@@ -16,9 +16,14 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: update-youtube-live-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   update:
     runs-on: windows-latest
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,7 +31,7 @@ jobs:
       - name: Refresh YouTube live URLs
         shell: pwsh
         run: |
-          powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-youtube-live.ps1 -DownloadYtDlp -IncludeOriginalOnFailure
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-youtube-live.ps1 -DownloadYtDlp -IncludeOriginalOnFailure -SocketTimeoutSec 10 -RetryCount 1
 
       - name: Commit changes
         shell: pwsh
