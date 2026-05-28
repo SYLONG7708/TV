@@ -1,4 +1,4 @@
-# OKTV 5.1.6 內置點播 / 直播源版
+# 影視 5.1.6 內置點播 / 直播源版
 
 這個 repo 保存已修改好的 APK、目前內置來源設定、可重新打包的 PowerShell 腳本，以及零基礎網頁教學。
 
@@ -6,15 +6,20 @@
 
 - APK：[`releases/OKTV_5.1.6_builtin_sources.apk`](releases/OKTV_5.1.6_builtin_sources.apk)
 - 版本：`5.1.6`
+- 顯示名稱：`影視`
 - 套件：`com.fongmi.android.tv`
+- 圖標：[`branding/icon-tech-20260528.png`](branding/icon-tech-20260528.png)
 - 簽名：debug key 重新簽名
 
 如果手機或模擬器已經安裝原版，因為簽名不同，請先卸載原版再安裝這個 APK。
+
+相容性：保留 Android 6.0+ / arm64-v8a 架構，並把相機、Wi-Fi、橫向螢幕等硬體需求設為非必須，補上全尺寸螢幕支援，方便手機、平板、電視盒與模擬器安裝。
 
 ## 目前內置來源
 
 - 點播：`https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json`
 - 直播穩定版：`https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/live-stable.txt`
+- 直播私密頻道密碼：`7708`
 
 設定檔在 [`sources/current-sources.json`](sources/current-sources.json)。
 
@@ -32,6 +37,8 @@
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build-stable-live.ps1
 ```
+
+腳本預設會把直播內的「私密頻道」輸出為密碼群組，密碼為 `7708`。
 
 ## 零基礎網頁教學
 

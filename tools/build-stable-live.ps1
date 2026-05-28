@@ -7,6 +7,7 @@ param(
     [int]$TimeoutSec = 4,
     [int]$MaxParallel = 48,
     [int]$Retries = 2,
+    [string]$PrivateGroupPassword = "7708",
     [switch]$SkipNetworkTest
 )
 
@@ -32,6 +33,13 @@ function Get-UrlScore([string]$Url) {
     if ($Url -match '/live/') { $score += 10 }
     if ($Url -match 'udp://|rtmp://') { $score -= 20 }
     return $score
+}
+
+function Protect-GroupName([string]$Name, [string]$Password) {
+    if ([string]::IsNullOrWhiteSpace($Password)) { return $Name }
+    $privateGroupName = [string]([char]0x79c1) + [string]([char]0x5bc6) + [string]([char]0x983b) + [string]([char]0x9053)
+    if ($Name -eq $privateGroupName) { return "$Name`_$Password" }
+    return $Name
 }
 
 function Remove-TrailingBlankLines([System.Collections.Generic.List[string]]$Lines) {
@@ -234,8 +242,9 @@ if ($verified.Count -gt 0) {
 $groups = $usable | Group-Object Group | Sort-Object { $groupOrder[$_.Name] }
 
 foreach ($group in $groups) {
-    $stableLines.Add("$($group.Name),#genre#")
-    $backupLines.Add("$($group.Name),#genre#")
+    $protectedGroupName = Protect-GroupName $group.Name $PrivateGroupPassword
+    $stableLines.Add("$protectedGroupName,#genre#")
+    $backupLines.Add("$protectedGroupName,#genre#")
     $channels = $group.Group | Group-Object StableName | Sort-Object { ($_.Group | Measure-Object Order -Minimum).Minimum }
     foreach ($channel in $channels) {
         $ranked = @($channel.Group | Sort-Object `
@@ -254,7 +263,8 @@ foreach ($group in $groups) {
 
 $verifiedGroups = $verified | Group-Object Group | Sort-Object { $groupOrder[$_.Name] }
 foreach ($group in $verifiedGroups) {
-    $verifiedLines.Add("$($group.Name),#genre#")
+    $protectedGroupName = Protect-GroupName $group.Name $PrivateGroupPassword
+    $verifiedLines.Add("$protectedGroupName,#genre#")
     $channels = $group.Group | Group-Object StableName | Sort-Object { ($_.Group | Measure-Object Order -Minimum).Minimum }
     foreach ($channel in $channels) {
         $ranked = @($channel.Group | Sort-Object `
@@ -290,6 +300,7 @@ $report = [pscustomobject]@{
     timeoutSec = $TimeoutSec
     maxParallel = $MaxParallel
     retries = $Retries
+    privateGroupPassword = $PrivateGroupPassword
     skipNetworkTest = [bool]$SkipNetworkTest
     outputs = @{
         stable = "sources/live-stable.txt"

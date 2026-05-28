@@ -1,4 +1,4 @@
-# OKTV 5.1.6 內置來源修改包
+# 影視 5.1.6 內置來源修改包
 
 本專案包含：
 
@@ -13,6 +13,7 @@
 | --- | --- |
 | 已完成 APK | `releases/OKTV_5.1.6_builtin_sources.apk` |
 | 來源設定 | `sources/current-sources.json` |
+| 科技感圖標 | `branding/icon-tech-20260528.png` |
 | 穩定直播源 | `sources/live-stable.txt` |
 | 直播驗活報告 | `sources/live-stability-report.json` |
 | 修改腳本 | `tools/update-oktv-sources.ps1` |
@@ -25,13 +26,16 @@
 這版 APK 已確認：
 
 - `apksigner verify` 通過 v1 / v2 / v3。
-- `aapt dump badging` 可讀取，版本為 `5.1.6`。
+- `aapt dump badging` 可讀取，版本為 `5.1.6`，顯示名稱為 `影視`。
 - `zipalign -c` 通過。
 - `classes.dex` 內已包含點播與直播 URL。
+- 全尺寸螢幕支援已加入，硬體功能需求保持非必須，以提高手機、平板、電視盒與模擬器相容性。
 
 ## 安裝提醒
 
 此 APK 已重新簽名，不能直接覆蓋原簽名版本。若裝置已安裝原版，請先卸載原版再安裝。
+
+直播內的「私密頻道」已設為密碼群組，密碼為 `7708`。
 
 ## 修改來源
 
@@ -54,6 +58,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build-stable-live.ps
 ```
 
 此腳本會抓取原始直播源，去除重複線路，預設每條線路短測 2 次，並把通過短測的線路放到 `Verified Fastest` 優先分類；原分類仍保留完整備援。
+腳本預設會把「私密頻道」輸出為密碼群組，密碼為 `7708`。
 
 輸出檔案：
 

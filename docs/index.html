@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>OKTV 5.1.6 內置點播 / 直播源修改教學</title>
+  <title>影視 5.1.6 內置點播 / 直播源修改教學</title>
   <style>
     :root {
       color-scheme: dark;
@@ -73,6 +73,14 @@
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
       font-weight: 800;
       letter-spacing: 0;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius);
+      object-fit: cover;
+      border: 1px solid var(--line);
     }
 
     .brand strong { display: block; font-size: 18px; line-height: 1.2; }
@@ -271,9 +279,9 @@
   <div class="layout">
     <aside>
       <div class="brand">
-        <div class="mark">OK</div>
+        <img class="brand-icon" src="../branding/icon-tech-20260528.png" alt="">
         <div>
-          <strong>OKTV 5.1.6</strong>
+          <strong>影視 5.1.6</strong>
           <span>內置來源修改包</span>
         </div>
       </div>
@@ -290,8 +298,8 @@
 
     <main>
       <section class="hero">
-        <h1>OKTV 5.1.6 內置點播 / 直播源修改教學</h1>
-        <p>這份教學從下載、安裝、修改來源到重新打包 APK 都用零基礎步驟說明。請只使用自己有權使用或可合法分享的來源。</p>
+        <h1>影視 5.1.6 內置點播 / 直播源修改教學</h1>
+        <p>這份 APK 已改名為「影視」，加入科技感圖標、穩定直播源與私密頻道密碼。教學從下載、安裝、修改來源到重新打包 APK 都用零基礎步驟說明。</p>
         <div class="actions">
           <a class="button primary" href="../releases/OKTV_5.1.6_builtin_sources.apk" download>下載內置來源 APK</a>
           <a class="button" href="../sources/current-sources.json">查看來源設定</a>
@@ -306,11 +314,14 @@
             <h3>已完成版本</h3>
             <p>檔案：<code>releases/OKTV_5.1.6_builtin_sources.apk</code></p>
             <p>版本：<code>5.1.6</code></p>
+            <p>名稱：<code>影視</code></p>
             <p>套件：<code>com.fongmi.android.tv</code></p>
+            <p>圖標：<code>branding/icon-tech-20260528.png</code></p>
           </div>
           <div class="card">
-            <h3>簽名提醒</h3>
+            <h3>安裝與相容性</h3>
             <p>這個 APK 是重新簽名版本。若手機或模擬器已安裝原版，請先卸載原版，再安裝這個版本。</p>
+            <p>目前保留 Android 6.0+ / arm64-v8a，並補上全尺寸螢幕支援與非必須硬體需求設定。</p>
           </div>
         </div>
       </section>
@@ -335,6 +346,11 @@
               <td>直播</td>
               <td>直播</td>
               <td><code id="currentLive">https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/live-stable.txt</code></td>
+            </tr>
+            <tr>
+              <td>私密頻道</td>
+              <td>密碼</td>
+              <td><code>7708</code></td>
             </tr>
           </tbody>
         </table>
@@ -419,7 +435,7 @@
         <h3>重新生成穩定直播源</h3>
         <p>要重新抓取原始直播源、去重、每條線路短測 2 次並排序備援線路，執行：</p>
         <pre>powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build-stable-live.ps1</pre>
-        <p>完成後會更新 <code>sources/live-stable.txt</code>，短測通過的線路會出現在 <code>Verified Fastest</code> 優先分類，APK 目前已內建讀取這個穩定版 URL。</p>
+        <p>完成後會更新 <code>sources/live-stable.txt</code>，短測通過的線路會出現在 <code>Verified Fastest</code> 優先分類，私密頻道會保留密碼 <code>7708</code>，APK 目前已內建讀取這個穩定版 URL。</p>
       </section>
 
       <section id="github">
