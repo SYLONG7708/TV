@@ -155,7 +155,7 @@ foreach ($channel in $channels) {
             Name = $name
             PageUrl = $url
             StreamUrl = $streamUrl
-            Ok = $true
+            Ok = (-not $SkipResolve)
         })
     } catch {
         $failed.Add([pscustomobject]@{
@@ -210,8 +210,8 @@ $report = [pscustomobject]@{
     mergedOutput = "sources/live-stable.txt"
     total = $channels.Count
     resolved = $resolved.Count
-    playable = @($resolved | Where-Object { $_.Ok }).Count
-    fallback = @($resolved | Where-Object { -not $_.Ok }).Count
+    playable = if ($SkipResolve) { 0 } else { @($resolved | Where-Object { $_.Ok }).Count }
+    fallback = if ($SkipResolve) { $resolved.Count } else { @($resolved | Where-Object { -not $_.Ok }).Count }
     failed = $failed.Count
     skipResolve = [bool]$SkipResolve
     includeOriginalOnFailure = [bool]$IncludeOriginalOnFailure
