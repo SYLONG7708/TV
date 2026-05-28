@@ -13,7 +13,10 @@
 | --- | --- |
 | 已完成 APK | `releases/OKTV_5.1.6_builtin_sources.apk` |
 | 來源設定 | `sources/current-sources.json` |
+| 穩定直播源 | `sources/live-stable.txt` |
+| 直播驗活報告 | `sources/live-stability-report.json` |
 | 修改腳本 | `tools/update-oktv-sources.ps1` |
+| 直播穩定源生成腳本 | `tools/build-stable-live.ps1` |
 | 網頁教學 | `docs/index.html` |
 | 修改後 smali 備份 | `patches/Config.modified.smali` |
 
@@ -43,3 +46,18 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-oktv-sources.
 ```
 
 請只使用自己有權使用或可合法分享的來源。
+
+## 重新生成穩定直播源
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build-stable-live.ps1
+```
+
+此腳本會抓取原始直播源，去除重複線路，預設每條線路短測 2 次，並把通過短測的線路放到 `Verified Fastest` 優先分類；原分類仍保留完整備援。
+
+輸出檔案：
+
+- `sources/live-stable.txt`
+- `sources/live-cleaned-backup.txt`
+- `sources/live-verified-only.txt`
+- `sources/live-stability-report.json`

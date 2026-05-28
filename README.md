@@ -14,9 +14,24 @@
 ## 目前內置來源
 
 - 點播：`https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json`
-- 直播：`https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E5%AE%89%E5%8D%9A.txt`
+- 直播穩定版：`https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/live-stable.txt`
 
 設定檔在 [`sources/current-sources.json`](sources/current-sources.json)。
+
+## 直播穩定加強
+
+已從原始安博直播源重新生成：
+
+- `sources/live-stable.txt`：APK 目前使用的穩定版，開頭有 `Verified Fastest` 優先分類；腳本預設每條線路短測 2 次，短測通過線路優先，同名頻道保留備援。
+- `sources/live-cleaned-backup.txt`：去重與整理後的完整備份。
+- `sources/live-verified-only.txt`：本次短測通過的精簡清單。
+- `sources/live-stability-report.json`：測速與驗活報告。
+
+重新整理直播源：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build-stable-live.ps1
+```
 
 ## 零基礎網頁教學
 
@@ -35,7 +50,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-oktv-sources.
   -InputApk .\releases\OKTV_5.1.6_builtin_sources.apk `
   -OutputApk .\releases\OKTV_5.1.6_custom_sources.apk `
   -VodUrl "你的點播 JSON URL" `
-  -LiveUrl "你的直播 TXT/M3U URL"
+  -LiveUrl "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/live-stable.txt"
 ```
 
 請只使用自己有權使用或可合法分享的來源。

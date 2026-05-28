@@ -334,7 +334,7 @@
             <tr>
               <td>直播</td>
               <td>直播</td>
-              <td><code id="currentLive">https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E5%AE%89%E5%8D%9A.txt</code></td>
+              <td><code id="currentLive">https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/live-stable.txt</code></td>
             </tr>
           </tbody>
         </table>
@@ -367,13 +367,13 @@
 
       <section id="modify">
         <h2>修改來源</h2>
-        <p>下面輸入新的點播與直播 URL，頁面會自動產生 PowerShell 指令。點播通常是 JSON，直播通常是 TXT、M3U 或 M3U8 清單。</p>
+        <p>下面輸入新的點播與直播 URL，頁面會自動產生 PowerShell 指令。點播通常是 JSON，直播建議使用本 repo 的穩定版 <code>sources/live-stable.txt</code>。</p>
         <div class="notice">請只填入你自己有權使用、維護或可合法分享的來源 URL。</div>
         <div class="form">
           <label for="vodUrl">點播 JSON URL</label>
           <input id="vodUrl" value="https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json">
           <label for="liveUrl">直播 TXT / M3U URL</label>
-          <input id="liveUrl" value="https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E5%AE%89%E5%8D%9A.txt">
+          <input id="liveUrl" value="https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/live-stable.txt">
           <button class="button primary" type="button" onclick="generateCommand()">產生修改指令</button>
         </div>
         <pre id="generatedCommand"></pre>
@@ -416,6 +416,10 @@
   -OutputApk .\releases\OKTV_5.1.6_custom_sources.apk `
   -VodUrl "你的點播 JSON URL" `
   -LiveUrl "你的直播 TXT/M3U URL"</pre>
+        <h3>重新生成穩定直播源</h3>
+        <p>要重新抓取原始直播源、去重、每條線路短測 2 次並排序備援線路，執行：</p>
+        <pre>powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build-stable-live.ps1</pre>
+        <p>完成後會更新 <code>sources/live-stable.txt</code>，短測通過的線路會出現在 <code>Verified Fastest</code> 優先分類，APK 目前已內建讀取這個穩定版 URL。</p>
       </section>
 
       <section id="github">
@@ -463,7 +467,7 @@
   -InputApk .\\releases\\OKTV_5.1.6_builtin_sources.apk \`
   -OutputApk .\\releases\\OKTV_5.1.6_custom_sources.apk \`
   -VodUrl "https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json" \`
-  -LiveUrl "https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E5%AE%89%E5%8D%9A.txt"`;
+  -LiveUrl "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/live-stable.txt"`;
 
     function safe(value) {
       return String(value).replace(/"/g, "");
