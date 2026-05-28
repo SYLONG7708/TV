@@ -13,5 +13,11 @@
     "name": "直播",
     "type": 1,
     "url": "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/live-stable.txt"
+  },
+  "youtubeLive": {
+    "channelCsv": "sources/youtube-live-channels.csv",
+    "generatedSource": "sources/live-youtube-stable.txt",
+    "report": "sources/live-youtube-report.json",
+    "autoRefresh": "GitHub Actions 推送後與每 2 小時刷新一次公開 YouTube 直播短效 URL"
   }
 }

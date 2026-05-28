@@ -288,6 +288,7 @@
       <nav>
         <a href="#download">下載 APK</a>
         <a href="#sources">目前內置來源</a>
+        <a href="#youtube">YouTube 自動更新</a>
         <a href="#install">安裝方式</a>
         <a href="#modify">修改來源</a>
         <a href="#run">重新打包</a>
@@ -354,6 +355,30 @@
             </tr>
           </tbody>
         </table>
+      </section>
+
+      <section id="youtube">
+        <h2>YouTube 即時直播自動更新</h2>
+        <p>已把 98 個公開 YouTube 直播頻道整理到 <code>sources/youtube-live-channels.csv</code>，並依照網路第四台常見方式分成新聞、購物、綜合娛樂、國際新聞、亞洲新聞、兒童動畫、文化紀實、音樂體育風景等群組。直播列表中的頻道名稱會加上三位數序號，方便排序與查找。</p>
+        <div class="grid">
+          <div class="card">
+            <h3>自動更新方式</h3>
+            <p>YouTube 真實播放 URL 是短效網址，不能永久固定。本 repo 已加入 GitHub Actions，每 2 小時自動執行 <code>tools/update-youtube-live.ps1</code>，用 <code>yt-dlp</code> 重新擷取公開直播 URL。</p>
+            <p>腳本會優先選擇 720p HLS，降低手機、電視盒與模擬器長時間播放時的卡頓機率，並合併到 APK 已經使用的 <code>sources/live-stable.txt</code>。</p>
+          </div>
+          <div class="card">
+            <h3>本次解析結果</h3>
+            <p>頻道表：<code>sources/youtube-live-channels.csv</code></p>
+            <p>解析直播源：<code>sources/live-youtube-stable.txt</code></p>
+            <p>解析報告：<code>sources/live-youtube-report.json</code></p>
+            <p>APK 直播 URL 不變：<code>https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/live-stable.txt</code></p>
+          </div>
+        </div>
+        <h3>手動立即更新</h3>
+        <pre>powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-youtube-live.ps1 -DownloadYtDlp -IncludeOriginalOnFailure</pre>
+        <h3>新增或調整頻道</h3>
+        <p>用文字編輯器打開 <code>sources/youtube-live-channels.csv</code>，修改 <code>Order</code>、<code>Group</code>、<code>Name</code>、<code>Url</code>。儲存後執行上方指令，或等待 GitHub Actions 自動刷新。</p>
+        <div class="notice">地區限制、影片下架、非公開或 DRM 內容無法被腳本強制播放；腳本會保留原 YouTube 頁面 URL，並把失敗原因寫入 <code>sources/live-youtube-report.json</code>。</div>
       </section>
 
       <section id="install">

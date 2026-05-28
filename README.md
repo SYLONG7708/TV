@@ -28,9 +28,13 @@
 已從原始安博直播源重新生成：
 
 - `sources/live-stable.txt`：APK 目前使用的穩定版，開頭有 `Verified Fastest` 優先分類；腳本預設每條線路短測 2 次，短測通過線路優先，同名頻道保留備援。
+- `sources/live-base.txt`：YouTube 直播合併前的原始穩定底表。
 - `sources/live-cleaned-backup.txt`：去重與整理後的完整備份。
 - `sources/live-verified-only.txt`：本次短測通過的精簡清單。
 - `sources/live-stability-report.json`：測速與驗活報告。
+- `sources/youtube-live-channels.csv`：98 個公開 YouTube 直播頻道表。
+- `sources/live-youtube-stable.txt`：YouTube 頻道解析後的短效播放 URL。
+- `sources/live-youtube-report.json`：YouTube 解析成功與失敗報告。
 
 重新整理直播源：
 
@@ -39,6 +43,20 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build-stable-live.ps
 ```
 
 腳本預設會把直播內的「私密頻道」輸出為密碼群組，密碼為 `7708`。
+
+## YouTube 即時直播自動更新
+
+已將提供的 YouTube 直播整理為新聞、購物、綜合娛樂、國際新聞、亞洲新聞、兒童動畫、文化紀實、音樂體育風景等群組，並以三位數序號排列。
+
+YouTube 的真實播放 URL 會過期，因此 repo 已加入 GitHub Actions，每 2 小時自動執行 `tools/update-youtube-live.ps1`，使用 `yt-dlp` 重新擷取公開直播 URL，優先取 720p HLS，然後合併到 APK 目前讀取的 `sources/live-stable.txt`。修改直播表不需要重新打包 APK，因為 APK 讀的是同一個 raw URL。
+
+手動更新：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-youtube-live.ps1 -DownloadYtDlp -IncludeOriginalOnFailure
+```
+
+新增或調整頻道時，修改 `sources/youtube-live-channels.csv` 的 `Order`、`Group`、`Name`、`Url` 後重新執行上方指令。地區限制、影片下架、非公開或 DRM 內容無法被腳本強制播放，會保留原 YouTube 頁面 URL 並記錄在 `sources/live-youtube-report.json`。
 
 ## 零基礎網頁教學
 
