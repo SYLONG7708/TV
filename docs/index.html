@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OKTV 5.1.6 內置點播 / 直播源修改教學</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101418;
+      --panel: #171d22;
+      --panel-2: #20272d;
+      --line: #33404a;
+      --text: #eef4f6;
+      --muted: #a8b6bd;
+      --accent: #2dd4bf;
+      --accent-2: #f2b84b;
+      --danger: #ff7777;
+      --code: #0b0f12;
+      --radius: 8px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
+      line-height: 1.7;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    aside {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      padding: 28px 22px;
+      border-right: 1px solid var(--line);
+      background: #0c1115;
+      overflow: auto;
+    }
+
+    main {
+      max-width: 1060px;
+      width: 100%;
+      padding: 42px 32px 80px;
+    }
+
+    .brand {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 28px;
+    }
+
+    .mark {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius);
+      display: grid;
+      place-items: center;
+      color: #08110f;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .brand strong { display: block; font-size: 18px; line-height: 1.2; }
+    .brand span { color: var(--muted); font-size: 13px; }
+
+    nav a {
+      display: block;
+      padding: 9px 10px;
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    nav a:hover {
+      background: var(--panel);
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: clamp(30px, 5vw, 54px);
+      line-height: 1.08;
+      letter-spacing: 0;
+    }
+    h2 {
+      margin: 46px 0 14px;
+      font-size: 26px;
+      letter-spacing: 0;
+      border-top: 1px solid var(--line);
+      padding-top: 26px;
+    }
+    h3 { margin: 24px 0 8px; font-size: 18px; }
+    p { margin: 8px 0 14px; color: var(--muted); }
+    strong { color: var(--text); }
+
+    .hero {
+      padding: 28px;
+      background: linear-gradient(135deg, #182126, #162423 62%, #2b2418);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      margin-bottom: 28px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .button {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel-2);
+      color: var(--text);
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .button.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #08110f;
+    }
+    .button:hover { text-decoration: none; filter: brightness(1.08); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      border-radius: var(--radius);
+      padding: 18px;
+    }
+    .card h3 { margin-top: 0; }
+
+    .notice {
+      border-left: 4px solid var(--accent-2);
+      background: #211b10;
+      border-radius: 4px;
+      padding: 14px 16px;
+      color: #ffe2a6;
+    }
+    .danger {
+      border-left-color: var(--danger);
+      background: #241315;
+      color: #ffc5c5;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: block;
+    }
+    thead, tbody, tr { display: table; width: 100%; table-layout: fixed; }
+    th, td {
+      border-bottom: 1px solid var(--line);
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+      word-break: break-word;
+    }
+    th { background: var(--panel-2); color: var(--text); }
+    tr:last-child td { border-bottom: 0; }
+
+    code, pre {
+      font-family: Consolas, "Cascadia Mono", monospace;
+    }
+    code {
+      background: var(--code);
+      border: 1px solid #202930;
+      border-radius: 4px;
+      padding: 2px 5px;
+      color: #d9f7ef;
+      word-break: break-word;
+    }
+    pre {
+      background: var(--code);
+      border: 1px solid #202930;
+      border-radius: var(--radius);
+      padding: 14px;
+      overflow: auto;
+      color: #d9f7ef;
+      white-space: pre-wrap;
+    }
+
+    .form {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    label { color: var(--text); font-weight: 700; }
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #0b0f12;
+      color: var(--text);
+      padding: 12px;
+      font-size: 15px;
+    }
+    input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+    .step {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 12px;
+      margin: 14px 0;
+    }
+    .num {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--panel-2);
+      color: var(--accent);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      border: 1px solid var(--line);
+    }
+
+    .status {
+      margin-top: 10px;
+      min-height: 24px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    @media (max-width: 860px) {
+      .layout { display: block; }
+      aside {
+        position: static;
+        height: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      main { padding: 28px 18px 60px; }
+      .grid { grid-template-columns: 1fr; }
+      .hero { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside>
+      <div class="brand">
+        <div class="mark">OK</div>
+        <div>
+          <strong>OKTV 5.1.6</strong>
+          <span>內置來源修改包</span>
+        </div>
+      </div>
+      <nav>
+        <a href="#download">下載 APK</a>
+        <a href="#sources">目前內置來源</a>
+        <a href="#install">安裝方式</a>
+        <a href="#modify">修改來源</a>
+        <a href="#run">重新打包</a>
+        <a href="#github">GitHub 更新</a>
+        <a href="#trouble">常見問題</a>
+      </nav>
+    </aside>
+
+    <main>
+      <section class="hero">
+        <h1>OKTV 5.1.6 內置點播 / 直播源修改教學</h1>
+        <p>這份教學從下載、安裝、修改來源到重新打包 APK 都用零基礎步驟說明。請只使用自己有權使用或可合法分享的來源。</p>
+        <div class="actions">
+          <a class="button primary" href="../releases/OKTV_5.1.6_builtin_sources.apk" download>下載內置來源 APK</a>
+          <a class="button" href="../sources/current-sources.json">查看來源設定</a>
+          <a class="button" href="../tools/update-oktv-sources.ps1">下載修改腳本</a>
+        </div>
+      </section>
+
+      <section id="download">
+        <h2>下載 APK</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>已完成版本</h3>
+            <p>檔案：<code>releases/OKTV_5.1.6_builtin_sources.apk</code></p>
+            <p>版本：<code>5.1.6</code></p>
+            <p>套件：<code>com.fongmi.android.tv</code></p>
+          </div>
+          <div class="card">
+            <h3>簽名提醒</h3>
+            <p>這個 APK 是重新簽名版本。若手機或模擬器已安裝原版，請先卸載原版，再安裝這個版本。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="sources">
+        <h2>目前內置來源</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>類型</th>
+              <th>名稱</th>
+              <th>URL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>點播</td>
+              <td>點播</td>
+              <td><code id="currentVod">https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json</code></td>
+            </tr>
+            <tr>
+              <td>直播</td>
+              <td>直播</td>
+              <td><code id="currentLive">https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E5%AE%89%E5%8D%9A.txt</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="install">
+        <h2>安裝方式</h2>
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <strong>下載 APK</strong>
+            <p>按上方「下載內置來源 APK」，或在 GitHub repo 裡進入 <code>releases</code> 資料夾下載。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <strong>傳到手機或模擬器</strong>
+            <p>可以用 USB、LINE、雲端硬碟，或直接在模擬器裡開 GitHub 下載。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <strong>安裝</strong>
+            <p>如果系統提示「不明來源」，允許目前使用的檔案管理器或瀏覽器安裝 APK。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="modify">
+        <h2>修改來源</h2>
+        <p>下面輸入新的點播與直播 URL，頁面會自動產生 PowerShell 指令。點播通常是 JSON，直播通常是 TXT、M3U 或 M3U8 清單。</p>
+        <div class="notice">請只填入你自己有權使用、維護或可合法分享的來源 URL。</div>
+        <div class="form">
+          <label for="vodUrl">點播 JSON URL</label>
+          <input id="vodUrl" value="https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json">
+          <label for="liveUrl">直播 TXT / M3U URL</label>
+          <input id="liveUrl" value="https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E5%AE%89%E5%8D%9A.txt">
+          <button class="button primary" type="button" onclick="generateCommand()">產生修改指令</button>
+        </div>
+        <pre id="generatedCommand"></pre>
+        <button class="button" type="button" onclick="copyCommand()">複製指令</button>
+        <div class="status" id="copyStatus"></div>
+      </section>
+
+      <section id="run">
+        <h2>重新打包</h2>
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <strong>下載整個 repo</strong>
+            <p>在 GitHub 按 <code>Code</code>，選 <code>Download ZIP</code>，解壓縮後進入資料夾。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <strong>準備 Java 與 Android SDK build-tools</strong>
+            <p>電腦需要能執行 <code>java</code>，並有 Android SDK 的 <code>zipalign.exe</code> 與 <code>apksigner.bat</code>。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <strong>開 PowerShell</strong>
+            <p>在 repo 資料夾空白處按右鍵，選擇在終端機或 PowerShell 開啟。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">4</div>
+          <div>
+            <strong>貼上指令</strong>
+            <p>把上一段產生的指令貼進 PowerShell 執行。完成後新的 APK 會出現在 <code>releases</code> 資料夾。</p>
+          </div>
+        </div>
+        <pre>powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-oktv-sources.ps1 `
+  -InputApk .\releases\OKTV_5.1.6_builtin_sources.apk `
+  -OutputApk .\releases\OKTV_5.1.6_custom_sources.apk `
+  -VodUrl "你的點播 JSON URL" `
+  -LiveUrl "你的直播 TXT/M3U URL"</pre>
+      </section>
+
+      <section id="github">
+        <h2>GitHub 更新方式</h2>
+        <div class="step">
+          <div class="num">1</div>
+          <div>
+            <strong>更新來源設定</strong>
+            <p>修改 <code>sources/current-sources.json</code> 裡的 <code>vod.url</code> 與 <code>live.url</code>。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <div>
+            <strong>重新打包 APK</strong>
+            <p>用 <code>tools/update-oktv-sources.ps1</code> 產生新的 APK。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <div>
+            <strong>上傳新 APK</strong>
+            <p>把新 APK 放回 <code>releases</code> 資料夾，再提交到 GitHub。</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="trouble">
+        <h2>常見問題</h2>
+        <h3>安裝時提示簽名不同</h3>
+        <p>先卸載已安裝的原版，再安裝這個重新簽名版本。</p>
+        <h3>PowerShell 說找不到 java</h3>
+        <p>安裝 JDK，並確認重新開啟 PowerShell 後輸入 <code>java -version</code> 能看到版本。</p>
+        <h3>PowerShell 說找不到 Android build-tools</h3>
+        <p>安裝 Android SDK build-tools，或執行腳本時加上 <code>-AndroidSdk "你的 Android SDK 路徑"</code>。</p>
+        <h3>來源不能播放</h3>
+        <p>先用瀏覽器打開 URL，確認檔案存在、網路可連線，而且來源格式符合 app 支援格式。</p>
+        <div class="notice danger">請避免使用沒有授權的第三方內容來源。來源能否播放與內容授權狀態需要由來源維護者自行確認。</div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const defaultCommand = `powershell -NoProfile -ExecutionPolicy Bypass -File .\\tools\\update-oktv-sources.ps1 \`
+  -InputApk .\\releases\\OKTV_5.1.6_builtin_sources.apk \`
+  -OutputApk .\\releases\\OKTV_5.1.6_custom_sources.apk \`
+  -VodUrl "https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json" \`
+  -LiveUrl "https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E5%AE%89%E5%8D%9A.txt"`;
+
+    function safe(value) {
+      return String(value).replace(/"/g, "");
+    }
+
+    function generateCommand() {
+      const vod = safe(document.getElementById("vodUrl").value.trim());
+      const live = safe(document.getElementById("liveUrl").value.trim());
+      const command = `powershell -NoProfile -ExecutionPolicy Bypass -File .\\tools\\update-oktv-sources.ps1 \`
+  -InputApk .\\releases\\OKTV_5.1.6_builtin_sources.apk \`
+  -OutputApk .\\releases\\OKTV_5.1.6_custom_sources.apk \`
+  -VodUrl "${vod}" \`
+  -LiveUrl "${live}"`;
+      document.getElementById("generatedCommand").textContent = command;
+      document.getElementById("copyStatus").textContent = "";
+    }
+
+    async function copyCommand() {
+      const text = document.getElementById("generatedCommand").textContent || defaultCommand;
+      try {
+        await navigator.clipboard.writeText(text);
+        document.getElementById("copyStatus").textContent = "已複製";
+      } catch (err) {
+        document.getElementById("copyStatus").textContent = "瀏覽器不允許自動複製，請手動選取上方指令。";
+      }
+    }
+
+    document.getElementById("generatedCommand").textContent = defaultCommand;
+  </script>
+</body>
+</html>
