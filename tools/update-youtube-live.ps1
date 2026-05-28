@@ -8,6 +8,7 @@ param(
     [int]$MaxChannels = 0,
     [int]$MaxHeight = 720,
     [int]$SocketTimeoutSec = 15,
+    [int]$ProcessTimeoutSec = 45,
     [int]$RetryCount = 2,
     [switch]$DownloadYtDlp,
     [switch]$SkipResolve,
@@ -69,8 +70,24 @@ function Resolve-StreamUrl([string]$Url, [string]$YtDlp) {
         "--get-url",
         $Url
     )
-    $output = & $YtDlp @args 2>&1
-    if ($LASTEXITCODE -ne 0) {
+    $psi = New-Object System.Diagnostics.ProcessStartInfo
+    $psi.FileName = $YtDlp
+    $psi.Arguments = ($args -join " ")
+    $psi.RedirectStandardOutput = $true
+    $psi.RedirectStandardError = $true
+    $psi.UseShellExecute = $false
+    $psi.CreateNoWindow = $true
+    $process = New-Object System.Diagnostics.Process
+    $process.StartInfo = $psi
+    [void]$process.Start()
+    if (-not $process.WaitForExit([Math]::Max(5, $ProcessTimeoutSec) * 1000)) {
+        try { $process.Kill() } catch { }
+        throw "yt-dlp timed out after $ProcessTimeoutSec seconds."
+    }
+    $stdout = $process.StandardOutput.ReadToEnd()
+    $stderr = $process.StandardError.ReadToEnd()
+    $output = @(($stdout + "`n" + $stderr) -split "(`r`n|`n)" | Where-Object { $_ -ne "" })
+    if ($process.ExitCode -ne 0) {
         throw (($output | Out-String).Trim())
     }
     $urls = @($output | Where-Object { $_ -match '^https?://' })
@@ -195,6 +212,7 @@ $report = [pscustomobject]@{
     skipResolve = [bool]$SkipResolve
     includeOriginalOnFailure = [bool]$IncludeOriginalOnFailure
     maxHeight = $MaxHeight
+    processTimeoutSec = $ProcessTimeoutSec
     retryCount = $RetryCount
     ytDlp = $ytDlp
     groups = ($resolved | Group-Object Group | Sort-Object Name | ForEach-Object { [pscustomobject]@{ name = $_.Name; count = $_.Count } })
