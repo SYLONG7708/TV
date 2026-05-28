@@ -1,5 +1,5 @@
 {
-    "generatedAt":  "2026-05-29T07:38:04.4834154+08:00",
+    "generatedAt":  "2026-05-28T23:38:39.6923054+00:00",
     "channelCsv":  "sources/youtube-live-channels.csv",
     "baseLive":  "sources/live-base.txt",
     "youtubeOutput":  "sources/live-youtube-stable.txt",
@@ -10,23 +10,15 @@
     "fallback":  98,
     "failed":  0,
     "skipResolve":  true,
-    "includeOriginalOnFailure":  false,
+    "includeOriginalOnFailure":  true,
     "maxHeight":  720,
-    "processTimeoutSec":  45,
-    "retryCount":  2,
+    "processTimeoutSec":  12,
+    "retryCount":  1,
     "ytDlp":  "",
     "cookiesEnabled":  false,
     "groups":  [
                    {
                        "name":  "YouTube互動娛樂",
-                       "count":  1
-                   },
-                   {
-                       "name":  "YouTube文化紀實",
-                       "count":  7
-                   },
-                   {
-                       "name":  "YouTube台灣節目",
                        "count":  1
                    },
                    {
@@ -38,12 +30,16 @@
                        "count":  9
                    },
                    {
-                       "name":  "YouTube音樂體育風景",
-                       "count":  4
+                       "name":  "YouTube台灣節目",
+                       "count":  1
                    },
                    {
                        "name":  "YouTube國際新聞",
                        "count":  15
+                   },
+                   {
+                       "name":  "YouTube文化紀實",
+                       "count":  7
                    },
                    {
                        "name":  "YouTube新聞台",
@@ -60,6 +56,10 @@
                    {
                        "name":  "YouTube韓綜娛樂",
                        "count":  1
+                   },
+                   {
+                       "name":  "YouTube音樂體育風景",
+                       "count":  4
                    }
                ],
     "failures":  [
