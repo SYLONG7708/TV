@@ -58,6 +58,17 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-youtube-live.
 
 新增或調整頻道時，修改 `sources/youtube-live-channels.csv` 的 `Order`、`Group`、`Name`、`Url` 後重新執行上方指令。地區限制、影片下架、非公開或 DRM 內容無法被腳本強制播放，會保留原 YouTube 頁面 URL 並記錄在 `sources/live-youtube-report.json`。
 
+### GitHub Actions cookies
+
+GitHub runner may be blocked by YouTube with `Sign in to confirm you're not a bot`. When that happens, the workflow keeps the original YouTube URL as fallback. To let Actions resolve HLS URLs, add an Actions secret named `YOUTUBE_COOKIES_B64`:
+
+```powershell
+.\.tools\yt-dlp.exe --cookies-from-browser chrome --cookies youtube-cookies.txt --skip-download "https://www.youtube.com/"
+[Convert]::ToBase64String([IO.File]::ReadAllBytes(".\youtube-cookies.txt")) | Set-Clipboard
+```
+
+Paste the Base64 text into GitHub `Settings` → `Secrets and variables` → `Actions` → `New repository secret`. Cookies are login credentials; keep them in GitHub Secrets only and do not commit them.
+
 ## 零基礎網頁教學
 
 完整網頁版教學在：

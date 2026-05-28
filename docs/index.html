@@ -379,6 +379,11 @@
         <h3>新增或調整頻道</h3>
         <p>用文字編輯器打開 <code>sources/youtube-live-channels.csv</code>，修改 <code>Order</code>、<code>Group</code>、<code>Name</code>、<code>Url</code>。儲存後執行上方指令，或等待 GitHub Actions 自動刷新。</p>
         <div class="notice">地區限制、影片下架、非公開或 DRM 內容無法被腳本強制播放；腳本會保留原 YouTube 頁面 URL，並把失敗原因寫入 <code>sources/live-youtube-report.json</code>。</div>
+        <h3>GitHub 被 YouTube 擋住時</h3>
+        <p>如果報告檔出現 <code>Sign in to confirm you're not a bot</code>，代表 GitHub runner 被 YouTube 要求登入。先在已登入 YouTube 的電腦產生 cookies，再把 Base64 放到 GitHub Secret。</p>
+        <pre>.\.tools\yt-dlp.exe --cookies-from-browser chrome --cookies youtube-cookies.txt --skip-download "https://www.youtube.com/"
+[Convert]::ToBase64String([IO.File]::ReadAllBytes(".\youtube-cookies.txt")) | Set-Clipboard</pre>
+        <p>到 GitHub repo 的 <code>Settings</code> → <code>Secrets and variables</code> → <code>Actions</code> → <code>New repository secret</code>，名稱填 <code>YOUTUBE_COOKIES_B64</code>，內容貼上剪貼簿的 Base64 字串。cookies 是登入憑證，只能放在 GitHub Secret，不要上傳到 repo。</p>
       </section>
 
       <section id="install">

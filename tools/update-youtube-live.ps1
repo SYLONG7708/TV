@@ -5,6 +5,7 @@ param(
     [string]$MergedOutput = "",
     [string]$ReportOutput = "",
     [string]$YtDlpPath = "",
+    [string]$CookiesFile = "",
     [int]$MaxChannels = 0,
     [int]$MaxHeight = 720,
     [int]$SocketTimeoutSec = 15,
@@ -70,6 +71,9 @@ function Resolve-StreamUrl([string]$Url, [string]$YtDlp) {
         "--get-url",
         $Url
     )
+    if (-not [string]::IsNullOrWhiteSpace($CookiesFile) -and (Test-Path -LiteralPath $CookiesFile)) {
+        $args = @("--cookies", (Get-FullPath $CookiesFile)) + $args
+    }
     $psi = New-Object System.Diagnostics.ProcessStartInfo
     $psi.FileName = $YtDlp
     $psi.Arguments = ($args -join " ")
@@ -215,6 +219,7 @@ $report = [pscustomobject]@{
     processTimeoutSec = $ProcessTimeoutSec
     retryCount = $RetryCount
     ytDlp = $ytDlp
+    cookiesEnabled = (-not [string]::IsNullOrWhiteSpace($CookiesFile) -and (Test-Path -LiteralPath $CookiesFile))
     groups = ($resolved | Group-Object Group | Sort-Object Name | ForEach-Object { [pscustomobject]@{ name = $_.Name; count = $_.Count } })
     failures = $failed
 }

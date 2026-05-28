@@ -28,10 +28,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Restore optional YouTube cookies
+        shell: pwsh
+        env:
+          YOUTUBE_COOKIES_B64: ${{ secrets.YOUTUBE_COOKIES_B64 }}
+        run: |
+          if (-not [string]::IsNullOrWhiteSpace($env:YOUTUBE_COOKIES_B64)) {
+            $cookieFile = Join-Path $env:RUNNER_TEMP "youtube-cookies.txt"
+            [System.IO.File]::WriteAllBytes($cookieFile, [System.Convert]::FromBase64String($env:YOUTUBE_COOKIES_B64))
+            "YOUTUBE_COOKIES_FILE=$cookieFile" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+            Write-Host "YouTube cookies restored from repository secret."
+          } else {
+            Write-Host "YOUTUBE_COOKIES_B64 secret is not set; unresolved channels will keep their original YouTube URLs."
+          }
+
       - name: Refresh YouTube live URLs
         shell: pwsh
         run: |
-          powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-youtube-live.ps1 -DownloadYtDlp -IncludeOriginalOnFailure -SocketTimeoutSec 8 -ProcessTimeoutSec 12 -RetryCount 1
+          $args = @(
+            "-NoProfile",
+            "-ExecutionPolicy", "Bypass",
+            "-File", ".\tools\update-youtube-live.ps1",
+            "-DownloadYtDlp",
+            "-IncludeOriginalOnFailure",
+            "-SocketTimeoutSec", "8",
+            "-ProcessTimeoutSec", "12",
+            "-RetryCount", "1"
+          )
+          if (-not [string]::IsNullOrWhiteSpace($env:YOUTUBE_COOKIES_FILE)) {
+            $args += @("-CookiesFile", $env:YOUTUBE_COOKIES_FILE)
+          }
+          powershell @args
 
       - name: Commit changes
         shell: pwsh
