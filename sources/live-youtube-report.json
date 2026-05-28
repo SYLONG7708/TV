@@ -1,5 +1,5 @@
 {
-    "generatedAt":  "2026-05-28T23:18:57.2969411+00:00",
+    "generatedAt":  "2026-05-28T23:26:17.4696487+00:00",
     "channelCsv":  "sources/youtube-live-channels.csv",
     "baseLive":  "sources/live-base.txt",
     "youtubeOutput":  "sources/live-youtube-stable.txt",
@@ -12,6 +12,7 @@
     "skipResolve":  false,
     "includeOriginalOnFailure":  true,
     "maxHeight":  720,
+    "processTimeoutSec":  12,
     "retryCount":  1,
     "ytDlp":  "D:\\a\\TV\\TV\\.tools\\yt-dlp.exe",
     "groups":  [
@@ -220,7 +221,7 @@
                          "Group":  "YouTube新聞台",
                          "Name":  "公視 網路直播頻道",
                          "PageUrl":  "https://www.youtube.com/watch?v=C6gYqSHLRw4",
-                         "Error":  "ERROR: [youtube] C6gYqSHLRw4: The uploader has not made this video available in your country"
+                         "Error":  "ERROR: [youtube] C6gYqSHLRw4: The uploader has not made this video available in your country\r\n\n\r\nThis video is available in Taiwan, Province of China.\r\n\n\r\nYou might want to use a VPN or a proxy server (with --proxy) to workaround."
                      },
                      {
                          "Order":  24,
@@ -598,7 +599,7 @@
                          "Group":  "YouTube兒童動畫",
                          "Name":  "Muse木棉花-闔家歡",
                          "PageUrl":  "https://www.youtube.com/watch?v=Lh6xiMlkRrg",
-                         "Error":  "ERROR: [youtube] Lh6xiMlkRrg: The uploader has not made this video available in your country"
+                         "Error":  "ERROR: [youtube] Lh6xiMlkRrg: The uploader has not made this video available in your country\r\n\n\r\nThis video is available in Taiwan, Province of China.\r\n\n\r\nYou might want to use a VPN or a proxy server (with --proxy) to workaround."
                      },
                      {
                          "Order":  78,
