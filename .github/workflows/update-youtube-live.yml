@@ -57,6 +57,8 @@ jobs:
           )
           if (-not [string]::IsNullOrWhiteSpace($env:YOUTUBE_COOKIES_FILE)) {
             $args += @("-CookiesFile", $env:YOUTUBE_COOKIES_FILE)
+          } else {
+            $args += @("-SkipResolve")
           }
           powershell @args
 
