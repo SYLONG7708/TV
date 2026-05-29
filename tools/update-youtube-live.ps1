@@ -13,7 +13,8 @@ param(
     [int]$RetryCount = 2,
     [switch]$DownloadYtDlp,
     [switch]$SkipResolve,
-    [switch]$IncludeOriginalOnFailure
+    [switch]$IncludeOriginalOnFailure,
+    [switch]$KeepFallbackInPlaylist
 )
 
 $ErrorActionPreference = "Stop"
@@ -21,13 +22,22 @@ $ErrorActionPreference = "Stop"
 
 $repoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 if ([string]::IsNullOrWhiteSpace($ChannelCsv)) { $ChannelCsv = Join-Path $repoRoot "sources\youtube-live-channels.csv" }
-if ([string]::IsNullOrWhiteSpace($BaseLive)) { $BaseLive = Join-Path $repoRoot "sources\live-base.txt" }
+if ([string]::IsNullOrWhiteSpace($BaseLive)) { $BaseLive = Join-Path $repoRoot "sources\live-verified-only.txt" }
 if ([string]::IsNullOrWhiteSpace($YoutubeOutput)) { $YoutubeOutput = Join-Path $repoRoot "sources\live-youtube-stable.txt" }
 if ([string]::IsNullOrWhiteSpace($MergedOutput)) { $MergedOutput = Join-Path $repoRoot "sources\live-stable.txt" }
 if ([string]::IsNullOrWhiteSpace($ReportOutput)) { $ReportOutput = Join-Path $repoRoot "sources\live-youtube-report.json" }
 
 function Get-FullPath([string]$Path) {
     return $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+}
+
+function Get-RepoRelativePath([string]$Path) {
+    $fullPath = Get-FullPath $Path
+    $rootPath = (Get-FullPath $repoRoot).TrimEnd("\", "/")
+    if ($fullPath.StartsWith($rootPath, [System.StringComparison]::OrdinalIgnoreCase)) {
+        return ($fullPath.Substring($rootPath.Length).TrimStart("\", "/") -replace "\\", "/")
+    }
+    return ($fullPath -replace "\\", "/")
 }
 
 function Find-CommandPath([string]$Name) {
@@ -178,6 +188,12 @@ foreach ($channel in $channels) {
     }
 }
 
+$playlistResolved = if ($KeepFallbackInPlaylist) {
+    @($resolved)
+} else {
+    @($resolved | Where-Object { $_.Ok })
+}
+
 $youtubeLines = New-Object System.Collections.Generic.List[string]
 $groupNames = @(
     $channels |
@@ -185,7 +201,7 @@ $groupNames = @(
         Select-Object -ExpandProperty Group -Unique
 )
 foreach ($groupName in $groupNames) {
-    $rows = @($resolved | Where-Object { $_.Group -eq $groupName } | Sort-Object Order)
+    $rows = @($playlistResolved | Where-Object { $_.Group -eq $groupName } | Sort-Object Order)
     Add-LinesForGroup $youtubeLines $groupName $rows
 }
 while ($youtubeLines.Count -gt 0 -and $youtubeLines[$youtubeLines.Count - 1] -eq "") {
@@ -204,10 +220,10 @@ foreach ($line in $baseLines) { $mergedLines.Add($line) }
 
 $report = [pscustomobject]@{
     generatedAt = (Get-Date).ToString("o")
-    channelCsv = "sources/youtube-live-channels.csv"
-    baseLive = "sources/live-base.txt"
-    youtubeOutput = "sources/live-youtube-stable.txt"
-    mergedOutput = "sources/live-stable.txt"
+    channelCsv = Get-RepoRelativePath $ChannelCsv
+    baseLive = Get-RepoRelativePath $BaseLive
+    youtubeOutput = Get-RepoRelativePath $YoutubeOutput
+    mergedOutput = Get-RepoRelativePath $MergedOutput
     total = $channels.Count
     resolved = $resolved.Count
     playable = if ($SkipResolve) { 0 } else { @($resolved | Where-Object { $_.Ok }).Count }
@@ -215,8 +231,11 @@ $report = [pscustomobject]@{
     failed = $failed.Count
     workflowSuccessRate = if ($channels.Count) { [Math]::Round(($resolved.Count / $channels.Count) * 100, 2) } else { 0 }
     hlsSuccessRate = if ($channels.Count -and -not $SkipResolve) { [Math]::Round((@($resolved | Where-Object { $_.Ok }).Count / $channels.Count) * 100, 2) } else { 0 }
+    playlistEntries = $playlistResolved.Count
+    removedFromPlaylist = if ($KeepFallbackInPlaylist) { 0 } else { @($resolved | Where-Object { -not $_.Ok }).Count }
+    playlistPolicy = if ($KeepFallbackInPlaylist) { "include-fallback" } else { "playable-only" }
     mode = if ($SkipResolve) { "no-cookies-fallback" } elseif (-not [string]::IsNullOrWhiteSpace($CookiesFile) -and (Test-Path -LiteralPath $CookiesFile)) { "cookies-hls-resolve" } else { "best-effort-hls-resolve" }
-    note = if ($SkipResolve) { "GitHub runner has no YouTube cookies, so the workflow keeps original YouTube URLs and succeeds without bot-check failures. Add YOUTUBE_COOKIES_B64 to resolve HLS URLs." } else { "" }
+    note = if ($SkipResolve) { "GitHub runner has no YouTube cookies, so unresolved YouTube watch URLs are removed from the playable playlist. Add YOUTUBE_COOKIES_B64 to resolve HLS URLs." } else { "" }
     skipResolve = [bool]$SkipResolve
     includeOriginalOnFailure = [bool]$IncludeOriginalOnFailure
     maxHeight = $MaxHeight

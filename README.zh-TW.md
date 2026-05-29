@@ -62,7 +62,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-oktv-sources.
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build-stable-live.ps1
 ```
 
-此腳本會抓取原始直播源，去除重複線路，預設每條線路短測 2 次，並把通過短測的線路放到 `Verified Fastest` 優先分類；原分類仍保留完整備援。
+此腳本會抓取原始直播源，去除重複線路，預設每條線路短測 2 次，並只把通過短測、能回傳 HLS 播放清單的線路寫入 `sources/live-stable.txt`。完整整理清單會保留在 `sources/live-cleaned-backup.txt`，不直接作為 APK 預設播放清單。
 腳本預設會把「私密頻道」輸出為密碼群組，密碼為 `7708`。
 
 輸出檔案：
@@ -76,7 +76,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build-stable-live.ps
 
 已把使用者提供的 98 個公開 YouTube 直播頻道整理到 `sources/youtube-live-channels.csv`，依照網路第四台常見邏輯分成新聞、購物、綜合娛樂、國際新聞、亞洲新聞、兒童動畫、文化紀實、音樂體育風景等群組，頻道名稱前方保留三位數序號，方便在直播列表中掃描。
 
-YouTube 真實播放 URL 是短效網址，不能永久固定。此 repo 已加入 GitHub Actions，每 2 小時執行一次 `tools/update-youtube-live.ps1`，用 `yt-dlp` 擷取可播放 URL，優先選擇 720p HLS 以降低卡頓，再合併到 APK 已使用的 `sources/live-stable.txt`。
+YouTube 真實播放 URL 是短效網址，不能永久固定；OKTV 直播 TXT 也不能直接播放 `https://www.youtube.com/watch?v=...` 頁面。此 repo 已加入 GitHub Actions，每 2 小時執行一次 `tools/update-youtube-live.ps1`，用 `yt-dlp` 擷取可播放 URL，優先選擇 720p HLS 以降低卡頓，只有解析成功的項目才合併到 APK 已使用的 `sources/live-stable.txt`。
 
 手動更新指令：
 
@@ -90,17 +90,17 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-youtube-live.
 - `sources/live-youtube-report.json`
 - `sources/live-stable.txt`
 
-若要新增或調整 YouTube 頻道，只要修改 `sources/youtube-live-channels.csv` 的 `Order`、`Group`、`Name`、`Url`，再執行上方指令即可。地區限制、影片下架、非公開或 DRM 內容無法被腳本強制播放，會保留原 YouTube 頁面 URL 並記錄在報告檔。
+若要新增或調整 YouTube 頻道，只要修改 `sources/youtube-live-channels.csv` 的 `Order`、`Group`、`Name`、`Url`，再執行上方指令即可。地區限制、影片下架、非公開、DRM 或無 cookies 無法解析時，原 YouTube 頁面 URL 只會記錄在報告檔，不會寫入主播放清單。
 
 ### 沒 cookies 的 100% 成功模式
 
-GitHub runner 沒有 YouTube cookies 時，workflow 會自動使用 `no-cookies-fallback` 模式，直接保留 98 個原始 YouTube 直播 URL。這樣 GitHub Actions 會 100% 成功更新清單、不會卡在 YouTube 機器人驗證；報告中的 `workflowSuccessRate` 會是 `100`。
+GitHub runner 沒有 YouTube cookies 時，workflow 會自動使用 `no-cookies-fallback` 模式，將 98 個原始 YouTube 直播 URL 記錄在報告檔，但不放進可播放清單。這樣 GitHub Actions 會 100% 成功更新、不會卡在 YouTube 機器人驗證；報告中的 `workflowSuccessRate` 會是 `100`，`hlsSuccessRate` 可能仍是 `0`。
 
-這個模式代表清單更新成功，不代表已取得短效 HLS。若要讓報告中的 `hlsSuccessRate` 提高，仍需設定 `YOUTUBE_COOKIES_B64`。
+這個模式代表清單更新成功，且已避免不可播放的 watch 頁面 URL 進入主清單；不代表已取得短效 HLS。若要讓報告中的 `hlsSuccessRate` 提高，仍需設定 `YOUTUBE_COOKIES_B64`。
 
 ### GitHub Actions 被 YouTube 擋住時
 
-GitHub runner 有時會被 YouTube 要求登入或驗證機器人。此時 `sources/live-youtube-report.json` 會顯示 `Sign in to confirm you're not a bot`，清單會保留原 YouTube URL。要讓 GitHub Actions 也能解析，請在 repo 設定一個 Actions secret：
+GitHub runner 有時會被 YouTube 要求登入或驗證機器人。此時 `sources/live-youtube-report.json` 會記錄原 YouTube URL，主播放清單會排除這些 watch 頁面。要讓 GitHub Actions 也能解析，請在 repo 設定一個 Actions secret：
 
 ```powershell
 .\.tools\yt-dlp.exe --cookies-from-browser chrome --cookies youtube-cookies.txt --skip-download "https://www.youtube.com/"

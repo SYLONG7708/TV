@@ -61,8 +61,12 @@ function Test-Stream([string]$Url, [int]$TimeoutSec) {
         $response = $request.GetResponse()
         try {
             $stream = $response.GetResponseStream()
-            $buffer = New-Object byte[] 512
-            [void]$stream.Read($buffer, 0, $buffer.Length)
+            $buffer = New-Object byte[] 2048
+            $read = $stream.Read($buffer, 0, $buffer.Length)
+            if ($Url -match '\.m3u8(\?|$)') {
+                $content = [Text.Encoding]::UTF8.GetString($buffer, 0, [Math]::Max(0, $read))
+                if ($content -notmatch '#EXTM3U') { throw "HLS playlist marker not found." }
+            }
             $stream.Dispose()
         } finally {
             $response.Dispose()
@@ -162,8 +166,12 @@ if (-not $SkipNetworkTest) {
                 $response = $request.GetResponse()
                 try {
                     $stream = $response.GetResponseStream()
-                    $buffer = New-Object byte[] 512
-                    [void]$stream.Read($buffer, 0, $buffer.Length)
+                    $buffer = New-Object byte[] 2048
+                    $read = $stream.Read($buffer, 0, $buffer.Length)
+                    if ($Url -match '\.m3u8(\?|$)') {
+                        $content = [Text.Encoding]::UTF8.GetString($buffer, 0, [Math]::Max(0, $read))
+                        if ($content -notmatch '#EXTM3U') { throw "HLS playlist marker not found." }
+                    }
                     $stream.Dispose()
                 } finally {
                     $response.Dispose()
@@ -282,7 +290,7 @@ Remove-TrailingBlankLines $stableLines
 Remove-TrailingBlankLines $backupLines
 Remove-TrailingBlankLines $verifiedLines
 
-[System.IO.File]::WriteAllLines($Output, $stableLines, [System.Text.UTF8Encoding]::new($false))
+[System.IO.File]::WriteAllLines($Output, $verifiedLines, [System.Text.UTF8Encoding]::new($false))
 [System.IO.File]::WriteAllLines($BackupOutput, $backupLines, [System.Text.UTF8Encoding]::new($false))
 [System.IO.File]::WriteAllLines($VerifiedOnlyOutput, $verifiedLines, [System.Text.UTF8Encoding]::new($false))
 
@@ -292,9 +300,10 @@ $report = [pscustomobject]@{
     inputLines = $lines.Count
     uniqueChannelUrls = $items.Count
     uniqueUrls = $seenUrls.Count
-    stableLines = $usable.Count
+    stableLines = $verified.Count
     priorityVerifiedLines = $verified.Count
-    stableOutputStreamLines = @($stableLines | Where-Object { $_ -match '^[^,]+,https?://' }).Count
+    stableOutputStreamLines = @($verifiedLines | Where-Object { $_ -match '^[^,]+,https?://' }).Count
+    backupOutputStreamLines = @($backupLines | Where-Object { $_ -match '^[^,]+,https?://' }).Count
     verifiedLines = $verified.Count
     failedShortTestLines = ($items.Count - $verified.Count)
     timeoutSec = $TimeoutSec
@@ -317,5 +326,5 @@ Write-Host "Stable output: $Output"
 Write-Host "Backup output: $BackupOutput"
 Write-Host "Verified-only output: $VerifiedOnlyOutput"
 Write-Host "Report output: $ReportOutput"
-Write-Host "Stable lines: $($usable.Count) / $($items.Count)"
+Write-Host "Stable lines: $($verified.Count) / $($items.Count)"
 Write-Host "Verified short-test lines: $($verified.Count) / $($items.Count)"
