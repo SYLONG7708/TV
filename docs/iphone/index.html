@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="影視" />
+    <meta name="theme-color" content="#05070a" />
+    <link rel="icon" href="../assets/icon.png" />
+    <link rel="apple-touch-icon" href="../assets/icon.png" />
+    <title>影視 iPhone</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #05070a;
+        --panel: #10161b;
+        --line: #26323c;
+        --text: #eef8ff;
+        --muted: #8fa0ad;
+        --cyan: #21d4ee;
+        --amber: #e4b65a;
+        --red: #e35e5e;
+        --green: #61d59d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background:
+          radial-gradient(circle at 20% 0%, rgba(33, 212, 238, 0.15), transparent 28rem),
+          linear-gradient(180deg, #071014 0%, var(--bg) 40%, #020305 100%);
+        color: var(--text);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      .app {
+        width: min(100%, 440px);
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: max(18px, env(safe-area-inset-top)) 14px max(92px, env(safe-area-inset-bottom));
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .brand-mark {
+        display: grid;
+        width: 42px;
+        height: 42px;
+        place-items: center;
+        border: 1px solid rgba(33, 212, 238, 0.45);
+        border-radius: 10px;
+        background: #0d171c;
+        color: var(--cyan);
+        font-weight: 800;
+      }
+
+      .brand strong {
+        display: block;
+        font-size: 18px;
+      }
+
+      .brand span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .icon-btn,
+      .seg button,
+      .play-btn {
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #131d23;
+        color: var(--text);
+      }
+
+      .icon-btn {
+        width: 42px;
+      }
+
+      .video-shell {
+        overflow: hidden;
+        border: 1px solid #1f3038;
+        border-radius: 8px;
+        background: #000;
+      }
+
+      video {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background: #000;
+      }
+
+      .player-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .seg {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin: 14px 0;
+      }
+
+      .seg button.is-active {
+        border-color: rgba(33, 212, 238, 0.8);
+        background: rgba(33, 212, 238, 0.16);
+        color: var(--cyan);
+      }
+
+      .panel {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(16, 22, 27, 0.92);
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .metric strong {
+        display: block;
+        font-size: 26px;
+        margin-bottom: 2px;
+      }
+
+      .metric span,
+      .row span,
+      .small {
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        padding: 10px 0;
+      }
+
+      .row:first-child {
+        border-top: 0;
+        padding-top: 0;
+      }
+
+      .row strong {
+        display: block;
+        overflow-wrap: anywhere;
+      }
+
+      .row > div,
+      .row span {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        padding: 0 8px;
+        border-radius: 999px;
+        background: rgba(33, 212, 238, 0.12);
+        color: var(--cyan);
+        font-size: 12px;
+      }
+
+      .tag.warn {
+        background: rgba(228, 182, 90, 0.13);
+        color: var(--amber);
+      }
+
+      .tag.bad {
+        background: rgba(227, 94, 94, 0.13);
+        color: var(--red);
+      }
+
+      .tag.ok {
+        background: rgba(97, 213, 157, 0.13);
+        color: var(--green);
+      }
+
+      .play-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0 10px;
+      }
+
+      .play-btn:disabled {
+        color: #65727d;
+      }
+
+      .search {
+        width: 100%;
+        height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #101922;
+        color: var(--text);
+        padding: 0 12px;
+        margin-bottom: 10px;
+      }
+
+      .bottom {
+        position: fixed;
+        left: 50%;
+        bottom: 0;
+        display: grid;
+        width: min(100%, 440px);
+        transform: translateX(-50%);
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0;
+        padding: 8px 12px max(8px, env(safe-area-inset-bottom));
+        border-top: 1px solid var(--line);
+        background: rgba(5, 7, 10, 0.94);
+        backdrop-filter: blur(14px);
+      }
+
+      .bottom button {
+        min-height: 48px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--muted);
+      }
+
+      .bottom button.is-active {
+        background: rgba(33, 212, 238, 0.16);
+        color: var(--cyan);
+      }
+
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark">影</div>
+          <div>
+            <strong>影視</strong>
+            <span>iPhone Web · OKTV source clone</span>
+          </div>
+        </div>
+        <button class="icon-btn" id="reloadBtn" type="button" aria-label="重新整理">⟳</button>
+      </header>
+
+      <section class="video-shell">
+        <video id="player" controls playsinline preload="metadata"></video>
+        <div class="player-meta">
+          <span id="playerTitle">授權示範 HLS</span>
+          <span id="playerKind">Ready</span>
+        </div>
+      </section>
+
+      <main id="screen"></main>
+    </div>
+
+    <nav class="bottom" aria-label="分頁">
+      <button class="is-active" data-tab="home" type="button">首頁</button>
+      <button data-tab="live" type="button">直播</button>
+      <button data-tab="adult" type="button">18+</button>
+      <button data-tab="config" type="button">來源</button>
+    </nav>
+
+    <script type="module">
+      const state = {
+        tab: 'home',
+        query: '',
+        summary: null,
+        live: [],
+        adult: { resources: [], categoryCounts: {} },
+        clone: null,
+      };
+
+      const demoUrl = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+      const screen = document.querySelector('#screen');
+      const player = document.querySelector('#player');
+      const playerTitle = document.querySelector('#playerTitle');
+      const playerKind = document.querySelector('#playerKind');
+
+      async function getJson(url, fallback) {
+        try {
+          const res = await fetch(url, { cache: 'no-store' });
+          if (!res.ok) return fallback;
+          return await res.json();
+        } catch {
+          return fallback;
+        }
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? '')
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;');
+      }
+
+      function statusTag(item) {
+        if (item.status === 'usable_review_required') return '<span class="tag ok">可用候選</span>';
+        if (item.status === 'duplicate_removed') return '<span class="tag warn">重複移除</span>';
+        return '<span class="tag bad">不可用</span>';
+      }
+
+      function play(title, url, kind = 'HLS') {
+        player.src = url;
+        playerTitle.textContent = title;
+        playerKind.textContent = kind;
+        player.play().catch(() => undefined);
+      }
+
+      function render() {
+        document.querySelectorAll('.bottom button').forEach((button) => {
+          button.classList.toggle('is-active', button.dataset.tab === state.tab);
+        });
+        if (state.tab === 'live') return renderLive();
+        if (state.tab === 'adult') return renderAdult();
+        if (state.tab === 'config') return renderConfig();
+        return renderHome();
+      }
+
+      function renderHome() {
+        const adult = state.adult || {};
+        const summary = state.summary || {};
+        screen.innerHTML = `
+          <section class="seg">
+            <button class="is-active" type="button">OKTV</button>
+            <button type="button">VOD</button>
+            <button type="button">IPTV</button>
+            <button type="button">18+</button>
+          </section>
+          <section class="grid">
+            <article class="panel metric">
+              <strong>${Number(summary.vod?.count || 0)}</strong>
+              <span>點播候選</span>
+            </article>
+            <article class="panel metric">
+              <strong>${Number(summary.live?.playableCount || 0)}</strong>
+              <span>可播直播</span>
+            </article>
+            <article class="panel metric">
+              <strong>${Number(adult.usable || 0)}</strong>
+              <span>18+ 可用候選</span>
+            </article>
+            <article class="panel metric">
+              <strong>${Number(adult.total || 0)}</strong>
+              <span>18+ 全量來源</span>
+            </article>
+          </section>
+          <section class="panel">
+            <div class="row">
+              <div>
+                <strong>授權示範播放器</strong>
+                <span>iPhone Safari 可直接播放 HLS</span>
+              </div>
+              <button class="play-btn" type="button" data-demo>播放</button>
+            </div>
+          </section>
+        `;
+        document.querySelector('[data-demo]')?.addEventListener('click', () => play('授權示範 HLS', demoUrl));
+      }
+
+      function renderLive() {
+        const channels = state.live.filter((item) => item.playable).slice(0, 80);
+        screen.innerHTML = `
+          <input class="search" value="${escapeHtml(state.query)}" placeholder="搜尋直播頻道" />
+          <section class="panel">
+            ${channels
+              .filter((item) => `${item.name} ${item.group}`.toLowerCase().includes(state.query.toLowerCase()))
+              .map(
+                (item, index) => `
+                  <div class="row">
+                    <div>
+                      <strong>${escapeHtml(item.name)}</strong>
+                      <span>${escapeHtml(item.group)} · ${escapeHtml(item.kind)}</span>
+                    </div>
+                    <button class="play-btn" type="button" data-live="${index}">播放</button>
+                  </div>
+                `,
+              )
+              .join('')}
+          </section>
+        `;
+        bindSearch();
+        document.querySelectorAll('[data-live]').forEach((button) => {
+          button.addEventListener('click', () => {
+            const item = channels[Number(button.dataset.live)];
+            play(item.name, item.url, item.kind.toUpperCase());
+          });
+        });
+      }
+
+      function renderAdult() {
+        const items = state.adult.resources || [];
+        const query = state.query.toLowerCase();
+        screen.innerHTML = `
+          <input class="search" value="${escapeHtml(state.query)}" placeholder="搜尋 18+ 來源名稱或分類" />
+          <section class="panel">
+            ${items
+              .filter((item) => `${item.name} ${item.category} ${item.endpointHost}`.toLowerCase().includes(query))
+              .map(
+                (item) => `
+                  <div class="row">
+                    <div>
+                      <strong>${escapeHtml(item.name)}</strong>
+                      <span>${escapeHtml(item.category)} · ${escapeHtml(item.endpointHost || 'unknown')}</span>
+                    </div>
+                    ${statusTag(item)}
+                  </div>
+                `,
+              )
+              .join('')}
+          </section>
+        `;
+        bindSearch();
+      }
+
+      function renderConfig() {
+        const config = state.clone?.config || {};
+        screen.innerHTML = `
+          <section class="panel">
+            <div class="row">
+              <div>
+                <strong>APK 來源設定</strong>
+                <span>${escapeHtml(state.clone?.apkReference || '')}</span>
+              </div>
+              <span class="tag">Clone</span>
+            </div>
+            <div class="row">
+              <div>
+                <strong>${escapeHtml(config.vod?.name || '點播')}</strong>
+                <span>${escapeHtml(config.vod?.url || '')}</span>
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <strong>${escapeHtml(config.live?.name || '直播')}</strong>
+                <span>${escapeHtml(config.live?.url || '')}</span>
+              </div>
+            </div>
+            <div class="row">
+              <div>
+                <strong>${escapeHtml(config.vodAdult18Sorted?.name || '18+ 分類排序源')}</strong>
+                <span>${escapeHtml(config.vodAdult18Sorted?.url || '')}</span>
+              </div>
+              <span class="tag warn">審核</span>
+            </div>
+          </section>
+        `;
+      }
+
+      function bindSearch() {
+        document.querySelector('.search')?.addEventListener('input', (event) => {
+          state.query = event.target.value;
+          render();
+          setTimeout(() => {
+            const input = document.querySelector('.search');
+            input?.focus();
+            input?.setSelectionRange(state.query.length, state.query.length);
+          });
+        });
+      }
+
+      document.querySelectorAll('.bottom button').forEach((button) => {
+        button.addEventListener('click', () => {
+          state.tab = button.dataset.tab;
+          state.query = '';
+          render();
+        });
+      });
+      document.querySelector('#reloadBtn').addEventListener('click', () => location.reload());
+
+      [state.summary, state.live, state.adult, state.clone] = await Promise.all([
+        getJson('../data/source-summary.json', {}),
+        getJson('../data/live-channels.json', []),
+        getJson('../data/adult18-sources.json', { resources: [] }),
+        getJson('../data/oktv-source-clone.json', {}),
+      ]);
+      play('授權示範 HLS', demoUrl);
+      render();
+    </script>
+  </body>
+</html>
