@@ -1,6 +1,6 @@
 param(
     [string]$RepoRoot = "",
-    [string]$SourceName = "jin18",
+    [string]$SourceName = "jin18,full",
     [int]$TimeoutSec = 12,
     [int]$MaxDetailProbe = 3,
     [switch]$NoGitPush
@@ -64,16 +64,20 @@ try {
     }
 
     $updateScript = Join-Path $repoRootText "tools\update-lunatv-vod.ps1"
-    Write-Log "Refreshing LunaTV VOD sources from GitHub raw $SourceName."
-    powershell -NoProfile -ExecutionPolicy Bypass -File $updateScript `
-        -SourceName $SourceName `
-        -TimeoutSec $TimeoutSec `
-        -MaxDetailProbe $MaxDetailProbe
+    $sourceNames = @($SourceName -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    foreach ($name in $sourceNames) {
+        Write-Log "Refreshing LunaTV VOD sources from GitHub raw $name."
+        powershell -NoProfile -ExecutionPolicy Bypass -File $updateScript `
+            -SourceName $name `
+            -TimeoutSec $TimeoutSec `
+            -MaxDetailProbe $MaxDetailProbe `
+            -RedactSampleNames
 
-    $reportPath = Join-Path $repoRootText "sources\vod-lunatv-$SourceName-report.json"
-    if (Test-Path -LiteralPath $reportPath) {
-        $report = Get-Content -LiteralPath $reportPath -Raw -Encoding UTF8 | ConvertFrom-Json
-        Write-Log "Included: $($report.includedSources) / $($report.totalSources); duplicates removed: $($report.duplicateSources); invalid removed: $($report.invalidSources)."
+        $reportPath = Join-Path $repoRootText "sources\vod-lunatv-$name-report.json"
+        if (Test-Path -LiteralPath $reportPath) {
+            $report = Get-Content -LiteralPath $reportPath -Raw -Encoding UTF8 | ConvertFrom-Json
+            Write-Log "$name included: $($report.includedSources) / $($report.totalSources); duplicates removed: $($report.duplicateSources); invalid removed: $($report.invalidSources); search OK: $($report.searchOkSources)."
+        }
     }
 
     Invoke-Git add `
@@ -81,8 +85,12 @@ try {
         "tools/update-lunatv-vod-local.ps1" `
         "tools/install-lunatv-vod-autoupdate-task.ps1" `
         "sources/current-sources.json" `
-        "sources/vod-lunatv-$SourceName-oktv.json" `
-        "sources/vod-lunatv-$SourceName-report.json" `
+        "sources/vod-lunatv-jin18-oktv.json" `
+        "sources/vod-lunatv-jin18-report.json" `
+        "sources/vod-lunatv-jin18-analysis.csv" `
+        "sources/vod-lunatv-full-oktv.json" `
+        "sources/vod-lunatv-full-report.json" `
+        "sources/vod-lunatv-full-analysis.csv" `
         ".github/workflows/update-lunatv-vod.yml"
 
     if (Invoke-Git diff --cached --quiet) {

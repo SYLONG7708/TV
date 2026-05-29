@@ -17,7 +17,7 @@ if (-not (Test-Path -LiteralPath $scriptPath)) {
     throw "Local updater script not found: $scriptPath"
 }
 
-$actionArgs = '-NoProfile -ExecutionPolicy Bypass -File "{0}" -RepoRoot "{1}" -SourceName "jin18"' -f $scriptPath, $RepoRoot
+$actionArgs = '-NoProfile -ExecutionPolicy Bypass -File "{0}" -RepoRoot "{1}" -SourceName "jin18,full"' -f $scriptPath, $RepoRoot
 $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $actionArgs
 $triggers = @(
     (New-ScheduledTaskTrigger -AtLogOn),
@@ -39,7 +39,7 @@ Register-ScheduledTask `
     -Trigger $triggers `
     -Settings $settings `
     -Principal $principal `
-    -Description "Refresh OKTV LunaTV jin18 VOD sources at startup/logon and every 2 hours, remove duplicates and failed sources, then push to GitHub." `
+    -Description "Refresh OKTV LunaTV jin18 and full VOD technical reports at startup/logon and every 2 hours, remove duplicates and failed sources, then push to GitHub." `
     -Force | Out-Null
 
 Write-Host "Registered scheduled task: $TaskName"

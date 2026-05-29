@@ -5,10 +5,13 @@ param(
     [string]$CompareVodPath = "",
     [string]$Output = "",
     [string]$ReportOutput = "",
+    [string]$AnalysisOutput = "",
     [int]$TimeoutSec = 12,
     [int]$MaxDetailProbe = 3,
+    [string]$SearchKeyword = "test",
     [switch]$SkipValidation,
     [switch]$SkipDuplicateCheck,
+    [switch]$RedactSampleNames,
     [switch]$KeepFailed
 )
 
@@ -33,6 +36,9 @@ if ([string]::IsNullOrWhiteSpace($Output)) {
 }
 if ([string]::IsNullOrWhiteSpace($ReportOutput)) {
     $ReportOutput = Join-Path $repoRoot "sources\vod-lunatv-$SourceName-report.json"
+}
+if ([string]::IsNullOrWhiteSpace($AnalysisOutput)) {
+    $AnalysisOutput = Join-Path $repoRoot "sources\vod-lunatv-$SourceName-analysis.csv"
 }
 
 $sourceConfigPath = Join-Path $repoRoot "sources\current-sources.json"
@@ -247,13 +253,17 @@ function Test-LunaApi {
     $result = [ordered]@{
         listOk = $false
         detailOk = $false
+        searchOk = $false
+        searchHasPlayUrl = $false
         hasPlayUrl = $false
         sampleVodName = ""
         sampleVodId = ""
+        searchSampleVodId = ""
         error = ""
     }
 
     try {
+        $firstName = ""
         $listUrl = Add-VodQuery -Api $Api -Query "ac=list"
         $listJson = Get-Utf8Text -Url $listUrl | ConvertFrom-Json
         $items = @($listJson.list)
@@ -280,10 +290,53 @@ function Test-LunaApi {
             $result.detailOk = $true
             $result.sampleVodId = $vodId
             $result.sampleVodName = [string]$detail.vod_name
+            if ([string]::IsNullOrWhiteSpace($firstName)) {
+                $firstName = [string]$detail.vod_name
+            }
             if (-not [string]::IsNullOrWhiteSpace($playUrl)) {
                 $result.hasPlayUrl = $true
                 break
             }
+        }
+
+        $searchTerms = New-Object System.Collections.Generic.List[string]
+        if (-not [string]::IsNullOrWhiteSpace($SearchKeyword)) {
+            $searchTerms.Add($SearchKeyword)
+        }
+        if (-not [string]::IsNullOrWhiteSpace($firstName)) {
+            $searchTerms.Add($firstName)
+        }
+
+        foreach ($term in @($searchTerms.ToArray() | Select-Object -Unique)) {
+            $encodedTerm = [System.Uri]::EscapeDataString($term)
+            $searchUrl = Add-VodQuery -Api $Api -Query "ac=detail&wd=$encodedTerm"
+            try {
+                $searchJson = Get-Utf8Text -Url $searchUrl | ConvertFrom-Json
+                $searchItems = @($searchJson.list)
+                if ($searchItems.Count -eq 0) { continue }
+
+                $result.searchOk = $true
+                foreach ($item in @($searchItems | Select-Object -First $MaxDetailProbe)) {
+                    $result.searchSampleVodId = [string]$item.vod_id
+                    $playUrl = [string]$item.vod_play_url
+                    if (-not [string]::IsNullOrWhiteSpace($playUrl)) {
+                        $result.searchHasPlayUrl = $true
+                        if (-not $result.hasPlayUrl) {
+                            $result.hasPlayUrl = $true
+                            $result.detailOk = $true
+                            $result.sampleVodId = [string]$item.vod_id
+                            $result.sampleVodName = [string]$item.vod_name
+                        }
+                        break
+                    }
+                }
+            } catch {
+                if ([string]::IsNullOrWhiteSpace($result.error)) {
+                    $result.error = "Search probe failed: $($_.Exception.Message)"
+                }
+            }
+
+            if ($result.searchOk) { break }
         }
 
         if (-not $result.hasPlayUrl) {
@@ -294,10 +347,13 @@ function Test-LunaApi {
             foreach ($item in @($searchItems | Select-Object -First $MaxDetailProbe)) {
                 $playUrl = [string]$item.vod_play_url
                 if (-not [string]::IsNullOrWhiteSpace($playUrl)) {
+                    $result.searchOk = $true
+                    $result.searchHasPlayUrl = $true
                     $result.detailOk = $true
                     $result.hasPlayUrl = $true
                     $result.sampleVodId = [string]$item.vod_id
                     $result.sampleVodName = [string]$item.vod_name
+                    $result.searchSampleVodId = [string]$item.vod_id
                     break
                 }
             }
@@ -382,10 +438,13 @@ foreach ($entryProp in $sourceEntries) {
             duplicateReason = $duplicateReason
             listOk = $null
             detailOk = $null
+            searchOk = $null
+            searchHasPlayUrl = $null
             hasPlayUrl = $null
             sampleVodName = ""
             sampleVodId = ""
-            error = if ($duplicateReason) { $duplicateReason } else { "Validation skipped" }
+            searchSampleVodId = ""
+            error = $(if ($duplicateReason) { $duplicateReason } else { "Validation skipped" })
         })
         $checks.Add($check)
         continue
@@ -407,10 +466,13 @@ foreach ($entryProp in $sourceEntries) {
         duplicateReason = $duplicateReason
         listOk = $probe.listOk
         detailOk = $probe.detailOk
+        searchOk = $probe.searchOk
+        searchHasPlayUrl = $probe.searchHasPlayUrl
         hasPlayUrl = $probe.hasPlayUrl
         sampleVodName = $probe.sampleVodName
         sampleVodId = $probe.sampleVodId
-        error = if ($duplicateReason) { $duplicateReason } else { $probe.error }
+        searchSampleVodId = $probe.searchSampleVodId
+        error = $(if ($duplicateReason) { $duplicateReason } else { $probe.error })
     })
     $checks.Add($check)
 }
@@ -418,16 +480,24 @@ foreach ($entryProp in $sourceEntries) {
 $siteArray = @($sites.ToArray())
 $checkArray = @($checks.ToArray())
 
+$warningText = if ($SourceName -eq "full") {
+    "影視 LunaTV full technical test source. Includes 18+ entries from upstream. Auto refreshed, validated and de-duplicated; review required before any playback use."
+} else {
+    "影視 LunaTV jin18 VOD source. Auto refreshed, validated, de-duplicated against the configured baseline, and adult/full sources are not used by default."
+}
+
 $vodConfig = [ordered]@{
     spider = ""
     logo = "https://raw.githubusercontent.com/SYLONG7708/TV/main/branding/icon-tech-20260528.png"
     wallpaper = "http://tool.teyonds.com/api"
-    warningText = "影視 LunaTV jin18 VOD source. Auto refreshed, validated, de-duplicated against the configured baseline, and adult/full sources are not used by default."
+    warningText = $warningText
     sites = $siteArray
 }
 
 $duplicateCount = @($checkArray | Where-Object { $_.duplicate }).Count
 $invalidCount = @($checkArray | Where-Object { -not $_.hasPlayUrl -and -not $_.included }).Count
+$searchOkCount = @($checkArray | Where-Object { $_.searchOk }).Count
+$searchPlayableCount = @($checkArray | Where-Object { $_.searchHasPlayUrl }).Count
 
 $report = [ordered]@{
     generatedAt = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss zzz")
@@ -440,26 +510,58 @@ $report = [ordered]@{
     compareError = [string]$compareIndex.error
     upstreamCacheSeconds = $sourceJson.cache_time
     output = ($Output -replace "\\", "/")
+    analysisOutput = ($AnalysisOutput -replace "\\", "/")
     totalSources = $sourceEntries.Count
     includedSources = $sites.Count
     failedSources = ($sourceEntries.Count - $sites.Count)
     duplicateSources = $duplicateCount
     invalidSources = $invalidCount
+    searchOkSources = $searchOkCount
+    searchPlayableSources = $searchPlayableCount
     validationSkipped = [bool]$SkipValidation
     duplicateCheckSkipped = [bool]$SkipDuplicateCheck
+    redactedSampleNames = [bool]$RedactSampleNames
     checks = $checkArray
+}
+
+if ($RedactSampleNames) {
+    foreach ($check in $checkArray) {
+        if ($check.sampleVodName) {
+            $check.sampleVodName = "[redacted]"
+        }
+    }
 }
 
 $outputDir = Split-Path -Parent $Output
 $reportDir = Split-Path -Parent $ReportOutput
+$analysisDir = Split-Path -Parent $AnalysisOutput
 if (-not (Test-Path -LiteralPath $outputDir)) { New-Item -ItemType Directory -Path $outputDir -Force | Out-Null }
 if (-not (Test-Path -LiteralPath $reportDir)) { New-Item -ItemType Directory -Path $reportDir -Force | Out-Null }
+if (-not (Test-Path -LiteralPath $analysisDir)) { New-Item -ItemType Directory -Path $analysisDir -Force | Out-Null }
 
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText($Output, ($vodConfig | ConvertTo-Json -Depth 8), $utf8NoBom)
 [System.IO.File]::WriteAllText($ReportOutput, ($report | ConvertTo-Json -Depth 8), $utf8NoBom)
 
+$analysisRows = $checkArray | Select-Object `
+    name,
+    api,
+    included,
+    duplicate,
+    duplicateReason,
+    listOk,
+    detailOk,
+    searchOk,
+    searchHasPlayUrl,
+    hasPlayUrl,
+    sampleVodId,
+    searchSampleVodId,
+    error
+[System.IO.File]::WriteAllText($AnalysisOutput, (($analysisRows | ConvertTo-Csv -NoTypeInformation) -join "`r`n") + "`r`n", $utf8NoBom)
+
 Write-Host ("Wrote OKTV VOD candidate: {0}" -f $Output)
 Write-Host ("Wrote validation report: {0}" -f $ReportOutput)
+Write-Host ("Wrote analysis CSV: {0}" -f $AnalysisOutput)
 Write-Host ("Included sources: {0} / {1}" -f $sites.Count, $sourceEntries.Count)
 Write-Host ("Duplicates removed: {0}; invalid removed: {1}" -f $duplicateCount, $invalidCount)
+Write-Host ("Search OK: {0}; search playable: {1}" -f $searchOkCount, $searchPlayableCount)

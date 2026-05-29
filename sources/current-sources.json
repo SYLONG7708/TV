@@ -9,7 +9,7 @@
     "type": 0,
     "url": "https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json",
     "compareUrl": "https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json",
-    "autoRefresh": "本機 Windows 工作排程與 GitHub Actions 會抓取 LunaTV-config main/jin18.json，驗活、去除與 compareUrl 重複的來源後更新。"
+    "autoRefresh": "本機 Windows 工作排程與 GitHub Actions 會抓取 LunaTV-config main/jin18.json 與 LunaTV-config.json，驗活、搜尋檢測、去除與 compareUrl 重複的來源後更新。"
   },
   "vodCandidate": {
     "name": "LunaTV 點播候選源",
@@ -18,6 +18,15 @@
     "report": "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-jin18-report.json",
     "status": "review_required",
     "note": "已驗活與去重，但內容授權需人工確認後才可設為預設播放源。"
+  },
+  "vodFullCandidate": {
+    "name": "LunaTV full 全量技術檢測",
+    "type": 0,
+    "url": "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-full-oktv.json",
+    "report": "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-full-report.json",
+    "analysis": "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-full-analysis.csv",
+    "status": "adult_review_required",
+    "note": "包含上游 full 來源與 18+ 來源，只做 API、搜尋、播放 URL 技術檢測；不作為影視預設播放源。"
   },
   "live": {
     "name": "直播",
