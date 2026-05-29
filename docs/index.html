@@ -379,6 +379,9 @@
         <h3>新增或調整頻道</h3>
         <p>用文字編輯器打開 <code>sources/youtube-live-channels.csv</code>，修改 <code>Order</code>、<code>Group</code>、<code>Name</code>、<code>Url</code>。儲存後執行上方指令，或等待 GitHub Actions 自動刷新。</p>
         <div class="notice">地區限制、影片下架、非公開或 DRM 內容無法被腳本強制播放；腳本會保留原 YouTube 頁面 URL，並把失敗原因寫入 <code>sources/live-youtube-report.json</code>。</div>
+        <h3>沒 cookies 的 100% 成功模式</h3>
+        <p>GitHub runner 沒有 YouTube cookies 時，workflow 會使用 <code>no-cookies-fallback</code> 模式，保留 98 個原始 YouTube 直播 URL。這樣 Actions 會 100% 成功更新清單，不會卡在 YouTube 機器人驗證；報告中的 <code>workflowSuccessRate</code> 會是 <code>100</code>。</p>
+        <p>這代表清單更新成功，不代表已取得短效 HLS。若要提高 <code>hlsSuccessRate</code>，仍需設定 <code>YOUTUBE_COOKIES_B64</code>。</p>
         <h3>GitHub 被 YouTube 擋住時</h3>
         <p>如果報告檔出現 <code>Sign in to confirm you're not a bot</code>，代表 GitHub runner 被 YouTube 要求登入。先在已登入 YouTube 的電腦產生 cookies，再把 Base64 放到 GitHub Secret。</p>
         <pre>.\.tools\yt-dlp.exe --cookies-from-browser chrome --cookies youtube-cookies.txt --skip-download "https://www.youtube.com/"

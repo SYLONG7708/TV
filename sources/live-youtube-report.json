@@ -1,5 +1,5 @@
 {
-    "generatedAt":  "2026-05-28T23:38:39.6923054+00:00",
+    "generatedAt":  "2026-05-29T12:19:32.8857163+08:00",
     "channelCsv":  "sources/youtube-live-channels.csv",
     "baseLive":  "sources/live-base.txt",
     "youtubeOutput":  "sources/live-youtube-stable.txt",
@@ -9,16 +9,28 @@
     "playable":  0,
     "fallback":  98,
     "failed":  0,
+    "workflowSuccessRate":  100,
+    "hlsSuccessRate":  0,
+    "mode":  "no-cookies-fallback",
+    "note":  "GitHub runner has no YouTube cookies, so the workflow keeps original YouTube URLs and succeeds without bot-check failures. Add YOUTUBE_COOKIES_B64 to resolve HLS URLs.",
     "skipResolve":  true,
-    "includeOriginalOnFailure":  true,
+    "includeOriginalOnFailure":  false,
     "maxHeight":  720,
-    "processTimeoutSec":  12,
-    "retryCount":  1,
+    "processTimeoutSec":  45,
+    "retryCount":  2,
     "ytDlp":  "",
     "cookiesEnabled":  false,
     "groups":  [
                    {
                        "name":  "YouTube互動娛樂",
+                       "count":  1
+                   },
+                   {
+                       "name":  "YouTube文化紀實",
+                       "count":  7
+                   },
+                   {
+                       "name":  "YouTube台灣節目",
                        "count":  1
                    },
                    {
@@ -30,16 +42,12 @@
                        "count":  9
                    },
                    {
-                       "name":  "YouTube台灣節目",
-                       "count":  1
+                       "name":  "YouTube音樂體育風景",
+                       "count":  4
                    },
                    {
                        "name":  "YouTube國際新聞",
                        "count":  15
-                   },
-                   {
-                       "name":  "YouTube文化紀實",
-                       "count":  7
                    },
                    {
                        "name":  "YouTube新聞台",
@@ -56,10 +64,6 @@
                    {
                        "name":  "YouTube韓綜娛樂",
                        "count":  1
-                   },
-                   {
-                       "name":  "YouTube音樂體育風景",
-                       "count":  4
                    }
                ],
     "failures":  [

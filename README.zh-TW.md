@@ -92,6 +92,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-youtube-live.
 
 若要新增或調整 YouTube 頻道，只要修改 `sources/youtube-live-channels.csv` 的 `Order`、`Group`、`Name`、`Url`，再執行上方指令即可。地區限制、影片下架、非公開或 DRM 內容無法被腳本強制播放，會保留原 YouTube 頁面 URL 並記錄在報告檔。
 
+### 沒 cookies 的 100% 成功模式
+
+GitHub runner 沒有 YouTube cookies 時，workflow 會自動使用 `no-cookies-fallback` 模式，直接保留 98 個原始 YouTube 直播 URL。這樣 GitHub Actions 會 100% 成功更新清單、不會卡在 YouTube 機器人驗證；報告中的 `workflowSuccessRate` 會是 `100`。
+
+這個模式代表清單更新成功，不代表已取得短效 HLS。若要讓報告中的 `hlsSuccessRate` 提高，仍需設定 `YOUTUBE_COOKIES_B64`。
+
 ### GitHub Actions 被 YouTube 擋住時
 
 GitHub runner 有時會被 YouTube 要求登入或驗證機器人。此時 `sources/live-youtube-report.json` 會顯示 `Sign in to confirm you're not a bot`，清單會保留原 YouTube URL。要讓 GitHub Actions 也能解析，請在 repo 設定一個 Actions secret：
