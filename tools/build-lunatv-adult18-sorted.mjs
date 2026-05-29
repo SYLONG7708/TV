@@ -43,12 +43,44 @@ function adultCategory(name) {
   return '06 其他/待驗';
 }
 
-function sortedKey(key, index) {
-  const safe = String(key || `adult18_${index}`)
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '_')
-    .replace(/^_+|_+$/g, '');
-  return `adult18_${String(index).padStart(3, '0')}_${safe || `source_${index}`}`;
+function displaySourceName(name, fallback) {
+  return String(name || fallback || '')
+    .replace(/^Luna\s+\d+\s*/i, '')
+    .replace(/[\s-]+$/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function normalizeAdultApi(api, displayName) {
+  if (displayName === '黄色仓库') {
+    return 'https://hsckzy.vip/api.php/provide/vod/';
+  }
+
+  const value = String(api || '').trim();
+  try {
+    const url = new URL(value);
+    if (!url.search && !url.hash && url.pathname.endsWith('/vod')) {
+      url.pathname = `${url.pathname}/`;
+      return url.toString();
+    }
+  } catch {
+    return value;
+  }
+  return value;
+}
+
+function toAdultRecord(site, row) {
+  const displayName = displaySourceName(row.name, site?.name || site?.key);
+  const savedName = displayName === '黄色仓库' ? '黄色仓库(旧)' : displayName;
+  return {
+    key: `${displayName}|AV`,
+    name: `${savedName}｜`,
+    type: Number(site?.type ?? 1),
+    api: normalizeAdultApi(site?.api || row.api, displayName),
+    quickSearch: Number(site?.quickSearch ?? 1),
+    searchable: Number(site?.searchable ?? 1),
+    filterable: 0,
+  };
 }
 
 function csvEscape(value) {
@@ -77,6 +109,10 @@ function toCsv(rows) {
     headers.map(csvEscape).join(','),
     ...rows.map((row) => headers.map((key) => csvEscape(row[key])).join(',')),
   ].join('\r\n') + '\r\n';
+}
+
+function repoRelative(filePath) {
+  return path.relative(repoRoot, path.resolve(filePath)).replaceAll(path.sep, '/');
 }
 
 await fs.mkdir(path.dirname(candidateOutput), { recursive: true });
@@ -118,16 +154,7 @@ const usableSites = rows
   .filter((row) => row.included)
   .map((row) => {
     const site = siteByName.get(row.name);
-    return {
-      key: sortedKey(site?.key || row.name, row.order),
-      name: row.name,
-      type: Number(site?.type ?? 1),
-      api: String(site?.api || row.api),
-      searchable: Number(site?.searchable ?? 1),
-      quickSearch: Number(site?.quickSearch ?? 1),
-      filterable: Number(site?.filterable ?? 1),
-      categories: [row.category, '18+', 'adult_review_required'],
-    };
+    return toAdultRecord(site, row);
   });
 
 const categoryCounts = {};
@@ -157,10 +184,13 @@ const report = {
   failedAdultSources: rows.filter((row) => row.status === 'failed_removed').length,
   searchOkSources: rows.filter((row) => row.searchOk).length,
   searchPlayableSources: rows.filter((row) => row.searchHasPlayUrl).length,
-  candidateOutput,
-  analysisOutput,
+  candidateOutput: repoRelative(candidateOutput),
+  analysisOutput: repoRelative(analysisOutput),
   categoryCounts,
-  resources: rows,
+  resources: rows.map((row) => ({
+    ...row,
+    record: row.included ? toAdultRecord(siteByName.get(row.name), row) : null,
+  })),
 };
 
 await fs.writeFile(candidateOutput, `${JSON.stringify(candidate, null, 2)}\n`, 'utf8');
