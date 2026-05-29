@@ -1,11 +1,14 @@
 param(
     [string]$SourceName = "jin18",
     [string]$SourceUrl = "",
+    [string]$CompareVodUrl = "",
+    [string]$CompareVodPath = "",
     [string]$Output = "",
     [string]$ReportOutput = "",
     [int]$TimeoutSec = 12,
     [int]$MaxDetailProbe = 3,
     [switch]$SkipValidation,
+    [switch]$SkipDuplicateCheck,
     [switch]$KeepFailed
 )
 
@@ -19,13 +22,27 @@ try {
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
 if ([string]::IsNullOrWhiteSpace($SourceUrl)) {
-    $SourceUrl = "https://pz.v88.qzz.io?format=0&source=$SourceName"
+    if ($SourceName -eq "full") {
+        $SourceUrl = "https://raw.githubusercontent.com/hafrey1/LunaTV-config/refs/heads/main/LunaTV-config.json"
+    } else {
+        $SourceUrl = "https://raw.githubusercontent.com/hafrey1/LunaTV-config/refs/heads/main/$SourceName.json"
+    }
 }
 if ([string]::IsNullOrWhiteSpace($Output)) {
     $Output = Join-Path $repoRoot "sources\vod-lunatv-$SourceName-oktv.json"
 }
 if ([string]::IsNullOrWhiteSpace($ReportOutput)) {
     $ReportOutput = Join-Path $repoRoot "sources\vod-lunatv-$SourceName-report.json"
+}
+
+$sourceConfigPath = Join-Path $repoRoot "sources\current-sources.json"
+if (([string]::IsNullOrWhiteSpace($CompareVodUrl) -and [string]::IsNullOrWhiteSpace($CompareVodPath)) -and (Test-Path -LiteralPath $sourceConfigPath)) {
+    $currentConfig = Get-Content -LiteralPath $sourceConfigPath -Raw -Encoding UTF8 | ConvertFrom-Json
+    if ($currentConfig.vod.compareUrl) {
+        $CompareVodUrl = [string]$currentConfig.vod.compareUrl
+    } elseif ($currentConfig.vod.url -and ([string]$currentConfig.vod.url) -notmatch "vod-lunatv-.+-oktv\.json") {
+        $CompareVodUrl = [string]$currentConfig.vod.url
+    }
 }
 
 function Get-Utf8Text {
@@ -64,6 +81,142 @@ function Add-VodQuery {
     # OKTV/FongMi CMS endpoints normally append ?ac=... to the configured API.
     # Keeping this convention also makes LunaTV proxy URLs usable.
     return "$trimmed`?$Query"
+}
+
+function Normalize-SourceName {
+    param([string]$Value)
+
+    $normalized = [string]$Value
+    $normalized = $normalized -replace "[\p{So}\p{Sk}\p{Cn}]+", ""
+    $normalized = $normalized -replace "(?i)luna\s*\d+", ""
+    $normalized = $normalized -replace "[\s\-_|\.,:;()\[\]{}]+", ""
+    return $normalized.Trim().ToLowerInvariant()
+}
+
+function Unwrap-ProxyUrl {
+    param([string]$Url)
+
+    $value = [string]$Url
+    if ([string]::IsNullOrWhiteSpace($value)) { return "" }
+    $value = $value.Trim()
+    if ($value -match "[?&]url=([^&]+)") {
+        try {
+            return [System.Uri]::UnescapeDataString($matches[1])
+        } catch {
+            return $matches[1]
+        }
+    }
+    return $value
+}
+
+function Normalize-ApiUrl {
+    param([string]$Url)
+
+    $value = Unwrap-ProxyUrl -Url $Url
+    if ([string]::IsNullOrWhiteSpace($value)) { return "" }
+    $value = $value.Trim().TrimEnd("/")
+    $value = $value -replace "(?i)[?&](ac|wd|ids|pg|t)=.*$", ""
+    $value = $value.TrimEnd("/")
+    return $value.ToLowerInvariant()
+}
+
+function Get-ApiHost {
+    param([string]$Url)
+
+    $value = Unwrap-ProxyUrl -Url $Url
+    try {
+        return ([System.Uri]$value).Host.ToLowerInvariant()
+    } catch {
+        return ""
+    }
+}
+
+function Get-JsonFromPathOrUrl {
+    param(
+        [string]$Path,
+        [string]$Url
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace($Path)) {
+        if (-not (Test-Path -LiteralPath $Path -PathType Leaf)) {
+            throw "Compare VOD file not found: $Path"
+        }
+        return Get-Content -LiteralPath $Path -Raw -Encoding UTF8 | ConvertFrom-Json
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($Url)) {
+        return Get-Utf8Text -Url $Url | ConvertFrom-Json
+    }
+
+    return $null
+}
+
+function Get-CompareIndex {
+    param(
+        [string]$Path,
+        [string]$Url
+    )
+
+    $index = [ordered]@{
+        loaded = $false
+        path = $Path
+        url = $Url
+        count = 0
+        apiKeys = @{}
+        hosts = @{}
+        names = @{}
+        error = ""
+    }
+
+    if ([string]::IsNullOrWhiteSpace($Path) -and [string]::IsNullOrWhiteSpace($Url)) {
+        $index.error = "No compare VOD source configured."
+        return [pscustomobject]$index
+    }
+
+    try {
+        $json = Get-JsonFromPathOrUrl -Path $Path -Url $Url
+        $sites = @($json.sites)
+        foreach ($site in $sites) {
+            $apiKey = Normalize-ApiUrl -Url ([string]$site.api)
+            $apiHost = Get-ApiHost -Url ([string]$site.api)
+            $nameKey = Normalize-SourceName -Value ([string]$site.name)
+
+            if (-not [string]::IsNullOrWhiteSpace($apiKey)) { $index.apiKeys[$apiKey] = $true }
+            if (-not [string]::IsNullOrWhiteSpace($apiHost)) { $index.hosts[$apiHost] = $true }
+            if (-not [string]::IsNullOrWhiteSpace($nameKey)) { $index.names[$nameKey] = $true }
+        }
+        $index.loaded = $true
+        $index.count = $sites.Count
+    } catch {
+        $index.error = $_.Exception.Message
+    }
+
+    return [pscustomobject]$index
+}
+
+function Get-DuplicateReason {
+    param(
+        [Parameter(Mandatory = $true)][object]$CompareIndex,
+        [Parameter(Mandatory = $true)][string]$Api,
+        [Parameter(Mandatory = $true)][string]$Name
+    )
+
+    if (-not $CompareIndex.loaded) { return "" }
+
+    $apiKey = Normalize-ApiUrl -Url $Api
+    $apiHost = Get-ApiHost -Url $Api
+    $nameKey = Normalize-SourceName -Value $Name
+
+    if (-not [string]::IsNullOrWhiteSpace($apiKey) -and $CompareIndex.apiKeys.Contains($apiKey)) {
+        return "duplicate_api"
+    }
+    if (-not [string]::IsNullOrWhiteSpace($apiHost) -and $CompareIndex.hosts.Contains($apiHost)) {
+        return "duplicate_host"
+    }
+    if (-not [string]::IsNullOrWhiteSpace($nameKey) -and $CompareIndex.names.Contains($nameKey)) {
+        return "duplicate_name"
+    }
+    return ""
 }
 
 function New-SafeKey {
@@ -166,6 +319,28 @@ if (-not $sourceJson.api_site) {
     throw "LunaTV config does not contain api_site."
 }
 
+$compareIndex = $null
+if ($SkipDuplicateCheck) {
+    $compareIndex = [pscustomobject]([ordered]@{
+        loaded = $false
+        path = $CompareVodPath
+        url = $CompareVodUrl
+        count = 0
+        apiKeys = @{}
+        hosts = @{}
+        names = @{}
+        error = "Duplicate check skipped"
+    })
+} else {
+    Write-Host "Loading compare VOD source for duplicate detection."
+    $compareIndex = Get-CompareIndex -Path $CompareVodPath -Url $CompareVodUrl
+    if ($compareIndex.loaded) {
+        Write-Host ("Compare VOD sources loaded: {0}" -f $compareIndex.count)
+    } else {
+        Write-Host ("Compare VOD source unavailable: {0}" -f $compareIndex.error)
+    }
+}
+
 $sourceEntries = @($sourceJson.api_site.PSObject.Properties)
 $sites = New-Object System.Collections.Generic.List[object]
 $checks = New-Object System.Collections.Generic.List[object]
@@ -188,27 +363,37 @@ foreach ($entryProp in $sourceEntries) {
         filterable = 1
     }
 
+    $duplicateReason = ""
+    if (-not $SkipDuplicateCheck) {
+        $duplicateReason = Get-DuplicateReason -CompareIndex $compareIndex -Api $site.api -Name $name
+    }
+
     if ($SkipValidation) {
+        $include = [string]::IsNullOrWhiteSpace($duplicateReason) -or $KeepFailed.IsPresent
+        if ($include) {
+            $sites.Add([pscustomobject]$site)
+        }
         $check = [pscustomobject]([ordered]@{
             key = $site.key
             name = $site.name
             api = $site.api
-            included = $true
+            included = $include
+            duplicate = -not [string]::IsNullOrWhiteSpace($duplicateReason)
+            duplicateReason = $duplicateReason
             listOk = $null
             detailOk = $null
             hasPlayUrl = $null
             sampleVodName = ""
             sampleVodId = ""
-            error = "Validation skipped"
+            error = if ($duplicateReason) { $duplicateReason } else { "Validation skipped" }
         })
-        $sites.Add([pscustomobject]$site)
         $checks.Add($check)
         continue
     }
 
     Write-Host ("Checking {0}: {1}" -f $site.name, $site.api)
     $probe = Test-LunaApi -Api $site.api
-    $include = [bool]$probe.hasPlayUrl -or $KeepFailed.IsPresent
+    $include = (([bool]$probe.hasPlayUrl) -and [string]::IsNullOrWhiteSpace($duplicateReason)) -or $KeepFailed.IsPresent
     if ($include) {
         $sites.Add([pscustomobject]$site)
     }
@@ -218,12 +403,14 @@ foreach ($entryProp in $sourceEntries) {
         name = $site.name
         api = $site.api
         included = $include
+        duplicate = -not [string]::IsNullOrWhiteSpace($duplicateReason)
+        duplicateReason = $duplicateReason
         listOk = $probe.listOk
         detailOk = $probe.detailOk
         hasPlayUrl = $probe.hasPlayUrl
         sampleVodName = $probe.sampleVodName
         sampleVodId = $probe.sampleVodId
-        error = $probe.error
+        error = if ($duplicateReason) { $duplicateReason } else { $probe.error }
     })
     $checks.Add($check)
 }
@@ -235,20 +422,31 @@ $vodConfig = [ordered]@{
     spider = ""
     logo = "https://raw.githubusercontent.com/SYLONG7708/TV/main/branding/icon-tech-20260528.png"
     wallpaper = "http://tool.teyonds.com/api"
-    warningText = "LunaTV candidate VOD source converted for OKTV. This file is not the built-in APK default; replace manually only for testing."
+    warningText = "影視 LunaTV jin18 VOD source. Auto refreshed, validated, de-duplicated against the configured baseline, and adult/full sources are not used by default."
     sites = $siteArray
 }
+
+$duplicateCount = @($checkArray | Where-Object { $_.duplicate }).Count
+$invalidCount = @($checkArray | Where-Object { -not $_.hasPlayUrl -and -not $_.included }).Count
 
 $report = [ordered]@{
     generatedAt = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss zzz")
     sourceName = $SourceName
     sourceUrl = $SourceUrl
+    compareVodUrl = $CompareVodUrl
+    compareVodPath = $CompareVodPath
+    compareLoaded = [bool]$compareIndex.loaded
+    compareCount = [int]$compareIndex.count
+    compareError = [string]$compareIndex.error
     upstreamCacheSeconds = $sourceJson.cache_time
     output = ($Output -replace "\\", "/")
     totalSources = $sourceEntries.Count
     includedSources = $sites.Count
     failedSources = ($sourceEntries.Count - $sites.Count)
+    duplicateSources = $duplicateCount
+    invalidSources = $invalidCount
     validationSkipped = [bool]$SkipValidation
+    duplicateCheckSkipped = [bool]$SkipDuplicateCheck
     checks = $checkArray
 }
 
@@ -264,3 +462,4 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 Write-Host ("Wrote OKTV VOD candidate: {0}" -f $Output)
 Write-Host ("Wrote validation report: {0}" -f $ReportOutput)
 Write-Host ("Included sources: {0} / {1}" -f $sites.Count, $sourceEntries.Count)
+Write-Host ("Duplicates removed: {0}; invalid removed: {1}" -f $duplicateCount, $invalidCount)
