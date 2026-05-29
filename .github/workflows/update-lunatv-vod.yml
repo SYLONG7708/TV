@@ -9,6 +9,8 @@ on:
       - "tools/update-lunatv-vod.ps1"
       - "tools/update-lunatv-vod-local.ps1"
       - "tools/install-lunatv-vod-autoupdate-task.ps1"
+      - "tools/build-iphone-vod-catalog.mjs"
+      - "docs/iphone/index.html"
       - "sources/current-sources.json"
       - ".github/workflows/update-lunatv-vod.yml"
   schedule:
@@ -43,6 +45,14 @@ jobs:
             -MaxDetailProbe 2 `
             -RedactSampleNames
           node .\tools\build-lunatv-adult18-sorted.mjs --repoRoot .
+          node .\tools\build-iphone-vod-catalog.mjs `
+            --tvRoot . `
+            --output .\docs\data\iphone-vod-catalog.json `
+            --reportOutput .\docs\data\iphone-vod-catalog-report.json `
+            --maxSources 16 `
+            --maxItemsPerSource 70 `
+            --maxCategoriesPerSource 6 `
+            --timeoutMs 8000
 
       - name: Commit changes
         shell: pwsh
@@ -52,7 +62,8 @@ jobs:
           git add sources/current-sources.json `
             sources/vod-lunatv-jin18-oktv.json sources/vod-lunatv-jin18-report.json sources/vod-lunatv-jin18-analysis.csv `
             sources/vod-lunatv-full-oktv.json sources/vod-lunatv-full-report.json sources/vod-lunatv-full-analysis.csv `
-            sources/vod-lunatv-adult18-sorted-oktv.json sources/vod-lunatv-adult18-sorted-report.json sources/vod-lunatv-adult18-sorted-analysis.csv
+            sources/vod-lunatv-adult18-sorted-oktv.json sources/vod-lunatv-adult18-sorted-report.json sources/vod-lunatv-adult18-sorted-analysis.csv `
+            docs/data/iphone-vod-catalog.json docs/data/iphone-vod-catalog-report.json docs/iphone/index.html
           if (git diff --cached --quiet) {
             Write-Host "No LunaTV VOD source changes."
           } else {

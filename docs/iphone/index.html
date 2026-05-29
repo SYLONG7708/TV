@@ -4,26 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="影視" />
     <meta name="theme-color" content="#050507" />
     <link rel="icon" href="../assets/icon.png" />
     <link rel="apple-touch-icon" href="../assets/icon.png" />
     <title>影視 OKTV iPhone</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js" defer></script>
     <style>
       :root {
         color-scheme: dark;
         --bg: #050507;
-        --panel: rgba(16, 17, 20, 0.88);
-        --panel-strong: rgba(24, 25, 30, 0.94);
+        --panel: rgba(17, 18, 22, 0.92);
+        --panel-2: rgba(25, 27, 33, 0.94);
         --line: rgba(255, 255, 255, 0.12);
         --text: #f5f5f7;
-        --muted: #b8b8bf;
-        --dim: #7d8089;
-        --accent: #9a0f45;
-        --accent-2: #c4145f;
-        --cyan: #35d9ea;
-        --green: #59d68d;
-        --amber: #f0bd5a;
+        --muted: #b8bac3;
+        --dim: #7f838e;
+        --accent: #9f114c;
+        --accent-2: #d81769;
+        --cyan: #32d6e7;
+        --green: #5bd58e;
+        --amber: #f2bd5c;
         --red: #ff6571;
       }
 
@@ -39,7 +41,7 @@
 
       body {
         background:
-          linear-gradient(90deg, rgba(5, 5, 7, 0.96), rgba(5, 5, 7, 0.9)),
+          linear-gradient(90deg, rgba(5, 5, 7, 0.97), rgba(5, 5, 7, 0.9)),
           url("../assets/hero-cinema.png") right top / auto 100vh fixed no-repeat,
           var(--bg);
         color: var(--text);
@@ -62,27 +64,27 @@
         width: min(100%, 1180px);
         min-height: 100vh;
         margin: 0 auto;
-        padding: max(12px, env(safe-area-inset-top)) 12px max(28px, env(safe-area-inset-bottom));
+        padding: max(12px, env(safe-area-inset-top)) 12px max(30px, env(safe-area-inset-bottom));
       }
 
       .top-nav {
         position: sticky;
         top: 0;
-        z-index: 20;
+        z-index: 30;
+        min-height: 70px;
         display: flex;
         align-items: center;
-        gap: 20px;
-        min-height: 72px;
+        gap: 18px;
         overflow-x: auto;
         padding: 8px 0 12px;
-        background: linear-gradient(180deg, rgba(5, 5, 7, 0.98), rgba(5, 5, 7, 0.72));
-        backdrop-filter: blur(14px);
+        background: linear-gradient(180deg, rgba(5, 5, 7, 0.99), rgba(5, 5, 7, 0.74));
+        backdrop-filter: blur(16px);
         scrollbar-width: none;
       }
 
       .top-nav::-webkit-scrollbar,
-      .poster-grid::-webkit-scrollbar,
-      .chip-row::-webkit-scrollbar {
+      .chip-row::-webkit-scrollbar,
+      .source-rail::-webkit-scrollbar {
         display: none;
       }
 
@@ -93,37 +95,26 @@
         border-radius: 999px;
         background: transparent;
         color: rgba(255, 255, 255, 0.72);
-        padding: 0 10px;
-        font-size: clamp(1.04rem, 5.4vw, 1.72rem);
-        font-weight: 600;
+        padding: 0 8px;
+        font-size: clamp(1.05rem, 5.6vw, 1.7rem);
+        font-weight: 650;
         white-space: nowrap;
         cursor: pointer;
       }
 
       .nav-btn.is-active {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
         background: linear-gradient(135deg, var(--accent), var(--accent-2));
         color: #fff;
         padding: 0 22px;
         font-weight: 900;
       }
 
-      .nav-btn svg,
-      .icon-btn svg,
-      .play-btn svg,
-      .status-pill svg {
-        width: 20px;
-        height: 20px;
-      }
-
       .toolbar {
         display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 10px;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        gap: 8px;
         align-items: center;
-        margin: 0 0 14px;
+        margin-bottom: 12px;
       }
 
       .search {
@@ -138,10 +129,11 @@
       }
 
       .search:focus {
-        border-color: rgba(196, 20, 95, 0.8);
+        border-color: rgba(216, 23, 105, 0.82);
       }
 
       .icon-btn,
+      .text-icon-btn,
       .play-btn {
         min-height: 42px;
         border: 1px solid var(--line);
@@ -158,57 +150,84 @@
         width: 42px;
       }
 
-      .hero-strip {
+      .text-icon-btn,
+      .play-btn {
+        padding: 0 12px;
+        white-space: nowrap;
+      }
+
+      .icon-btn svg,
+      .text-icon-btn svg,
+      .play-btn svg,
+      .status-pill svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .hero {
+        min-height: 46vh;
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 8px;
-        margin-bottom: 16px;
+        grid-template-columns: minmax(0, 1fr) minmax(118px, 32%);
+        gap: 14px;
+        align-items: end;
+        margin-bottom: 14px;
       }
 
-      .metric {
-        min-height: 86px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.035));
-        padding: 12px;
+      .hero-copy {
+        min-width: 0;
+        padding-bottom: 6px;
       }
 
-      .metric strong {
-        display: block;
-        font-size: clamp(1.55rem, 8vw, 2.4rem);
-        line-height: 1;
+      .hero-kicker {
+        color: var(--cyan);
+        font-size: 0.78rem;
+        font-weight: 800;
       }
 
-      .metric span {
-        display: block;
-        margin-top: 8px;
+      .hero h1 {
+        margin: 8px 0 8px;
+        font-size: clamp(2.2rem, 13vw, 4.5rem);
+        line-height: 0.95;
+        letter-spacing: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .hero-meta,
+      .item-meta,
+      .section-head span,
+      .source-row span,
+      .episode-grid span {
         color: var(--muted);
-        font-size: 0.82rem;
+      }
+
+      .hero-poster {
+        min-width: 0;
       }
 
       .section-head {
         display: flex;
-        align-items: center;
+        align-items: end;
         justify-content: space-between;
         gap: 12px;
-        margin: 10px 0 12px;
+        margin: 14px 0 10px;
       }
 
       .section-head h1,
       .section-head h2 {
         margin: 0;
-        font-size: clamp(1.15rem, 6vw, 1.65rem);
+        font-size: clamp(1.18rem, 5.8vw, 1.72rem);
       }
 
-      .section-head span {
-        color: var(--muted);
-        font-size: 0.86rem;
+      .poster-grid,
+      .rank-list,
+      .source-list,
+      .live-list {
+        display: grid;
+        gap: 12px;
       }
 
       .poster-grid {
-        display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
       }
 
       .poster-card {
@@ -225,82 +244,96 @@
         position: relative;
         aspect-ratio: 0.72;
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.18);
         border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
         background:
-          linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.2)),
-          var(--poster-bg, linear-gradient(135deg, #123949, #17202a));
+          linear-gradient(135deg, #153746, #60183c 52%, #120911);
       }
 
-      .poster-art::before {
-        content: "";
-        position: absolute;
-        inset: -18%;
-        background:
-          radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.28), transparent 12%),
-          repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.08) 0 2px, transparent 2px 18px);
-        transform: rotate(-8deg);
+      .poster-art img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
       }
 
-      .poster-art strong {
+      .poster-art img.is-broken {
+        display: none;
+      }
+
+      .poster-fallback {
         position: absolute;
-        inset: auto 10px 40px;
-        z-index: 2;
-        font-size: clamp(1.45rem, 7vw, 2.6rem);
-        line-height: 1.05;
-        letter-spacing: 0;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 14px;
         text-align: center;
-        text-shadow: 0 4px 18px rgba(0, 0, 0, 0.55);
+        font-size: clamp(1.3rem, 7vw, 2.5rem);
+        font-weight: 900;
+        line-height: 1.08;
         overflow-wrap: anywhere;
       }
 
-      .poster-art .badge,
-      .poster-art .score {
+      .poster-art img:not(.is-broken) + .poster-fallback {
+        display: none;
+      }
+
+      .badge,
+      .score {
         position: absolute;
-        z-index: 3;
-        min-height: 30px;
+        z-index: 2;
+        min-height: 28px;
         display: inline-flex;
         align-items: center;
         border-radius: 6px;
-        background: rgba(34, 34, 38, 0.78);
+        background: rgba(20, 20, 24, 0.78);
         color: #fff;
         padding: 0 8px;
-        font-size: 1rem;
+        font-size: 0.82rem;
+        max-width: calc(100% - 16px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
-      .poster-art .badge {
+      .score {
+        top: 8px;
+        left: 8px;
+      }
+
+      .badge {
         left: 8px;
         bottom: 8px;
-      }
-
-      .poster-art .score {
-        left: 8px;
-        top: 8px;
       }
 
       .poster-title {
         display: block;
         margin-top: 8px;
-        overflow: hidden;
         color: #fff;
         font-size: 1rem;
+        line-height: 1.25;
+        overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
 
-      .poster-meta {
+      .poster-sub {
         display: flex;
         gap: 7px;
         margin-top: 4px;
         color: var(--muted);
-        font-size: 0.8rem;
+        font-size: 0.78rem;
+        overflow: hidden;
+        white-space: nowrap;
       }
 
-      .chip-row {
+      .chip-row,
+      .source-rail {
         display: flex;
         gap: 8px;
         overflow-x: auto;
         margin-bottom: 12px;
+        scrollbar-width: none;
       }
 
       .chip {
@@ -315,20 +348,32 @@
       }
 
       .chip.is-active {
-        border-color: rgba(196, 20, 95, 0.75);
-        background: rgba(196, 20, 95, 0.24);
+        border-color: rgba(216, 23, 105, 0.76);
+        background: rgba(216, 23, 105, 0.24);
         color: #fff;
       }
 
-      .row-list {
-        display: grid;
-        gap: 8px;
+      .source-pill {
+        flex: 0 0 auto;
+        min-height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        color: inherit;
+        padding: 0 12px;
+        cursor: pointer;
       }
 
-      .list-row {
-        min-height: 66px;
+      .source-pill.is-active {
+        border-color: rgba(50, 214, 231, 0.6);
+        background: rgba(50, 214, 231, 0.16);
+      }
+
+      .row,
+      .source-row {
+        min-height: 68px;
         display: grid;
-        grid-template-columns: 44px minmax(0, 1fr) auto;
+        grid-template-columns: 46px minmax(0, 1fr) auto;
         gap: 10px;
         align-items: center;
         border: 1px solid var(--line);
@@ -338,67 +383,32 @@
       }
 
       .avatar {
-        width: 44px;
-        height: 44px;
+        width: 46px;
+        height: 46px;
         display: grid;
         place-items: center;
         border-radius: 8px;
-        background: rgba(196, 20, 95, 0.28);
+        background: rgba(216, 23, 105, 0.25);
         color: #fff;
         font-weight: 900;
       }
 
-      .list-main {
+      .row-main {
         min-width: 0;
       }
 
-      .list-main strong,
-      .list-main span {
+      .row-main strong,
+      .row-main span {
         display: block;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
 
-      .list-main span {
+      .row-main span {
         margin-top: 4px;
         color: var(--muted);
-        font-size: 0.78rem;
-      }
-
-      .play-btn {
-        min-width: 72px;
-        padding: 0 10px;
-      }
-
-      .play-btn:disabled {
-        cursor: not-allowed;
-        opacity: 0.42;
-      }
-
-      .status-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 10px;
-      }
-
-      .status-card {
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--panel-strong);
-        padding: 12px;
-      }
-
-      .status-card strong,
-      .status-card span {
-        display: block;
-      }
-
-      .status-card span {
-        margin-top: 6px;
-        color: var(--muted);
-        font-size: 0.82rem;
-        overflow-wrap: anywhere;
+        font-size: 0.8rem;
       }
 
       .status-pill {
@@ -408,47 +418,68 @@
         gap: 6px;
         border-radius: 999px;
         padding: 0 10px;
-        color: #fff;
         background: rgba(255, 255, 255, 0.1);
+        color: #fff;
         font-size: 0.78rem;
+        white-space: nowrap;
       }
 
       .status-pill.ok {
-        background: rgba(89, 214, 141, 0.18);
+        background: rgba(91, 213, 142, 0.18);
         color: var(--green);
       }
 
       .status-pill.warn {
-        background: rgba(240, 189, 90, 0.18);
+        background: rgba(242, 189, 92, 0.18);
         color: var(--amber);
       }
 
-      .player-sheet {
+      .filter-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+
+      .notice {
+        border: 1px solid rgba(242, 189, 92, 0.34);
+        border-radius: 8px;
+        background: rgba(242, 189, 92, 0.1);
+        color: #ffdc9a;
+        padding: 10px 12px;
+        font-size: 0.88rem;
+        line-height: 1.5;
+      }
+
+      .sheet {
         position: fixed;
         inset: 0;
-        z-index: 60;
+        z-index: 80;
         opacity: 0;
         pointer-events: none;
         transition: opacity 160ms ease;
       }
 
-      .player-sheet.is-open {
+      .sheet.is-open {
         opacity: 1;
         pointer-events: auto;
       }
 
-      .player-backdrop {
+      .sheet-backdrop {
         position: absolute;
         inset: 0;
         background: rgba(0, 0, 0, 0.68);
         backdrop-filter: blur(8px);
       }
 
-      .player-panel {
+      .sheet-panel {
         position: absolute;
         left: 50%;
         bottom: 0;
-        width: min(100%, 720px);
+        width: min(100%, 740px);
+        max-height: 86vh;
+        display: flex;
+        flex-direction: column;
         transform: translateX(-50%);
         border: 1px solid var(--line);
         border-bottom: 0;
@@ -457,26 +488,78 @@
         padding: 12px 12px max(14px, env(safe-area-inset-bottom));
       }
 
-      .player-head {
-        min-height: 48px;
+      .sheet-head {
+        min-height: 50px;
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         gap: 10px;
         align-items: center;
       }
 
-      .player-head strong,
-      .player-head span {
+      .sheet-head strong,
+      .sheet-head span {
         display: block;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
 
-      .player-head span {
+      .sheet-head span {
         margin-top: 4px;
         color: var(--muted);
         font-size: 0.82rem;
+      }
+
+      .sheet-body {
+        min-height: 0;
+        overflow: auto;
+        padding-top: 8px;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 116px minmax(0, 1fr);
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .detail-grid .poster-art {
+        min-width: 0;
+      }
+
+      .detail-copy {
+        min-width: 0;
+      }
+
+      .detail-copy h2 {
+        margin: 0 0 8px;
+        font-size: 1.35rem;
+        line-height: 1.18;
+      }
+
+      .detail-copy p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        line-height: 1.45;
+        font-size: 0.88rem;
+      }
+
+      .episode-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .episode-grid button {
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       video {
@@ -485,16 +568,6 @@
         aspect-ratio: 16 / 9;
         border-radius: 8px;
         background: #000;
-      }
-
-      .notice {
-        border: 1px solid rgba(240, 189, 90, 0.34);
-        border-radius: 8px;
-        background: rgba(240, 189, 90, 0.1);
-        color: #ffd992;
-        padding: 10px 12px;
-        font-size: 0.86rem;
-        line-height: 1.5;
       }
 
       .hidden {
@@ -509,15 +582,11 @@
 
       @media (min-width: 980px) {
         .poster-grid {
-          grid-template-columns: repeat(5, minmax(0, 1fr));
+          grid-template-columns: repeat(6, minmax(0, 1fr));
         }
 
         .app {
           padding-inline: 28px;
-        }
-
-        .hero-strip {
-          grid-template-columns: repeat(4, minmax(0, 1fr));
         }
       }
 
@@ -526,34 +595,73 @@
           gap: 12px;
         }
 
-        .hero-strip {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+        .hero {
+          min-height: 36vh;
+          grid-template-columns: minmax(0, 1fr) 124px;
         }
 
         .poster-grid {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .status-grid {
-          grid-template-columns: 1fr;
+        .toolbar {
+          grid-template-columns: minmax(0, 1fr) 42px 42px;
+        }
+
+        .text-icon-btn span {
+          display: none;
+        }
+
+        .episode-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
         }
       }
     </style>
   </head>
   <body>
     <div class="app">
-      <nav class="top-nav" aria-label="OKTV 分類" id="topNav"></nav>
-      <div id="screen"></div>
+      <nav class="top-nav" aria-label="OKTV 分頁" id="topNav"></nav>
+      <main id="screen"></main>
     </div>
 
-    <div class="player-sheet" id="playerSheet" aria-hidden="true">
-      <div class="player-backdrop" data-close-player></div>
-      <section class="player-panel">
-        <div class="player-head">
-          <div>
-            <strong id="playerTitle">影視</strong>
-            <span id="playerMeta">Ready</span>
-          </div>
+    <div class="sheet" id="sourceSheet" aria-hidden="true">
+      <div class="sheet-backdrop" data-close-sheet></div>
+      <section class="sheet-panel">
+        <div class="sheet-head">
+          <div><strong>點播訊號源</strong><span id="sourceSheetMeta">可切換已建立索引的來源</span></div>
+          <button class="icon-btn" type="button" data-close-sheet aria-label="關閉"></button>
+        </div>
+        <div class="sheet-body" id="sourceSheetBody"></div>
+      </section>
+    </div>
+
+    <div class="sheet" id="filterSheet" aria-hidden="true">
+      <div class="sheet-backdrop" data-close-filter></div>
+      <section class="sheet-panel">
+        <div class="sheet-head">
+          <div><strong>篩選器</strong><span>年份、國家、類型、發布時間、熱門</span></div>
+          <button class="icon-btn" type="button" data-close-filter aria-label="關閉"></button>
+        </div>
+        <div class="sheet-body" id="filterSheetBody"></div>
+      </section>
+    </div>
+
+    <div class="sheet" id="detailSheet" aria-hidden="true">
+      <div class="sheet-backdrop" data-close-detail></div>
+      <section class="sheet-panel">
+        <div class="sheet-head">
+          <div><strong id="detailTitle">影視</strong><span id="detailMeta">OKTV</span></div>
+          <button class="icon-btn" type="button" data-close-detail aria-label="關閉"></button>
+        </div>
+        <div class="sheet-body" id="detailBody"></div>
+      </section>
+    </div>
+
+    <div class="sheet" id="playerSheet" aria-hidden="true">
+      <div class="sheet-backdrop" data-close-player></div>
+      <section class="sheet-panel">
+        <div class="sheet-head">
+          <div><strong id="playerTitle">影視</strong><span id="playerMeta">Ready</span></div>
           <button class="icon-btn" type="button" data-close-player aria-label="關閉"></button>
         </div>
         <video id="player" controls playsinline preload="metadata" poster="../assets/hero-cinema.png"></video>
@@ -562,62 +670,55 @@
 
     <script type="module">
       const tabs = [
-        ['home', '主頁', false],
-        ['movie', '熱門電影', true],
-        ['series', '熱播劇集', false],
-        ['variety', '熱播綜藝', false],
-        ['movieFilter', '電影篩選', false],
-        ['tvFilter', '電視篩選', false],
-        ['movieRank', '電影榜單', false],
-        ['tvRank', '電視榜單', false],
-        ['anime', '動漫', true],
-        ['live', '直播', false],
-        ['sources', '來源', false],
+        ['home', '主頁'],
+        ['movie', '電影'],
+        ['series', '劇集'],
+        ['variety', '綜藝'],
+        ['anime', '動漫'],
+        ['rank', '榜單'],
+        ['live', '直播'],
+        ['sources', '點播源'],
       ];
 
-      const demoStream = 'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
       const state = {
-        tab: 'movie',
+        tab: 'home',
         query: '',
-        liveKind: 'all',
+        selectedSource: localStorage.getItem('oktv:iphone:selectedSource') || 'all',
+        filters: {
+          year: 'all',
+          area: 'all',
+          genre: 'all',
+          sort: 'hot',
+        },
+        catalog: { totals: {}, sources: [], items: [], filters: { years: [], areas: [], genres: [] } },
         live: [],
-        vod: [],
-        adult: { records: [], resources: [], usable: 0, total: 0 },
-        summary: {},
-        clone: {},
-        check: null,
+        activeItem: null,
         playerUrl: '',
       };
 
-      const posterTitles = [
-        ['吞噬星空', '181', '動漫', '9.1', '#572126,#b54842,#251018'],
-        ['美食一場裡的女高', '03', '劇集', '8.4', '#6b4b28,#d8b272,#1b1410'],
-        ['薰香花朵凜然綻放', '03', '動漫', '8.7', '#225476,#b6d8ef,#111c2c'],
-        ['異人旅館', '03', '劇集', '8.0', '#432247,#e3a65b,#160b14'],
-        ['瑞克與莫蒂第8季', '09', '動漫', '8.8', '#195b34,#7bd55d,#102018'],
-        ['梅根2.0', '評分 6.6', '電影', '6.6', '#3a152c,#cf4fac,#120812'],
-        ['新馴龍高手', '評分 8.4', '電影', '8.4', '#6e4d28,#f1c66b,#20160b'],
-        ['牆外之音', '評分 6.4', '電影', '6.4', '#183a35,#41b09b,#081514'],
-        ['30頁的戲曲', '評分 7.1', '電影', '7.1', '#4d3b34,#b28e71,#17110f'],
-        ['河邊有個好地方', '評分 7.2', '電影', '7.2', '#477a4b,#dfb86a,#142016'],
-        ['魔女與使魔', '16', '動漫', '8.2', '#4d236f,#e880d5,#190b24'],
-        ['靈武大陸', '93集全', '動漫', '7.9', '#1e3c68,#4c82de,#07111f'],
-      ];
-
-      const screen = document.querySelector('#screen');
       const topNav = document.querySelector('#topNav');
-      const player = document.querySelector('#player');
+      const screen = document.querySelector('#screen');
+      const sourceSheet = document.querySelector('#sourceSheet');
+      const sourceSheetBody = document.querySelector('#sourceSheetBody');
+      const filterSheet = document.querySelector('#filterSheet');
+      const filterSheetBody = document.querySelector('#filterSheetBody');
+      const detailSheet = document.querySelector('#detailSheet');
+      const detailBody = document.querySelector('#detailBody');
+      const detailTitle = document.querySelector('#detailTitle');
+      const detailMeta = document.querySelector('#detailMeta');
       const playerSheet = document.querySelector('#playerSheet');
+      const player = document.querySelector('#player');
       const playerTitle = document.querySelector('#playerTitle');
       const playerMeta = document.querySelector('#playerMeta');
+      let hls = null;
 
       function icon(name) {
         const paths = {
           filter: '<path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"></path>',
+          signal: '<path d="M2 20h.01"></path><path d="M7 20a5 5 0 0 0-5-5"></path><path d="M12 20A10 10 0 0 0 2 10"></path><path d="M17 20A15 15 0 0 0 2 5"></path>',
           search: '<circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>',
           play: '<path d="m8 5 11 7-11 7V5z"></path>',
           close: '<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>',
-          refresh: '<path d="M20 12a8 8 0 1 1-2.34-5.66"></path><path d="M20 4v6h-6"></path>',
           check: '<path d="M20 6 9 17l-5-5"></path>',
           alert: '<path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>',
         };
@@ -647,16 +748,57 @@
         return [...String(value || '影視').replace(/\s+/g, '')].slice(0, 2).join('');
       }
 
+      function imageSrc(value) {
+        const raw = String(value || '').trim();
+        if (!raw) return '';
+        if (/^http:\/\//i.test(raw)) {
+          return `https://images.weserv.nl/?url=${encodeURIComponent(raw.replace(/^https?:\/\//i, ''))}`;
+        }
+        return raw;
+      }
+
+      function activeSource() {
+        if (state.selectedSource === 'all') return null;
+        return state.catalog.sources.find((source) => source.id === state.selectedSource) || null;
+      }
+
+      function sourceLabel() {
+        return activeSource()?.name || '全部來源';
+      }
+
+      function sourceItems(sourceId = state.selectedSource) {
+        const query = state.query.trim().toLowerCase();
+        return state.catalog.items.filter((item) => {
+          if (sourceId !== 'all' && item.sourceId !== sourceId) return false;
+          if (item.adult) return false;
+          if (state.tab !== 'home' && state.tab !== 'rank' && item.kind !== state.tab) return false;
+          if (state.filters.year !== 'all' && item.year !== state.filters.year) return false;
+          if (state.filters.area !== 'all' && item.area !== state.filters.area) return false;
+          if (state.filters.genre !== 'all' && !item.genre.includes(state.filters.genre)) return false;
+          if (!query) return true;
+          return `${item.title} ${item.categoryName} ${item.year} ${item.area} ${item.genre.join(' ')} ${item.sourceName}`
+            .toLowerCase()
+            .includes(query);
+        });
+      }
+
+      function sortedItems(items) {
+        const rows = [...items];
+        if (state.filters.sort === 'latest') {
+          return rows.sort((a, b) => Date.parse(b.updatedAt || 0) - Date.parse(a.updatedAt || 0));
+        }
+        if (state.filters.sort === 'score') return rows.sort((a, b) => Number(b.score || 0) - Number(a.score || 0));
+        if (state.filters.sort === 'name') return rows.sort((a, b) => a.title.localeCompare(b.title, 'zh-Hant'));
+        return rows.sort((a, b) => Number(b.hot || 0) - Number(a.hot || 0));
+      }
+
       function renderNav() {
         topNav.innerHTML = tabs
-          .map(([id, label, filter]) => {
-            const active = state.tab === id ? 'is-active' : '';
-            return `<button class="nav-btn ${active}" type="button" data-tab="${id}">${escapeHtml(label)}${filter && state.tab === id ? icon('filter') : ''}</button>`;
-          })
+          .map(([id, label]) => `<button class="nav-btn ${state.tab === id ? 'is-active' : ''}" type="button" data-tab="${id}">${escapeHtml(label)}</button>`)
           .join('');
         topNav.querySelectorAll('[data-tab]').forEach((button) => {
           button.addEventListener('click', () => {
-            state.tab = button.dataset.tab || 'movie';
+            state.tab = button.dataset.tab || 'home';
             state.query = '';
             render();
           });
@@ -667,14 +809,16 @@
         renderNav();
         if (state.tab === 'live') return renderLive();
         if (state.tab === 'sources') return renderSources();
-        return renderPosters();
+        if (state.tab === 'rank') return renderRank();
+        return renderVodScreen();
       }
 
-      function renderToolbar(placeholder = '搜尋片名、分類、來源') {
+      function renderToolbar(placeholder = '搜尋片名、類型、年份') {
         return `
           <div class="toolbar">
             <input class="search" id="searchBox" value="${escapeHtml(state.query)}" placeholder="${escapeHtml(placeholder)}" />
-            <button class="icon-btn" type="button" data-refresh aria-label="重新整理">${icon('refresh')}</button>
+            <button class="icon-btn" type="button" data-open-source aria-label="點播訊號源">${icon('signal')}</button>
+            <button class="icon-btn" type="button" data-open-filter aria-label="篩選器">${icon('filter')}</button>
           </div>
         `;
       }
@@ -689,216 +833,414 @@
             input?.setSelectionRange(state.query.length, state.query.length);
           }, 0);
         });
-        document.querySelector('[data-refresh]')?.addEventListener('click', () => location.reload());
+        document.querySelector('[data-open-source]')?.addEventListener('click', openSourceSheet);
+        document.querySelector('[data-open-filter]')?.addEventListener('click', openFilterSheet);
       }
 
-      function filteredPosters() {
-        const tabLabel = tabs.find(([id]) => id === state.tab)?.[1] || '';
-        const query = state.query.toLowerCase();
-        return posterTitles.filter((item) => {
-          const text = `${item[0]} ${item[2]} ${tabLabel}`.toLowerCase();
-          if (state.tab === 'anime' && item[2] !== '動漫') return false;
-          if (state.tab === 'movie' && item[2] !== '電影') return false;
-          if (state.tab === 'series' && item[2] !== '劇集') return false;
-          return !query || text.includes(query);
-        });
+      function renderFilterSummary() {
+        const chips = [
+          ['訊號源', sourceLabel()],
+          ['年份', state.filters.year === 'all' ? '全部' : state.filters.year],
+          ['國家', state.filters.area === 'all' ? '全部' : state.filters.area],
+          ['類型', state.filters.genre === 'all' ? '全部' : state.filters.genre],
+          ['排序', sortLabel(state.filters.sort)],
+        ];
+        return `<div class="filter-summary">${chips.map(([k, v]) => `<span class="status-pill">${escapeHtml(k)} ${escapeHtml(v)}</span>`).join('')}</div>`;
       }
 
-      function renderPosters() {
-        const summary = state.summary || {};
-        const adult = state.adult || {};
-        const posters = filteredPosters();
+      function renderVodScreen() {
+        const rows = sortedItems(sourceItems()).slice(0, state.tab === 'home' ? 36 : 120);
+        const hero = sortedItems(sourceItems('all')).find((item) => item.poster) || state.catalog.items[0];
+        const title = tabs.find(([id]) => id === state.tab)?.[1] || '主頁';
         screen.innerHTML = `
-          ${renderToolbar('搜尋影片、分類、來源')}
-          <section class="hero-strip">
-            <article class="metric"><strong>${Number(summary.vod?.count || state.vod.length || 0)}</strong><span>點播來源</span></article>
-            <article class="metric"><strong>${Number(summary.live?.playableCount || state.live.filter((x) => x.playable).length || 0)}</strong><span>可播直播</span></article>
-            <article class="metric"><strong>${Number(adult.usable || (adult.records || []).length || 0)}</strong><span>18+ 紀錄</span></article>
-            <article class="metric"><strong>${Number(state.live.length || 0)}</strong><span>直播總數</span></article>
-          </section>
+          ${renderToolbar()}
+          ${renderFilterSummary()}
+          ${state.tab === 'home' && hero ? renderHero(hero) : ''}
+          ${renderSourceRail()}
           <section class="section-head">
-            <div>
-              <h1>${escapeHtml(tabs.find(([id]) => id === state.tab)?.[1] || '熱門電影')}</h1>
-              <span>OKTV 海報牆介面</span>
-            </div>
-            <span class="status-pill ok">${icon('check')} 已載入</span>
+            <div><h1>${escapeHtml(title)}</h1><span>${rows.length} 部內容，${state.catalog.totals.playableItems || 0} 部有播放項</span></div>
+            <span class="status-pill ok">${icon('check')} OKTV</span>
           </section>
           <section class="poster-grid">
-            ${posters.map(renderPoster).join('') || emptyState('沒有符合搜尋的項目')}
+            ${rows.map(renderPoster).join('') || emptyState('目前沒有符合篩選的影片')}
           </section>
         `;
         bindToolbar();
-        document.querySelectorAll('[data-demo-play]').forEach((button) => {
-          button.addEventListener('click', () => {
-            const title = button.dataset.demoPlay || '授權示範';
-            openPlayer(title, '授權示範 HLS', demoStream);
-          });
+        bindPosters();
+        bindSourceRail();
+      }
+
+      function renderHero(item) {
+        return `
+          <section class="hero">
+            <div class="hero-copy">
+              <span class="hero-kicker">${escapeHtml(item.sourceName || 'OKTV')}</span>
+              <h1>${escapeHtml(item.title)}</h1>
+              <div class="hero-meta">${escapeHtml([item.year, item.area, item.categoryName].filter(Boolean).join(' / '))}</div>
+              <div style="margin-top:14px">
+                <button class="play-btn" type="button" data-open-detail="${escapeHtml(item.id)}">${icon('play')}播放</button>
+              </div>
+            </div>
+            <div class="hero-poster">${renderPosterArt(item)}</div>
+          </section>
+        `;
+      }
+
+      function renderSourceRail() {
+        const indexed = state.catalog.sources.filter((source) => source.indexed && !source.adult).slice(0, 18);
+        return `
+          <div class="source-rail">
+            <button class="source-pill ${state.selectedSource === 'all' ? 'is-active' : ''}" type="button" data-source-rail="all">全部來源</button>
+            ${indexed
+              .map(
+                (source) =>
+                  `<button class="source-pill ${state.selectedSource === source.id ? 'is-active' : ''}" type="button" data-source-rail="${escapeHtml(source.id)}">${escapeHtml(source.name)} ${source.itemCount}</button>`,
+              )
+              .join('')}
+          </div>
+        `;
+      }
+
+      function bindSourceRail() {
+        document.querySelectorAll('[data-source-rail]').forEach((button) => {
+          button.addEventListener('click', () => selectSource(button.dataset.sourceRail || 'all'));
         });
       }
 
-      function renderPoster(item, index) {
-        const [title, badge, type, rating, colors] = item;
-        return `
-          <button class="poster-card" type="button" data-demo-play="${escapeHtml(title)}">
-            <div class="poster-art" style="--poster-bg: linear-gradient(135deg, ${colors});">
-              <span class="score">${escapeHtml(badge)}</span>
-              <strong>${escapeHtml(initials(title))}</strong>
-              <span class="badge">${escapeHtml(title)}</span>
-            </div>
-            <strong class="poster-title">${escapeHtml(title)}</strong>
-            <div class="poster-meta"><span>${escapeHtml(type)}</span><span>評分 ${escapeHtml(rating)}</span></div>
-          </button>
+      function renderRank() {
+        const rows = sortedItems(sourceItems('all')).slice(0, 80);
+        screen.innerHTML = `
+          ${renderToolbar('搜尋榜單內容')}
+          ${renderFilterSummary()}
+          <section class="section-head">
+            <div><h1>榜單</h1><span>依熱門、發布時間、評分排序</span></div>
+          </section>
+          <section class="rank-list">
+            ${rows.map(renderRankRow).join('') || emptyState('目前沒有榜單內容')}
+          </section>
         `;
+        bindToolbar();
+        document.querySelectorAll('[data-open-detail]').forEach((button) => {
+          button.addEventListener('click', () => openDetail(button.dataset.openDetail));
+        });
       }
 
       function renderLive() {
-        const kinds = ['all', 'hls', 'stream', 'external', 'network', 'unknown'];
-        const query = state.query.toLowerCase();
-        const rows = state.live.filter((item) => {
-          const text = `${item.name} ${item.group} ${item.kind}`.toLowerCase();
-          return (state.liveKind === 'all' || item.kind === state.liveKind) && (!query || text.includes(query));
-        });
+        const query = state.query.trim().toLowerCase();
+        const rows = state.live.filter((item) => !query || `${item.name} ${item.group} ${item.kind}`.toLowerCase().includes(query));
         screen.innerHTML = `
-          ${renderToolbar('搜尋直播頻道')}
-          <div class="chip-row">
-            ${kinds.map((kind) => `<button class="chip ${state.liveKind === kind ? 'is-active' : ''}" type="button" data-kind="${kind}">${kindLabel(kind)}</button>`).join('')}
+          <div class="toolbar">
+            <input class="search" id="searchBox" value="${escapeHtml(state.query)}" placeholder="搜尋直播頻道" />
+            <button class="icon-btn" type="button" data-open-source aria-label="點播訊號源">${icon('signal')}</button>
+            <button class="icon-btn" type="button" data-open-filter aria-label="篩選器">${icon('filter')}</button>
           </div>
           <section class="section-head">
-            <div>
-              <h1>直播</h1>
-              <span>${rows.length} 條符合條件，${state.live.filter((item) => item.playable).length} 條可播</span>
-            </div>
+            <div><h1>直播</h1><span>${rows.length} 條頻道，${state.live.filter((item) => item.playable).length} 條可播放</span></div>
           </section>
-          <section class="row-list">
-            ${rows.map(renderLiveRow).join('') || emptyState('沒有符合搜尋的直播')}
+          <section class="live-list">
+            ${rows.map(renderLiveRow).join('') || emptyState('目前沒有符合搜尋的直播')}
           </section>
         `;
         bindToolbar();
-        document.querySelectorAll('[data-kind]').forEach((button) => {
-          button.addEventListener('click', () => {
-            state.liveKind = button.dataset.kind || 'all';
-            renderLive();
-          });
-        });
         document.querySelectorAll('[data-live-play]').forEach((button) => {
           button.addEventListener('click', () => {
             const item = state.live.find((entry) => entry.id === button.dataset.livePlay);
             if (!item) return;
-            if (item.kind === 'external') {
-              window.open(item.url, '_blank', 'noopener,noreferrer');
-              return;
-            }
-            if (item.playable) openPlayer(item.name, `${item.group} · ${kindLabel(item.kind)}`, item.url);
+            if (item.kind === 'external') return window.open(item.url, '_blank', 'noopener,noreferrer');
+            if (item.playable) openPlayer(item.name, `${item.group} / ${kindLabel(item.kind)}`, item.url);
           });
         });
       }
 
-      function renderLiveRow(item) {
-        const canPlay = item.playable || item.kind === 'external';
-        return `
-          <article class="list-row">
-            <div class="avatar">${escapeHtml(initials(item.name))}</div>
-            <div class="list-main">
-              <strong>${escapeHtml(item.name)}</strong>
-              <span>${escapeHtml(item.group)} · ${kindLabel(item.kind)}</span>
-            </div>
-            <button class="play-btn" type="button" data-live-play="${escapeHtml(item.id)}" ${canPlay ? '' : 'disabled'}>
-              ${icon(item.kind === 'external' ? 'filter' : 'play')}${item.kind === 'external' ? '外部' : '播放'}
-            </button>
-          </article>
-        `;
-      }
-
       function renderSources() {
-        const adultRecords = state.adult.records || state.adult.sites || [];
-        const query = state.query.toLowerCase();
-        const sourceRows = [...state.vod.map((item) => ({ ...item, sourceType: '點播' })), ...adultRecords.map((item) => ({ ...item, sourceType: '18+' }))].filter((item) =>
-          `${item.name} ${item.key} ${item.endpointHost || item.api || ''} ${item.sourceType}`.toLowerCase().includes(query),
-        );
+        const rows = state.catalog.sources;
         screen.innerHTML = `
-          ${renderToolbar('搜尋來源名稱、API、類別')}
-          <section class="status-grid">
-            <article class="status-card"><strong>點播來源</strong><span>${state.vod.length} 筆，依 OKTV/FongMi CMS 格式保存。</span></article>
-            <article class="status-card"><strong>18+ 保存格式</strong><span>${adultRecords.length} 筆，key/name/type/api/quickSearch/searchable/filterable。</span></article>
-            <article class="status-card"><strong>點播檢測</strong><span>${Number(state.check?.vod?.ok || 0)} / ${Number(state.check?.vod?.total || 0)} 通過 API 技術檢查。</span></article>
-            <article class="status-card"><strong>直播檢測</strong><span>${Number(state.check?.live?.ok || 0)} / ${Number(state.check?.live?.total || 0)} 通過 HLS 技術檢查。</span></article>
+          ${renderToolbar('搜尋點播源')}
+          <section class="section-head">
+            <div><h1>點播源</h1><span>${state.catalog.totals.indexedSources || 0} 個來源已建立手機索引</span></div>
           </section>
-          <p class="notice">點播來源在此頁以來源檢測與格式保存為主；未確認授權的第三方正片不設為預設播放。直播可播放項會直接開啟播放器。</p>
-          <section class="row-list">
-            ${sourceRows.map(renderSourceRow).join('') || emptyState('沒有符合搜尋的來源')}
+          <section class="source-list">
+            ${rows.map(renderSourceRow).join('') || emptyState('沒有點播源資料')}
           </section>
         `;
         bindToolbar();
+        document.querySelectorAll('[data-select-source]').forEach((button) => {
+          button.addEventListener('click', () => selectSource(button.dataset.selectSource || 'all'));
+        });
       }
 
-      function renderSourceRow(item) {
-        const host = item.endpointHost || hostOf(item.api) || item.origin || '';
+      function renderPoster(item) {
         return `
-          <article class="list-row">
-            <div class="avatar">${item.sourceType === '18+' ? 'AV' : 'CM'}</div>
-            <div class="list-main">
-              <strong>${escapeHtml(item.name)}</strong>
-              <span>${escapeHtml(item.sourceType)} · ${escapeHtml(host)}</span>
+          <button class="poster-card" type="button" data-open-detail="${escapeHtml(item.id)}">
+            ${renderPosterArt(item)}
+            <strong class="poster-title">${escapeHtml(item.title)}</strong>
+            <div class="poster-sub"><span>${escapeHtml(item.year || item.categoryName || item.kind)}</span><span>${escapeHtml(item.area || item.sourceName)}</span></div>
+          </button>
+        `;
+      }
+
+      function renderPosterArt(item) {
+        const poster = imageSrc(item.poster);
+        return `
+          <div class="poster-art">
+            ${poster ? `<img src="${escapeHtml(poster)}" alt="${escapeHtml(item.title)}" loading="lazy" referrerpolicy="no-referrer" onerror="this.classList.add('is-broken')" />` : ''}
+            <div class="poster-fallback">${escapeHtml(initials(item.title))}</div>
+            <span class="score">${escapeHtml(item.score ? `評分 ${item.score}` : item.remarks || item.year || 'OKTV')}</span>
+            <span class="badge">${escapeHtml(item.remarks || item.categoryName || item.kind)}</span>
+          </div>
+        `;
+      }
+
+      function renderRankRow(item, index) {
+        return `
+          <article class="row">
+            <div class="avatar">${index + 1}</div>
+            <div class="row-main">
+              <strong>${escapeHtml(item.title)}</strong>
+              <span>${escapeHtml([item.sourceName, item.year, item.area, item.categoryName].filter(Boolean).join(' / '))}</span>
             </div>
-            <span class="status-pill warn">${icon('alert')} 審核</span>
+            <button class="play-btn" type="button" data-open-detail="${escapeHtml(item.id)}">${icon('play')}播放</button>
           </article>
         `;
+      }
+
+      function renderLiveRow(item) {
+        const playable = item.playable || item.kind === 'external';
+        return `
+          <article class="row">
+            <div class="avatar">${escapeHtml(initials(item.name))}</div>
+            <div class="row-main">
+              <strong>${escapeHtml(item.name)}</strong>
+              <span>${escapeHtml(item.group)} / ${kindLabel(item.kind)}</span>
+            </div>
+            <button class="play-btn" type="button" data-live-play="${escapeHtml(item.id)}" ${playable ? '' : 'disabled'}>${icon(item.kind === 'external' ? 'signal' : 'play')}${item.kind === 'external' ? '外部' : '播放'}</button>
+          </article>
+        `;
+      }
+
+      function renderSourceRow(source) {
+        const active = state.selectedSource === source.id;
+        const canSelect = source.indexed && !source.adult;
+        return `
+          <article class="source-row">
+            <div class="avatar">${source.type === 3 ? 'SP' : source.adult ? 'AV' : 'VOD'}</div>
+            <div class="row-main">
+              <strong>${escapeHtml(source.name)}</strong>
+              <span>${escapeHtml(source.origin)} / ${escapeHtml(source.host || source.key)} / ${source.itemCount || 0} 部</span>
+            </div>
+            ${
+              canSelect
+                ? `<button class="play-btn" type="button" data-select-source="${escapeHtml(source.id)}">${icon(active ? 'check' : 'signal')}${active ? '使用中' : '切換'}</button>`
+                : `<span class="status-pill warn">${source.adult ? '18+' : source.type === 3 ? 'Spider' : '未索引'}</span>`
+            }
+          </article>
+        `;
+      }
+
+      function bindPosters() {
+        document.querySelectorAll('[data-open-detail]').forEach((button) => {
+          button.addEventListener('click', () => openDetail(button.dataset.openDetail));
+        });
+      }
+
+      function openDetail(id) {
+        const item = state.catalog.items.find((entry) => entry.id === id);
+        if (!item) return;
+        state.activeItem = item;
+        detailTitle.textContent = item.title;
+        detailMeta.textContent = [item.sourceName, item.year, item.area, item.categoryName].filter(Boolean).join(' / ');
+        detailBody.innerHTML = `
+          <div class="detail-grid">
+            ${renderPosterArt(item)}
+            <div class="detail-copy">
+              <h2>${escapeHtml(item.title)}</h2>
+              <div class="item-meta">${escapeHtml([item.remarks, item.score ? `評分 ${item.score}` : '', item.updatedAt].filter(Boolean).join(' / '))}</div>
+              <p>${escapeHtml(item.content || item.actor || item.director || '此內容已建立 OKTV 手機索引。')}</p>
+            </div>
+          </div>
+          <section class="section-head"><h2>播放</h2><span>${item.episodes.length} 集</span></section>
+          <div class="episode-grid">
+            ${
+              item.episodes.length
+                ? item.episodes
+                    .map((episode, index) => `<button type="button" data-episode="${index}">${escapeHtml(episode.name || `第 ${index + 1} 集`)}</button>`)
+                    .join('')
+                : '<span>目前沒有可播放集數</span>'
+            }
+          </div>
+        `;
+        detailBody.querySelectorAll('[data-episode]').forEach((button) => {
+          button.addEventListener('click', () => {
+            const episode = item.episodes[Number(button.dataset.episode || 0)];
+            if (episode) openPlayer(item.title, episode.name, episode.url);
+          });
+        });
+        openSheet(detailSheet);
+      }
+
+      function openPlayer(title, meta, url) {
+        closeDetail(false);
+        hls?.destroy?.();
+        hls = null;
+        player.pause();
+        player.removeAttribute('src');
+        player.load();
+        playerTitle.textContent = title;
+        playerMeta.textContent = meta;
+        state.playerUrl = url;
+        openSheet(playerSheet);
+
+        if (/\.m3u8(?:$|\?)/i.test(url) && window.Hls?.isSupported?.()) {
+          hls = new window.Hls({ lowLatencyMode: true, enableWorker: true });
+          hls.loadSource(url);
+          hls.attachMedia(player);
+        } else {
+          player.src = url;
+        }
+        player.play().catch(() => undefined);
+      }
+
+      function closePlayer() {
+        hls?.destroy?.();
+        hls = null;
+        player.pause();
+        player.removeAttribute('src');
+        player.load();
+        state.playerUrl = '';
+        closeSheet(playerSheet);
+      }
+
+      function openSourceSheet() {
+        sourceSheetBody.innerHTML = `
+          <section class="source-list">
+            <article class="source-row">
+              <div class="avatar">ALL</div>
+              <div class="row-main"><strong>全部來源</strong><span>${state.catalog.items.length} 部手機索引內容</span></div>
+              <button class="play-btn" type="button" data-sheet-source="all">${icon(state.selectedSource === 'all' ? 'check' : 'signal')}${state.selectedSource === 'all' ? '使用中' : '切換'}</button>
+            </article>
+            ${state.catalog.sources.map((source) => renderSheetSourceRow(source)).join('')}
+          </section>
+        `;
+        sourceSheetBody.querySelectorAll('[data-sheet-source]').forEach((button) => {
+          button.addEventListener('click', () => {
+            selectSource(button.dataset.sheetSource || 'all');
+            closeSheet(sourceSheet);
+          });
+        });
+        openSheet(sourceSheet);
+      }
+
+      function renderSheetSourceRow(source) {
+        const active = state.selectedSource === source.id;
+        const canSelect = source.indexed && !source.adult;
+        return `
+          <article class="source-row">
+            <div class="avatar">${source.type === 3 ? 'SP' : source.adult ? 'AV' : 'VOD'}</div>
+            <div class="row-main">
+              <strong>${escapeHtml(source.name)}</strong>
+              <span>${escapeHtml(source.origin)} / ${source.itemCount || 0} 部 / ${source.playableCount || 0} 可播放</span>
+            </div>
+            ${
+              canSelect
+                ? `<button class="play-btn" type="button" data-sheet-source="${escapeHtml(source.id)}">${icon(active ? 'check' : 'signal')}${active ? '使用中' : '切換'}</button>`
+                : `<span class="status-pill warn">${source.adult ? '18+' : source.type === 3 ? 'Spider' : '未索引'}</span>`
+            }
+          </article>
+        `;
+      }
+
+      function openFilterSheet() {
+        const filter = (label, key, values) => `
+          <section class="section-head"><h2>${label}</h2></section>
+          <div class="chip-row">
+            ${values
+              .map(
+                ([value, text]) =>
+                  `<button class="chip ${state.filters[key] === value ? 'is-active' : ''}" type="button" data-filter-key="${key}" data-filter-value="${escapeHtml(value)}">${escapeHtml(text)}</button>`,
+              )
+              .join('')}
+          </div>
+        `;
+        const years = [['all', '全部年份'], ...state.catalog.filters.years.map((year) => [year, year])];
+        const areas = [['all', '全部國家'], ...state.catalog.filters.areas.map((area) => [area, area])];
+        const genres = [['all', '全部類型'], ...state.catalog.filters.genres.map((genre) => [genre, genre])];
+        const sorts = [
+          ['hot', '熱門'],
+          ['latest', '發布時間'],
+          ['score', '評分'],
+          ['name', '名稱'],
+        ];
+        filterSheetBody.innerHTML = `
+          ${filter('年份', 'year', years)}
+          ${filter('國家', 'area', areas)}
+          ${filter('類型', 'genre', genres)}
+          ${filter('排序', 'sort', sorts)}
+          <button class="play-btn" type="button" data-reset-filter style="width:100%;margin-top:10px">重設篩選</button>
+        `;
+        filterSheetBody.querySelectorAll('[data-filter-key]').forEach((button) => {
+          button.addEventListener('click', () => {
+            state.filters[button.dataset.filterKey] = button.dataset.filterValue || 'all';
+            openFilterSheet();
+            render();
+          });
+        });
+        filterSheetBody.querySelector('[data-reset-filter]')?.addEventListener('click', () => {
+          state.filters = { year: 'all', area: 'all', genre: 'all', sort: 'hot' };
+          closeSheet(filterSheet);
+          render();
+        });
+        openSheet(filterSheet);
+      }
+
+      function selectSource(sourceId) {
+        state.selectedSource = sourceId;
+        localStorage.setItem('oktv:iphone:selectedSource', sourceId);
+        state.tab = state.tab === 'sources' ? 'movie' : state.tab;
+        render();
+      }
+
+      function sortLabel(value) {
+        return { hot: '熱門', latest: '發布時間', score: '評分', name: '名稱' }[value] || value;
+      }
+
+      function kindLabel(kind) {
+        return { hls: 'M3U8', stream: 'HTTP', external: '外部', network: '內網', unknown: '未知' }[kind] || kind;
       }
 
       function emptyState(text) {
         return `<p class="notice">${escapeHtml(text)}</p>`;
       }
 
-      function kindLabel(kind) {
-        return {
-          all: '全部',
-          hls: 'M3U8',
-          stream: 'HTTP',
-          external: '外部',
-          network: '內網',
-          unknown: '未知',
-        }[kind] || String(kind).toUpperCase();
+      function openSheet(sheet) {
+        sheet.classList.add('is-open');
+        sheet.setAttribute('aria-hidden', 'false');
       }
 
-      function hostOf(value) {
-        try {
-          return new URL(String(value)).host;
-        } catch {
-          return '';
-        }
+      function closeSheet(sheet) {
+        sheet.classList.remove('is-open');
+        sheet.setAttribute('aria-hidden', 'true');
       }
 
-      function openPlayer(title, meta, url) {
-        state.playerUrl = url;
-        playerTitle.textContent = title;
-        playerMeta.textContent = meta;
-        player.src = url;
-        playerSheet.classList.add('is-open');
-        playerSheet.setAttribute('aria-hidden', 'false');
-        player.play().catch(() => undefined);
+      function closeDetail(close = true) {
+        if (close) closeSheet(detailSheet);
       }
 
-      function closePlayer() {
-        player.pause();
-        player.removeAttribute('src');
-        player.load();
-        state.playerUrl = '';
-        playerSheet.classList.remove('is-open');
-        playerSheet.setAttribute('aria-hidden', 'true');
-      }
-
+      document.querySelectorAll('[data-close-sheet]').forEach((item) => item.addEventListener('click', () => closeSheet(sourceSheet)));
+      document.querySelectorAll('[data-close-filter]').forEach((item) => item.addEventListener('click', () => closeSheet(filterSheet)));
+      document.querySelectorAll('[data-close-detail]').forEach((item) => item.addEventListener('click', () => closeDetail(true)));
       document.querySelectorAll('[data-close-player]').forEach((item) => item.addEventListener('click', closePlayer));
-      document.querySelector('[data-close-player].icon-btn').innerHTML = icon('close');
+      document.querySelector('#sourceSheet [data-close-sheet].icon-btn').innerHTML = icon('close');
+      document.querySelector('#filterSheet [data-close-filter].icon-btn').innerHTML = icon('close');
+      document.querySelector('#detailSheet [data-close-detail].icon-btn').innerHTML = icon('close');
+      document.querySelector('#playerSheet [data-close-player].icon-btn').innerHTML = icon('close');
 
-      [state.summary, state.live, state.vod, state.adult, state.clone, state.check] = await Promise.all([
-        getJson('../data/source-summary.json', {}),
+      [state.catalog, state.live] = await Promise.all([
+        getJson('../data/iphone-vod-catalog.json', state.catalog),
         getJson('../data/live-channels.json', []),
-        getJson('../data/vod-sources.json', []),
-        getJson('../data/adult18-sources.json', { records: [], resources: [], usable: 0, total: 0 }),
-        getJson('../data/oktv-source-clone.json', {}),
-        getJson('../data/oktv-playback-check-latest.json', null),
       ]);
-
+      if (state.selectedSource !== 'all' && !state.catalog.sources.some((source) => source.id === state.selectedSource && source.indexed)) {
+        state.selectedSource = 'all';
+      }
       render();
     </script>
   </body>
