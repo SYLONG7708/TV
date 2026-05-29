@@ -25,6 +25,9 @@
 | LunaTV full 全量候選源 | `sources/vod-lunatv-full-oktv.json` |
 | LunaTV full 全量檢測報告 | `sources/vod-lunatv-full-report.json` |
 | LunaTV full 全量分析表 | `sources/vod-lunatv-full-analysis.csv` |
+| LunaTV 成人 18+ 分類排序源 | `sources/vod-lunatv-adult18-sorted-oktv.json` |
+| LunaTV 成人 18+ 分類排序報告 | `sources/vod-lunatv-adult18-sorted-report.json` |
+| LunaTV 成人 18+ 分類排序表 | `sources/vod-lunatv-adult18-sorted-analysis.csv` |
 | 修改腳本 | `tools/update-oktv-sources.ps1` |
 | 直播穩定源生成腳本 | `tools/build-stable-live.ps1` |
 | YouTube 直播自動解析腳本 | `tools/update-youtube-live.ps1` |
@@ -73,12 +76,16 @@ LunaTV `jin18` 與 `full` 來源會從 `https://github.com/hafrey1/LunaTV-config
 - full 全量候選源：`https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-full-oktv.json`
 - full 全量檢測報告：`https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-full-report.json`
 - full 全量分析表：`https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-full-analysis.csv`
+- 成人 18+ 分類排序源：`https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-adult18-sorted-oktv.json`
+- 成人 18+ 分類排序報告：`https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-adult18-sorted-report.json`
+- 成人 18+ 分類排序表：`https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-adult18-sorted-analysis.csv`
 
 手動更新：
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-lunatv-vod.ps1 -SourceName jin18 -TimeoutSec 12 -MaxDetailProbe 3
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-lunatv-vod.ps1 -SourceName full -TimeoutSec 12 -MaxDetailProbe 2 -RedactSampleNames
+node .\tools\build-lunatv-adult18-sorted.mjs --repoRoot .
 ```
 
 關閉 Codex 後仍會自動更新：本機 Windows 工作排程 `OKTV LunaTV VOD Auto Update` 會在開機、登入、以及每 2 小時執行 `tools/update-lunatv-vod-local.ps1`，同時刷新 `jin18` 與 `full`，更新後自動 commit / push 到 GitHub。GitHub Actions 也會每 6 小時自動複測。

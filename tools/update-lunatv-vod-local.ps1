@@ -64,6 +64,7 @@ try {
     }
 
     $updateScript = Join-Path $repoRootText "tools\update-lunatv-vod.ps1"
+    $adultSortScript = Join-Path $repoRootText "tools\build-lunatv-adult18-sorted.mjs"
     $sourceNames = @($SourceName -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ })
     foreach ($name in $sourceNames) {
         Write-Log "Refreshing LunaTV VOD sources from GitHub raw $name."
@@ -80,10 +81,16 @@ try {
         }
     }
 
+    if (Test-Path -LiteralPath $adultSortScript) {
+        Write-Log "Building sorted adult 18+ resource area."
+        node $adultSortScript --repoRoot $repoRootText
+    }
+
     Invoke-Git add `
         "tools/update-lunatv-vod.ps1" `
         "tools/update-lunatv-vod-local.ps1" `
         "tools/install-lunatv-vod-autoupdate-task.ps1" `
+        "tools/build-lunatv-adult18-sorted.mjs" `
         "sources/current-sources.json" `
         "sources/vod-lunatv-jin18-oktv.json" `
         "sources/vod-lunatv-jin18-report.json" `
@@ -91,6 +98,9 @@ try {
         "sources/vod-lunatv-full-oktv.json" `
         "sources/vod-lunatv-full-report.json" `
         "sources/vod-lunatv-full-analysis.csv" `
+        "sources/vod-lunatv-adult18-sorted-oktv.json" `
+        "sources/vod-lunatv-adult18-sorted-report.json" `
+        "sources/vod-lunatv-adult18-sorted-analysis.csv" `
         ".github/workflows/update-lunatv-vod.yml"
 
     if (Invoke-Git diff --cached --quiet) {
