@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-05-29T18:30:45.433Z",
+  "input": {
+    "vod": "C:\\Users\\Administrator\\TV\\sources\\vod-lunatv-jin18-oktv.json",
+    "live": "C:\\Users\\Administrator\\TV\\sources\\live-stable.txt"
+  },
+  "vod": {
+    "count": 24,
+    "typeCounts": {
+      "CMS JSON/API": 24
+    },
+    "reviewRequiredCount": 24
+  },
+  "live": {
+    "count": 91,
+    "playableCount": 78,
+    "externalCount": 0,
+    "networkOnlyCount": 0,
+    "kinds": {
+      "unknown": 13,
+      "hls": 78
+    },
+    "groups": [
+      "未分類"
+    ]
+  },
+  "notes": [
+    "已解析 TV repo 產生的清理後 VOD JSON 與穩定 M3U 清單，輸出為可供 App 呈現的摘要資料。",
+    "VOD 來源預設 disabled，不自動串接未授權解析、爬蟲或第三方接口。",
+    "YouTube 類直播以 external 標記，App 以外部開啟處理，不偽裝成直連串流。"
+  ],
+  "adult18": {
+    "count": 34,
+    "usableCount": 24,
+    "duplicateCount": 8,
+    "failedCount": 2
+  }
+}
