@@ -6,10 +6,15 @@ param(
     [string]$ReportOutput = "",
     [string]$YtDlpPath = "",
     [string]$CookiesFile = "",
+    [string]$CookiesFromBrowser = "",
     [int]$MaxChannels = 0,
-    [int]$MaxHeight = 720,
+    [int]$MaxHeight = 480,
     [int]$SocketTimeoutSec = 15,
     [int]$ProcessTimeoutSec = 45,
+    [int]$StreamValidationTimeoutSec = 8,
+    [int]$SegmentProbeBytes = 262144,
+    [int]$MinSegmentBytes = 65536,
+    [int]$MinSegmentKbps = 600,
     [int]$RetryCount = 2,
     [switch]$DownloadYtDlp,
     [switch]$SkipResolve,
@@ -46,6 +51,16 @@ function Find-CommandPath([string]$Name) {
     return ""
 }
 
+function ConvertTo-ProcessArgument([string]$Argument) {
+    if ($null -eq $Argument) { return '""' }
+    if ($Argument -notmatch '[\s"]') { return $Argument }
+    return '"' + ($Argument -replace '"', '\"') + '"'
+}
+
+function Join-ProcessArguments($Arguments) {
+    return (($Arguments | ForEach-Object { ConvertTo-ProcessArgument ([string]$_) }) -join " ")
+}
+
 function Resolve-YtDlp {
     if (-not [string]::IsNullOrWhiteSpace($YtDlpPath) -and (Test-Path -LiteralPath $YtDlpPath)) {
         return (Get-FullPath $YtDlpPath)
@@ -71,7 +86,7 @@ function Resolve-YtDlp {
 
 function Resolve-StreamUrl([string]$Url, [string]$YtDlp) {
     if ($SkipResolve) { return $Url }
-    $format = "best[protocol^=m3u8][height<=$MaxHeight]/best[height<=$MaxHeight]/best[protocol^=m3u8][height<=1080]/best[height<=1080]/best"
+    $format = "best[protocol^=m3u8][height<=$MaxHeight]/best[protocol^=m3u8][height<=1080]/best[protocol^=m3u8]"
     $args = @(
         "--no-warnings",
         "--no-playlist",
@@ -84,9 +99,12 @@ function Resolve-StreamUrl([string]$Url, [string]$YtDlp) {
     if (-not [string]::IsNullOrWhiteSpace($CookiesFile) -and (Test-Path -LiteralPath $CookiesFile)) {
         $args = @("--cookies", (Get-FullPath $CookiesFile)) + $args
     }
+    if (-not [string]::IsNullOrWhiteSpace($CookiesFromBrowser)) {
+        $args = @("--cookies-from-browser", $CookiesFromBrowser) + $args
+    }
     $psi = New-Object System.Diagnostics.ProcessStartInfo
     $psi.FileName = $YtDlp
-    $psi.Arguments = ($args -join " ")
+    $psi.Arguments = Join-ProcessArguments $args
     $psi.RedirectStandardOutput = $true
     $psi.RedirectStandardError = $true
     $psi.UseShellExecute = $false
@@ -108,7 +126,7 @@ function Resolve-StreamUrl([string]$Url, [string]$YtDlp) {
     if (-not $urls.Count) { throw "yt-dlp returned no playable URL." }
     $hls = @($urls | Where-Object { $_ -match '\.m3u8|manifest/hls|mime=application%2Fx-mpegURL' })
     if ($hls.Count) { return [string]$hls[0] }
-    return [string]$urls[0]
+    throw "yt-dlp returned URL, but not an HLS stream."
 }
 
 function Resolve-StreamUrlWithRetry([string]$Url, [string]$YtDlp) {
@@ -136,6 +154,126 @@ function Add-LinesForGroup($Lines, [string]$GroupName, $Rows) {
     $Lines.Add("")
 }
 
+function Resolve-ChildUrl([string]$BaseUrl, [string]$Line) {
+    if ($Line -match '^https?://') { return $Line }
+    return ([Uri]::new([Uri]$BaseUrl, $Line)).AbsoluteUri
+}
+
+function Read-UrlText([string]$Url) {
+    $request = [Net.HttpWebRequest]::Create($Url)
+    $request.Method = "GET"
+    $request.UserAgent = "Mozilla/5.0 OKTV-HLS-Validator"
+    $request.Accept = "*/*"
+    $request.Timeout = [Math]::Max(3, $StreamValidationTimeoutSec) * 1000
+    $request.ReadWriteTimeout = [Math]::Max(3, $StreamValidationTimeoutSec) * 1000
+    $request.AllowAutoRedirect = $true
+    $response = $request.GetResponse()
+    try {
+        $stream = $response.GetResponseStream()
+        $memory = New-Object IO.MemoryStream
+        $buffer = New-Object byte[] 65536
+        do {
+            $read = $stream.Read($buffer, 0, $buffer.Length)
+            if ($read -gt 0) { $memory.Write($buffer, 0, $read) }
+        } while ($read -gt 0 -and $memory.Length -lt 8388608)
+        return [Text.Encoding]::UTF8.GetString($memory.ToArray())
+    } finally {
+        if ($memory) { $memory.Dispose() }
+        if ($stream) { $stream.Dispose() }
+        $response.Dispose()
+    }
+}
+
+function Get-HlsProbeSegmentUrl([string]$Url, [int]$Depth = 0) {
+    if ($Depth -gt 2) { throw "HLS playlist recursion too deep." }
+    $content = Read-UrlText $Url
+    if ($content -notmatch "#EXTM3U") { throw "HLS playlist marker not found." }
+
+    $lines = @($content -split "`r?`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        if ($lines[$i] -match '^#EXTINF') {
+            for ($j = $i + 1; $j -lt $lines.Count; $j++) {
+                if ($lines[$j] -and $lines[$j] -notmatch '^#') {
+                    return (Resolve-ChildUrl $Url $lines[$j])
+                }
+            }
+        }
+    }
+
+    $variants = New-Object System.Collections.Generic.List[object]
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        if ($lines[$i] -match '^#EXT-X-STREAM-INF') {
+            $bandwidth = 999999999
+            if ($lines[$i] -match 'BANDWIDTH=([0-9]+)') { $bandwidth = [int]$Matches[1] }
+            for ($j = $i + 1; $j -lt $lines.Count; $j++) {
+                if ($lines[$j] -and $lines[$j] -notmatch '^#') {
+                    $variants.Add([pscustomobject]@{ Bandwidth = $bandwidth; Url = Resolve-ChildUrl $Url $lines[$j] })
+                    break
+                }
+            }
+        }
+    }
+    if ($variants.Count) {
+        $variant = @($variants | Sort-Object Bandwidth | Select-Object -First 1)[0]
+        return (Get-HlsProbeSegmentUrl $variant.Url ($Depth + 1))
+    }
+
+    $firstUri = @($lines | Where-Object { $_ -notmatch '^#' } | Select-Object -First 1)
+    if ($firstUri.Count) { return (Resolve-ChildUrl $Url $firstUri[0]) }
+    throw "No media segment found in HLS playlist."
+}
+
+function Test-HlsPlaylist([string]$Url) {
+    $sw = [Diagnostics.Stopwatch]::StartNew()
+    try {
+        $segmentUrl = Get-HlsProbeSegmentUrl $Url
+        $request = [Net.HttpWebRequest]::Create($segmentUrl)
+        $request.Method = "GET"
+        $request.UserAgent = "Mozilla/5.0 OKTV-HLS-Validator"
+        $request.Accept = "*/*"
+        $request.Timeout = [Math]::Max(3, $StreamValidationTimeoutSec) * 1000
+        $request.ReadWriteTimeout = [Math]::Max(3, $StreamValidationTimeoutSec) * 1000
+        $request.AllowAutoRedirect = $true
+        try { $request.AddRange(0, [Math]::Max(1024, $SegmentProbeBytes) - 1) } catch {}
+        $response = $request.GetResponse()
+        try {
+            $stream = $response.GetResponseStream()
+            $buffer = New-Object byte[] 65536
+            $total = 0
+            do {
+                $read = $stream.Read($buffer, 0, $buffer.Length)
+                $total += $read
+            } while ($read -gt 0 -and $total -lt $SegmentProbeBytes)
+            $sw.Stop()
+            $kbps = if ($sw.Elapsed.TotalSeconds -gt 0) { [Math]::Round(($total * 8 / 1000) / $sw.Elapsed.TotalSeconds, 1) } else { 0 }
+            $ok = ([int]$response.StatusCode -ge 200 -and [int]$response.StatusCode -lt 400 -and $total -ge $MinSegmentBytes -and $kbps -ge $MinSegmentKbps)
+            return [pscustomobject]@{
+                Ok = $ok
+                Status = [int]$response.StatusCode
+                Ms = [int]$sw.ElapsedMilliseconds
+                Bytes = $total
+                Kbps = $kbps
+                SegmentUrl = $segmentUrl
+                Error = if ($ok) { "" } else { "Segment probe too slow or incomplete: $total bytes, $kbps kbps." }
+            }
+        } finally {
+            if ($stream) { $stream.Dispose() }
+            $response.Dispose()
+        }
+    } catch {
+        $sw.Stop()
+        return [pscustomobject]@{
+            Ok = $false
+            Status = 0
+            Ms = [int]$sw.ElapsedMilliseconds
+            Bytes = 0
+            Kbps = 0
+            SegmentUrl = ""
+            Error = $_.Exception.Message
+        }
+    }
+}
+
 $ChannelCsv = Get-FullPath $ChannelCsv
 $BaseLive = Get-FullPath $BaseLive
 $YoutubeOutput = Get-FullPath $YoutubeOutput
@@ -159,6 +297,14 @@ foreach ($channel in $channels) {
     Write-Host "[$index/$($channels.Count)] $name"
     try {
         $streamUrl = Resolve-StreamUrlWithRetry $url $ytDlp
+        $validation = if ($SkipResolve) {
+            [pscustomobject]@{ Ok = $false; Status = 0; Ms = 0; Error = "Skipped resolution." }
+        } else {
+            Test-HlsPlaylist $streamUrl
+        }
+        if (-not $validation.Ok) {
+            throw "Resolved stream failed HLS validation: $($validation.Error)"
+        }
         $resolved.Add([pscustomobject]@{
             Order = [int]$channel.Order
             Group = [string]$channel.Group
@@ -166,6 +312,10 @@ foreach ($channel in $channels) {
             PageUrl = $url
             StreamUrl = $streamUrl
             Ok = (-not $SkipResolve)
+            ValidationMs = $validation.Ms
+            ValidationStatus = $validation.Status
+            SegmentBytes = $validation.Bytes
+            SegmentKbps = $validation.Kbps
         })
     } catch {
         $failed.Add([pscustomobject]@{
@@ -234,15 +384,20 @@ $report = [pscustomobject]@{
     playlistEntries = $playlistResolved.Count
     removedFromPlaylist = if ($KeepFallbackInPlaylist) { 0 } else { @($resolved | Where-Object { -not $_.Ok }).Count }
     playlistPolicy = if ($KeepFallbackInPlaylist) { "include-fallback" } else { "playable-only" }
-    mode = if ($SkipResolve) { "no-cookies-fallback" } elseif (-not [string]::IsNullOrWhiteSpace($CookiesFile) -and (Test-Path -LiteralPath $CookiesFile)) { "cookies-hls-resolve" } else { "best-effort-hls-resolve" }
+    mode = if ($SkipResolve) { "no-cookies-fallback" } elseif (-not [string]::IsNullOrWhiteSpace($CookiesFile) -and (Test-Path -LiteralPath $CookiesFile)) { "cookies-file-hls-resolve" } elseif (-not [string]::IsNullOrWhiteSpace($CookiesFromBrowser)) { "browser-cookies-hls-resolve" } else { "best-effort-hls-resolve" }
     note = if ($SkipResolve) { "GitHub runner has no YouTube cookies, so unresolved YouTube watch URLs are removed from the playable playlist. Add YOUTUBE_COOKIES_B64 to resolve HLS URLs." } else { "" }
     skipResolve = [bool]$SkipResolve
     includeOriginalOnFailure = [bool]$IncludeOriginalOnFailure
     maxHeight = $MaxHeight
     processTimeoutSec = $ProcessTimeoutSec
+    streamValidationTimeoutSec = $StreamValidationTimeoutSec
+    segmentProbeBytes = $SegmentProbeBytes
+    minSegmentBytes = $MinSegmentBytes
+    minSegmentKbps = $MinSegmentKbps
     retryCount = $RetryCount
     ytDlp = $ytDlp
-    cookiesEnabled = (-not [string]::IsNullOrWhiteSpace($CookiesFile) -and (Test-Path -LiteralPath $CookiesFile))
+    cookiesEnabled = ((-not [string]::IsNullOrWhiteSpace($CookiesFile) -and (Test-Path -LiteralPath $CookiesFile)) -or (-not [string]::IsNullOrWhiteSpace($CookiesFromBrowser)))
+    cookiesFromBrowser = $CookiesFromBrowser
     groups = ($resolved | Group-Object Group | Sort-Object Name | ForEach-Object { [pscustomobject]@{ name = $_.Name; count = $_.Count } })
     failures = $failed
 }

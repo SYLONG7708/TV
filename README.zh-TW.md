@@ -76,7 +76,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build-stable-live.ps
 
 已把使用者提供的 98 個公開 YouTube 直播頻道整理到 `sources/youtube-live-channels.csv`，依照網路第四台常見邏輯分成新聞、購物、綜合娛樂、國際新聞、亞洲新聞、兒童動畫、文化紀實、音樂體育風景等群組，頻道名稱前方保留三位數序號，方便在直播列表中掃描。
 
-YouTube 真實播放 URL 是短效網址，不能永久固定；OKTV 直播 TXT 也不能直接播放 `https://www.youtube.com/watch?v=...` 頁面。此 repo 已加入 GitHub Actions，每 2 小時執行一次 `tools/update-youtube-live.ps1`，用 `yt-dlp` 擷取可播放 URL，優先選擇 720p HLS 以降低卡頓，只有解析成功的項目才合併到 APK 已使用的 `sources/live-stable.txt`。
+YouTube 真實播放 URL 是短效網址，不能永久固定；OKTV 直播 TXT 也不能直接播放 `https://www.youtube.com/watch?v=...` 頁面。本機已加入 Windows 排程，每次開機 / 登入後會執行 `tools/update-youtube-live-local.ps1`，之後每 2 小時用 `yt-dlp` 擷取可播放 URL，優先選擇 480p HLS 以降低卡頓，並實測影片分段下載速度；只有達到 600 kbps 以上的項目才合併到 APK 已使用的 `sources/live-stable.txt` 並推送到 GitHub。
 
 手動更新指令：
 
@@ -92,9 +92,15 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-youtube-live.
 
 若要新增或調整 YouTube 頻道，只要修改 `sources/youtube-live-channels.csv` 的 `Order`、`Group`、`Name`、`Url`，再執行上方指令即可。地區限制、影片下架、非公開、DRM 或無 cookies 無法解析時，原 YouTube 頁面 URL 只會記錄在報告檔，不會寫入主播放清單。
 
+安裝或重裝本機開機自動更新：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\install-youtube-live-autoupdate-task.ps1
+```
+
 ### 沒 cookies 的 100% 成功模式
 
-GitHub runner 沒有 YouTube cookies 時，workflow 會自動使用 `no-cookies-fallback` 模式，將 98 個原始 YouTube 直播 URL 記錄在報告檔，但不放進可播放清單。這樣 GitHub Actions 會 100% 成功更新、不會卡在 YouTube 機器人驗證；報告中的 `workflowSuccessRate` 會是 `100`，`hlsSuccessRate` 可能仍是 `0`。
+GitHub runner 沒有 YouTube cookies 時，workflow 會保持目前的 `sources/live-stable.txt` 不變，避免把本機已刷新好的可播放 HLS 清單洗掉。除非 GitHub 已設定 `YOUTUBE_COOKIES_B64`，否則主要更新來源是本機 Windows 排程。
 
 這個模式代表清單更新成功，且已避免不可播放的 watch 頁面 URL 進入主清單；不代表已取得短效 HLS。若要讓報告中的 `hlsSuccessRate` 提高，仍需設定 `YOUTUBE_COOKIES_B64`。
 

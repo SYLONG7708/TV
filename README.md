@@ -48,7 +48,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build-stable-live.ps
 
 已將提供的 YouTube 直播整理為新聞、購物、綜合娛樂、國際新聞、亞洲新聞、兒童動畫、文化紀實、音樂體育風景等群組，並以三位數序號排列。
 
-YouTube 的真實播放 URL 會過期，OKTV 直播 TXT 不能直接播放 `https://www.youtube.com/watch?v=...` 頁面。repo 已加入 GitHub Actions，每 2 小時自動執行 `tools/update-youtube-live.ps1`，使用 `yt-dlp` 重新擷取公開直播 URL，只有成功解析成 HLS 的項目才會合併到 APK 目前讀取的 `sources/live-stable.txt`。修改直播表不需要重新打包 APK，因為 APK 讀的是同一個 raw URL。
+YouTube 的真實播放 URL 會過期，OKTV 直播 TXT 不能直接播放 `https://www.youtube.com/watch?v=...` 頁面。本機已加入 Windows 排程，每次開機 / 登入後會執行 `tools/update-youtube-live-local.ps1`，之後每 2 小時使用 `yt-dlp` 重新擷取 480p HLS、測試實際影片分段速度，只有達到 600 kbps 以上的項目才會合併到 APK 目前讀取的 `sources/live-stable.txt` 並推送到 GitHub。修改直播表不需要重新打包 APK，因為 APK 讀的是同一個 raw URL。
 
 手動更新：
 
@@ -58,9 +58,15 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-youtube-live.
 
 新增或調整頻道時，修改 `sources/youtube-live-channels.csv` 的 `Order`、`Group`、`Name`、`Url` 後重新執行上方指令。地區限制、影片下架、非公開、DRM 或無 cookies 無法解析時，原 YouTube 頁面 URL 只會記錄在 `sources/live-youtube-report.json`，不會寫入主播放清單。
 
+安裝或重裝本機開機自動更新：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\install-youtube-live-autoupdate-task.ps1
+```
+
 ### No-cookies 100% workflow mode
 
-When GitHub runner has no YouTube cookies, the workflow uses `no-cookies-fallback` mode and records all 98 original YouTube live URLs in the report only. Unresolved YouTube watch URLs are removed from the playable playlist, so `sources/live-stable.txt` stays on the verified HLS base list. The report field `workflowSuccessRate` should be `100`, while `hlsSuccessRate` may remain `0`.
+When GitHub runner has no YouTube cookies, the workflow leaves `sources/live-stable.txt` unchanged to avoid wiping the locally refreshed playable HLS URLs. The Windows scheduled task is the primary updater for this repo unless `YOUTUBE_COOKIES_B64` is configured on GitHub.
 
 This means the playlist update succeeded and avoided unplayable watch-page URLs. It does not mean short-lived HLS URLs were extracted. To improve `hlsSuccessRate`, set `YOUTUBE_COOKIES_B64`.
 

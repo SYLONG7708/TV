@@ -4,9 +4,12 @@ param(
     [string]$BackupOutput = "",
     [string]$VerifiedOnlyOutput = "",
     [string]$ReportOutput = "",
-    [int]$TimeoutSec = 4,
-    [int]$MaxParallel = 48,
+    [int]$TimeoutSec = 8,
+    [int]$MaxParallel = 24,
     [int]$Retries = 2,
+    [int]$SegmentProbeBytes = 262144,
+    [int]$MinSegmentBytes = 65536,
+    [int]$MinSegmentKbps = 600,
     [string]$PrivateGroupPassword = "7708",
     [switch]$SkipNetworkTest
 )
@@ -48,33 +51,109 @@ function Remove-TrailingBlankLines([System.Collections.Generic.List[string]]$Lin
     }
 }
 
+function Resolve-ChildUrl([string]$BaseUrl, [string]$Line) {
+    if ($Line -match '^https?://') { return $Line }
+    return ([Uri]::new([Uri]$BaseUrl, $Line)).AbsoluteUri
+}
+
+function Read-UrlText([string]$Url, [int]$TimeoutSec) {
+    $request = [Net.HttpWebRequest]::Create($Url)
+    $request.Method = "GET"
+    $request.UserAgent = "Mozilla/5.0 OKTV-Stability-Checker"
+    $request.Accept = "*/*"
+    $request.Timeout = $TimeoutSec * 1000
+    $request.ReadWriteTimeout = $TimeoutSec * 1000
+    $request.AllowAutoRedirect = $true
+    $response = $request.GetResponse()
+    try {
+        $stream = $response.GetResponseStream()
+        $memory = New-Object IO.MemoryStream
+        $buffer = New-Object byte[] 65536
+        do {
+            $read = $stream.Read($buffer, 0, $buffer.Length)
+            if ($read -gt 0) { $memory.Write($buffer, 0, $read) }
+        } while ($read -gt 0 -and $memory.Length -lt 8388608)
+        return [Text.Encoding]::UTF8.GetString($memory.ToArray())
+    } finally {
+        if ($memory) { $memory.Dispose() }
+        if ($stream) { $stream.Dispose() }
+        $response.Dispose()
+    }
+}
+
+function Get-HlsProbeSegmentUrl([string]$Url, [int]$TimeoutSec, [int]$Depth = 0) {
+    if ($Depth -gt 2) { throw "HLS playlist recursion too deep." }
+    $content = Read-UrlText $Url $TimeoutSec
+    if ($content -notmatch "#EXTM3U") { throw "HLS playlist marker not found." }
+
+    $lines = @($content -split "`r?`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        if ($lines[$i] -match '^#EXTINF') {
+            for ($j = $i + 1; $j -lt $lines.Count; $j++) {
+                if ($lines[$j] -and $lines[$j] -notmatch '^#') {
+                    return (Resolve-ChildUrl $Url $lines[$j])
+                }
+            }
+        }
+    }
+
+    $variants = New-Object System.Collections.Generic.List[object]
+    for ($i = 0; $i -lt $lines.Count; $i++) {
+        if ($lines[$i] -match '^#EXT-X-STREAM-INF') {
+            $bandwidth = 999999999
+            if ($lines[$i] -match 'BANDWIDTH=([0-9]+)') { $bandwidth = [int]$Matches[1] }
+            for ($j = $i + 1; $j -lt $lines.Count; $j++) {
+                if ($lines[$j] -and $lines[$j] -notmatch '^#') {
+                    $variants.Add([pscustomobject]@{ Bandwidth = $bandwidth; Url = Resolve-ChildUrl $Url $lines[$j] })
+                    break
+                }
+            }
+        }
+    }
+    if ($variants.Count) {
+        $variant = @($variants | Sort-Object Bandwidth | Select-Object -First 1)[0]
+        return (Get-HlsProbeSegmentUrl $variant.Url $TimeoutSec ($Depth + 1))
+    }
+
+    $firstUri = @($lines | Where-Object { $_ -notmatch '^#' } | Select-Object -First 1)
+    if ($firstUri.Count) { return (Resolve-ChildUrl $Url $firstUri[0]) }
+    throw "No media segment found in HLS playlist."
+}
+
 function Test-Stream([string]$Url, [int]$TimeoutSec) {
     $sw = [Diagnostics.Stopwatch]::StartNew()
     try {
-        $request = [Net.HttpWebRequest]::Create($Url)
+        $probeUrl = if ($Url -match '\.m3u8(\?|$)|manifest/hls|mime=application%2Fx-mpegURL') { Get-HlsProbeSegmentUrl $Url $TimeoutSec } else { $Url }
+        $request = [Net.HttpWebRequest]::Create($probeUrl)
         $request.Method = "GET"
         $request.UserAgent = "Mozilla/5.0 OKTV-Stability-Checker"
         $request.Timeout = $TimeoutSec * 1000
         $request.ReadWriteTimeout = $TimeoutSec * 1000
         $request.AllowAutoRedirect = $true
-        try { $request.AddRange(0, 2047) } catch {}
+        try { $request.AddRange(0, [Math]::Max(1024, $SegmentProbeBytes) - 1) } catch {}
         $response = $request.GetResponse()
         try {
             $stream = $response.GetResponseStream()
-            $buffer = New-Object byte[] 2048
-            $read = $stream.Read($buffer, 0, $buffer.Length)
-            if ($Url -match '\.m3u8(\?|$)') {
-                $content = [Text.Encoding]::UTF8.GetString($buffer, 0, [Math]::Max(0, $read))
-                if ($content -notmatch '#EXTM3U') { throw "HLS playlist marker not found." }
-            }
+            $buffer = New-Object byte[] 65536
+            $total = 0
+            do {
+                $read = $stream.Read($buffer, 0, $buffer.Length)
+                $total += $read
+            } while ($read -gt 0 -and $total -lt $SegmentProbeBytes)
             $stream.Dispose()
         } finally {
             $response.Dispose()
         }
         $sw.Stop()
+        $kbps = if ($sw.Elapsed.TotalSeconds -gt 0) { [Math]::Round(($total * 8 / 1000) / $sw.Elapsed.TotalSeconds, 1) } else { 0 }
+        if ($total -lt $MinSegmentBytes -or $kbps -lt $MinSegmentKbps) {
+            throw "Segment probe too slow or incomplete: $total bytes, $kbps kbps."
+        }
         return [pscustomobject]@{
             Ok = $true
             Ms = [int]$sw.ElapsedMilliseconds
+            SegmentBytes = $total
+            SegmentKbps = $kbps
             Error = ""
         }
     } catch {
@@ -82,6 +161,8 @@ function Test-Stream([string]$Url, [int]$TimeoutSec) {
         return [pscustomobject]@{
             Ok = $false
             Ms = [int]$sw.ElapsedMilliseconds
+            SegmentBytes = 0
+            SegmentKbps = 0
             Error = $_.Exception.Message
         }
     }
@@ -135,6 +216,8 @@ foreach ($line in $lines) {
         StaticScore = Get-UrlScore $url
         Ok = $false
         Ms = 999999
+        SegmentBytes = 0
+        SegmentKbps = 0
         Error = ""
     })
     $order++
@@ -148,40 +231,108 @@ if (-not $SkipNetworkTest) {
     $pool.Open()
     $jobs = New-Object System.Collections.Generic.List[object]
     $scriptBlock = {
-        param($Url, $TimeoutSec, $Retries)
+        param($Url, $TimeoutSec, $Retries, $SegmentProbeBytes, $MinSegmentBytes, $MinSegmentKbps)
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+        function Resolve-ChildUrl([string]$BaseUrl, [string]$Line) {
+            if ($Line -match '^https?://') { return $Line }
+            return ([Uri]::new([Uri]$BaseUrl, $Line)).AbsoluteUri
+        }
+        function Read-UrlText([string]$Url, [int]$TimeoutSec) {
+            $request = [Net.HttpWebRequest]::Create($Url)
+            $request.Method = "GET"
+            $request.UserAgent = "Mozilla/5.0 OKTV-Stability-Checker"
+            $request.Accept = "*/*"
+            $request.Timeout = $TimeoutSec * 1000
+            $request.ReadWriteTimeout = $TimeoutSec * 1000
+            $request.AllowAutoRedirect = $true
+            $response = $request.GetResponse()
+            try {
+                $stream = $response.GetResponseStream()
+                $memory = New-Object IO.MemoryStream
+                $buffer = New-Object byte[] 65536
+                do {
+                    $read = $stream.Read($buffer, 0, $buffer.Length)
+                    if ($read -gt 0) { $memory.Write($buffer, 0, $read) }
+                } while ($read -gt 0 -and $memory.Length -lt 8388608)
+                return [Text.Encoding]::UTF8.GetString($memory.ToArray())
+            } finally {
+                if ($memory) { $memory.Dispose() }
+                if ($stream) { $stream.Dispose() }
+                $response.Dispose()
+            }
+        }
+        function Get-HlsProbeSegmentUrl([string]$Url, [int]$TimeoutSec, [int]$Depth = 0) {
+            if ($Depth -gt 2) { throw "HLS playlist recursion too deep." }
+            $content = Read-UrlText $Url $TimeoutSec
+            if ($content -notmatch "#EXTM3U") { throw "HLS playlist marker not found." }
+            $lines = @($content -split "`r?`n" | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+            for ($i = 0; $i -lt $lines.Count; $i++) {
+                if ($lines[$i] -match '^#EXTINF') {
+                    for ($j = $i + 1; $j -lt $lines.Count; $j++) {
+                        if ($lines[$j] -and $lines[$j] -notmatch '^#') {
+                            return (Resolve-ChildUrl $Url $lines[$j])
+                        }
+                    }
+                }
+            }
+            $variants = New-Object System.Collections.Generic.List[object]
+            for ($i = 0; $i -lt $lines.Count; $i++) {
+                if ($lines[$i] -match '^#EXT-X-STREAM-INF') {
+                    $bandwidth = 999999999
+                    if ($lines[$i] -match 'BANDWIDTH=([0-9]+)') { $bandwidth = [int]$Matches[1] }
+                    for ($j = $i + 1; $j -lt $lines.Count; $j++) {
+                        if ($lines[$j] -and $lines[$j] -notmatch '^#') {
+                            $variants.Add([pscustomobject]@{ Bandwidth = $bandwidth; Url = Resolve-ChildUrl $Url $lines[$j] })
+                            break
+                        }
+                    }
+                }
+            }
+            if ($variants.Count) {
+                $variant = @($variants | Sort-Object Bandwidth | Select-Object -First 1)[0]
+                return (Get-HlsProbeSegmentUrl $variant.Url $TimeoutSec ($Depth + 1))
+            }
+            $firstUri = @($lines | Where-Object { $_ -notmatch '^#' } | Select-Object -First 1)
+            if ($firstUri.Count) { return (Resolve-ChildUrl $Url $firstUri[0]) }
+            throw "No media segment found in HLS playlist."
+        }
         $attempts = [Math]::Max(1, $Retries)
         $best = $null
         $last = $null
         for ($attempt = 1; $attempt -le $attempts; $attempt++) {
             $sw = [Diagnostics.Stopwatch]::StartNew()
             try {
-                $request = [Net.HttpWebRequest]::Create($Url)
+                $probeUrl = if ($Url -match '\.m3u8(\?|$)|manifest/hls|mime=application%2Fx-mpegURL') { Get-HlsProbeSegmentUrl $Url $TimeoutSec } else { $Url }
+                $request = [Net.HttpWebRequest]::Create($probeUrl)
                 $request.Method = "GET"
                 $request.UserAgent = "Mozilla/5.0 OKTV-Stability-Checker"
                 $request.Timeout = $TimeoutSec * 1000
                 $request.ReadWriteTimeout = $TimeoutSec * 1000
                 $request.AllowAutoRedirect = $true
-                try { $request.AddRange(0, 2047) } catch {}
+                try { $request.AddRange(0, [Math]::Max(1024, $SegmentProbeBytes) - 1) } catch {}
                 $response = $request.GetResponse()
                 try {
                     $stream = $response.GetResponseStream()
-                    $buffer = New-Object byte[] 2048
-                    $read = $stream.Read($buffer, 0, $buffer.Length)
-                    if ($Url -match '\.m3u8(\?|$)') {
-                        $content = [Text.Encoding]::UTF8.GetString($buffer, 0, [Math]::Max(0, $read))
-                        if ($content -notmatch '#EXTM3U') { throw "HLS playlist marker not found." }
-                    }
+                    $buffer = New-Object byte[] 65536
+                    $total = 0
+                    do {
+                        $read = $stream.Read($buffer, 0, $buffer.Length)
+                        $total += $read
+                    } while ($read -gt 0 -and $total -lt $SegmentProbeBytes)
                     $stream.Dispose()
                 } finally {
                     $response.Dispose()
                 }
                 $sw.Stop()
-                $current = [pscustomobject]@{ Ok = $true; Ms = [int]$sw.ElapsedMilliseconds; Error = "" }
-                if (($null -eq $best) -or ($current.Ms -lt $best.Ms)) { $best = $current }
+                $kbps = if ($sw.Elapsed.TotalSeconds -gt 0) { [Math]::Round(($total * 8 / 1000) / $sw.Elapsed.TotalSeconds, 1) } else { 0 }
+                if ($total -lt $MinSegmentBytes -or $kbps -lt $MinSegmentKbps) {
+                    throw "Segment probe too slow or incomplete: $total bytes, $kbps kbps."
+                }
+                $current = [pscustomobject]@{ Ok = $true; Ms = [int]$sw.ElapsedMilliseconds; SegmentBytes = $total; SegmentKbps = $kbps; Error = "" }
+                if (($null -eq $best) -or ($current.SegmentKbps -gt $best.SegmentKbps)) { $best = $current }
             } catch {
                 $sw.Stop()
-                $last = [pscustomobject]@{ Ok = $false; Ms = [int]$sw.ElapsedMilliseconds; Error = $_.Exception.Message }
+                $last = [pscustomobject]@{ Ok = $false; Ms = [int]$sw.ElapsedMilliseconds; SegmentBytes = 0; SegmentKbps = 0; Error = $_.Exception.Message }
             }
             if ($attempt -lt $attempts) { Start-Sleep -Milliseconds 150 }
         }
@@ -190,14 +341,14 @@ if (-not $SkipNetworkTest) {
         } elseif ($null -ne $last) {
             $last
         } else {
-            [pscustomobject]@{ Ok = $false; Ms = 0; Error = "No test result" }
+            [pscustomobject]@{ Ok = $false; Ms = 0; SegmentBytes = 0; SegmentKbps = 0; Error = "No test result" }
         }
     }
 
     for ($i = 0; $i -lt $items.Count; $i++) {
         $ps = [powershell]::Create()
         $ps.RunspacePool = $pool
-        [void]$ps.AddScript($scriptBlock).AddArgument($items[$i].Url).AddArgument($TimeoutSec).AddArgument($Retries)
+        [void]$ps.AddScript($scriptBlock).AddArgument($items[$i].Url).AddArgument($TimeoutSec).AddArgument($Retries).AddArgument($SegmentProbeBytes).AddArgument($MinSegmentBytes).AddArgument($MinSegmentKbps)
         $jobs.Add([pscustomobject]@{ Index = $i; Ps = $ps; Handle = $ps.BeginInvoke() })
     }
 
@@ -207,6 +358,8 @@ if (-not $SkipNetworkTest) {
         if ($result.Count -gt 0) {
             $items[$job.Index].Ok = [bool]$result[0].Ok
             $items[$job.Index].Ms = [int]$result[0].Ms
+            $items[$job.Index].SegmentBytes = [int]$result[0].SegmentBytes
+            $items[$job.Index].SegmentKbps = [double]$result[0].SegmentKbps
             $items[$job.Index].Error = [string]$result[0].Error
         }
     }
@@ -235,6 +388,7 @@ $verifiedLines = New-Object System.Collections.Generic.List[string]
 
 if ($verified.Count -gt 0) {
     $verifiedFirst = @($verified | Sort-Object `
+        @{ Expression = { -1 * $_.SegmentKbps }; Ascending = $true },
         @{ Expression = { $_.Ms }; Ascending = $true },
         @{ Expression = { -1 * $_.StaticScore }; Ascending = $true },
         @{ Expression = { $_.Order }; Ascending = $true })
@@ -257,6 +411,7 @@ foreach ($group in $groups) {
     foreach ($channel in $channels) {
         $ranked = @($channel.Group | Sort-Object `
             @{ Expression = { if ($_.Ok) { 0 } else { 1 } }; Ascending = $true },
+            @{ Expression = { -1 * $_.SegmentKbps }; Ascending = $true },
             @{ Expression = { $_.Ms }; Ascending = $true },
             @{ Expression = { -1 * $_.StaticScore }; Ascending = $true },
             @{ Expression = { $_.Order }; Ascending = $true })
@@ -276,6 +431,7 @@ foreach ($group in $verifiedGroups) {
     $channels = $group.Group | Group-Object StableName | Sort-Object { ($_.Group | Measure-Object Order -Minimum).Minimum }
     foreach ($channel in $channels) {
         $ranked = @($channel.Group | Sort-Object `
+            @{ Expression = { -1 * $_.SegmentKbps }; Ascending = $true },
             @{ Expression = { $_.Ms }; Ascending = $true },
             @{ Expression = { -1 * $_.StaticScore }; Ascending = $true },
             @{ Expression = { $_.Order }; Ascending = $true })
@@ -309,6 +465,9 @@ $report = [pscustomobject]@{
     timeoutSec = $TimeoutSec
     maxParallel = $MaxParallel
     retries = $Retries
+    segmentProbeBytes = $SegmentProbeBytes
+    minSegmentBytes = $MinSegmentBytes
+    minSegmentKbps = $MinSegmentKbps
     privateGroupPassword = $PrivateGroupPassword
     skipNetworkTest = [bool]$SkipNetworkTest
     outputs = @{
@@ -316,8 +475,8 @@ $report = [pscustomobject]@{
         backup = "sources/live-cleaned-backup.txt"
         verifiedOnly = "sources/live-verified-only.txt"
     }
-    fastest = @($verified | Sort-Object Ms | Select-Object -First 30 Group,Name,Url,Ok,Ms,StaticScore)
-    failedSample = @($items | Where-Object { -not $_.Ok } | Select-Object -First 30 Group,Name,Url,Ms,Error)
+    fastest = @($verified | Sort-Object @{ Expression = { -1 * $_.SegmentKbps }; Ascending = $true }, Ms | Select-Object -First 30 Group,Name,Url,Ok,Ms,SegmentBytes,SegmentKbps,StaticScore)
+    failedSample = @($items | Where-Object { -not $_.Ok } | Select-Object -First 30 Group,Name,Url,Ms,SegmentBytes,SegmentKbps,Error)
 }
 $json = $report | ConvertTo-Json -Depth 6
 [System.IO.File]::WriteAllText($ReportOutput, $json, [System.Text.UTF8Encoding]::new($false))
