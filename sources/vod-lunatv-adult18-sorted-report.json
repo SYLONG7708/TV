@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-05-29T20:05:08.269Z",
+  "generatedAt": "2026-05-29T20:28:13.254Z",
   "sourceName": "full",
   "adultStartIndex": 40,
   "totalAdultSources": 34,
-  "usableAdultSources": 23,
+  "usableAdultSources": 24,
   "duplicateAdultSources": 8,
-  "failedAdultSources": 3,
-  "searchOkSources": 31,
-  "searchPlayableSources": 30,
+  "failedAdultSources": 2,
+  "searchOkSources": 32,
+  "searchPlayableSources": 31,
   "candidateOutput": "sources/vod-lunatv-adult18-sorted-oktv.json",
   "analysisOutput": "sources/vod-lunatv-adult18-sorted-analysis.csv",
   "categoryCounts": {
@@ -25,9 +25,9 @@
     },
     "03 番號/日本": {
       "total": 7,
-      "usable": 4,
+      "usable": 5,
       "duplicate": 1,
-      "failed": 2
+      "failed": 1
     },
     "04 動漫/美少女": {
       "total": 1,
@@ -459,17 +459,25 @@
       "order": 72,
       "name": "Luna 72 奥斯卡-",
       "api": "https://aosikazy.com/api.php/provide/vod",
-      "included": false,
+      "included": true,
       "duplicate": false,
       "duplicateReason": "",
-      "listOk": false,
-      "detailOk": false,
-      "searchOk": false,
-      "searchHasPlayUrl": false,
-      "hasPlayUrl": false,
-      "status": "failed_removed",
-      "error": "Exception calling \"GetResponse\" with \"0\" argument(s): \"The operation has timed out\"",
-      "record": null
+      "listOk": true,
+      "detailOk": true,
+      "searchOk": true,
+      "searchHasPlayUrl": true,
+      "hasPlayUrl": true,
+      "status": "usable_review_required",
+      "error": "",
+      "record": {
+        "key": "奥斯卡|AV",
+        "name": "奥斯卡｜",
+        "type": 1,
+        "api": "https://aosikazy.com/api.php/provide/vod/",
+        "quickSearch": 1,
+        "searchable": 1,
+        "filterable": 0
+      }
     },
     {
       "category": "03 番號/日本",

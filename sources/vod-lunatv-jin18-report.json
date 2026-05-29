@@ -1,5 +1,5 @@
 {
-    "generatedAt":  "2026-05-29 20:03:12 +00:00",
+    "generatedAt":  "2026-05-30 04:25:09 +08:00",
     "sourceName":  "jin18",
     "sourceUrl":  "https://raw.githubusercontent.com/hafrey1/LunaTV-config/refs/heads/main/jin18.json",
     "compareVodUrl":  "https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json",
@@ -8,15 +8,15 @@
     "compareCount":  27,
     "compareError":  "",
     "upstreamCacheSeconds":  7200,
-    "output":  "D:/a/TV/TV/sources/vod-lunatv-jin18-oktv.json",
-    "analysisOutput":  "D:/a/TV/TV/sources/vod-lunatv-jin18-analysis.csv",
+    "output":  "C:/Users/Administrator/TV/sources/vod-lunatv-jin18-oktv.json",
+    "analysisOutput":  "C:/Users/Administrator/TV/sources/vod-lunatv-jin18-analysis.csv",
     "totalSources":  27,
-    "includedSources":  23,
-    "failedSources":  4,
+    "includedSources":  24,
+    "failedSources":  3,
     "duplicateSources":  2,
-    "invalidSources":  2,
-    "searchOkSources":  23,
-    "searchPlayableSources":  22,
+    "invalidSources":  1,
+    "searchOkSources":  25,
+    "searchPlayableSources":  24,
     "validationSkipped":  false,
     "duplicateCheckSkipped":  false,
     "redactedSampleNames":  true,
@@ -42,18 +42,18 @@
                        "key":  "lunatv_002_mtzy_me",
                        "name":  "Luna 02 茅台资源",
                        "api":  "https://caiji.maotaizy.cc/api.php/provide/vod",
-                       "included":  false,
+                       "included":  true,
                        "duplicate":  false,
                        "duplicateReason":  "",
                        "listOk":  true,
-                       "detailOk":  false,
-                       "searchOk":  false,
-                       "searchHasPlayUrl":  false,
-                       "hasPlayUrl":  false,
-                       "sampleVodName":  "",
-                       "sampleVodId":  "",
-                       "searchSampleVodId":  "",
-                       "error":  "Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (429) Too Many Requests.\""
+                       "detailOk":  true,
+                       "searchOk":  true,
+                       "searchHasPlayUrl":  true,
+                       "hasPlayUrl":  true,
+                       "sampleVodName":  "[redacted]",
+                       "sampleVodId":  "134407",
+                       "searchSampleVodId":  "134407",
+                       "error":  "Search probe failed: Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (429) Too Many Requests.\""
                    },
                    {
                        "key":  "lunatv_003_wolongzyw_com",
@@ -70,7 +70,7 @@
                        "sampleVodName":  "",
                        "sampleVodId":  "",
                        "searchSampleVodId":  "",
-                       "error":  "Exception calling \"GetResponse\" with \"0\" argument(s): \"The underlying connection was closed: An unexpected error occurred on a send.\""
+                       "error":  "Invalid JSON primitive: ."
                    },
                    {
                        "key":  "lunatv_004_ikunzy_com",
@@ -238,8 +238,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "125314",
-                       "searchSampleVodId":  "125314",
+                       "sampleVodId":  "124340",
+                       "searchSampleVodId":  "124340",
                        "error":  ""
                    },
                    {
@@ -251,13 +251,13 @@
                        "duplicateReason":  "",
                        "listOk":  true,
                        "detailOk":  true,
-                       "searchOk":  false,
-                       "searchHasPlayUrl":  false,
+                       "searchOk":  true,
+                       "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "162248",
-                       "searchSampleVodId":  "",
-                       "error":  "Search probe failed: Exception calling \"GetResponse\" with \"0\" argument(s): \"The operation has timed out\""
+                       "sampleVodId":  "162279",
+                       "searchSampleVodId":  "162279",
+                       "error":  ""
                    },
                    {
                        "key":  "lunatv_015_xinlangapi_com",
@@ -459,8 +459,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "1522",
-                       "searchSampleVodId":  "1522",
+                       "sampleVodId":  "49525",
+                       "searchSampleVodId":  "49525",
                        "error":  ""
                    },
                    {
