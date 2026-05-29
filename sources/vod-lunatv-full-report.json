@@ -1,5 +1,5 @@
 {
-    "generatedAt":  "2026-05-29 21:02:50 +00:00",
+    "generatedAt":  "2026-05-30 06:28:08 +08:00",
     "sourceName":  "full",
     "sourceUrl":  "https://raw.githubusercontent.com/hafrey1/LunaTV-config/refs/heads/main/LunaTV-config.json",
     "compareVodUrl":  "https://raw.githubusercontent.com/FGBLH/GHK/refs/heads/main/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json",
@@ -8,13 +8,13 @@
     "compareCount":  27,
     "compareError":  "",
     "upstreamCacheSeconds":  7200,
-    "output":  "D:/a/TV/TV/sources/vod-lunatv-full-oktv.json",
-    "analysisOutput":  "D:/a/TV/TV/sources/vod-lunatv-full-analysis.csv",
+    "output":  "C:/Users/Administrator/TV/sources/vod-lunatv-full-oktv.json",
+    "analysisOutput":  "C:/Users/Administrator/TV/sources/vod-lunatv-full-analysis.csv",
     "totalSources":  73,
-    "includedSources":  59,
-    "failedSources":  14,
+    "includedSources":  58,
+    "failedSources":  15,
     "duplicateSources":  11,
-    "invalidSources":  4,
+    "invalidSources":  5,
     "searchOkSources":  63,
     "searchPlayableSources":  61,
     "validationSkipped":  false,
@@ -64,13 +64,13 @@
                        "duplicateReason":  "",
                        "listOk":  true,
                        "detailOk":  true,
-                       "searchOk":  false,
-                       "searchHasPlayUrl":  false,
+                       "searchOk":  true,
+                       "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
                        "sampleVodId":  "134407",
-                       "searchSampleVodId":  "",
-                       "error":  "Search probe failed: Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (429) Too Many Requests.\""
+                       "searchSampleVodId":  "70201",
+                       "error":  ""
                    },
                    {
                        "key":  "lunatv_004_wolongzyw_com",
@@ -87,7 +87,7 @@
                        "sampleVodName":  "",
                        "sampleVodId":  "",
                        "searchSampleVodId":  "",
-                       "error":  "Exception calling \"GetResponse\" with \"0\" argument(s): \"The underlying connection was closed: An unexpected error occurred on a send.\""
+                       "error":  "Invalid JSON primitive: ."
                    },
                    {
                        "key":  "lunatv_005_ikunzy_com",
@@ -255,8 +255,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "125314",
-                       "searchSampleVodId":  "125314",
+                       "sampleVodId":  "124341",
+                       "searchSampleVodId":  "124341",
                        "error":  ""
                    },
                    {
@@ -476,8 +476,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "48266",
-                       "searchSampleVodId":  "48266",
+                       "sampleVodId":  "16292",
+                       "searchSampleVodId":  "16292",
                        "error":  ""
                    },
                    {
@@ -493,8 +493,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "190402",
-                       "searchSampleVodId":  "190402",
+                       "sampleVodId":  "189636",
+                       "searchSampleVodId":  "189636",
                        "error":  ""
                    },
                    {
@@ -527,8 +527,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "125891",
-                       "searchSampleVodId":  "125891",
+                       "sampleVodId":  "124341",
+                       "searchSampleVodId":  "124341",
                        "error":  ""
                    },
                    {
@@ -612,7 +612,7 @@
                        "searchHasPlayUrl":  false,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "125347",
+                       "sampleVodId":  "125916",
                        "searchSampleVodId":  "",
                        "error":  "Search probe failed: Invalid JSON primitive: 暂不支持搜索."
                    },
@@ -629,7 +629,7 @@
                        "searchHasPlayUrl":  false,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "147260",
+                       "sampleVodId":  "147261",
                        "searchSampleVodId":  "",
                        "error":  "Search probe failed: Invalid JSON primitive: 暂不支持搜索."
                    },
@@ -646,7 +646,7 @@
                        "searchHasPlayUrl":  false,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "126900",
+                       "sampleVodId":  "128470",
                        "searchSampleVodId":  "",
                        "error":  "Search probe failed: Invalid JSON primitive: 暂不支持搜索."
                    },
@@ -663,7 +663,7 @@
                        "searchHasPlayUrl":  false,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "130530",
+                       "sampleVodId":  "132095",
                        "searchSampleVodId":  "",
                        "error":  "Search probe failed: Invalid JSON primitive: 暂不支持搜索."
                    },
@@ -1011,18 +1011,18 @@
                        "key":  "lunatv_059_api_bwzym3u8_com",
                        "name":  "Luna 59 百万资源",
                        "api":  "https://api.bwzyz.com/api.php/provide/vod",
-                       "included":  true,
+                       "included":  false,
                        "duplicate":  false,
                        "duplicateReason":  "",
-                       "listOk":  true,
-                       "detailOk":  true,
-                       "searchOk":  true,
-                       "searchHasPlayUrl":  true,
-                       "hasPlayUrl":  true,
-                       "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "127223",
-                       "searchSampleVodId":  "127223",
-                       "error":  ""
+                       "listOk":  false,
+                       "detailOk":  false,
+                       "searchOk":  false,
+                       "searchHasPlayUrl":  false,
+                       "hasPlayUrl":  false,
+                       "sampleVodName":  "",
+                       "sampleVodId":  "",
+                       "searchSampleVodId":  "",
+                       "error":  "Exception calling \"GetResponse\" with \"0\" argument(s): \"作業逾時\""
                    },
                    {
                        "key":  "lunatv_060_thzy8_me",
@@ -1105,7 +1105,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "74034",
+                       "sampleVodId":  "74044",
                        "searchSampleVodId":  "68480",
                        "error":  ""
                    },
@@ -1122,7 +1122,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "73187",
+                       "sampleVodId":  "73198",
                        "searchSampleVodId":  "68480",
                        "error":  "duplicate_api"
                    },
@@ -1139,7 +1139,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "254556",
+                       "sampleVodId":  "254558",
                        "searchSampleVodId":  "249197",
                        "error":  ""
                    },
@@ -1156,7 +1156,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "253736",
+                       "sampleVodId":  "253738",
                        "searchSampleVodId":  "251599",
                        "error":  ""
                    },
@@ -1173,7 +1173,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "253446",
+                       "sampleVodId":  "253448",
                        "searchSampleVodId":  "226249",
                        "error":  ""
                    },

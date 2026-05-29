@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-05-29T21:02:53.399Z",
+  "generatedAt": "2026-05-29T22:28:08.260Z",
   "sourceName": "full",
   "adultStartIndex": 40,
   "totalAdultSources": 34,
-  "usableAdultSources": 24,
+  "usableAdultSources": 23,
   "duplicateAdultSources": 8,
-  "failedAdultSources": 2,
-  "searchOkSources": 32,
-  "searchPlayableSources": 31,
+  "failedAdultSources": 3,
+  "searchOkSources": 31,
+  "searchPlayableSources": 30,
   "candidateOutput": "sources/vod-lunatv-adult18-sorted-oktv.json",
   "analysisOutput": "sources/vod-lunatv-adult18-sorted-analysis.csv",
   "categoryCounts": {
@@ -37,9 +37,9 @@
     },
     "05 精品/大站": {
       "total": 12,
-      "usable": 11,
+      "usable": 10,
       "duplicate": 1,
-      "failed": 0
+      "failed": 1
     }
   },
   "resources": [
@@ -726,25 +726,17 @@
       "order": 59,
       "name": "Luna 59 百万资源",
       "api": "https://api.bwzyz.com/api.php/provide/vod",
-      "included": true,
+      "included": false,
       "duplicate": false,
       "duplicateReason": "",
-      "listOk": true,
-      "detailOk": true,
-      "searchOk": true,
-      "searchHasPlayUrl": true,
-      "hasPlayUrl": true,
-      "status": "usable_review_required",
-      "error": "",
-      "record": {
-        "key": "百万资源|AV",
-        "name": "百万资源｜",
-        "type": 1,
-        "api": "https://api.bwzyz.com/api.php/provide/vod/",
-        "quickSearch": 1,
-        "searchable": 1,
-        "filterable": 0
-      }
+      "listOk": false,
+      "detailOk": false,
+      "searchOk": false,
+      "searchHasPlayUrl": false,
+      "hasPlayUrl": false,
+      "status": "failed_removed",
+      "error": "Exception calling \"GetResponse\" with \"0\" argument(s): \"作業逾時\"",
+      "record": null
     },
     {
       "category": "05 精品/大站",

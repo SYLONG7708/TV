@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-05-29T21:03:03.844Z",
+  "generatedAt": "2026-05-29T22:28:15.491Z",
   "totals": {
-    "sources": 85,
-    "indexedSources": 15,
-    "items": 950,
-    "playableItems": 949,
-    "movies": 361,
-    "series": 329,
-    "variety": 203,
-    "anime": 57
+    "sources": 84,
+    "indexedSources": 14,
+    "items": 880,
+    "playableItems": 880,
+    "movies": 331,
+    "series": 289,
+    "variety": 218,
+    "anime": 42
   },
   "sourceChecks": [
     {
@@ -86,7 +86,7 @@
           "count": 20
         },
         {
-          "label": "现代都市",
+          "label": "古装仙侠",
           "ok": true,
           "count": 20
         },
@@ -96,12 +96,12 @@
           "count": 20
         },
         {
-          "label": "女频恋爱",
+          "label": "现代都市",
           "ok": true,
           "count": 20
         },
         {
-          "label": "古装仙侠",
+          "label": "女频恋爱",
           "ok": true,
           "count": 20
         }
@@ -207,12 +207,6 @@
         },
         {
           "label": "大陆综艺",
-          "ok": false,
-          "count": 0,
-          "error": "The operation was aborted due to timeout"
-        },
-        {
-          "label": "日本动漫",
           "ok": true,
           "count": 20
         }
@@ -587,42 +581,16 @@
       "origin": "LunaTV full 技術檢測",
       "adult": false,
       "indexable": true,
-      "indexed": true,
-      "itemCount": 70,
-      "playableCount": 69,
-      "error": "",
+      "indexed": false,
+      "itemCount": 0,
+      "playableCount": 0,
+      "error": "分類讀取失敗: HTTP 429",
       "checks": [
         {
           "label": "最新",
           "ok": false,
           "count": 0,
           "error": "HTTP 429"
-        },
-        {
-          "label": "古装仙侠",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "欧美剧",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "现代都市",
-          "ok": false,
-          "count": 0,
-          "error": "HTTP 429"
-        },
-        {
-          "label": "剧情片",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "科幻片",
-          "ok": true,
-          "count": 20
         }
       ]
     },
@@ -1382,21 +1350,7 @@
       "checks": []
     },
     {
-      "id": "lunatv-full-技術檢測-lunatv-059-api-bwzym3u8-com-https-api-bwzyz-com-api-php-provide-vod-76",
-      "name": "Luna 59 百万资源",
-      "type": 1,
-      "api": "https://api.bwzyz.com/api.php/provide/vod",
-      "origin": "LunaTV full 技術檢測",
-      "adult": false,
-      "indexable": true,
-      "indexed": false,
-      "itemCount": 0,
-      "playableCount": 0,
-      "error": "",
-      "checks": []
-    },
-    {
-      "id": "lunatv-full-技術檢測-lunatv-061-www-jingpinx-com-https-www-jingpinx-com-api-php-provide-vod-77",
+      "id": "lunatv-full-技術檢測-lunatv-061-www-jingpinx-com-https-www-jingpinx-com-api-php-provide-vod-76",
       "name": "Luna 61 精品资源",
       "type": 1,
       "api": "https://www.jingpinx.com/api.php/provide/vod",
@@ -1410,7 +1364,7 @@
       "checks": []
     },
     {
-      "id": "lunatv-full-技術檢測-lunatv-062-ckzy-me-https-ckzy-me-api-php-provide-vod-78",
+      "id": "lunatv-full-技術檢測-lunatv-062-ckzy-me-https-ckzy-me-api-php-provide-vod-77",
       "name": "Luna 62 CK-资源",
       "type": 1,
       "api": "https://ckzy.me/api.php/provide/vod",
@@ -1424,7 +1378,7 @@
       "checks": []
     },
     {
-      "id": "lunatv-full-技術檢測-lunatv-063-souavzyw-com-https-api-souavzyw-net-api-php-provide-vod-79",
+      "id": "lunatv-full-技術檢測-lunatv-063-souavzyw-com-https-api-souavzyw-net-api-php-provide-vod-78",
       "name": "Luna 63 souavZY",
       "type": 1,
       "api": "https://api.souavzyw.net/api.php/provide/vod",
@@ -1438,7 +1392,7 @@
       "checks": []
     },
     {
-      "id": "lunatv-full-技術檢測-lunatv-064-www-xxibaozyw-com-https-www-xxibaozyw-com-api-php-provide-vod-80",
+      "id": "lunatv-full-技術檢測-lunatv-064-www-xxibaozyw-com-https-www-xxibaozyw-com-api-php-provide-vod-79",
       "name": "Luna 64 细胞资源",
       "type": 1,
       "api": "https://www.xxibaozyw.com/api.php/provide/vod",
@@ -1452,7 +1406,7 @@
       "checks": []
     },
     {
-      "id": "lunatv-full-技術檢測-lunatv-066-www-msnii-com-https-www-msnii-com-api-json-php-81",
+      "id": "lunatv-full-技術檢測-lunatv-066-www-msnii-com-https-www-msnii-com-api-json-php-80",
       "name": "Luna 66 美少女-",
       "type": 1,
       "api": "https://www.msnii.com/api/json.php",
@@ -1466,7 +1420,7 @@
       "checks": []
     },
     {
-      "id": "lunatv-full-技術檢測-lunatv-067-www-pgxdy-com-https-www-pgxdy-com-api-json-php-82",
+      "id": "lunatv-full-技術檢測-lunatv-067-www-pgxdy-com-https-www-pgxdy-com-api-json-php-81",
       "name": "Luna 67 黄AVZY",
       "type": 1,
       "api": "https://www.pgxdy.com/api/json.php",
@@ -1480,7 +1434,7 @@
       "checks": []
     },
     {
-      "id": "lunatv-full-技術檢測-lunatv-068-www-kxgav-com-https-www-kxgav-com-api-json-php-83",
+      "id": "lunatv-full-技術檢測-lunatv-068-www-kxgav-com-https-www-kxgav-com-api-json-php-82",
       "name": "Luna 68 白嫖资源",
       "type": 1,
       "api": "https://www.kxgav.com/api/json.php",
@@ -1494,7 +1448,7 @@
       "checks": []
     },
     {
-      "id": "lunatv-full-技術檢測-lunatv-069-xingba111-com-https-xingba222-com-api-php-provide-vod-84",
+      "id": "lunatv-full-技術檢測-lunatv-069-xingba111-com-https-xingba222-com-api-php-provide-vod-83",
       "name": "Luna 69 杏吧资源",
       "type": 1,
       "api": "https://xingba222.com/api.php/provide/vod",
@@ -1508,7 +1462,7 @@
       "checks": []
     },
     {
-      "id": "lunatv-full-技術檢測-lunatv-072-aosikazy-com-https-aosikazy-com-api-php-provide-vod-85",
+      "id": "lunatv-full-技術檢測-lunatv-072-aosikazy-com-https-aosikazy-com-api-php-provide-vod-84",
       "name": "Luna 72 奥斯卡-",
       "type": 1,
       "api": "https://aosikazy.com/api.php/provide/vod",
