@@ -1,18 +1,18 @@
 {
-    "generatedAt":  "2026-05-29T19:47:37.5726871+08:00",
+    "generatedAt":  "2026-05-29T21:48:33.1469767+08:00",
     "channelCsv":  "sources/youtube-live-channels.csv",
     "baseLive":  "sources/live-verified-only.txt",
     "youtubeOutput":  "sources/live-youtube-stable.txt",
     "mergedOutput":  "sources/live-stable.txt",
-    "total":  98,
-    "resolved":  98,
-    "playable":  65,
-    "fallback":  33,
-    "failed":  33,
+    "total":  112,
+    "resolved":  112,
+    "playable":  78,
+    "fallback":  34,
+    "failed":  34,
     "workflowSuccessRate":  100,
-    "hlsSuccessRate":  66.33,
-    "playlistEntries":  65,
-    "removedFromPlaylist":  33,
+    "hlsSuccessRate":  69.64,
+    "playlistEntries":  78,
+    "removedFromPlaylist":  34,
     "playlistPolicy":  "playable-only",
     "mode":  "best-effort-hls-resolve",
     "note":  "",
@@ -54,12 +54,20 @@
                        "count":  4
                    },
                    {
+                       "name":  "YouTube動漫台",
+                       "count":  8
+                   },
+                   {
                        "name":  "YouTube國際新聞",
                        "count":  15
                    },
                    {
                        "name":  "YouTube新聞台",
                        "count":  25
+                   },
+                   {
+                       "name":  "YouTube電影劇集",
+                       "count":  6
                    },
                    {
                        "name":  "YouTube綜合娛樂",
@@ -305,6 +313,13 @@
                          "Name":  "Best of MLB",
                          "PageUrl":  "https://www.youtube.com/watch?v=wKiClrFLjZs",
                          "Error":  "ERROR: [youtube] wKiClrFLjZs: Requested format is not available. Use --list-formats for a list of available formats"
+                     },
+                     {
+                         "Order":  102,
+                         "Group":  "YouTube動漫台",
+                         "Name":  "Muse 異世界流浪美食家馬拉松",
+                         "PageUrl":  "https://www.youtube.com/watch?v=fK1M3oM7ZPQ",
+                         "Error":  "Resolved stream failed HLS validation: Segment probe too slow or incomplete: 51512 bytes, 6439.3 kbps."
                      }
                  ]
 }
