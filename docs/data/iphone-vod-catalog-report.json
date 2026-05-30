@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-05-30T22:28:17.695Z",
+  "generatedAt": "2026-05-30T23:21:44.337Z",
   "totals": {
     "sources": 73,
-    "indexedSources": 59,
-    "items": 3418,
-    "playableItems": 3418,
-    "movies": 1554,
-    "series": 328,
-    "variety": 157,
-    "anime": 329,
-    "short": 261,
-    "adult": 789
+    "indexedSources": 57,
+    "items": 3258,
+    "playableItems": 3258,
+    "movies": 1448,
+    "series": 325,
+    "variety": 174,
+    "anime": 346,
+    "short": 250,
+    "adult": 715
   },
   "sourceChecks": [
     {
@@ -98,9 +98,8 @@
       "checks": [
         {
           "label": "最新",
-          "ok": false,
-          "count": 0,
-          "error": "HTTP 429"
+          "ok": true,
+          "count": 18
         },
         {
           "label": "纪录片",
@@ -114,22 +113,6 @@
         },
         {
           "label": "国产动漫",
-          "ok": false,
-          "count": 0,
-          "error": "HTTP 429"
-        },
-        {
-          "label": "现代都市",
-          "ok": true,
-          "count": 16
-        },
-        {
-          "label": "古装仙侠",
-          "ok": true,
-          "count": 5
-        },
-        {
-          "label": "穿越现代",
           "ok": true,
           "count": 20
         }
@@ -1140,17 +1123,12 @@
           "count": 20
         },
         {
-          "label": "爱情片",
-          "ok": true,
-          "count": 20
-        },
-        {
           "label": "短剧",
           "ok": true,
           "count": 20
         },
         {
-          "label": "海外剧",
+          "label": "日韩剧",
           "ok": true,
           "count": 20
         },
@@ -2106,11 +2084,23 @@
       "checks": [
         {
           "label": "最新",
+          "ok": false,
+          "count": 0,
+          "error": "HTTP 429"
+        },
+        {
+          "label": "重口激情",
+          "ok": false,
+          "count": 0,
+          "error": "HTTP 429"
+        },
+        {
+          "label": "强奸乱伦",
           "ok": true,
           "count": 50
         },
         {
-          "label": "重口激情",
+          "label": "日韩无码",
           "ok": true,
           "count": 50
         }
@@ -2245,23 +2235,12 @@
       "adult": false,
       "indexable": true,
       "indexed": true,
-      "itemCount": 40,
-      "playableCount": 40,
-      "error": "",
+      "itemCount": 20,
+      "playableCount": 20,
+      "error": "分類讀取失敗: fetch failed",
       "checks": [
         {
           "label": "最新",
-          "ok": false,
-          "count": 0,
-          "error": "fetch failed"
-        },
-        {
-          "label": "国产视频",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "欧美精品",
           "ok": true,
           "count": 20
         }
@@ -2278,15 +2257,10 @@
       "indexed": true,
       "itemCount": 20,
       "playableCount": 20,
-      "error": "",
+      "error": "分類讀取失敗: fetch failed",
       "checks": [
         {
           "label": "最新",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "国产专区",
           "ok": true,
           "count": 20
         }
@@ -2311,7 +2285,7 @@
           "count": 50
         },
         {
-          "label": "日本无码",
+          "label": "黑丝诱惑",
           "ok": true,
           "count": 50
         }
@@ -2480,36 +2454,16 @@
       "origin": "All on-demand sources",
       "adult": false,
       "indexable": true,
-      "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
-      "error": "",
+      "indexed": false,
+      "itemCount": 0,
+      "playableCount": 0,
+      "error": "分類讀取失敗: The operation was aborted due to timeout",
       "checks": [
         {
           "label": "最新",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "传媒原创",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "国产直播",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "AV解说",
           "ok": false,
           "count": 0,
           "error": "The operation was aborted due to timeout"
-        },
-        {
-          "label": "国产色情",
-          "ok": true,
-          "count": 20
         }
       ]
     },
@@ -2521,30 +2475,16 @@
       "origin": "All on-demand sources",
       "adult": true,
       "indexable": true,
-      "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
-      "error": "",
+      "indexed": false,
+      "itemCount": 0,
+      "playableCount": 0,
+      "error": "分類讀取失敗: The operation was aborted due to timeout",
       "checks": [
         {
           "label": "最新",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "乱伦中出",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "淫娃自慰",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "重口调教",
-          "ok": true,
-          "count": 20
+          "ok": false,
+          "count": 0,
+          "error": "The operation was aborted due to timeout"
         }
       ]
     },
