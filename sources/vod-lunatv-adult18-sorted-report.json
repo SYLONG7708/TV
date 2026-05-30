@@ -1,21 +1,21 @@
 {
-  "generatedAt": "2026-05-30T10:20:57.101Z",
+  "generatedAt": "2026-05-30T12:20:14.121Z",
   "sourceName": "full",
   "adultStartIndex": 40,
   "totalAdultSources": 34,
-  "usableAdultSources": 24,
+  "usableAdultSources": 23,
   "duplicateAdultSources": 8,
-  "failedAdultSources": 2,
-  "searchOkSources": 32,
-  "searchPlayableSources": 31,
+  "failedAdultSources": 3,
+  "searchOkSources": 31,
+  "searchPlayableSources": 30,
   "candidateOutput": "sources/vod-lunatv-adult18-sorted-oktv.json",
   "analysisOutput": "sources/vod-lunatv-adult18-sorted-analysis.csv",
   "categoryCounts": {
     "01 綜合成人": {
       "total": 5,
-      "usable": 2,
+      "usable": 1,
       "duplicate": 3,
-      "failed": 0
+      "failed": 1
     },
     "02 國產/短片": {
       "total": 9,
@@ -124,25 +124,17 @@
       "order": 52,
       "name": "Luna 52 奶香资源",
       "api": "https://Naixxzy.com/api.php/provide/vod",
-      "included": true,
+      "included": false,
       "duplicate": false,
       "duplicateReason": "",
-      "listOk": true,
-      "detailOk": true,
-      "searchOk": true,
-      "searchHasPlayUrl": true,
-      "hasPlayUrl": true,
-      "status": "usable_review_required",
-      "error": "",
-      "record": {
-        "key": "奶香资源|AV",
-        "name": "奶香资源｜",
-        "type": 1,
-        "api": "https://naixxzy.com/api.php/provide/vod/",
-        "quickSearch": 1,
-        "searchable": 1,
-        "filterable": 0
-      }
+      "listOk": false,
+      "detailOk": false,
+      "searchOk": false,
+      "searchHasPlayUrl": false,
+      "hasPlayUrl": false,
+      "status": "failed_removed",
+      "error": "Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (429) Too Many Requests.\"",
+      "record": null
     },
     {
       "category": "02 國產/短片",
