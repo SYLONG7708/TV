@@ -338,7 +338,8 @@
       }
 
       .chip-row,
-      .source-rail {
+      .source-rail,
+      .area-rail {
         display: flex;
         gap: 8px;
         overflow-x: auto;
@@ -377,6 +378,58 @@
       .source-pill.is-active {
         border-color: rgba(50, 214, 231, 0.6);
         background: rgba(50, 214, 231, 0.16);
+      }
+
+      .source-toggle {
+        width: 100%;
+        min-height: 46px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        border: 1px solid rgba(50, 214, 231, 0.44);
+        border-radius: 8px;
+        background: rgba(8, 12, 16, 0.96);
+        color: #fff;
+        padding: 0 12px;
+        margin-bottom: 12px;
+        cursor: pointer;
+      }
+
+      .source-toggle strong,
+      .source-toggle span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .source-toggle span {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .floating-filter {
+        position: fixed;
+        right: max(14px, env(safe-area-inset-right));
+        bottom: max(18px, env(safe-area-inset-bottom));
+        z-index: 55;
+        min-width: 54px;
+        min-height: 54px;
+        border: 1px solid rgba(216, 23, 105, 0.62);
+        border-radius: 999px;
+        background: linear-gradient(135deg, #9f114c, #d81769);
+        color: #fff;
+        box-shadow: 0 12px 26px rgba(0, 0, 0, 0.36);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .floating-filter svg {
+        width: 22px;
+        height: 22px;
       }
 
       .row,
@@ -649,7 +702,7 @@
       <div class="sheet-backdrop" data-close-filter></div>
       <section class="sheet-panel">
         <div class="sheet-head">
-          <div><strong>篩選器</strong><span>年份、國家、類型、發布時間、熱門</span></div>
+          <div><strong>篩選器</strong><span>年份、地區、類型、觀看人數、評分</span></div>
           <button class="icon-btn" type="button" data-close-filter aria-label="關閉"></button>
         </div>
         <div class="sheet-body" id="filterSheetBody"></div>
@@ -682,12 +735,11 @@
       const tabs = [
         ['home', '主頁'],
         ['movie', '電影'],
-        ['series', '劇集'],
+        ['short', '短劇'],
         ['variety', '綜藝'],
         ['anime', '動漫'],
         ['rank', '榜單'],
         ['live', '直播'],
-        ['sources', '點播源'],
       ];
 
       const state = {
@@ -730,6 +782,7 @@
           signal: '<path d="M2 20h.01"></path><path d="M7 20a5 5 0 0 0-5-5"></path><path d="M12 20A10 10 0 0 0 2 10"></path><path d="M17 20A15 15 0 0 0 2 5"></path>',
           search: '<circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>',
           play: '<path d="m8 5 11 7-11 7V5z"></path>',
+          chevron: '<path d="m6 9 6 6 6-6"></path>',
           close: '<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>',
           check: '<path d="M20 6 9 17l-5-5"></path>',
           alert: '<path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>',
@@ -781,7 +834,6 @@
           if (state.healthIndex.posters.has(item.id)) return false;
           if (state.healthIndex.sources.has(item.sourceId)) return false;
           if (sourceId !== 'all' && item.sourceId !== sourceId) return false;
-          if (item.adult) return false;
           if (state.tab !== 'home' && state.tab !== 'rank' && item.kind !== state.tab) return false;
           if (state.filters.year !== 'all' && item.year !== state.filters.year) return false;
           if (state.filters.area !== 'all' && item.area !== state.filters.area) return false;
@@ -799,6 +851,7 @@
           return rows.sort((a, b) => Date.parse(b.updatedAt || 0) - Date.parse(a.updatedAt || 0));
         }
         if (state.filters.sort === 'score') return rows.sort((a, b) => Number(b.score || 0) - Number(a.score || 0));
+        if (state.filters.sort === 'views') return rows.sort((a, b) => Number(b.views || 0) - Number(a.views || 0));
         if (state.filters.sort === 'name') return rows.sort((a, b) => a.title.localeCompare(b.title, 'zh-Hant'));
         return rows.sort((a, b) => Number(b.hot || 0) - Number(a.hot || 0));
       }
@@ -819,7 +872,6 @@
       function render() {
         renderNav();
         if (state.tab === 'live') return renderLive();
-        if (state.tab === 'sources') return renderSources();
         if (state.tab === 'rank') return renderRank();
         return renderVodScreen();
       }
@@ -862,7 +914,7 @@
       function renderVodScreen() {
         const rows = sortedItems(sourceItems()).slice(0, state.tab === 'home' ? 36 : 120);
         const title = tabs.find(([id]) => id === state.tab)?.[1] || '主頁';
-        const controls = state.tab === 'home' ? renderSourceRail() : `${renderFilterSummary()}${renderSourceRail()}`;
+        const controls = `${renderSourceRail()}${state.tab === 'short' ? renderShortAreaRail() : ''}`;
         screen.innerHTML = `
           ${renderToolbar()}
           ${controls}
@@ -873,10 +925,13 @@
           <section class="poster-grid">
             ${rows.map(renderPoster).join('') || emptyState('目前沒有符合篩選的影片')}
           </section>
+          ${renderFloatingFilter()}
         `;
         bindToolbar();
         bindPosters();
         bindSourceRail();
+        bindShortAreaRail();
+        bindFloatingFilter();
       }
 
       function renderHero(item) {
@@ -896,41 +951,77 @@
       }
 
       function renderSourceRail() {
-        const indexed = state.catalog.sources
-          .filter((source) => source.indexed && !source.adult && !state.healthIndex.sources.has(source.id))
-          .slice(0, 18);
+        const selected = activeSource();
+        const indexedCount = state.catalog.sources.filter((source) => source.indexed && !state.healthIndex.sources.has(source.id)).length;
         return `
           <div class="source-rail">
-            <button class="source-pill ${state.selectedSource === 'all' ? 'is-active' : ''}" type="button" data-source-rail="all">全部來源</button>
-            ${indexed
-              .map(
-                (source) =>
-                  `<button class="source-pill ${state.selectedSource === source.id ? 'is-active' : ''}" type="button" data-source-rail="${escapeHtml(source.id)}">${escapeHtml(source.name)} ${source.itemCount}</button>`,
-              )
-              .join('')}
+            <button class="source-toggle" type="button" data-open-source>
+              ${icon('signal')}
+              <span><strong>${escapeHtml(sourceLabel())}</strong><span>${selected ? `${selected.itemCount || 0} 部 / ${selected.playableCount || 0} 可播放` : `${indexedCount} 個來源 / ${state.catalog.totals.playableItems || 0} 部可播放`}</span></span>
+              ${icon('chevron')}
+            </button>
           </div>
         `;
       }
 
       function bindSourceRail() {
-        document.querySelectorAll('[data-source-rail]').forEach((button) => {
-          button.addEventListener('click', () => selectSource(button.dataset.sourceRail || 'all'));
+        document.querySelectorAll('[data-open-source]').forEach((button) => button.addEventListener('click', openSourceSheet));
+      }
+
+      function shortAreas() {
+        const areas = [...new Set(state.catalog.items.filter((item) => item.kind === 'short').map((item) => item.area).filter(Boolean))];
+        return areas.sort((a, b) => {
+          const score = (value) => (value.includes('韓國') ? -2 : value.includes('韓') ? -1 : 0);
+          return score(a) - score(b) || a.localeCompare(b, 'zh-Hant');
         });
       }
 
+      function renderShortAreaRail() {
+        const areas = shortAreas();
+        if (!areas.length) return '';
+        return `
+          <div class="area-rail">
+            <button class="chip ${state.filters.area === 'all' ? 'is-active' : ''}" type="button" data-short-area="all">全部地區</button>
+            ${areas
+              .map((area) => `<button class="chip ${state.filters.area === area ? 'is-active' : ''}" type="button" data-short-area="${escapeHtml(area)}">${escapeHtml(area)}</button>`)
+              .join('')}
+          </div>
+        `;
+      }
+
+      function bindShortAreaRail() {
+        document.querySelectorAll('[data-short-area]').forEach((button) => {
+          button.addEventListener('click', () => {
+            state.filters.area = button.dataset.shortArea || 'all';
+            render();
+          });
+        });
+      }
+
+      function renderFloatingFilter() {
+        return `<button class="floating-filter" type="button" data-open-filter aria-label="篩選器">${icon('filter')}</button>`;
+      }
+
+      function bindFloatingFilter() {
+        document.querySelectorAll('[data-open-filter]').forEach((button) => button.addEventListener('click', openFilterSheet));
+      }
+
       function renderRank() {
-        const rows = sortedItems(sourceItems('all')).slice(0, 80);
+        const rows = sortedItems(sourceItems()).slice(0, 80);
         screen.innerHTML = `
           ${renderToolbar('搜尋榜單內容')}
-          ${renderFilterSummary()}
+          ${renderSourceRail()}
           <section class="section-head">
-            <div><h1>榜單</h1><span>依熱門、發布時間、評分排序</span></div>
+            <div><h1>榜單</h1><span>觀看人數與評分排序</span></div>
           </section>
           <section class="rank-list">
             ${rows.map(renderRankRow).join('') || emptyState('目前沒有榜單內容')}
           </section>
+          ${renderFloatingFilter()}
         `;
         bindToolbar();
+        bindSourceRail();
+        bindFloatingFilter();
         document.querySelectorAll('[data-open-detail]').forEach((button) => {
           button.addEventListener('click', () => openDetail(button.dataset.openDetail));
         });
@@ -953,8 +1044,10 @@
           <section class="live-list">
             ${rows.map(renderLiveRow).join('') || emptyState('目前沒有符合搜尋的直播')}
           </section>
+          ${renderFloatingFilter()}
         `;
         bindToolbar();
+        bindFloatingFilter();
         document.querySelectorAll('[data-live-play]').forEach((button) => {
           button.addEventListener('click', () => {
             const item = state.live.find((entry) => entry.id === button.dataset.livePlay);
@@ -1033,7 +1126,7 @@
 
       function renderSourceRow(source) {
         const active = state.selectedSource === source.id;
-        const canSelect = source.indexed && !source.adult;
+        const canSelect = source.indexed;
         return `
           <article class="source-row">
             <div class="avatar">${source.type === 3 ? 'SP' : source.adult ? 'AV' : 'VOD'}</div>
@@ -1145,7 +1238,7 @@
 
       function renderSheetSourceRow(source) {
         const active = state.selectedSource === source.id;
-        const canSelect = source.indexed && !source.adult;
+        const canSelect = source.indexed;
         return `
           <article class="source-row">
             <div class="avatar">${source.type === 3 ? 'SP' : source.adult ? 'AV' : 'VOD'}</div>
@@ -1175,17 +1268,18 @@
           </div>
         `;
         const years = [['all', '全部年份'], ...state.catalog.filters.years.map((year) => [year, year])];
-        const areas = [['all', '全部國家'], ...state.catalog.filters.areas.map((area) => [area, area])];
+        const areas = [['all', '全部地區'], ...state.catalog.filters.areas.map((area) => [area, area])];
         const genres = [['all', '全部類型'], ...state.catalog.filters.genres.map((genre) => [genre, genre])];
         const sorts = [
           ['hot', '熱門'],
+          ['views', '觀看人數'],
           ['latest', '發布時間'],
           ['score', '評分'],
           ['name', '名稱'],
         ];
         filterSheetBody.innerHTML = `
           ${filter('年份', 'year', years)}
-          ${filter('國家', 'area', areas)}
+          ${filter('地區', 'area', areas)}
           ${filter('類型', 'genre', genres)}
           ${filter('排序', 'sort', sorts)}
           <button class="play-btn" type="button" data-reset-filter style="width:100%;margin-top:10px">重設篩選</button>
@@ -1213,7 +1307,7 @@
       }
 
       function sortLabel(value) {
-        return { hot: '熱門', latest: '發布時間', score: '評分', name: '名稱' }[value] || value;
+        return { hot: '熱門', views: '觀看人數', latest: '發布時間', score: '評分', name: '名稱' }[value] || value;
       }
 
       function kindLabel(kind) {

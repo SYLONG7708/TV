@@ -9,11 +9,11 @@
     "icon": "branding/icon-tech-20260528.png",
     "privateLivePassword": "7708",
     "vod": {
-      "name": "點播",
+      "name": "All on-demand sources",
       "type": 0,
-      "url": "https://raw.githubusercontent.com/FGBLH/GHK/a1c46cb76810cd6d53b73e1c6f0a0789586151c5/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json",
-      "compareUrl": "https://raw.githubusercontent.com/FGBLH/GHK/a1c46cb76810cd6d53b73e1c6f0a0789586151c5/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json",
-      "autoRefresh": "本機 Windows 工作排程與 GitHub Actions 會抓取 LunaTV-config main/jin18.json 與 LunaTV-config.json，驗活、搜尋檢測、去除與 compareUrl 重複的來源後更新。"
+      "url": "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/All%20on-demand%20sources",
+      "compareUrl": "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/All%20on-demand%20sources",
+      "autoRefresh": "本機 Windows 工作排程與 GitHub Actions 每小時讀取 hafrey1/LunaTV-config report.md，保存全部點播源與成人 18+ 來源到 sources/All on-demand sources，並同步 iPhone 影視 OKTV。"
     },
     "vodCandidate": {
       "name": "LunaTV 點播候選源",
@@ -24,13 +24,13 @@
       "note": "已驗活與去重，但內容授權需人工確認後才可設為預設播放源。"
     },
     "vodFullCandidate": {
-      "name": "LunaTV full 全量技術檢測",
+      "name": "All on-demand sources",
       "type": 0,
-      "url": "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-full-oktv.json",
-      "report": "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-full-report.json",
+      "url": "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/All%20on-demand%20sources",
+      "report": "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/All%20on-demand%20sources-report.json",
       "analysis": "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-full-analysis.csv",
-      "status": "adult_review_required",
-      "note": "包含上游 full 來源與 18+ 來源，只做 API、搜尋、播放 URL 技術檢測；不作為影視預設播放源。"
+      "status": "enabled",
+      "note": "影視 OKTV 與 iPhone 影視 OKTV 使用的全部點播源。"
     },
     "vodAdult18Sorted": {
       "name": "LunaTV 成人 18+ 分類排序資源區",
