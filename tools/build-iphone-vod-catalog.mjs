@@ -134,9 +134,9 @@ function normalizeImage(baseUrl, value) {
   if (!raw) return '';
   const first = raw.split(/[,\s]+/).find(Boolean) || raw;
   try {
-    return new URL(first, baseUrl).toString();
+    return new URL(first, baseUrl).toString().replace(/^http:/i, 'https:');
   } catch {
-    return first;
+    return first.replace(/^http:/i, 'https:');
   }
 }
 
@@ -166,6 +166,11 @@ function parseEpoch(value) {
   return Number.isFinite(time) ? time : 0;
 }
 
+function isDirectMediaUrl(value) {
+  const url = String(value || '').trim();
+  return /\.(m3u8|mp4|m4v|webm|mov|flv|ts)(?:$|[?#])/i.test(url);
+}
+
 function splitClasses(value, fallback = '') {
   return [...new Set(`${value || ''},${fallback || ''}`.split(/[,\s/、|]+/).map(normalizeText).filter(Boolean))];
 }
@@ -183,6 +188,7 @@ function parseEpisodes(playUrl) {
       const name = bits.length > 1 ? bits.slice(0, -1).join('$') : `第 ${index + 1} 集`;
       const cleanUrl = normalizeText(url);
       if (!/^https?:\/\//i.test(cleanUrl)) return null;
+      if (!isDirectMediaUrl(cleanUrl)) return null;
       return {
         name: normalizeText(name, `第 ${index + 1} 集`),
         url: cleanUrl,
@@ -337,7 +343,9 @@ function pickCategoryFetches(categories) {
 
 async function fetchList(source, query, category = null) {
   const payload = await fetchJson(addVodQuery(source.api, query));
-  return extractArray(payload).map((item) => normalizeVodItem(item, source, category)).filter(Boolean);
+  return extractArray(payload)
+    .map((item) => normalizeVodItem(item, source, category))
+    .filter((item) => item && item.poster && item.playable);
 }
 
 async function indexSource(source) {

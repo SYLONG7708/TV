@@ -66,6 +66,7 @@ try {
     $updateScript = Join-Path $repoRootText "tools\update-lunatv-vod.ps1"
     $adultSortScript = Join-Path $repoRootText "tools\build-lunatv-adult18-sorted.mjs"
     $iphoneCatalogScript = Join-Path $repoRootText "tools\build-iphone-vod-catalog.mjs"
+    $iphoneHealthScript = Join-Path $repoRootText "tools\check-iphone-catalog-health.mjs"
     $sourceNames = @($SourceName -split "," | ForEach-Object { $_.Trim() } | Where-Object { $_ })
     foreach ($name in $sourceNames) {
         Write-Log "Refreshing LunaTV VOD sources from GitHub raw $name."
@@ -99,12 +100,25 @@ try {
             --timeoutMs 8000
     }
 
+    if (Test-Path -LiteralPath $iphoneHealthScript) {
+        Write-Log "Checking iPhone VOD names, posters, VOD sources and live sources."
+        node $iphoneHealthScript `
+            --tvRoot $repoRootText `
+            --catalog (Join-Path $repoRootText "docs\data\iphone-vod-catalog.json") `
+            --live (Join-Path $repoRootText "docs\data\live-channels.json") `
+            --output (Join-Path $repoRootText "docs\data\iphone-health-check-latest.json") `
+            --csvOutput (Join-Path $repoRootText "docs\data\iphone-health-check-latest.csv") `
+            --timeoutMs 8000 `
+            --concurrency 18
+    }
+
     Invoke-Git add `
         "tools/update-lunatv-vod.ps1" `
         "tools/update-lunatv-vod-local.ps1" `
         "tools/install-lunatv-vod-autoupdate-task.ps1" `
         "tools/build-lunatv-adult18-sorted.mjs" `
         "tools/build-iphone-vod-catalog.mjs" `
+        "tools/check-iphone-catalog-health.mjs" `
         "sources/current-sources.json" `
         "sources/vod-lunatv-jin18-oktv.json" `
         "sources/vod-lunatv-jin18-report.json" `
@@ -117,6 +131,8 @@ try {
         "sources/vod-lunatv-adult18-sorted-analysis.csv" `
         "docs/data/iphone-vod-catalog.json" `
         "docs/data/iphone-vod-catalog-report.json" `
+        "docs/data/iphone-health-check-latest.json" `
+        "docs/data/iphone-health-check-latest.csv" `
         "docs/iphone/index.html" `
         ".github/workflows/update-lunatv-vod.yml"
 

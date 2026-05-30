@@ -10,11 +10,12 @@ on:
       - "tools/update-lunatv-vod-local.ps1"
       - "tools/install-lunatv-vod-autoupdate-task.ps1"
       - "tools/build-iphone-vod-catalog.mjs"
+      - "tools/check-iphone-catalog-health.mjs"
       - "docs/iphone/index.html"
       - "sources/current-sources.json"
       - ".github/workflows/update-lunatv-vod.yml"
   schedule:
-    - cron: "41 */6 * * *"
+    - cron: "17 * * * *"
 
 permissions:
   contents: write
@@ -26,7 +27,7 @@ concurrency:
 jobs:
   update:
     runs-on: windows-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -53,6 +54,14 @@ jobs:
             --maxItemsPerSource 70 `
             --maxCategoriesPerSource 6 `
             --timeoutMs 8000
+          node .\tools\check-iphone-catalog-health.mjs `
+            --tvRoot . `
+            --catalog .\docs\data\iphone-vod-catalog.json `
+            --live .\docs\data\live-channels.json `
+            --output .\docs\data\iphone-health-check-latest.json `
+            --csvOutput .\docs\data\iphone-health-check-latest.csv `
+            --timeoutMs 8000 `
+            --concurrency 18
 
       - name: Commit changes
         shell: pwsh
@@ -63,7 +72,9 @@ jobs:
             sources/vod-lunatv-jin18-oktv.json sources/vod-lunatv-jin18-report.json sources/vod-lunatv-jin18-analysis.csv `
             sources/vod-lunatv-full-oktv.json sources/vod-lunatv-full-report.json sources/vod-lunatv-full-analysis.csv `
             sources/vod-lunatv-adult18-sorted-oktv.json sources/vod-lunatv-adult18-sorted-report.json sources/vod-lunatv-adult18-sorted-analysis.csv `
-            docs/data/iphone-vod-catalog.json docs/data/iphone-vod-catalog-report.json docs/iphone/index.html
+            docs/data/iphone-vod-catalog.json docs/data/iphone-vod-catalog-report.json `
+            docs/data/iphone-health-check-latest.json docs/data/iphone-health-check-latest.csv `
+            docs/iphone/index.html
           if (git diff --cached --quiet) {
             Write-Host "No LunaTV VOD source changes."
           } else {

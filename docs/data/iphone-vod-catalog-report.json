@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-05-30T02:29:37.815Z",
+  "generatedAt": "2026-05-30T03:13:35.618Z",
   "totals": {
     "sources": 84,
-    "indexedSources": 14,
-    "items": 880,
-    "playableItems": 880,
-    "movies": 278,
-    "series": 296,
-    "variety": 225,
-    "anime": 81
+    "indexedSources": 9,
+    "items": 530,
+    "playableItems": 530,
+    "movies": 182,
+    "series": 199,
+    "variety": 109,
+    "anime": 40
   },
   "sourceChecks": [
     {
@@ -41,7 +41,7 @@
     },
     {
       "id": "oktv-內建點播源-tx-https-file-icve-com-cn-file-doc-249-899-3e7e0c8a023b624cec6bdcc200f06f02-js-3",
-      "name": "腾讯视频1",
+      "name": "腾讯视频",
       "type": 3,
       "api": "https://file.icve.com.cn/file_doc/249/899/3E7E0C8A023B624CEC6BDCC200F06F02.js",
       "origin": "OKTV 內建點播源",
@@ -136,30 +136,45 @@
       "origin": "OKTV 內建點播源",
       "adult": false,
       "indexable": true,
-      "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
+      "indexed": false,
+      "itemCount": 0,
+      "playableCount": 0,
       "error": "",
       "checks": [
         {
           "label": "最新",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "泰国剧",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "国产剧",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "日韩综艺",
           "ok": true,
-          "count": 20
+          "count": 0
+        },
+        {
+          "label": "国产动漫",
+          "ok": true,
+          "count": 0
+        },
+        {
+          "label": "短剧",
+          "ok": true,
+          "count": 0
+        },
+        {
+          "label": "日韩动漫",
+          "ok": true,
+          "count": 0
         }
       ]
     },
@@ -185,30 +200,40 @@
       "origin": "OKTV 內建點播源",
       "adult": false,
       "indexable": true,
-      "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
+      "indexed": false,
+      "itemCount": 0,
+      "playableCount": 0,
       "error": "",
       "checks": [
         {
           "label": "最新",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "内地剧",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "欧美剧",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "日韩综艺",
           "ok": true,
-          "count": 20
+          "count": 0
+        },
+        {
+          "label": "中国动漫",
+          "ok": true,
+          "count": 0
+        },
+        {
+          "label": "大陆综艺",
+          "ok": true,
+          "count": 0
         }
       ]
     },
@@ -220,30 +245,45 @@
       "origin": "OKTV 內建點播源",
       "adult": false,
       "indexable": true,
-      "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
+      "indexed": false,
+      "itemCount": 0,
+      "playableCount": 0,
       "error": "",
       "checks": [
         {
           "label": "最新",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "泰国剧",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "国产剧",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "日韩综艺",
           "ok": true,
-          "count": 20
+          "count": 0
+        },
+        {
+          "label": "国产动漫",
+          "ok": true,
+          "count": 0
+        },
+        {
+          "label": "短剧",
+          "ok": true,
+          "count": 0
+        },
+        {
+          "label": "日韩动漫",
+          "ok": true,
+          "count": 0
         }
       ]
     },
@@ -278,7 +318,7 @@
         {
           "label": "日韩综艺",
           "ok": true,
-          "count": 20
+          "count": 19
         }
       ]
     },
@@ -557,17 +597,17 @@
           "count": 20
         },
         {
-          "label": "香港剧",
+          "label": "喜剧片",
           "ok": true,
           "count": 20
         },
         {
-          "label": "国产剧",
+          "label": "韩剧",
           "ok": true,
           "count": 20
         },
         {
-          "label": "综艺片",
+          "label": "科幻片",
           "ok": true,
           "count": 20
         }
@@ -581,16 +621,35 @@
       "origin": "LunaTV full 技術檢測",
       "adult": false,
       "indexable": true,
-      "indexed": false,
-      "itemCount": 0,
-      "playableCount": 0,
-      "error": "分類讀取失敗: HTTP 429",
+      "indexed": true,
+      "itemCount": 70,
+      "playableCount": 70,
+      "error": "",
       "checks": [
         {
           "label": "最新",
-          "ok": false,
-          "count": 0,
-          "error": "HTTP 429"
+          "ok": true,
+          "count": 19
+        },
+        {
+          "label": "喜剧片",
+          "ok": true,
+          "count": 19
+        },
+        {
+          "label": "古装仙侠",
+          "ok": true,
+          "count": 20
+        },
+        {
+          "label": "现代都市",
+          "ok": true,
+          "count": 20
+        },
+        {
+          "label": "剧情片",
+          "ok": true,
+          "count": 19
         }
       ]
     },
@@ -637,30 +696,45 @@
       "origin": "LunaTV full 技術檢測",
       "adult": false,
       "indexable": true,
-      "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
+      "indexed": false,
+      "itemCount": 0,
+      "playableCount": 0,
       "error": "",
       "checks": [
         {
           "label": "最新",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "科幻片",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "国产剧",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "日韩综艺",
           "ok": true,
-          "count": 20
+          "count": 0
+        },
+        {
+          "label": "国产动漫",
+          "ok": true,
+          "count": 0
+        },
+        {
+          "label": "日韩动漫",
+          "ok": true,
+          "count": 0
+        },
+        {
+          "label": "大陆综艺",
+          "ok": true,
+          "count": 0
         }
       ]
     },
@@ -702,30 +776,45 @@
       "origin": "LunaTV full 技術檢測",
       "adult": false,
       "indexable": true,
-      "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
+      "indexed": false,
+      "itemCount": 0,
+      "playableCount": 0,
       "error": "",
       "checks": [
         {
           "label": "最新",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "泰国剧",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "国产剧",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "日韩综艺",
           "ok": true,
-          "count": 20
+          "count": 0
+        },
+        {
+          "label": "国产动漫",
+          "ok": true,
+          "count": 0
+        },
+        {
+          "label": "短剧",
+          "ok": true,
+          "count": 0
+        },
+        {
+          "label": "日韩动漫",
+          "ok": true,
+          "count": 0
         }
       ]
     },
@@ -762,30 +851,40 @@
       "origin": "LunaTV full 技術檢測",
       "adult": false,
       "indexable": true,
-      "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
+      "indexed": false,
+      "itemCount": 0,
+      "playableCount": 0,
       "error": "",
       "checks": [
         {
           "label": "最新",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "内地剧",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "欧美剧",
           "ok": true,
-          "count": 20
+          "count": 0
         },
         {
           "label": "日韩综艺",
           "ok": true,
-          "count": 20
+          "count": 0
+        },
+        {
+          "label": "中国动漫",
+          "ok": true,
+          "count": 0
+        },
+        {
+          "label": "大陆综艺",
+          "ok": true,
+          "count": 0
         }
       ]
     },

@@ -22,7 +22,7 @@ $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $actionArg
 $triggers = @(
     (New-ScheduledTaskTrigger -AtLogOn),
     (New-ScheduledTaskTrigger -AtStartup),
-    (New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(5) -RepetitionInterval (New-TimeSpan -Hours 2) -RepetitionDuration (New-TimeSpan -Days 3650))
+    (New-ScheduledTaskTrigger -Once -At (Get-Date).AddMinutes(5) -RepetitionInterval (New-TimeSpan -Hours 1) -RepetitionDuration (New-TimeSpan -Days 3650))
 )
 $settings = New-ScheduledTaskSettingsSet `
     -StartWhenAvailable `
@@ -39,7 +39,7 @@ Register-ScheduledTask `
     -Trigger $triggers `
     -Settings $settings `
     -Principal $principal `
-    -Description "Refresh OKTV LunaTV jin18 and full VOD technical reports at startup/logon and every 2 hours, remove duplicates and failed sources, then push to GitHub." `
+    -Description "Refresh OKTV LunaTV VOD, iPhone catalog, poster/name checks and live checks at startup/logon and every hour, then push to GitHub." `
     -Force | Out-Null
 
 Write-Host "Registered scheduled task: $TaskName"
