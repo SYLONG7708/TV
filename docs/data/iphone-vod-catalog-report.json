@@ -1,14 +1,14 @@
 {
-  "generatedAt": "2026-05-30T03:13:35.618Z",
+  "generatedAt": "2026-05-30T03:27:35.914Z",
   "totals": {
-    "sources": 84,
-    "indexedSources": 9,
-    "items": 530,
-    "playableItems": 530,
-    "movies": 182,
-    "series": 199,
-    "variety": 109,
-    "anime": 40
+    "sources": 85,
+    "indexedSources": 8,
+    "items": 410,
+    "playableItems": 410,
+    "movies": 97,
+    "series": 137,
+    "variety": 119,
+    "anime": 57
   },
   "sourceChecks": [
     {
@@ -552,27 +552,12 @@
       "adult": false,
       "indexable": true,
       "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
-      "error": "",
+      "itemCount": 20,
+      "playableCount": 20,
+      "error": "分類讀取失敗: HTTP 500",
       "checks": [
         {
           "label": "最新",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "韩国剧",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "国产剧",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "日韩综艺",
           "ok": true,
           "count": 20
         }
@@ -597,9 +582,9 @@
           "count": 20
         },
         {
-          "label": "喜剧片",
+          "label": "剧情片",
           "ok": true,
-          "count": 20
+          "count": 19
         },
         {
           "label": "韩剧",
@@ -607,7 +592,7 @@
           "count": 20
         },
         {
-          "label": "科幻片",
+          "label": "大陆综艺",
           "ok": true,
           "count": 20
         }
@@ -621,35 +606,16 @@
       "origin": "LunaTV full 技術檢測",
       "adult": false,
       "indexable": true,
-      "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
-      "error": "",
+      "indexed": false,
+      "itemCount": 0,
+      "playableCount": 0,
+      "error": "分類讀取失敗: HTTP 429",
       "checks": [
         {
           "label": "最新",
-          "ok": true,
-          "count": 19
-        },
-        {
-          "label": "喜剧片",
-          "ok": true,
-          "count": 19
-        },
-        {
-          "label": "古装仙侠",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "现代都市",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "剧情片",
-          "ok": true,
-          "count": 19
+          "ok": false,
+          "count": 0,
+          "error": "HTTP 429"
         }
       ]
     },
@@ -672,12 +638,17 @@
           "count": 20
         },
         {
-          "label": "韩国剧",
+          "label": "国产剧",
           "ok": true,
           "count": 20
         },
         {
-          "label": "国产剧",
+          "label": "大陆综艺",
+          "ok": true,
+          "count": 20
+        },
+        {
+          "label": "国产动漫",
           "ok": true,
           "count": 20
         },
@@ -1567,6 +1538,20 @@
       "api": "https://xingba222.com/api.php/provide/vod",
       "origin": "LunaTV full 技術檢測",
       "adult": true,
+      "indexable": true,
+      "indexed": false,
+      "itemCount": 0,
+      "playableCount": 0,
+      "error": "",
+      "checks": []
+    },
+    {
+      "id": "lunatv-full-技術檢測-lunatv-072-aosikazy-com-https-aosikazy-com-api-php-provide-vod-85",
+      "name": "Luna 72 奥斯卡-",
+      "type": 1,
+      "api": "https://aosikazy.com/api.php/provide/vod",
+      "origin": "LunaTV full 技術檢測",
+      "adult": false,
       "indexable": true,
       "indexed": false,
       "itemCount": 0,
