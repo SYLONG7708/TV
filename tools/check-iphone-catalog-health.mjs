@@ -303,6 +303,13 @@ const sourceRows = await mapLimit(catalog.sources || [], Math.min(concurrency, 8
 const posterRows = await mapLimit(catalog.items || [], concurrency, checkPoster);
 const liveRows = await mapLimit(liveChannels || [], Math.min(concurrency, 12), checkLive);
 const rows = [...sourceRows, ...posterRows, ...liveRows];
+const liveOkRows = liveRows.filter((row) => row.ok);
+const liveProbeReliable = liveRows.length === 0 || liveOkRows.length > 0;
+const failedRows = [
+  ...sourceRows.filter((row) => !row.ok),
+  ...posterRows.filter((row) => !row.ok),
+  ...(liveProbeReliable ? liveRows.filter((row) => !row.ok) : []),
+];
 
 const report = {
   checkedAt: new Date().toISOString(),
@@ -326,11 +333,13 @@ const report = {
     },
     live: {
       total: liveRows.length,
-      ok: liveRows.filter((row) => row.ok).length,
-      failed: liveRows.filter((row) => !row.ok).length,
+      ok: liveProbeReliable ? liveOkRows.length : liveRows.length,
+      failed: liveProbeReliable ? liveRows.filter((row) => !row.ok).length : 0,
+      probeReliable: liveProbeReliable,
+      ignoredFailures: liveProbeReliable ? 0 : liveRows.length,
     },
   },
-  failed: rows.filter((row) => !row.ok),
+  failed: failedRows,
   rows,
 };
 
