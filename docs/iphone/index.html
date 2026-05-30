@@ -832,7 +832,6 @@
         const query = state.query.trim().toLowerCase();
         return state.catalog.items.filter((item) => {
           if (state.healthIndex.posters.has(item.id)) return false;
-          if (state.healthIndex.sources.has(item.sourceId)) return false;
           if (sourceId !== 'all' && item.sourceId !== sourceId) return false;
           if (state.tab !== 'home' && state.tab !== 'rank' && item.kind !== state.tab) return false;
           if (state.filters.year !== 'all' && item.year !== state.filters.year) return false;
@@ -952,7 +951,7 @@
 
       function renderSourceRail() {
         const selected = activeSource();
-        const indexedCount = state.catalog.sources.filter((source) => source.indexed && !state.healthIndex.sources.has(source.id)).length;
+        const indexedCount = state.catalog.sources.filter((source) => source.indexed).length;
         return `
           <div class="source-rail">
             <button class="source-toggle" type="button" data-open-source>
@@ -1059,7 +1058,7 @@
       }
 
       function renderSources() {
-        const rows = state.catalog.sources.filter((source) => !state.healthIndex.sources.has(source.id));
+        const rows = state.catalog.sources;
         screen.innerHTML = `
           ${renderToolbar('搜尋點播源')}
           <section class="section-head">
@@ -1224,7 +1223,7 @@
               <div class="row-main"><strong>全部來源</strong><span>${state.catalog.items.length} 部手機索引內容</span></div>
               <button class="play-btn" type="button" data-sheet-source="all">${icon(state.selectedSource === 'all' ? 'check' : 'signal')}${state.selectedSource === 'all' ? '使用中' : '切換'}</button>
             </article>
-            ${state.catalog.sources.filter((source) => !state.healthIndex.sources.has(source.id)).map((source) => renderSheetSourceRow(source)).join('')}
+            ${state.catalog.sources.map((source) => renderSheetSourceRow(source)).join('')}
           </section>
         `;
         sourceSheetBody.querySelectorAll('[data-sheet-source]').forEach((button) => {
@@ -1353,7 +1352,7 @@
       };
       if (
         state.selectedSource !== 'all' &&
-        !state.catalog.sources.some((source) => source.id === state.selectedSource && source.indexed && !state.healthIndex.sources.has(source.id))
+        !state.catalog.sources.some((source) => source.id === state.selectedSource && source.indexed)
       ) {
         state.selectedSource = 'all';
       }
