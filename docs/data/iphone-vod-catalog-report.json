@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-05-30T18:30:17.263Z",
+  "generatedAt": "2026-05-30T18:42:27.774Z",
   "totals": {
     "sources": 73,
     "indexedSources": 59,
-    "items": 3307,
-    "playableItems": 3307,
-    "movies": 1476,
-    "series": 421,
-    "variety": 130,
+    "items": 3196,
+    "playableItems": 3196,
+    "movies": 1333,
+    "series": 448,
+    "variety": 146,
     "anime": 295,
     "short": 252,
-    "adult": 733
+    "adult": 722
   },
   "sourceChecks": [
     {
@@ -169,17 +169,11 @@
         },
         {
           "label": "大陆综艺",
-          "ok": false,
-          "count": 0,
-          "error": "The operation was aborted due to timeout"
-        },
-        {
-          "label": "日本动漫",
           "ok": true,
           "count": 20
         },
         {
-          "label": "韩国剧",
+          "label": "日本动漫",
           "ok": true,
           "count": 20
         }
@@ -542,11 +536,6 @@
           "label": "日韩动漫",
           "ok": true,
           "count": 20
-        },
-        {
-          "label": "泰剧",
-          "ok": true,
-          "count": 20
         }
       ]
     },
@@ -760,8 +749,9 @@
         },
         {
           "label": "欧美剧",
-          "ok": true,
-          "count": 0
+          "ok": false,
+          "count": 0,
+          "error": "The operation was aborted due to timeout"
         }
       ]
     },
@@ -774,8 +764,8 @@
       "adult": false,
       "indexable": true,
       "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
+      "itemCount": 46,
+      "playableCount": 46,
       "error": "",
       "checks": [
         {
@@ -785,8 +775,9 @@
         },
         {
           "label": "韩国剧",
-          "ok": true,
-          "count": 20
+          "ok": false,
+          "count": 0,
+          "error": "The operation was aborted due to timeout"
         },
         {
           "label": "短剧",
@@ -806,8 +797,9 @@
         },
         {
           "label": "国产剧",
-          "ok": true,
-          "count": 20
+          "ok": false,
+          "count": 0,
+          "error": "The operation was aborted due to timeout"
         }
       ]
     },
@@ -1221,21 +1213,22 @@
         },
         {
           "label": "年代穿越",
+          "ok": false,
+          "count": 0,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "label": "国产剧",
           "ok": true,
           "count": 20
         },
         {
-          "label": "现代都市",
+          "label": "日韩动漫",
           "ok": true,
           "count": 20
         },
         {
-          "label": "女频恋爱",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "古装仙侠",
+          "label": "泰剧",
           "ok": true,
           "count": 20
         }
@@ -2100,17 +2093,12 @@
       "adult": false,
       "indexable": true,
       "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
-      "error": "",
+      "itemCount": 50,
+      "playableCount": 50,
+      "error": "分類讀取失敗: HTTP 429",
       "checks": [
         {
           "label": "最新",
-          "ok": true,
-          "count": 50
-        },
-        {
-          "label": "重口激情",
           "ok": true,
           "count": 50
         }
@@ -2200,32 +2188,12 @@
       "adult": false,
       "indexable": true,
       "indexed": true,
-      "itemCount": 70,
-      "playableCount": 70,
-      "error": "",
+      "itemCount": 20,
+      "playableCount": 20,
+      "error": "分類讀取失敗: The operation was aborted due to timeout",
       "checks": [
         {
           "label": "最新",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "日本无码",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "国产情色",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "长腿丝袜",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "精品推荐",
           "ok": true,
           "count": 20
         }
@@ -2240,8 +2208,8 @@
       "adult": false,
       "indexable": true,
       "indexed": true,
-      "itemCount": 40,
-      "playableCount": 40,
+      "itemCount": 23,
+      "playableCount": 23,
       "error": "",
       "checks": [
         {
@@ -2256,8 +2224,9 @@
         },
         {
           "label": "欧美精品",
-          "ok": true,
-          "count": 20
+          "ok": false,
+          "count": 0,
+          "error": "fetch failed"
         }
       ]
     },
@@ -2305,7 +2274,7 @@
           "count": 50
         },
         {
-          "label": "黑丝诱惑",
+          "label": "中文字幕",
           "ok": true,
           "count": 50
         }
@@ -2460,7 +2429,7 @@
           "count": 20
         },
         {
-          "label": "岛国素人",
+          "label": "传媒原创",
           "ok": true,
           "count": 20
         },
@@ -2470,13 +2439,7 @@
           "count": 20
         },
         {
-          "label": "欧美精品",
-          "ok": false,
-          "count": 0,
-          "error": "The operation was aborted due to timeout"
-        },
-        {
-          "label": "萝莉少女",
+          "label": "岛国素人",
           "ok": true,
           "count": 20
         }
@@ -2497,8 +2460,20 @@
       "checks": [
         {
           "label": "最新",
+          "ok": false,
+          "count": 0,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "label": "卡通动漫",
           "ok": true,
           "count": 20
+        },
+        {
+          "label": "国产直播",
+          "ok": false,
+          "count": 0,
+          "error": "The operation was aborted due to timeout"
         },
         {
           "label": "AI换脸",
@@ -2506,12 +2481,12 @@
           "count": 20
         },
         {
-          "label": "国产直播",
+          "label": "重口调教",
           "ok": true,
           "count": 20
         },
         {
-          "label": "重口调教",
+          "label": "欧美精品",
           "ok": true,
           "count": 20
         }
