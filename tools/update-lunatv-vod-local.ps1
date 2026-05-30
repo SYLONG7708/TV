@@ -67,8 +67,9 @@ function Sync-GhPages {
         New-Item -ItemType Directory -Force -Path (Join-Path $pagesRootText "docs") | Out-Null
         Copy-Item -LiteralPath (Join-Path $repoRootText "docs\iphone") -Destination (Join-Path $pagesRootText "docs") -Recurse -Force
         Copy-Item -LiteralPath (Join-Path $repoRootText "docs\data") -Destination (Join-Path $pagesRootText "docs") -Recurse -Force
+        Copy-Item -LiteralPath (Join-Path $repoRootText "docs\assets") -Destination (Join-Path $pagesRootText "docs") -Recurse -Force
 
-        Invoke-PagesGit add "docs/iphone" "docs/data"
+        Invoke-PagesGit add "docs/iphone" "docs/data" "docs/assets"
         if (Invoke-PagesGit diff --cached --quiet) {
             Write-Log "No gh-pages public file changes to commit."
         } else {
@@ -201,6 +202,8 @@ try {
         "docs/data/iphone-health-check-latest.json" `
         "docs/data/iphone-health-check-latest.csv" `
         "docs/iphone/index.html" `
+        "docs/assets/source-signal-icon.svg" `
+        "docs/assets/adult-18-badge.svg" `
         ".github/workflows/update-lunatv-vod.yml"
 
     if (Invoke-Git diff --cached --quiet) {

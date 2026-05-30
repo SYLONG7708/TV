@@ -13,6 +13,8 @@ on:
       - "tools/build-iphone-vod-catalog.mjs"
       - "tools/check-iphone-catalog-health.mjs"
       - "docs/iphone/index.html"
+      - "docs/assets/source-signal-icon.svg"
+      - "docs/assets/adult-18-badge.svg"
       - "sources/current-sources.json"
       - "sources/All on-demand sources"
       - ".github/workflows/update-lunatv-vod.yml"
@@ -82,7 +84,8 @@ jobs:
             sources/vod-lunatv-adult18-sorted-oktv.json sources/vod-lunatv-adult18-sorted-report.json sources/vod-lunatv-adult18-sorted-analysis.csv `
             docs/data/vod-sources.json docs/data/iphone-vod-catalog.json docs/data/iphone-vod-catalog-report.json `
             docs/data/iphone-health-check-latest.json docs/data/iphone-health-check-latest.csv `
-            docs/iphone/index.html
+            docs/iphone/index.html `
+            docs/assets/source-signal-icon.svg docs/assets/adult-18-badge.svg
           if (git diff --cached --quiet) {
             Write-Host "No LunaTV VOD source changes."
           } else {
@@ -99,10 +102,11 @@ jobs:
           New-Item -ItemType Directory -Force -Path (Join-Path $pages "docs") | Out-Null
           Copy-Item -Path .\docs\iphone -Destination (Join-Path $pages "docs") -Recurse -Force
           Copy-Item -Path .\docs\data -Destination (Join-Path $pages "docs") -Recurse -Force
+          Copy-Item -Path .\docs\assets -Destination (Join-Path $pages "docs") -Recurse -Force
           Push-Location $pages
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/iphone docs/data
+          git add docs/iphone docs/data docs/assets
           if (git diff --cached --quiet) {
             Write-Host "No GitHub Pages public data changes."
           } else {
