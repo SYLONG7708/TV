@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-05-30T03:38:31.041Z",
+  "generatedAt": "2026-05-30T07:22:37.840Z",
   "sourceName": "full",
   "adultStartIndex": 40,
   "totalAdultSources": 34,
-  "usableAdultSources": 24,
+  "usableAdultSources": 23,
   "duplicateAdultSources": 8,
-  "failedAdultSources": 2,
-  "searchOkSources": 32,
-  "searchPlayableSources": 31,
+  "failedAdultSources": 3,
+  "searchOkSources": 31,
+  "searchPlayableSources": 30,
   "candidateOutput": "sources/vod-lunatv-adult18-sorted-oktv.json",
   "analysisOutput": "sources/vod-lunatv-adult18-sorted-analysis.csv",
   "categoryCounts": {
@@ -19,9 +19,9 @@
     },
     "02 國產/短片": {
       "total": 9,
-      "usable": 5,
+      "usable": 4,
       "duplicate": 3,
-      "failed": 1
+      "failed": 2
     },
     "03 番號/日本": {
       "total": 7,
@@ -166,25 +166,17 @@
       "order": 48,
       "name": "Luna 48 黄色仓库",
       "api": "https://hsckzy.xyz/api.php/provide/vod",
-      "included": true,
+      "included": false,
       "duplicate": false,
       "duplicateReason": "",
-      "listOk": true,
-      "detailOk": true,
-      "searchOk": true,
-      "searchHasPlayUrl": true,
-      "hasPlayUrl": true,
-      "status": "usable_review_required",
-      "error": "",
-      "record": {
-        "key": "黄色仓库|AV",
-        "name": "黄色仓库(旧)｜",
-        "type": 1,
-        "api": "https://hsckzy.vip/api.php/provide/vod/",
-        "quickSearch": 1,
-        "searchable": 1,
-        "filterable": 0
-      }
+      "listOk": false,
+      "detailOk": false,
+      "searchOk": false,
+      "searchHasPlayUrl": false,
+      "hasPlayUrl": false,
+      "status": "failed_removed",
+      "error": "Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (523) <none>.\"",
+      "record": null
     },
     {
       "category": "02 國產/短片",
