@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-05-30T14:11:12.817Z",
+  "generatedAt": "2026-05-30T15:39:49.372Z",
   "sourceName": "full",
   "adultStartIndex": 40,
   "totalAdultSources": 34,
-  "usableAdultSources": 23,
+  "usableAdultSources": 24,
   "duplicateAdultSources": 8,
-  "failedAdultSources": 3,
-  "searchOkSources": 31,
-  "searchPlayableSources": 30,
+  "failedAdultSources": 2,
+  "searchOkSources": 32,
+  "searchPlayableSources": 31,
   "candidateOutput": "sources/vod-lunatv-adult18-sorted-oktv.json",
   "analysisOutput": "sources/vod-lunatv-adult18-sorted-analysis.csv",
   "categoryCounts": {
@@ -19,9 +19,9 @@
     },
     "02 國產/短片": {
       "total": 9,
-      "usable": 4,
+      "usable": 5,
       "duplicate": 3,
-      "failed": 2
+      "failed": 1
     },
     "03 番號/日本": {
       "total": 7,
@@ -283,17 +283,25 @@
       "order": 69,
       "name": "Luna 69 杏吧资源",
       "api": "https://xingba222.com/api.php/provide/vod",
-      "included": false,
+      "included": true,
       "duplicate": false,
       "duplicateReason": "",
       "listOk": true,
-      "detailOk": false,
-      "searchOk": false,
-      "searchHasPlayUrl": false,
-      "hasPlayUrl": false,
-      "status": "failed_removed",
-      "error": "Exception calling \"GetResponse\" with \"0\" argument(s): \"The operation has timed out\"",
-      "record": null
+      "detailOk": true,
+      "searchOk": true,
+      "searchHasPlayUrl": true,
+      "hasPlayUrl": true,
+      "status": "usable_review_required",
+      "error": "",
+      "record": {
+        "key": "杏吧资源|AV",
+        "name": "杏吧资源｜",
+        "type": 1,
+        "api": "https://xingba222.com/api.php/provide/vod/",
+        "quickSearch": 1,
+        "searchable": 1,
+        "filterable": 0
+      }
     },
     {
       "category": "02 國產/短片",
