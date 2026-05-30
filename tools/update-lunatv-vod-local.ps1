@@ -1,5 +1,6 @@
 param(
     [string]$RepoRoot = "",
+    [string]$PagesRoot = "",
     [string]$SourceName = "jin18,full",
     [int]$TimeoutSec = 12,
     [int]$MaxDetailProbe = 3,
@@ -17,6 +18,12 @@ if ([string]::IsNullOrWhiteSpace($RepoRoot)) {
 
 $repoRootText = [string]$RepoRoot
 $safeDir = $repoRootText -replace "\\", "/"
+$parentDir = Split-Path -Parent $repoRootText
+if ([string]::IsNullOrWhiteSpace($PagesRoot)) {
+    $PagesRoot = Join-Path $parentDir "TV-gh-pages"
+}
+$pagesRootText = [string]$PagesRoot
+$pagesSafeDir = $pagesRootText -replace "\\", "/"
 $logDir = Join-Path $repoRootText ".patch-work"
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 $logPath = Join-Path $logDir "lunatv-vod-local-update.log"
@@ -29,6 +36,52 @@ function Write-Log([string]$Message) {
 
 function Invoke-Git {
     git -c "safe.directory=$safeDir" @args
+}
+
+function Invoke-PagesGit {
+    git -c "safe.directory=$pagesSafeDir" @args
+}
+
+function Sync-GhPages {
+    if (-not (Test-Path -LiteralPath (Join-Path $pagesRootText ".git"))) {
+        Write-Log "GitHub Pages worktree not found; skipping gh-pages sync: $pagesRootText"
+        return
+    }
+
+    Write-Log "Syncing iPhone public files to gh-pages worktree: $pagesRootText"
+    Push-Location $pagesRootText
+    try {
+        try {
+            Invoke-PagesGit config user.name | Out-Null
+        } catch {
+            Invoke-PagesGit config user.name "OKTV local updater"
+        }
+        try {
+            Invoke-PagesGit config user.email | Out-Null
+        } catch {
+            Invoke-PagesGit config user.email "oktv-local-updater@example.local"
+        }
+
+        Invoke-PagesGit pull --ff-only origin gh-pages
+
+        New-Item -ItemType Directory -Force -Path (Join-Path $pagesRootText "docs") | Out-Null
+        Copy-Item -LiteralPath (Join-Path $repoRootText "docs\iphone") -Destination (Join-Path $pagesRootText "docs") -Recurse -Force
+        Copy-Item -LiteralPath (Join-Path $repoRootText "docs\data") -Destination (Join-Path $pagesRootText "docs") -Recurse -Force
+
+        Invoke-PagesGit add "docs/iphone" "docs/data"
+        if (Invoke-PagesGit diff --cached --quiet) {
+            Write-Log "No gh-pages public file changes to commit."
+        } else {
+            Invoke-PagesGit commit -m "Publish auto refreshed OKTV data"
+            if ($NoGitPush) {
+                Write-Log "NoGitPush set; gh-pages commit created but not pushed."
+            } else {
+                Invoke-PagesGit push origin HEAD:gh-pages
+            }
+        }
+    } finally {
+        Pop-Location
+    }
 }
 
 if (Test-Path -LiteralPath $lockPath) {
@@ -149,6 +202,7 @@ try {
         }
     }
 
+    Sync-GhPages
     Write-Log "LunaTV VOD update finished."
 } catch {
     Write-Log "ERROR: $($_.Exception.Message)"
