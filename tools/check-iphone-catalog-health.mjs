@@ -101,6 +101,27 @@ function firstPlayableManifestLine(manifest) {
     .find((line) => line && !line.startsWith('#'));
 }
 
+function hlsQuality(manifest) {
+  const variants = [...String(manifest || '').matchAll(/#EXT-X-STREAM-INF:([^\n\r]+)/gi)].map((match) => {
+    const attrs = match[1];
+    const bandwidth = Number(attrs.match(/BANDWIDTH=(\d+)/i)?.[1] || 0);
+    const resolution = attrs.match(/RESOLUTION=(\d+)x(\d+)/i);
+    const width = Number(resolution?.[1] || 0);
+    const height = Number(resolution?.[2] || 0);
+    return { bandwidth, width, height };
+  });
+  const maxHeight = Math.max(0, ...variants.map((item) => item.height));
+  const maxBandwidth = Math.max(0, ...variants.map((item) => item.bandwidth));
+  const qualityLabel = maxHeight ? `${maxHeight}p` : variants.length ? 'adaptive' : 'single';
+  return {
+    qualityOk: variants.length === 0 || maxHeight >= 480 || maxBandwidth >= 800000,
+    qualityLabel,
+    maxHeight,
+    maxBandwidth,
+    variants: variants.length,
+  };
+}
+
 function absolutizeUrl(baseUrl, value) {
   try {
     return new URL(value, baseUrl).toString();
@@ -165,6 +186,7 @@ async function checkPoster(item) {
   let playOk = false;
   let playStatus = 0;
   let playError = '';
+  let quality = { qualityOk: false, qualityLabel: '', maxHeight: 0, maxBandwidth: 0, variants: 0 };
 
   if (firstEpisode?.url) {
     try {
@@ -172,11 +194,19 @@ async function checkPoster(item) {
         const manifest = await fetchText(firstEpisode.url);
         playStatus = manifest.res.status;
         playOk = manifest.res.ok && manifest.text.includes('#EXTM3U');
+        quality = hlsQuality(manifest.text);
         if (!playOk) playError = `play manifest HTTP ${manifest.res.status}`;
       } else {
         const playProbe = await fetchProbe(firstEpisode.url);
         playStatus = playProbe.status;
         playOk = playProbe.ok;
+        quality = {
+          qualityOk: playProbe.ok,
+          qualityLabel: playProbe.contentType || 'direct',
+          maxHeight: 0,
+          maxBandwidth: 0,
+          variants: 0,
+        };
         playError = playProbe.error;
       }
     } catch (error) {
@@ -196,11 +226,24 @@ async function checkPoster(item) {
     titleOk,
     posterOk,
     playOk,
-    ok: titleOk && posterOk && playOk,
+    qualityOk: playOk && quality.qualityOk,
+    qualityLabel: quality.qualityLabel,
+    maxHeight: quality.maxHeight,
+    maxBandwidth: quality.maxBandwidth,
+    variants: quality.variants,
+    ok: titleOk && posterOk && playOk && quality.qualityOk,
     status: probe?.status || 0,
     playStatus,
     elapsedMs: probe?.elapsedMs || 0,
-    error: titleOk ? (posterOk ? (playOk ? '' : playError || 'play URL probe failed') : probe?.error || 'poster probe failed') : 'missing title',
+    error: titleOk
+      ? posterOk
+        ? playOk
+          ? quality.qualityOk
+            ? ''
+            : 'play quality probe failed'
+          : playError || 'play URL probe failed'
+        : probe?.error || 'poster probe failed'
+      : 'missing title',
   };
 }
 
@@ -214,6 +257,11 @@ async function checkLive(channel) {
     url: channel.url || '',
     group: channel.group || '',
     ok: false,
+    qualityOk: false,
+    qualityLabel: '',
+    maxHeight: 0,
+    maxBandwidth: 0,
+    variants: 0,
     status: 0,
     elapsedMs: 0,
     error: '',
@@ -228,6 +276,8 @@ async function checkLive(channel) {
       const probe = await fetchProbe(row.url);
       row.status = probe.status;
       row.ok = probe.ok;
+      row.qualityOk = probe.ok;
+      row.qualityLabel = probe.contentType || 'external';
       row.error = probe.error;
       return row;
     }
@@ -236,19 +286,28 @@ async function checkLive(channel) {
       row.status = manifest.res.status;
       const manifestOk = manifest.res.ok && manifest.text.includes('#EXTM3U');
       if (!manifestOk) throw new Error(`manifest HTTP ${manifest.res.status}`);
+      const quality = hlsQuality(manifest.text);
+      row.qualityOk = quality.qualityOk;
+      row.qualityLabel = quality.qualityLabel;
+      row.maxHeight = quality.maxHeight;
+      row.maxBandwidth = quality.maxBandwidth;
+      row.variants = quality.variants;
       const nextLine = firstPlayableManifestLine(manifest.text);
       const nextUrl = nextLine ? absolutizeUrl(row.url, nextLine) : '';
       if (nextUrl) {
         const segment = await fetchProbe(nextUrl);
-        row.ok = segment.ok;
-        row.error = segment.ok ? '' : segment.error || `segment HTTP ${segment.status}`;
+        row.ok = segment.ok && row.qualityOk;
+        row.error = segment.ok ? (row.qualityOk ? '' : 'live quality probe failed') : segment.error || `segment HTTP ${segment.status}`;
       } else {
-        row.ok = true;
+        row.ok = row.qualityOk;
+        row.error = row.qualityOk ? '' : 'live quality probe failed';
       }
     } else {
       const probe = await fetchProbe(row.url);
       row.status = probe.status;
       row.ok = probe.ok;
+      row.qualityOk = probe.ok;
+      row.qualityLabel = probe.contentType || 'direct';
       row.error = probe.error;
     }
   } catch (error) {
@@ -290,6 +349,11 @@ function toCsv(rows) {
     'titleOk',
     'posterOk',
     'playOk',
+    'qualityOk',
+    'qualityLabel',
+    'maxHeight',
+    'maxBandwidth',
+    'variants',
     'status',
     'playStatus',
     'elapsedMs',
@@ -329,12 +393,14 @@ const report = {
       titleOk: posterRows.filter((row) => row.titleOk).length,
       posterOk: posterRows.filter((row) => row.posterOk).length,
       playOk: posterRows.filter((row) => row.playOk).length,
+      qualityOk: posterRows.filter((row) => row.qualityOk).length,
       failed: posterRows.filter((row) => !row.ok).length,
     },
     live: {
       total: liveRows.length,
       ok: liveProbeReliable ? liveOkRows.length : liveRows.length,
       failed: liveProbeReliable ? liveRows.filter((row) => !row.ok).length : 0,
+      qualityOk: liveProbeReliable ? liveRows.filter((row) => row.qualityOk).length : liveRows.length,
       probeReliable: liveProbeReliable,
       ignoredFailures: liveProbeReliable ? 0 : liveRows.length,
     },
