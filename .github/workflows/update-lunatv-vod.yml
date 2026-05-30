@@ -9,10 +9,12 @@ on:
       - "tools/update-lunatv-vod.ps1"
       - "tools/update-lunatv-vod-local.ps1"
       - "tools/install-lunatv-vod-autoupdate-task.ps1"
+      - "tools/build-all-on-demand-sources.mjs"
       - "tools/build-iphone-vod-catalog.mjs"
       - "tools/check-iphone-catalog-health.mjs"
       - "docs/iphone/index.html"
       - "sources/current-sources.json"
+      - "sources/All on-demand sources"
       - ".github/workflows/update-lunatv-vod.yml"
   schedule:
     - cron: "17 * * * *"
@@ -45,14 +47,19 @@ jobs:
             -TimeoutSec 12 `
             -MaxDetailProbe 2 `
             -RedactSampleNames
+          node .\tools\build-all-on-demand-sources.mjs `
+            --repoRoot . `
+            --timeoutMs 12000 `
+            --concurrency 10
           node .\tools\build-lunatv-adult18-sorted.mjs --repoRoot .
           node .\tools\build-iphone-vod-catalog.mjs `
             --tvRoot . `
             --output .\docs\data\iphone-vod-catalog.json `
             --reportOutput .\docs\data\iphone-vod-catalog-report.json `
-            --maxSources 16 `
+            --maxSources 90 `
             --maxItemsPerSource 70 `
-            --maxCategoriesPerSource 6 `
+            --maxCategoriesPerSource 8 `
+            --includeAdult true `
             --timeoutMs 8000
           node .\tools\check-iphone-catalog-health.mjs `
             --tvRoot . `
@@ -69,10 +76,11 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add sources/current-sources.json `
+            "sources/All on-demand sources" "sources/All on-demand sources-report.json" `
             sources/vod-lunatv-jin18-oktv.json sources/vod-lunatv-jin18-report.json sources/vod-lunatv-jin18-analysis.csv `
             sources/vod-lunatv-full-oktv.json sources/vod-lunatv-full-report.json sources/vod-lunatv-full-analysis.csv `
             sources/vod-lunatv-adult18-sorted-oktv.json sources/vod-lunatv-adult18-sorted-report.json sources/vod-lunatv-adult18-sorted-analysis.csv `
-            docs/data/iphone-vod-catalog.json docs/data/iphone-vod-catalog-report.json `
+            docs/data/vod-sources.json docs/data/iphone-vod-catalog.json docs/data/iphone-vod-catalog-report.json `
             docs/data/iphone-health-check-latest.json docs/data/iphone-health-check-latest.csv `
             docs/iphone/index.html
           if (git diff --cached --quiet) {

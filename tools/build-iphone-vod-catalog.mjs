@@ -19,13 +19,14 @@ const reportOutput = path.resolve(
 );
 const timeoutMs = Number(args.get('timeoutMs') || 9000);
 const concurrency = Number(args.get('concurrency') || 6);
-const maxSources = Number(args.get('maxSources') || 24);
+const maxSources = Number(args.get('maxSources') || 90);
 const maxItemsPerSource = Number(args.get('maxItemsPerSource') || 90);
 const maxCategoriesPerSource = Number(args.get('maxCategoriesPerSource') || 8);
-const includeAdult = args.get('includeAdult') === 'true';
+const includeAdult = args.get('includeAdult') !== 'false';
 
 const currentSourcesPath = path.join(tvRoot, 'sources', 'current-sources.json');
 const fallbackCurrentVodPath = path.join(tvRoot, '.patch-work', 'current-vod.json');
+const allOnDemandSourcesPath = path.join(tvRoot, 'sources', 'All on-demand sources');
 const lunaFullPath = path.join(tvRoot, 'sources', 'vod-lunatv-full-oktv.json');
 
 const INDEXABLE_TYPES = new Set([0, 1]);
@@ -122,7 +123,8 @@ function kindFromTypeName(typeName, sourceAdult = false) {
   if (sourceAdult || /伦理|写真|福利|成人|情色|麻豆|番号|AV|直播秀/i.test(text)) return 'adult';
   if (/动漫|动画|番剧|番|少儿|卡通/i.test(text)) return 'anime';
   if (/综艺|真人秀|脱口秀|选秀/i.test(text)) return 'variety';
-  if (/连续剧|电视剧|国产剧|港台剧|日韩剧|欧美剧|海外剧|泰剧|日剧|韩剧|美剧|剧集|短剧/i.test(text)) return 'series';
+  if (/短剧|短劇|微短剧|微短劇/i.test(text)) return 'short';
+  if (/连续剧|电视剧|国产剧|港台剧|日韩剧|欧美剧|海外剧|泰剧|日剧|韩剧|美剧|剧集/i.test(text)) return 'series';
   if (/电影|动作|喜剧|爱情|科幻|恐怖|剧情|战争|纪录|犯罪|悬疑|惊悚|冒险|奇幻|灾难/i.test(text)) {
     return 'movie';
   }
@@ -153,9 +155,24 @@ function parseScore(value) {
   return Number.isFinite(number) ? number : 0;
 }
 
+function parseNumber(value) {
+  const number = Number(String(value || '').match(/\d+(?:\.\d+)?/)?.[0] || 0);
+  return Number.isFinite(number) ? number : 0;
+}
+
 function parseYear(value) {
   const match = String(value || '').match(/(?:19|20)\d{2}/);
   return match ? match[0] : '';
+}
+
+function normalizeArea(value) {
+  return normalizeText(value)
+    .replace(/韩国/g, '韓國')
+    .replace(/中国大陆|中國大陸|大陆/g, '大陸')
+    .replace(/台湾|台灣/g, '台灣')
+    .replace(/日本/g, '日本')
+    .replace(/泰国|泰國/g, '泰國')
+    .replace(/欧美|歐美/g, '歐美');
 }
 
 function parseEpoch(value) {
@@ -213,9 +230,10 @@ function normalizeVodItem(item, source, category = null) {
   if (!title) return null;
   const typeName = normalizeText(item.type_name || category?.name || '');
   const year = parseYear(item.vod_year || item.year || item.vod_time || item.update_time || item.vod_pubdate);
-  const area = normalizeText(item.vod_area || item.area || item.region || '');
+  const area = normalizeArea(item.vod_area || item.area || item.region || '');
   const genre = splitClasses(item.vod_class || item.class || item.tag, typeName);
   const score = parseScore(item.vod_score || item.score || item.douban_score);
+  const views = parseNumber(item.vod_hits || item.hits || item.views || item.play_count || item.vod_up);
   const updatedAt = normalizeText(item.vod_time || item.update_time || item.vod_pubdate || item.created_at || '');
   const episodes = parseEpisodes(item.vod_play_url || item.play_url || item.url);
   const kind = kindFromTypeName(`${typeName} ${genre.join(' ')}`, source.adult);
@@ -239,7 +257,8 @@ function normalizeVodItem(item, source, category = null) {
     director: normalizeText(item.vod_director || item.director || ''),
     content: normalizeText(item.vod_content || item.content || item.desc || '').slice(0, 220),
     score,
-    hot: score * 100 + parseEpoch(updatedAt) / 100000000,
+    views,
+    hot: views + score * 100 + parseEpoch(updatedAt) / 100000000,
     updatedAt,
     poster: normalizeImage(source.api, item.vod_pic || item.pic || item.cover || item.logo),
     episodes,
@@ -276,12 +295,16 @@ async function loadSources() {
     const sites = Array.isArray(config?.sites) ? config.sites : [];
     for (const site of sites) {
       const apiKey = normalizeApi(site.api || `${origin}:${site.key || site.name}`);
-      const dedupeKey = `${apiKey}|${site.ext || ''}|${site.key || ''}`;
+      const dedupeKey = `${apiKey}|${site.ext || ''}|${site.key || site.name || ''}`;
       if (!apiKey || seen.has(dedupeKey)) continue;
       seen.add(dedupeKey);
       rawSources.push(sourceFromSite(site, rawSources.length, origin));
     }
   };
+
+  const allOnDemand = await readJson(allOnDemandSourcesPath, {});
+  addSites(allOnDemand, 'All on-demand sources');
+  if (rawSources.length > 0) return rawSources;
 
   const currentSources = await readJson(currentSourcesPath, {});
   const currentVodUrl = currentSources?.vod?.url || '';
@@ -336,7 +359,7 @@ function pickCategoryFetches(categories) {
   for (const category of categories) {
     if (!byKind.has(category.kind)) byKind.set(category.kind, category);
   }
-  const preferred = ['movie', 'series', 'variety', 'anime'].map((kind) => byKind.get(kind)).filter(Boolean);
+  const preferred = ['movie', 'short', 'series', 'variety', 'anime'].map((kind) => byKind.get(kind)).filter(Boolean);
   const rest = categories.filter((category) => !preferred.includes(category));
   return [...preferred, ...rest].slice(0, maxCategoriesPerSource);
 }
@@ -418,6 +441,7 @@ const catalog = {
   generatedAt: new Date().toISOString(),
   source: {
     currentSourcesPath,
+    allOnDemandSourcesPath,
     lunaFullPath,
     maxSources,
     maxItemsPerSource,
@@ -432,6 +456,8 @@ const catalog = {
     series: items.filter((item) => item.kind === 'series').length,
     variety: items.filter((item) => item.kind === 'variety').length,
     anime: items.filter((item) => item.kind === 'anime').length,
+    short: items.filter((item) => item.kind === 'short').length,
+    adult: items.filter((item) => item.kind === 'adult' || item.adult).length,
   },
   filters,
   sources,

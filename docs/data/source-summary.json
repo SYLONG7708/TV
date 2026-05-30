@@ -1,15 +1,18 @@
 {
-  "generatedAt": "2026-05-30T03:04:08.903Z",
+  "generatedAt": "2026-05-30T17:02:30.020Z",
   "input": {
-    "vod": "C:\\Users\\Administrator\\TV\\sources\\vod-lunatv-jin18-oktv.json",
+    "vod": "C:\\Users\\Administrator\\TV\\sources\\All on-demand sources",
     "live": "C:\\Users\\Administrator\\TV\\sources\\live-stable.txt"
   },
   "vod": {
-    "count": 21,
+    "count": 73,
     "typeCounts": {
-      "CMS JSON/API": 21
+      "CMS JSON/API": 72,
+      "CMS XML/API": 1
     },
-    "reviewRequiredCount": 21
+    "enabledCount": 73,
+    "categoriesOk": 70,
+    "categoriesFailed": 3
   },
   "live": {
     "count": 79,
@@ -36,14 +39,14 @@
     ]
   },
   "notes": [
-    "已解析 TV repo 產生的清理後 VOD JSON 與穩定 M3U 清單，輸出為可供 App 呈現的摘要資料。",
-    "VOD 來源預設 disabled，不自動串接未授權解析、爬蟲或第三方接口。",
+    "已解析 hafrey1/LunaTV-config report.md，輸出為影視 OKTV 與 iPhone 影視 OKTV 使用的全部點播源。",
+    "點播源保存於 sources/All on-demand sources，並由本機 Windows 工作排程與 GitHub Actions 每小時更新。",
     "YouTube 類直播以 external 標記，App 以外部開啟處理，不偽裝成直連串流。"
   ],
   "adult18": {
     "count": 34,
-    "usableCount": 23,
-    "duplicateCount": 8,
-    "failedCount": 3
+    "usableCount": 34,
+    "duplicateCount": 0,
+    "failedCount": 0
   }
 }

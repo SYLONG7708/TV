@@ -117,6 +117,7 @@ try {
     }
 
     $updateScript = Join-Path $repoRootText "tools\update-lunatv-vod.ps1"
+    $allOnDemandScript = Join-Path $repoRootText "tools\build-all-on-demand-sources.mjs"
     $adultSortScript = Join-Path $repoRootText "tools\build-lunatv-adult18-sorted.mjs"
     $iphoneCatalogScript = Join-Path $repoRootText "tools\build-iphone-vod-catalog.mjs"
     $iphoneHealthScript = Join-Path $repoRootText "tools\check-iphone-catalog-health.mjs"
@@ -136,6 +137,14 @@ try {
         }
     }
 
+    if (Test-Path -LiteralPath $allOnDemandScript) {
+        Write-Log "Building all on-demand sources from LunaTV-config report.md."
+        node $allOnDemandScript `
+            --repoRoot $repoRootText `
+            --timeoutMs ($TimeoutSec * 1000) `
+            --concurrency 10
+    }
+
     if (Test-Path -LiteralPath $adultSortScript) {
         Write-Log "Building sorted adult 18+ resource area."
         node $adultSortScript --repoRoot $repoRootText
@@ -147,9 +156,10 @@ try {
             --tvRoot $repoRootText `
             --output (Join-Path $repoRootText "docs\data\iphone-vod-catalog.json") `
             --reportOutput (Join-Path $repoRootText "docs\data\iphone-vod-catalog-report.json") `
-            --maxSources 16 `
+            --maxSources 90 `
             --maxItemsPerSource 70 `
-            --maxCategoriesPerSource 6 `
+            --maxCategoriesPerSource 8 `
+            --includeAdult true `
             --timeoutMs 8000
     }
 
@@ -169,10 +179,13 @@ try {
         "tools/update-lunatv-vod.ps1" `
         "tools/update-lunatv-vod-local.ps1" `
         "tools/install-lunatv-vod-autoupdate-task.ps1" `
+        "tools/build-all-on-demand-sources.mjs" `
         "tools/build-lunatv-adult18-sorted.mjs" `
         "tools/build-iphone-vod-catalog.mjs" `
         "tools/check-iphone-catalog-health.mjs" `
         "sources/current-sources.json" `
+        "sources/All on-demand sources" `
+        "sources/All on-demand sources-report.json" `
         "sources/vod-lunatv-jin18-oktv.json" `
         "sources/vod-lunatv-jin18-report.json" `
         "sources/vod-lunatv-jin18-analysis.csv" `
@@ -184,6 +197,7 @@ try {
         "sources/vod-lunatv-adult18-sorted-analysis.csv" `
         "docs/data/iphone-vod-catalog.json" `
         "docs/data/iphone-vod-catalog-report.json" `
+        "docs/data/vod-sources.json" `
         "docs/data/iphone-health-check-latest.json" `
         "docs/data/iphone-health-check-latest.csv" `
         "docs/iphone/index.html" `
