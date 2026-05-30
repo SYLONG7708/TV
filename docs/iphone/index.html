@@ -109,6 +109,27 @@
         font-weight: 900;
       }
 
+      .nav-source-btn {
+        flex: 0 0 auto;
+        width: 52px;
+        height: 52px;
+        border: 1px solid rgba(50, 214, 231, 0.55);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.08);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        cursor: pointer;
+        box-shadow: 0 0 18px rgba(50, 214, 231, 0.16);
+      }
+
+      .nav-source-btn img {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
       .toolbar {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto auto;
@@ -378,6 +399,29 @@
       .source-pill.is-active {
         border-color: rgba(50, 214, 231, 0.6);
         background: rgba(50, 214, 231, 0.16);
+      }
+
+      .source-icon,
+      .adult-source-icon {
+        width: 28px;
+        height: 28px;
+        display: inline-block;
+        flex: 0 0 auto;
+        vertical-align: middle;
+      }
+
+      .source-name {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .source-name span {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .source-toggle {
@@ -736,16 +780,21 @@
         ['home', '主頁'],
         ['movie', '電影'],
         ['short', '短劇'],
-        ['variety', '綜藝'],
         ['anime', '動漫'],
-        ['rank', '榜單'],
+        ['variety', '綜藝'],
+        ['rank', '排行'],
         ['live', '直播'],
       ];
+      const SOURCE_ICON = '../assets/source-signal-icon.svg';
+      const ADULT_ICON = '../assets/adult-18-badge.svg';
+      const SOURCE_STORAGE_KEY = 'oktv:iphone:selectedSource:v3';
+      const DEFAULT_SOURCE_RE = /爱奇艺|愛奇藝/i;
 
       const state = {
         tab: 'home',
         query: '',
-        selectedSource: localStorage.getItem('oktv:iphone:selectedSource') || 'all',
+        selectedSource: localStorage.getItem(SOURCE_STORAGE_KEY) || 'default',
+        visibleLimit: 36,
         filters: {
           year: 'all',
           area: 'all',
@@ -828,11 +877,44 @@
         return activeSource()?.name || '全部來源';
       }
 
+      function generatedSourceIcon(className = 'source-icon') {
+        return `<img class="${className}" src="${SOURCE_ICON}" alt="" aria-hidden="true" />`;
+      }
+
+      function adultIcon() {
+        return `<img class="adult-source-icon" src="${ADULT_ICON}" alt="18+" />`;
+      }
+
+      function sourceNameMarkup(source) {
+        return `<span class="source-name">${source.adult ? adultIcon() : ''}<span>${escapeHtml(source.name)}</span></span>`;
+      }
+
+      function baseVisibleLimit() {
+        return state.tab === 'home' ? 36 : 72;
+      }
+
+      function resetVisibleLimit() {
+        state.visibleLimit = baseVisibleLimit();
+      }
+
+      function visibleItems() {
+        return sortedItems(sourceItems());
+      }
+
+      function maybeLoadMore() {
+        if (state.tab === 'live') return;
+        const all = visibleItems();
+        if (state.visibleLimit >= all.length) return;
+        if (window.innerHeight + window.scrollY < document.documentElement.scrollHeight - 900) return;
+        state.visibleLimit += state.tab === 'home' ? 36 : 72;
+        render();
+      }
+
       function sourceItems(sourceId = state.selectedSource) {
         const query = state.query.trim().toLowerCase();
-        return state.catalog.items.filter((item) => {
+        const matches = (item, enforceSource) => {
           if (state.healthIndex.posters.has(item.id)) return false;
-          if (sourceId !== 'all' && item.sourceId !== sourceId) return false;
+          if (enforceSource && sourceId !== 'all' && item.sourceId !== sourceId) return false;
           if (state.tab !== 'home' && state.tab !== 'rank' && item.kind !== state.tab) return false;
           if (state.filters.year !== 'all' && item.year !== state.filters.year) return false;
           if (state.filters.area !== 'all' && item.area !== state.filters.area) return false;
@@ -841,7 +923,10 @@
           return `${item.title} ${item.categoryName} ${item.year} ${item.area} ${item.genre.join(' ')} ${item.sourceName}`
             .toLowerCase()
             .includes(query);
-        });
+        };
+        const rows = state.catalog.items.filter((item) => matches(item, true));
+        if (rows.length || sourceId === 'all' || state.tab === 'home' || state.tab === 'rank') return rows;
+        return state.catalog.items.filter((item) => matches(item, false));
       }
 
       function sortedItems(items) {
@@ -856,16 +941,18 @@
       }
 
       function renderNav() {
-        topNav.innerHTML = tabs
+        topNav.innerHTML = `${tabs
           .map(([id, label]) => `<button class="nav-btn ${state.tab === id ? 'is-active' : ''}" type="button" data-tab="${id}">${escapeHtml(label)}</button>`)
-          .join('');
+          .join('')}<button class="nav-source-btn" type="button" data-open-source-nav aria-label="點播訊號源">${generatedSourceIcon()}</button>`;
         topNav.querySelectorAll('[data-tab]').forEach((button) => {
           button.addEventListener('click', () => {
             state.tab = button.dataset.tab || 'home';
             state.query = '';
+            resetVisibleLimit();
             render();
           });
         });
+        topNav.querySelector('[data-open-source-nav]')?.addEventListener('click', openSourceSheet);
       }
 
       function render() {
@@ -888,6 +975,7 @@
       function bindToolbar() {
         document.querySelector('#searchBox')?.addEventListener('input', (event) => {
           state.query = event.target.value;
+          resetVisibleLimit();
           render();
           setTimeout(() => {
             const input = document.querySelector('#searchBox');
@@ -911,14 +999,15 @@
       }
 
       function renderVodScreen() {
-        const rows = sortedItems(sourceItems()).slice(0, state.tab === 'home' ? 36 : 120);
+        const allRows = visibleItems();
+        const rows = allRows.slice(0, state.visibleLimit);
         const title = tabs.find(([id]) => id === state.tab)?.[1] || '主頁';
         const controls = `${renderSourceRail()}${state.tab === 'short' ? renderShortAreaRail() : ''}`;
         screen.innerHTML = `
           ${renderToolbar()}
           ${controls}
           <section class="section-head">
-            <div><h1>${escapeHtml(title)}</h1><span>${rows.length} 部內容，${state.catalog.totals.playableItems || 0} 部有播放項</span></div>
+            <div><h1>${escapeHtml(title)}</h1><span>${rows.length} / ${allRows.length} 部內容，${state.catalog.totals.playableItems || 0} 部有播放項</span></div>
             <span class="status-pill ok">${icon('check')} OKTV</span>
           </section>
           <section class="poster-grid">
@@ -955,7 +1044,7 @@
         return `
           <div class="source-rail">
             <button class="source-toggle" type="button" data-open-source>
-              ${icon('signal')}
+              ${generatedSourceIcon()}
               <span><strong>${escapeHtml(sourceLabel())}</strong><span>${selected ? `${selected.itemCount || 0} 部 / ${selected.playableCount || 0} 可播放` : `${indexedCount} 個來源 / ${state.catalog.totals.playableItems || 0} 部可播放`}</span></span>
               ${icon('chevron')}
             </button>
@@ -992,6 +1081,7 @@
         document.querySelectorAll('[data-short-area]').forEach((button) => {
           button.addEventListener('click', () => {
             state.filters.area = button.dataset.shortArea || 'all';
+            resetVisibleLimit();
             render();
           });
         });
@@ -1006,12 +1096,13 @@
       }
 
       function renderRank() {
-        const rows = sortedItems(sourceItems()).slice(0, 80);
+        const allRows = visibleItems();
+        const rows = allRows.slice(0, state.visibleLimit);
         screen.innerHTML = `
           ${renderToolbar('搜尋榜單內容')}
           ${renderSourceRail()}
           <section class="section-head">
-            <div><h1>榜單</h1><span>觀看人數與評分排序</span></div>
+            <div><h1>排行</h1><span>${rows.length} / ${allRows.length} 部內容，觀看人數與評分排序</span></div>
           </section>
           <section class="rank-list">
             ${rows.map(renderRankRow).join('') || emptyState('目前沒有榜單內容')}
@@ -1128,9 +1219,9 @@
         const canSelect = source.indexed;
         return `
           <article class="source-row">
-            <div class="avatar">${source.type === 3 ? 'SP' : source.adult ? 'AV' : 'VOD'}</div>
+            <div class="avatar">${source.adult ? adultIcon() : generatedSourceIcon()}</div>
             <div class="row-main">
-              <strong>${escapeHtml(source.name)}</strong>
+              <strong>${sourceNameMarkup(source)}</strong>
               <span>${escapeHtml(source.origin)} / ${escapeHtml(source.host || source.key)} / ${source.itemCount || 0} 部</span>
             </div>
             ${
@@ -1240,9 +1331,9 @@
         const canSelect = source.indexed;
         return `
           <article class="source-row">
-            <div class="avatar">${source.type === 3 ? 'SP' : source.adult ? 'AV' : 'VOD'}</div>
+            <div class="avatar">${source.adult ? adultIcon() : generatedSourceIcon()}</div>
             <div class="row-main">
-              <strong>${escapeHtml(source.name)}</strong>
+              <strong>${sourceNameMarkup(source)}</strong>
               <span>${escapeHtml(source.origin)} / ${source.itemCount || 0} 部 / ${source.playableCount || 0} 可播放</span>
             </div>
             ${
@@ -1286,12 +1377,14 @@
         filterSheetBody.querySelectorAll('[data-filter-key]').forEach((button) => {
           button.addEventListener('click', () => {
             state.filters[button.dataset.filterKey] = button.dataset.filterValue || 'all';
+            resetVisibleLimit();
             openFilterSheet();
             render();
           });
         });
         filterSheetBody.querySelector('[data-reset-filter]')?.addEventListener('click', () => {
           state.filters = { year: 'all', area: 'all', genre: 'all', sort: 'hot' };
+          resetVisibleLimit();
           closeSheet(filterSheet);
           render();
         });
@@ -1300,8 +1393,9 @@
 
       function selectSource(sourceId) {
         state.selectedSource = sourceId;
-        localStorage.setItem('oktv:iphone:selectedSource', sourceId);
+        localStorage.setItem(SOURCE_STORAGE_KEY, sourceId);
         state.tab = state.tab === 'sources' ? 'movie' : state.tab;
+        resetVisibleLimit();
         render();
       }
 
@@ -1350,12 +1444,27 @@
         posters: new Set((state.health.failed || []).filter((row) => row.kind === 'poster').map((row) => row.id)),
         live: new Set((state.health.failed || []).filter((row) => row.kind === 'live').map((row) => row.id)),
       };
+      localStorage.removeItem('oktv:iphone:selectedSource');
+      const storedSource = localStorage.getItem(SOURCE_STORAGE_KEY);
+      if (!storedSource || storedSource === 'all' || state.selectedSource === 'default') {
+        const iqiyiSource =
+          state.catalog.sources.find((source) => source.indexed && DEFAULT_SOURCE_RE.test(source.name)) ||
+          state.catalog.sources.find((source) => source.indexed);
+        if (iqiyiSource) {
+          state.selectedSource = iqiyiSource.id;
+          localStorage.setItem(SOURCE_STORAGE_KEY, state.selectedSource);
+        }
+      }
       if (
         state.selectedSource !== 'all' &&
         !state.catalog.sources.some((source) => source.id === state.selectedSource && source.indexed)
       ) {
-        state.selectedSource = 'all';
+        const fallbackSource = state.catalog.sources.find((source) => source.indexed && DEFAULT_SOURCE_RE.test(source.name)) || state.catalog.sources.find((source) => source.indexed);
+        state.selectedSource = fallbackSource?.id || 'all';
+        localStorage.setItem(SOURCE_STORAGE_KEY, state.selectedSource);
       }
+      window.addEventListener('scroll', maybeLoadMore, { passive: true });
+      resetVisibleLimit();
       render();
     </script>
   </body>
