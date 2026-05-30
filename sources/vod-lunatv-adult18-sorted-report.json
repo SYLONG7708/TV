@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-30T00:28:26.098Z",
+  "generatedAt": "2026-05-30T02:29:28.535Z",
   "sourceName": "full",
   "adultStartIndex": 40,
   "totalAdultSources": 34,
@@ -25,9 +25,9 @@
     },
     "03 番號/日本": {
       "total": 7,
-      "usable": 5,
+      "usable": 4,
       "duplicate": 1,
-      "failed": 1
+      "failed": 2
     },
     "04 動漫/美少女": {
       "total": 1,
@@ -37,9 +37,9 @@
     },
     "05 精品/大站": {
       "total": 12,
-      "usable": 10,
+      "usable": 11,
       "duplicate": 1,
-      "failed": 1
+      "failed": 0
     }
   },
   "resources": [
@@ -459,25 +459,17 @@
       "order": 72,
       "name": "Luna 72 奥斯卡-",
       "api": "https://aosikazy.com/api.php/provide/vod",
-      "included": true,
+      "included": false,
       "duplicate": false,
       "duplicateReason": "",
-      "listOk": true,
-      "detailOk": true,
-      "searchOk": true,
-      "searchHasPlayUrl": true,
-      "hasPlayUrl": true,
-      "status": "usable_review_required",
-      "error": "",
-      "record": {
-        "key": "奥斯卡|AV",
-        "name": "奥斯卡｜",
-        "type": 1,
-        "api": "https://aosikazy.com/api.php/provide/vod/",
-        "quickSearch": 1,
-        "searchable": 1,
-        "filterable": 0
-      }
+      "listOk": false,
+      "detailOk": false,
+      "searchOk": false,
+      "searchHasPlayUrl": false,
+      "hasPlayUrl": false,
+      "status": "failed_removed",
+      "error": "Exception calling \"GetResponse\" with \"0\" argument(s): \"作業逾時\"",
+      "record": null
     },
     {
       "category": "03 番號/日本",
@@ -726,17 +718,25 @@
       "order": 59,
       "name": "Luna 59 百万资源",
       "api": "https://api.bwzyz.com/api.php/provide/vod",
-      "included": false,
+      "included": true,
       "duplicate": false,
       "duplicateReason": "",
-      "listOk": false,
-      "detailOk": false,
-      "searchOk": false,
-      "searchHasPlayUrl": false,
-      "hasPlayUrl": false,
-      "status": "failed_removed",
-      "error": "Exception calling \"GetResponse\" with \"0\" argument(s): \"作業逾時\"",
-      "record": null
+      "listOk": true,
+      "detailOk": true,
+      "searchOk": true,
+      "searchHasPlayUrl": true,
+      "hasPlayUrl": true,
+      "status": "usable_review_required",
+      "error": "",
+      "record": {
+        "key": "百万资源|AV",
+        "name": "百万资源｜",
+        "type": 1,
+        "api": "https://api.bwzyz.com/api.php/provide/vod/",
+        "quickSearch": 1,
+        "searchable": 1,
+        "filterable": 0
+      }
     },
     {
       "category": "05 精品/大站",
