@@ -1,16 +1,16 @@
 {
-  "generatedAt": "2026-05-31T00:21:04.327Z",
+  "generatedAt": "2026-05-31T00:28:24.453Z",
   "totals": {
     "sources": 73,
-    "indexedSources": 59,
-    "items": 3404,
-    "playableItems": 3404,
-    "movies": 1483,
+    "indexedSources": 58,
+    "items": 3379,
+    "playableItems": 3379,
+    "movies": 1465,
     "series": 341,
     "variety": 174,
-    "anime": 354,
-    "short": 247,
-    "adult": 805
+    "anime": 350,
+    "short": 245,
+    "adult": 804
   },
   "sourceChecks": [
     {
@@ -92,21 +92,19 @@
       "adult": false,
       "indexable": true,
       "indexed": true,
-      "itemCount": 55,
-      "playableCount": 55,
+      "itemCount": 70,
+      "playableCount": 70,
       "error": "",
       "checks": [
         {
           "label": "最新",
-          "ok": false,
-          "count": 0,
-          "error": "HTTP 429"
+          "ok": true,
+          "count": 18
         },
         {
           "label": "纪录片",
-          "ok": false,
-          "count": 0,
-          "error": "HTTP 429"
+          "ok": true,
+          "count": 20
         },
         {
           "label": "国产剧",
@@ -117,23 +115,6 @@
           "label": "国产动漫",
           "ok": true,
           "count": 20
-        },
-        {
-          "label": "现代都市",
-          "ok": true,
-          "count": 16
-        },
-        {
-          "label": "古装仙侠",
-          "ok": false,
-          "count": 0,
-          "error": "HTTP 429"
-        },
-        {
-          "label": "穿越现代",
-          "ok": false,
-          "count": 0,
-          "error": "HTTP 429"
         }
       ]
     },
@@ -893,8 +874,9 @@
         },
         {
           "label": "欧美剧",
-          "ok": true,
-          "count": 0
+          "ok": false,
+          "count": 0,
+          "error": "The operation was aborted due to timeout"
         }
       ]
     },
@@ -1317,7 +1299,7 @@
           "count": 20
         },
         {
-          "label": "日本剧",
+          "label": "恐怖片",
           "ok": true,
           "count": 20
         },
@@ -2282,25 +2264,16 @@
       "origin": "All on-demand sources",
       "adult": false,
       "indexable": true,
-      "indexed": true,
-      "itemCount": 40,
-      "playableCount": 40,
-      "error": "",
+      "indexed": false,
+      "itemCount": 0,
+      "playableCount": 0,
+      "error": "分類讀取失敗: The operation was aborted due to timeout",
       "checks": [
         {
           "label": "最新",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "国产主播",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "国产视频",
-          "ok": true,
-          "count": 20
+          "ok": false,
+          "count": 0,
+          "error": "The operation was aborted due to timeout"
         }
       ]
     },
@@ -2448,7 +2421,7 @@
           "count": 20
         },
         {
-          "label": "吃瓜爆料",
+          "label": "国产直播",
           "ok": true,
           "count": 20
         },
@@ -2483,17 +2456,17 @@
           "count": 20
         },
         {
+          "label": "自拍偷拍",
+          "ok": true,
+          "count": 20
+        },
+        {
           "label": "乱伦中出",
           "ok": true,
           "count": 20
         },
         {
           "label": "AI换脸",
-          "ok": true,
-          "count": 20
-        },
-        {
-          "label": "吃瓜爆料",
           "ok": true,
           "count": 20
         }
