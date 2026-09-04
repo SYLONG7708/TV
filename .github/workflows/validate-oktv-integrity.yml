@@ -46,6 +46,7 @@ jobs:
             /sources/title-aliases.json
             tests/*
             tools/*.mjs
+            tools/*.ps1
 
       - name: Run regression tests
         shell: bash
