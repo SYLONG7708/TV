@@ -191,6 +191,13 @@ Invoke-GitChecked -Arguments @('config', 'http.version', 'HTTP/1.1')
 Invoke-GitChecked -Arguments @('config', 'core.autocrlf', 'false')
 Invoke-GitChecked -Arguments @('config', 'core.eol', 'lf')
 Invoke-GitChecked -Arguments @('config', 'core.quotepath', 'false')
+# The generated payloads are already gzip-compressed. Recompressing them inside
+# Git wastes runner CPU without reducing upload size, especially for thousands
+# of query shards.
+Invoke-GitChecked -Arguments @('config', 'core.compression', '0')
+Invoke-GitChecked -Arguments @('config', 'pack.compression', '0')
+Invoke-GitChecked -Arguments @('config', 'pack.window', '0')
+Invoke-GitChecked -Arguments @('config', 'pack.depth', '1')
 
 $pagesBase = Get-GitValue -Arguments @('rev-parse', 'HEAD')
 
