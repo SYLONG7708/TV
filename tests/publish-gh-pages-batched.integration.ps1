@@ -39,14 +39,18 @@ try {
     (Join-Path $seed 'docs\assets'), `
     (Join-Path $seed 'docs\data\vod-detail'), `
     (Join-Path $seed 'docs\data\vod-index'), `
-    (Join-Path $seed 'docs\data\vod-query\normal')
+    (Join-Path $seed 'docs\data\vod-search'), `
+    (Join-Path $seed 'docs\data\vod-query\normal'), `
+    (Join-Path $seed 'docs\data\quantum-lzi')
   [IO.File]::WriteAllText((Join-Path $seed '.gitattributes'), "* text=auto`n")
   [IO.File]::WriteAllText((Join-Path $seed 'docs\iphone\index.html'), '<!doctype html>')
   [IO.File]::WriteAllText((Join-Path $seed 'docs\assets\app.svg'), '<svg/>')
   [IO.File]::WriteAllText((Join-Path $seed 'docs\data\manifest.json'), '{"version":1}')
   [IO.File]::WriteAllText((Join-Path $seed 'docs\data\vod-detail\page.json'), '{"items":[]}')
   [IO.File]::WriteAllText((Join-Path $seed 'docs\data\vod-index\source.json.gz'), 'seed-index')
+  [IO.File]::WriteAllText((Join-Path $seed 'docs\data\vod-search\source.json.gz'), 'seed-search')
   [IO.File]::WriteAllText((Join-Path $seed 'docs\data\vod-query\normal\b-0.json.gz'), 'seed-query')
+  [IO.File]::WriteAllText((Join-Path $seed 'docs\data\quantum-lzi\manifest.json'), '{"version":1}')
 
   Invoke-TestGit -Repository $seed -Arguments @('config', 'user.name', 'test')
   Invoke-TestGit -Repository $seed -Arguments @('config', 'user.email', 'test@example.invalid')
@@ -62,6 +66,8 @@ try {
   [IO.File]::WriteAllText((Join-Path $pages 'docs\data\manifest.json'), '{"version":2}')
   [IO.File]::WriteAllText((Join-Path $pages 'docs\data\vod-detail\page.json'), '{"items":[1]}')
   [IO.File]::WriteAllText((Join-Path $pages 'docs\data\vod-index\source.json.gz'), 'updated-index')
+  [IO.File]::WriteAllText((Join-Path $pages 'docs\data\vod-search\source.json.gz'), 'updated-search')
+  [IO.File]::WriteAllText((Join-Path $pages 'docs\data\quantum-lzi\manifest.json'), '{"version":2}')
   $unicodeDirName = -join @([char]0x611B, [char]0x5947, [char]0x85DD, [char]0x6E2C, [char]0x8A66)
   $unicodeFileName = (-join @([char]0x7B2C, '1', [char]0x9801)) + '.json'
   $unicodeTitle = -join @([char]0x7661, [char]0x8FF7)
@@ -91,6 +97,14 @@ try {
   $remoteManifest = (& git -C $pages show 'origin/gh-pages:docs/data/manifest.json').Trim()
   if ($remoteManifest -ne '{"version":2}') {
     throw 'The atomic gh-pages update did not publish the expected metadata.'
+  }
+  $remoteSearch = (& git -C $pages show 'origin/gh-pages:docs/data/vod-search/source.json.gz').Trim()
+  if ($remoteSearch -ne 'updated-search') {
+    throw 'The atomic gh-pages update did not publish the VOD search index.'
+  }
+  $remoteQuantum = (& git -C $pages show 'origin/gh-pages:docs/data/quantum-lzi/manifest.json').Trim()
+  if ($remoteQuantum -ne '{"version":2}') {
+    throw 'The atomic gh-pages update did not publish the quantum index.'
   }
   $unicodeGitPath = "origin/gh-pages:docs/data/vod-detail/$unicodeDirName/$unicodeFileName"
   $remoteUnicodeDetail = (& git -C $pages show $unicodeGitPath).Trim()

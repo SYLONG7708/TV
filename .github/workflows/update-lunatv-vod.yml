@@ -104,7 +104,9 @@ jobs:
           git worktree add --no-checkout $pages origin/gh-pages
           @(
             "/docs/data/iphone-vod-catalog.json",
-            "/docs/data/iphone-vod-catalog-report.json"
+            "/docs/data/iphone-vod-catalog-report.json",
+            "/docs/data/source-summary.json",
+            "/docs/data/live-channels.json"
           ) | git -C $pages sparse-checkout set --no-cone --stdin
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           git -C $pages checkout
@@ -335,6 +337,7 @@ jobs:
             "/docs/data/*.json",
             "/docs/data/*.csv",
             "/docs/data/vod-index/**",
+            "/docs/data/vod-search/**",
             "/docs/data/vod-query/**"
           ) | git -C $pages sparse-checkout set --no-cone --stdin
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

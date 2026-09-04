@@ -208,12 +208,15 @@ Publish-PathBatches -Paths $metadataPaths -Label 'public metadata'
 
 Publish-PathBatches -Paths @(Get-ChangedPaths -Root 'docs/data/vod-detail') -Label 'VOD detail'
 Publish-PathBatches -Paths @(Get-ChangedPaths -Root 'docs/data/vod-index') -Label 'VOD index'
+Publish-PathBatches -Paths @(Get-ChangedPaths -Root 'docs/data/vod-search') -Label 'VOD search index'
 Publish-PathBatches -Paths @(Get-ChangedPaths -Root 'docs/data/vod-query') -Label 'query shard'
+Publish-PathBatches -Paths @(Get-ChangedPaths -Root 'docs/data/quantum-lzi') -Label 'quantum index'
 
 $remaining = @(& git -C $repo status --porcelain --untracked-files=all -- `
   '.gitattributes' 'docs/iphone' 'docs/assets' `
   ':(glob)docs/data/*.json' ':(glob)docs/data/*.csv' `
-  'docs/data/vod-detail' 'docs/data/vod-index' 'docs/data/vod-query')
+  'docs/data/vod-detail' 'docs/data/vod-index' 'docs/data/vod-search' `
+  'docs/data/vod-query' 'docs/data/quantum-lzi')
 if ($LASTEXITCODE -ne 0) {
   throw 'Unable to verify the final Pages worktree status.'
 }
