@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-JEb09TjXK1OwKIo7EqkH9O8GCbXqOwIp2cX702LVi5o=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-q02F97qqlOr202beJ5VnHrLJYWm/Qm53QwnFgiZg0VQ='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-/P0I3eNA6q0CZxnJkNMfVU0TAHbe4RuDa1PNAwwN4iQ=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-q02F97qqlOr202beJ5VnHrLJYWm/Qm53QwnFgiZg0VQ='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1043,7 +1043,9 @@
       const SOURCE_ICON = '../assets/source-signal-icon.svg';
       const ADULT_ICON = '../assets/adult-18-badge.svg';
       const ONLINE_DATA_BASE = 'https://sylong7708.github.io/TV/docs/data/';
-      const ARCHIVE_DATA_BASE = 'https://sylong7708.github.io/TV-archive-20260904/docs/data/';
+      const ARCHIVE_DATA_BASE = location.pathname.startsWith('/TV-recovery-20260904/')
+        ? 'https://sylong7708.github.io/TV/docs/data/'
+        : 'https://sylong7708.github.io/TV-archive-20260904/docs/data/';
       const SOURCE_STORAGE_KEY = 'oktv:iphone:selectedSource:v3';
       const DEFAULT_SOURCE_RE = /爱奇艺|愛奇藝/i;
       const QUANTUM_MANIFEST_URL = '../data/quantum-lzi/manifest.json';
@@ -1244,7 +1246,12 @@
             ? [localUrl, online]
             : [online, localUrl]
           : [localUrl];
-        if (archive && !urls.includes(archive)) urls.push(archive);
+        // Detail pages are by far the largest dataset.  During the quota-safe
+        // repository handoff they remain in the read-only archive until each
+        // source is regenerated, so consult the archive first without causing
+        // a noisy, expected 404 in the browser console.
+        if (archive && /^vod-detail\//i.test(dataPath)) urls.unshift(archive);
+        else if (archive && !urls.includes(archive)) urls.push(archive);
         const requestController = new AbortController();
         let timedOut = false;
         let lastError = null;
