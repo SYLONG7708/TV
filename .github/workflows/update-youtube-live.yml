@@ -46,6 +46,7 @@ jobs:
             tools/build-live-channels-json.mjs
             tools/build-live-signal-index.mjs
             tools/push-commit-with-recovery.ps1
+            tools/publish-gh-pages-batched.ps1
             tools/update-iphone-csp.mjs
             sources/youtube-live-channels.csv
             sources/live-base.txt
@@ -217,25 +218,8 @@ jobs:
           Copy-Item -LiteralPath ".\docs\data\live-channels.json" -Destination (Join-Path $pages "docs\data\live-channels.json") -Force
           Copy-Item -LiteralPath ".\docs\data\source-summary.json" -Destination (Join-Path $pages "docs\data\source-summary.json") -Force
           Copy-Item -LiteralPath ".\docs\iphone\index.html" -Destination (Join-Path $pages "docs\iphone\index.html") -Force
-          Push-Location $pages
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/data/live-channels.json docs/data/source-summary.json docs/iphone/index.html
-          git diff --cached --quiet
-          $diffExit = $LASTEXITCODE
-          $hasChanges = $diffExit -eq 1
-          if ($diffExit -gt 1) { exit $diffExit }
-          if (-not $hasChanges) {
-            Write-Host "No gh-pages live data changes."
-          } else {
-            git commit -m "Publish refreshed live data"
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-            & "$env:GITHUB_WORKSPACE\tools\push-commit-with-recovery.ps1" `
-              -RepositoryRoot $pages `
-              -Branch gh-pages `
-              -Commit HEAD `
-              -PushAttempts 3 `
-              -RetryDelaySeconds 20
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          }
-          Pop-Location
+          & "$env:GITHUB_WORKSPACE\tools\publish-gh-pages-batched.ps1" `
+            -RepositoryRoot $pages `
+            -RunId "${{ github.run_id }}" `
+            -RunAttempt "${{ github.run_attempt }}"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
