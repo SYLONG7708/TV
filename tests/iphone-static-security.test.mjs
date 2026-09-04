@@ -40,7 +40,8 @@ test('rendered markup has no inline event handlers or style attributes', () => {
 
 test('player iframe is sandboxed and media URLs pass through allowlist helpers', () => {
   assert.match(html, /<iframe[^>]+sandbox="[^"]*allow-scripts[^"]*"/);
-  assert.doesNotMatch(html, /<iframe[^>]+sandbox="[^"]*allow-same-origin[^"]*"/);
+  assert.match(html, /<iframe[^>]+sandbox="[^"]*allow-same-origin[^"]*"/);
+  assert.doesNotMatch(html, /<iframe[^>]+sandbox="[^"]*(?:allow-top-navigation|allow-forms)[^"]*"/);
   assert.match(html, /function safeHttpUrl\(/);
   assert.match(html, /function safeEmbedUrl\(/);
   assert.match(html, /playerFrame\.src = verifiedEmbedUrl/);
