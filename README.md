@@ -1,14 +1,14 @@
 # 影視 5.1.6 內置點播 / 直播源版
 
-這個 repo 保存已修改好的 APK、目前內置來源設定、可重新打包的 PowerShell 腳本，以及零基礎網頁教學。
+這個 repo 保存目前內置來源設定、可重新打包的 PowerShell 腳本，以及零基礎網頁教學。已修改好的 APK 與圖示保存在唯讀安全封存倉庫，正式來源 URL 仍指向本 repo，因此更新來源不需要重新安裝 APK。
 
 ## 下載 APK
 
-- APK：[`releases/OKTV_5.1.6_builtin_sources.apk`](releases/OKTV_5.1.6_builtin_sources.apk)
+- APK：[`OKTV_5.1.6_builtin_sources.apk`](https://github.com/SYLONG7708/TV-archive-20260904/raw/refs/heads/main/releases/OKTV_5.1.6_builtin_sources.apk)
 - 版本：`5.1.6`
 - 顯示名稱：`影視`
 - 套件：`com.fongmi.android.tv`
-- 圖標：[`branding/icon-tech-20260528.png`](branding/icon-tech-20260528.png)
+- 圖標：[`icon-tech-20260528.png`](https://github.com/SYLONG7708/TV-archive-20260904/raw/refs/heads/main/branding/icon-tech-20260528.png)
 - 簽名：debug key 重新簽名
 
 如果手機或模擬器已經安裝原版，因為簽名不同，請先卸載原版再安裝這個 APK。
