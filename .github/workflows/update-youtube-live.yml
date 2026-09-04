@@ -101,6 +101,12 @@ jobs:
           )
           if (-not [string]::IsNullOrWhiteSpace($env:YOUTUBE_COOKIES_FILE)) {
             $args += @("-CookiesFile", $env:YOUTUBE_COOKIES_FILE)
+          } else {
+            # GitHub-hosted runners are commonly blocked by YouTube when no
+            # authenticated cookies are available. Keep deterministic
+            # watch/iframe fallbacks instead of timing out on 100+ serial
+            # yt-dlp attempts.
+            $args += "-SkipResolve"
           }
           powershell @args
 
