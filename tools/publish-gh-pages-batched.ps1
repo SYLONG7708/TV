@@ -15,7 +15,8 @@ param(
   [string]$PagesBranch = 'gh-pages',
   [long]$MaxBatchBytes = 134217728,
   [int]$PushAttempts = 4,
-  [bool]$CompactPublishedHistory = $true
+  [bool]$CompactPublishedHistory = $true,
+  [bool]$PreferGitHubApiCompaction = $true
 )
 
 Set-StrictMode -Version Latest
@@ -57,6 +58,45 @@ function Get-GitValue {
     throw "git $($Arguments -join ' ') failed with exit code $LASTEXITCODE."
   }
   return ($value | Select-Object -Last 1).Trim()
+}
+
+function Get-GitHubRepositorySlug {
+  $remoteUrl = Get-GitValue -Arguments @('remote', 'get-url', $RemoteName)
+  if ($remoteUrl -match 'github\.com[/:]([^/:\s]+)/([^/\s]+)$') {
+    $repositoryName = $matches[2] -replace '\.git$', ''
+    return "$($matches[1])/$repositoryName"
+  }
+  return ''
+}
+
+function Invoke-GitHubApiJson {
+  param(
+    [Parameter(Mandatory = $true)][string]$Method,
+    [Parameter(Mandatory = $true)][string]$Endpoint,
+    [hashtable]$Body = $null,
+    [string]$Jq = ''
+  )
+
+  $inputPath = Join-Path ([IO.Path]::GetTempPath()) ("oktv-github-api-" + [guid]::NewGuid().ToString('N') + '.json')
+  try {
+    $arguments = @('api', '--method', $Method, $Endpoint, '--input', $inputPath)
+    if ($null -ne $Body) {
+      [IO.File]::WriteAllText(
+        $inputPath,
+        ($Body | ConvertTo-Json -Depth 8 -Compress),
+        [Text.UTF8Encoding]::new($false)
+      )
+    } else {
+      $arguments = @('api', '--method', $Method, $Endpoint)
+    }
+    if ($Jq) { $arguments += @('--jq', $Jq) }
+    $output = @(& gh @arguments)
+    if ($LASTEXITCODE -ne 0) { throw "GitHub API $Method $Endpoint failed with exit code $LASTEXITCODE." }
+    return (($output -join "`n").Trim())
+  }
+  finally {
+    if (Test-Path -LiteralPath $inputPath) { Remove-Item -LiteralPath $inputPath -Force }
+  }
 }
 
 function Push-UploadHead {
@@ -240,12 +280,31 @@ Invoke-GitChecked -Arguments @('commit', '--allow-empty', '-m', 'Publish auto re
 Push-UploadHead
 
 $publishCommit = Get-GitValue -Arguments @('rev-parse', 'HEAD')
+$publishViaGitHubApi = $false
 if ($CompactPublishedHistory) {
   $finalTree = Get-GitValue -Arguments @('rev-parse', 'HEAD^{tree}')
   $compactMessage = "Publish current OKTV snapshot for run $RunId (bounded history)"
-  $publishCommit = @($compactMessage | & git -C $repo commit-tree $finalTree | Select-Object -Last 1)[0].Trim()
-  if ($LASTEXITCODE -ne 0 -or -not $publishCommit) {
-    throw 'Unable to create the bounded-history Pages snapshot commit.'
+  $githubRepository = Get-GitHubRepositorySlug
+  if ($PreferGitHubApiCompaction -and $githubRepository -and (Get-Command gh -ErrorAction SilentlyContinue)) {
+    try {
+      $publishCommit = Invoke-GitHubApiJson `
+        -Method 'POST' `
+        -Endpoint "repos/$githubRepository/git/commits" `
+        -Body @{ message = $compactMessage; tree = $finalTree; parents = @() } `
+        -Jq '.sha'
+      if ($publishCommit -notmatch '^[0-9a-f]{40,64}$') { throw "GitHub returned an invalid commit: $publishCommit" }
+      $publishViaGitHubApi = $true
+      Write-Host "Created bounded-history root commit through the GitHub API: $publishCommit"
+    }
+    catch {
+      Write-Warning "GitHub API compaction was unavailable; falling back to Git push: $($_.Exception.Message)"
+    }
+  }
+  if (-not $publishViaGitHubApi) {
+    $publishCommit = @($compactMessage | & git -C $repo commit-tree $finalTree | Select-Object -Last 1)[0].Trim()
+    if ($LASTEXITCODE -ne 0 -or -not $publishCommit) {
+      throw 'Unable to create the bounded-history Pages snapshot commit.'
+    }
   }
 }
 
@@ -257,12 +316,31 @@ if ($remotePagesHead -ne $pagesBase) {
 
 $published = $false
 for ($attempt = 1; $attempt -le $PushAttempts; $attempt++) {
-  if ($CompactPublishedHistory) {
+  if ($publishViaGitHubApi) {
+    try {
+      $null = Invoke-GitHubApiJson `
+        -Method 'PATCH' `
+        -Endpoint "repos/$githubRepository/git/refs/heads/$PagesBranch" `
+        -Body @{ sha = $publishCommit; force = $true }
+      $confirmed = Invoke-GitHubApiJson `
+        -Method 'GET' `
+        -Endpoint "repos/$githubRepository/git/ref/heads/$PagesBranch" `
+        -Jq '.object.sha'
+      if ($confirmed -ne $publishCommit) { throw "GitHub API ref verification returned $confirmed." }
+      $published = $true
+    }
+    catch {
+      Write-Warning "Atomic GitHub API update failed on attempt $attempt`: $($_.Exception.Message)"
+    }
+  } elseif ($CompactPublishedHistory) {
     & git -C $repo push $RemoteName "--force-with-lease=$pagesRef`:$pagesBase" "$publishCommit`:$pagesRef"
   } else {
     & git -C $repo push $RemoteName "$publishCommit`:$pagesRef"
   }
-  if ($LASTEXITCODE -eq 0) {
+  if ($publishViaGitHubApi -and $published) {
+    break
+  }
+  if (-not $publishViaGitHubApi -and $LASTEXITCODE -eq 0) {
     $published = $true
     break
   }
