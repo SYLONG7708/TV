@@ -393,15 +393,15 @@ jobs:
         shell: pwsh
         run: |
           $branch = "oktv-pages-upload-${{ github.run_id }}-${{ github.run_attempt }}"
-          git ls-remote --exit-code --heads origin "refs/heads/$branch" | Out-Null
-          $probeExit = $LASTEXITCODE
-          if ($probeExit -eq 0) {
-            git push origin --delete $branch
-            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          } elseif ($probeExit -eq 2) {
+          $refs = gh api "repos/${{ github.repository }}/git/matching-refs/heads/$branch" | ConvertFrom-Json
+          if ($LASTEXITCODE -ne 0) {
+            throw "Unable to inspect temporary Pages upload branch."
+          }
+          if ($refs.Count -eq 0) {
             Write-Host "No temporary Pages upload branch remains."
           } else {
-            throw "Unable to inspect temporary Pages upload branch."
+            git push origin --delete $branch
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           }
 
       - name: Commit successful public update state
