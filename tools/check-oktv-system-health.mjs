@@ -72,26 +72,35 @@ async function mapLimit(items, limit, mapper) {
 async function probeStaticIndex(source) {
   if (!source?.indexPath) return { id: source?.id || '', name: source?.name || '', ok: false, error: 'missing indexPath' };
   const url = new URL(source.indexPath.replace(/^\/+/, ''), `${dataBase}/`).href;
-  try {
-    let response = await fetchWithTimeout(`${url}?health=${Date.now()}`, { method: 'HEAD' });
-    if (response.status === 405) {
-      response = await fetchWithTimeout(`${url}?health=${Date.now()}`, {
-        headers: { range: 'bytes=0-1' },
-      });
+  let lastError = '';
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    try {
+      let response = await fetchWithTimeout(`${url}?health=${Date.now()}`, { method: 'HEAD' });
+      if (response.status === 405) {
+        response = await fetchWithTimeout(`${url}?health=${Date.now()}`, {
+          headers: { range: 'bytes=0-1' },
+        });
+      }
+      const bytes = Number(response.headers.get('content-length') || 0);
+      const ok = response.ok && (bytes > 20 || response.status === 206);
+      if (ok || (response.status >= 400 && response.status < 500)) {
+        return {
+          id: source.id,
+          name: source.name,
+          url,
+          ok,
+          status: response.status,
+          bytes,
+          error: ok ? '' : `HTTP ${response.status}`,
+        };
+      }
+      lastError = `HTTP ${response.status}`;
+    } catch (error) {
+      lastError = error.message;
     }
-    const bytes = Number(response.headers.get('content-length') || 0);
-    return {
-      id: source.id,
-      name: source.name,
-      url,
-      ok: response.ok && (bytes > 20 || response.status === 206),
-      status: response.status,
-      bytes,
-      error: response.ok ? (bytes > 20 || response.status === 206 ? '' : 'empty response') : `HTTP ${response.status}`,
-    };
-  } catch (error) {
-    return { id: source.id, name: source.name, url, ok: false, status: 0, bytes: 0, error: error.message };
+    if (attempt < 2) await new Promise((resolve) => setTimeout(resolve, 500));
   }
+  return { id: source.id, name: source.name, url, ok: false, status: 0, bytes: 0, error: lastError };
 }
 
 function sourceProbeUrl(source) {
