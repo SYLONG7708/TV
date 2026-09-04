@@ -8,7 +8,7 @@ $script = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..\tools\push-com
 $failure = $null
 
 function Invoke-TestGit([string]$repository, [string[]]$arguments) {
-  & git.exe -C $repository @arguments | Out-Host
+  & git -C $repository @arguments | Out-Host
   if ($LASTEXITCODE -ne 0) { throw "git $($arguments -join ' ') failed." }
 }
 
