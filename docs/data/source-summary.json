@@ -1,0 +1,64 @@
+{
+  "generatedAt": "2026-09-07T02:14:25.846Z",
+  "input": {
+    "live": "D:\\a\\TV\\TV\\sources\\live-stable.txt",
+    "vodUrl": "https://raw.githubusercontent.com/FGBLH/GHK/a1c46cb76810cd6d53b73e1c6f0a0789586151c5/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json",
+    "includeLegacySources": false
+  },
+  "vod": {
+    "count": 25,
+    "typeCounts": {
+      "Spider/API": 8,
+      "CMS JSON/API": 13,
+      "CMS XML/API": 3,
+      "Proxy/API": 1
+    },
+    "enabledCount": 25,
+    "indexedCount": 12,
+    "categoriesOk": 15,
+    "categoriesFailed": 1
+  },
+  "live": {
+    "count": 110,
+    "playableCount": 110,
+    "externalCount": 0,
+    "networkOnlyCount": 0,
+    "kinds": {
+      "youtube": 110
+    },
+    "groups": [
+      "YouTube新聞台",
+      "YouTube購物台",
+      "YouTube綜合娛樂",
+      "YouTube國際新聞",
+      "YouTube亞洲新聞",
+      "YouTube兒童動畫",
+      "YouTube文化紀實",
+      "YouTube音樂體育風景",
+      "YouTube韓綜娛樂",
+      "YouTube台灣節目",
+      "YouTube互動娛樂",
+      "YouTube動漫台",
+      "YouTube電影劇集"
+    ],
+    "lastAttemptAt": "2026-09-07T02:14:27.7486376+00:00",
+    "refreshStatus": "updated",
+    "outputsPreserved": false,
+    "playlistEntries": 112
+  },
+  "notes": [
+    "VOD source is loaded from sources/current-sources.json vod.url.",
+    "Legacy All on-demand and LunaTV VOD data is excluded unless --includeLegacySources true is set.",
+    "Live data continues to use docs/data/live-channels.json.",
+    "直播來源由 sources/live-stable.txt 重建為 docs/data/live-channels.json，YouTube 簽名 HLS 過期前會被本機排程重新刷新。",
+    "直播來源由 sources/live-stable.txt 重建為 docs/data/live-channels.json，YouTube 簽名 HLS 會由自動排程重新刷新。"
+  ],
+  "adult18": {
+    "count": 34,
+    "usableCount": 34,
+    "duplicateCount": 0,
+    "failedCount": 0
+  },
+  "lastLiveAttemptAt": "2026-09-07T02:14:27.7486376+00:00"
+}
+

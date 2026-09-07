@@ -1,0 +1,5843 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-4penCNMSeIrMQ9T47w6/AGKuPFmq9RLo+3tajaAkSR0=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-q02F97qqlOr202beJ5VnHrLJYWm/Qm53QwnFgiZg0VQ='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="影視" />
+    <meta name="theme-color" content="#050507" />
+    <link rel="icon" href="../assets/icon.png" />
+    <link rel="apple-touch-icon" href="../assets/icon.png" />
+    <title>影視 OKTV iPhone</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js" integrity="sha384-iZBI1/lW9u8FcBjxuQ8nPTsU7TXhZNtzkV8H3gQHSTgz+VYQoKWqGlBHqhO84alJ" crossorigin="anonymous" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js" integrity="sha384-rNlaE5fs9dGIjmxWDALQh/RBAaGRYT5ChrzHo6tRfgrZ36iRFAiquP5g41Jsv+0j" crossorigin="anonymous" defer></script>
+    <style data-csp-hash>
+      :root {
+        color-scheme: dark;
+        --bg: #050507;
+        --panel: rgba(17, 18, 22, 0.92);
+        --panel-2: rgba(25, 27, 33, 0.94);
+        --line: rgba(255, 255, 255, 0.12);
+        --text: #f5f5f7;
+        --muted: #b8bac3;
+        --dim: #7f838e;
+        --accent: #9f114c;
+        --accent-2: #d81769;
+        --cyan: #32d6e7;
+        --green: #5bd58e;
+        --amber: #f2bd5c;
+        --red: #ff6571;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background:
+          linear-gradient(90deg, rgba(5, 5, 7, 0.97), rgba(5, 5, 7, 0.9)),
+          url("../assets/hero-cinema.png") right top / auto 100vh no-repeat,
+          var(--bg);
+        color: var(--text);
+        font-family:
+          "Noto Sans TC", "Microsoft JhengHei", "PingFang TC", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        overflow-x: hidden;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      button {
+        color: inherit;
+      }
+
+      .app {
+        width: min(100%, 1180px);
+        min-height: 100vh;
+        margin: 0 auto;
+        padding: max(12px, env(safe-area-inset-top)) 12px max(30px, env(safe-area-inset-bottom));
+      }
+
+      .top-nav {
+        position: sticky;
+        top: 0;
+        z-index: 30;
+        min-height: 70px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        overflow-x: auto;
+        padding: 8px 0 12px;
+        background: linear-gradient(180deg, rgba(5, 5, 7, 0.99), rgba(5, 5, 7, 0.74));
+        backdrop-filter: none;
+        scrollbar-width: none;
+      }
+
+      .top-nav::-webkit-scrollbar,
+      .chip-row::-webkit-scrollbar,
+      .source-rail::-webkit-scrollbar {
+        display: none;
+      }
+
+      .nav-btn {
+        flex: 0 0 auto;
+        min-height: 46px;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: rgba(255, 255, 255, 0.72);
+        padding: 0 8px;
+        font-size: clamp(1.05rem, 5.6vw, 1.7rem);
+        font-weight: 650;
+        white-space: nowrap;
+        cursor: pointer;
+      }
+
+      .nav-btn.is-active {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: #fff;
+        padding: 0 22px;
+        font-weight: 900;
+      }
+
+      .nav-source-btn {
+        flex: 0 0 auto;
+        width: 52px;
+        height: 52px;
+        border: 1px solid rgba(50, 214, 231, 0.55);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.08);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px;
+        cursor: pointer;
+        box-shadow: 0 0 18px rgba(50, 214, 231, 0.16);
+      }
+
+      .nav-source-btn img {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .toolbar {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .search {
+        width: 100%;
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--text);
+        padding: 0 12px;
+        outline: none;
+      }
+
+      .search:focus {
+        border-color: rgba(216, 23, 105, 0.82);
+      }
+
+      .icon-btn,
+      .text-icon-btn,
+      .play-btn {
+        min-height: 42px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+      }
+
+      .icon-btn {
+        width: 42px;
+      }
+
+      .text-icon-btn,
+      .play-btn {
+        padding: 0 12px;
+        white-space: nowrap;
+      }
+
+      .icon-btn svg,
+      .text-icon-btn svg,
+      .play-btn svg,
+      .status-pill svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .hero {
+        min-height: 46vh;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(118px, 32%);
+        gap: 14px;
+        align-items: end;
+        margin-bottom: 14px;
+      }
+
+      .hero-copy {
+        min-width: 0;
+        padding-bottom: 6px;
+      }
+
+      .hero-kicker {
+        color: var(--cyan);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .hero h1 {
+        margin: 8px 0 8px;
+        font-size: clamp(2.2rem, 13vw, 4.5rem);
+        line-height: 0.95;
+        letter-spacing: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .hero-meta,
+      .item-meta,
+      .section-head span,
+      .source-row span,
+      .episode-grid span {
+        color: var(--muted);
+      }
+
+      .hero-poster {
+        min-width: 0;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 12px;
+        margin: 14px 0 10px;
+      }
+
+      .section-head h1,
+      .section-head h2 {
+        margin: 0;
+        font-size: clamp(1.18rem, 5.8vw, 1.72rem);
+      }
+
+      .search-section-head .status-pill {
+        max-width: 100%;
+      }
+
+      .poster-grid,
+      .rank-list,
+      .source-list,
+      .live-list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .poster-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .poster-card {
+        min-width: 0;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        padding: 0;
+        text-align: left;
+        cursor: pointer;
+        content-visibility: auto;
+        contain-intrinsic-size: 260px 150px;
+      }
+
+      .poster-art {
+        position: relative;
+        aspect-ratio: 0.72;
+        overflow: hidden;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        background:
+          linear-gradient(135deg, #153746, #60183c 52%, #120911);
+      }
+
+      .poster-art img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: cover;
+      }
+
+      .poster-art img.is-broken {
+        display: none;
+      }
+
+      .poster-fallback {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        padding: 14px;
+        text-align: center;
+        font-size: 0;
+        font-weight: 900;
+        line-height: 1.08;
+        overflow-wrap: anywhere;
+        color: transparent;
+      }
+
+      .poster-fallback::after {
+        content: "";
+        width: 42%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .poster-art img:not(.is-broken) + .poster-fallback {
+        display: none;
+      }
+
+      .badge,
+      .score,
+      .adult-content-badge {
+        position: absolute;
+        z-index: 2;
+        min-height: 28px;
+        display: inline-flex;
+        align-items: center;
+        border-radius: 6px;
+        background: rgba(20, 20, 24, 0.78);
+        color: #fff;
+        padding: 0 8px;
+        font-size: 0.82rem;
+        max-width: calc(100% - 16px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .score {
+        top: 8px;
+        left: 8px;
+      }
+
+      .badge {
+        left: 8px;
+        bottom: 8px;
+      }
+
+      .adult-content-badge {
+        top: 8px;
+        right: 8px;
+        gap: 5px;
+        background: rgba(216, 23, 105, 0.92);
+        font-weight: 900;
+      }
+
+      .adult-content-badge img,
+      .poster-title .adult-source-icon {
+        width: 22px;
+        height: 22px;
+      }
+
+      .poster-title {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        color: #fff;
+        font-size: 1rem;
+        line-height: 1.25;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .poster-sub {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+
+      .chip-row,
+      .source-rail,
+      .area-rail,
+      .quick-filter-row {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        margin-bottom: 12px;
+        scrollbar-width: none;
+      }
+
+      .chip {
+        flex: 0 0 auto;
+        min-height: 34px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: var(--muted);
+        padding: 0 12px;
+        cursor: pointer;
+      }
+
+      .chip.is-active {
+        border-color: rgba(216, 23, 105, 0.76);
+        background: rgba(216, 23, 105, 0.24);
+        color: #fff;
+      }
+
+      .quick-filters {
+        display: grid;
+        gap: 2px;
+        margin-bottom: 12px;
+      }
+
+      .quick-filter-block {
+        min-width: 0;
+      }
+
+      .quick-filter-label {
+        display: block;
+        margin: 0 0 6px 2px;
+        color: var(--muted);
+        font-size: 0.78rem;
+        font-weight: 800;
+      }
+
+      .source-pill {
+        flex: 0 0 auto;
+        min-height: 40px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        color: inherit;
+        padding: 0 12px;
+        cursor: pointer;
+      }
+
+      .source-pill.is-active {
+        border-color: rgba(50, 214, 231, 0.6);
+        background: rgba(50, 214, 231, 0.16);
+      }
+
+      .source-icon,
+      .adult-source-icon {
+        width: 28px;
+        height: 28px;
+        display: inline-block;
+        flex: 0 0 auto;
+        vertical-align: middle;
+      }
+
+      .source-name {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .source-name span {
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .source-toggle {
+        width: 52px;
+        height: 52px;
+        min-height: 52px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid rgba(50, 214, 231, 0.44);
+        border-radius: 16px;
+        background: rgba(8, 12, 16, 0.96);
+        color: #fff;
+        padding: 5px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        box-shadow: 0 0 18px rgba(50, 214, 231, 0.14);
+      }
+
+      .source-toggle-icon {
+        width: 100%;
+        height: 100%;
+      }
+
+      .source-section-label {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 2px 2px;
+        color: #fff;
+        font-size: 0.9rem;
+        font-weight: 900;
+      }
+
+      .source-section-label > span {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+      }
+
+      .source-section-label small {
+        color: var(--muted);
+        font-size: 0.76rem;
+        font-weight: 650;
+      }
+
+      .source-section-label.is-adult {
+        color: #ffd166;
+      }
+
+      .source-mode-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .source-mode-row .chip {
+        width: 100%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .floating-filter {
+        position: fixed;
+        right: max(14px, env(safe-area-inset-right));
+        bottom: max(18px, env(safe-area-inset-bottom));
+        z-index: 55;
+        min-width: 54px;
+        min-height: 54px;
+        border: 1px solid rgba(216, 23, 105, 0.62);
+        border-radius: 999px;
+        background: linear-gradient(135deg, #9f114c, #d81769);
+        color: #fff;
+        box-shadow: 0 12px 26px rgba(0, 0, 0, 0.36);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .floating-filter svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      .row,
+      .source-row {
+        min-height: 68px;
+        display: grid;
+        grid-template-columns: 46px minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 10px;
+      }
+
+      .avatar {
+        width: 46px;
+        height: 46px;
+        display: grid;
+        place-items: center;
+        border-radius: 8px;
+        background: rgba(216, 23, 105, 0.25);
+        color: #fff;
+        font-weight: 900;
+      }
+
+      .row-main {
+        min-width: 0;
+      }
+
+      .row-main strong,
+      .row-main span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .row-main span {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .status-pill {
+        min-height: 30px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 0 10px;
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        font-size: 0.78rem;
+        white-space: nowrap;
+      }
+
+      .status-pill.ok {
+        background: rgba(91, 213, 142, 0.18);
+        color: var(--green);
+      }
+
+      .status-pill.warn {
+        background: rgba(242, 189, 92, 0.18);
+        color: var(--amber);
+      }
+
+      button.status-pill {
+        border: 0;
+        cursor: pointer;
+        font: inherit;
+      }
+
+      button.status-pill:focus-visible {
+        outline: 2px solid var(--amber);
+        outline-offset: 2px;
+      }
+
+      .filter-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+
+      .notice {
+        border: 1px solid rgba(242, 189, 92, 0.34);
+        border-radius: 8px;
+        background: rgba(242, 189, 92, 0.1);
+        color: #ffdc9a;
+        padding: 10px 12px;
+        font-size: 0.88rem;
+        line-height: 1.5;
+      }
+
+      .sheet {
+        position: fixed;
+        inset: 0;
+        z-index: 80;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 160ms ease;
+      }
+
+      .sheet.is-open {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .sheet-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.68);
+        backdrop-filter: none;
+      }
+
+      .sheet-panel {
+        position: absolute;
+        left: 50%;
+        bottom: 0;
+        width: min(100%, 740px);
+        max-height: 86vh;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(-50%);
+        border: 1px solid var(--line);
+        border-bottom: 0;
+        border-radius: 8px 8px 0 0;
+        background: #07070a;
+        padding: 12px 12px max(14px, env(safe-area-inset-bottom));
+      }
+
+      .sheet-head {
+        min-height: 50px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .sheet-head strong,
+      .sheet-head span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .sheet-head span {
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.82rem;
+      }
+
+      .sheet-body {
+        min-height: 0;
+        overflow: auto;
+        padding-top: 8px;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: 116px minmax(0, 1fr);
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+
+      .detail-grid .poster-art {
+        min-width: 0;
+      }
+
+      .detail-copy {
+        min-width: 0;
+      }
+
+      .detail-copy h2 {
+        margin: 0 0 8px;
+        font-size: 1.35rem;
+        line-height: 1.18;
+      }
+
+      .detail-copy p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        line-height: 1.45;
+        font-size: 0.88rem;
+      }
+
+      .episode-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .episode-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin: 8px 0 10px;
+      }
+
+      .episode-toolbar small {
+        color: var(--muted);
+        white-space: nowrap;
+      }
+
+      .signal-strip {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 8px;
+        margin: 10px 0 12px;
+        overflow-x: auto;
+        overscroll-behavior-inline: contain;
+        padding: 1px 0 4px;
+        scroll-snap-type: inline proximity;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .signal-strip::-webkit-scrollbar {
+        display: none;
+      }
+
+      .signal-chip {
+        flex: 0 0 auto;
+        min-height: 34px;
+        border: 1px solid rgba(50, 214, 231, 0.35);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        padding: 0 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        scroll-snap-align: start;
+        white-space: nowrap;
+      }
+
+      .signal-chip.is-active {
+        border-color: rgba(50, 214, 231, 0.8);
+        background: rgba(50, 214, 231, 0.2);
+      }
+
+      .episode-pages {
+        min-width: 0;
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding-bottom: 2px;
+        scrollbar-width: none;
+      }
+
+      .episode-pages::-webkit-scrollbar {
+        display: none;
+      }
+
+      .episode-pages button {
+        flex: 0 0 auto;
+        min-height: 34px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        padding: 0 12px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .episode-pages button.is-active {
+        border-color: rgba(216, 23, 105, 0.8);
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      }
+
+      .episode-grid button {
+        min-height: 38px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      video,
+      .player-frame {
+        display: block;
+        width: 100%;
+        max-height: calc(100dvh - 112px);
+        aspect-ratio: 16 / 9;
+        border-radius: 8px;
+        background: #000;
+        object-fit: contain;
+      }
+
+      .player-frame {
+        border: 0;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      #playerSheet .sheet-panel {
+        width: min(100%, 1080px);
+        max-height: 100dvh;
+      }
+
+      @media (min-width: 620px) {
+        .poster-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .episode-grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 980px) {
+        .poster-grid {
+          grid-template-columns: repeat(6, minmax(0, 1fr));
+        }
+
+        .app {
+          padding-inline: 28px;
+        }
+
+        .sheet-panel {
+          width: min(92vw, 900px);
+        }
+
+        #playerSheet .sheet-panel {
+          width: min(94vw, 1280px);
+        }
+      }
+
+      @media (max-width: 430px) {
+        .search-section-head {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .search-section-head .status-pill {
+          white-space: normal;
+        }
+
+        .top-nav {
+          gap: 12px;
+        }
+
+        .hero {
+          min-height: 36vh;
+          grid-template-columns: minmax(0, 1fr) 124px;
+        }
+
+        .poster-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .toolbar {
+          grid-template-columns: minmax(0, 1fr) 42px;
+        }
+
+        .text-icon-btn span {
+          display: none;
+        }
+
+        .episode-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .episode-toolbar {
+          align-items: stretch;
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .app {
+          padding-inline: 8px;
+        }
+
+        .nav-btn {
+          font-size: 1rem;
+        }
+
+        .nav-source-btn {
+          width: 46px;
+          height: 46px;
+        }
+      }
+
+      @media (orientation: landscape) and (max-height: 540px) {
+        #playerSheet .sheet-panel {
+          height: 100dvh;
+          max-height: 100dvh;
+          border-radius: 0;
+          border: 0;
+        }
+
+        #playerSheet .sheet-body {
+          display: grid;
+          align-items: center;
+        }
+
+        #playerSheet video,
+        #playerSheet .player-frame {
+          max-height: calc(100dvh - 74px);
+          aspect-ratio: auto;
+        }
+      }
+
+      .load-more-status {
+        margin-top: 14px;
+      }
+
+      .reset-filter-btn {
+        width: 100%;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <nav class="top-nav" aria-label="OKTV 分頁" id="topNav"></nav>
+      <main id="screen"></main>
+    </div>
+
+    <div class="sheet" id="sourceSheet" aria-hidden="true">
+      <div class="sheet-backdrop" data-close-sheet></div>
+      <section class="sheet-panel">
+        <div class="sheet-head">
+          <div><strong>點播訊號源</strong><span id="sourceSheetMeta">可切換已建立索引的來源</span></div>
+          <button class="icon-btn" type="button" data-close-sheet aria-label="關閉"></button>
+        </div>
+        <div class="sheet-body" id="sourceSheetBody"></div>
+      </section>
+    </div>
+
+    <div class="sheet" id="filterSheet" aria-hidden="true">
+      <div class="sheet-backdrop" data-close-filter></div>
+      <section class="sheet-panel">
+        <div class="sheet-head">
+          <div><strong>篩選器</strong><span>年份、地區、類型、觀看人數、評分</span></div>
+          <button class="icon-btn" type="button" data-close-filter aria-label="關閉"></button>
+        </div>
+        <div class="sheet-body" id="filterSheetBody"></div>
+      </section>
+    </div>
+
+    <div class="sheet" id="detailSheet" aria-hidden="true">
+      <div class="sheet-backdrop" data-close-detail></div>
+      <section class="sheet-panel">
+        <div class="sheet-head">
+          <div><strong id="detailTitle">影視</strong><span id="detailMeta">OKTV</span></div>
+          <button class="icon-btn" type="button" data-close-detail aria-label="關閉"></button>
+        </div>
+        <div class="sheet-body" id="detailBody"></div>
+      </section>
+    </div>
+
+    <div class="sheet" id="playerSheet" aria-hidden="true">
+      <div class="sheet-backdrop" data-close-player></div>
+      <section class="sheet-panel">
+        <div class="sheet-head">
+          <div><strong id="playerTitle">影視</strong><span id="playerMeta">Ready</span></div>
+          <button class="icon-btn" type="button" data-close-player aria-label="關閉"></button>
+        </div>
+        <video id="player" controls playsinline preload="metadata" poster="../assets/hero-cinema.png"></video>
+        <iframe id="playerFrame" class="player-frame hidden" title="直播播放器" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" sandbox="allow-scripts allow-same-origin allow-popups" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </section>
+    </div>
+
+    <script type="module" data-csp-hash>
+      const tabs = [
+        ['home', '主頁'],
+        ['movie', '電影'],
+        ['series', '劇集'],
+        ['short', '短劇'],
+        ['anime', '動漫'],
+        ['variety', '綜藝'],
+        ['rank', '排行'],
+        ['live', '直播'],
+      ];
+      const SOURCE_ICON = '../assets/source-signal-icon.svg';
+      const ADULT_ICON = '../assets/adult-18-badge.svg';
+      const ONLINE_DATA_BASE = 'https://sylong7708.github.io/TV/docs/data/';
+      const ARCHIVE_DATA_BASE = location.pathname.startsWith('/TV-recovery-20260904/')
+        ? 'https://sylong7708.github.io/TV/docs/data/'
+        : 'https://sylong7708.github.io/TV-archive-20260904/docs/data/';
+      const ARCHIVE_RAW_DATA_BASE = location.pathname.startsWith('/TV-recovery-20260904/')
+        ? 'https://raw.githubusercontent.com/SYLONG7708/TV/gh-pages/docs/data/'
+        : 'https://raw.githubusercontent.com/SYLONG7708/TV-archive-20260904/gh-pages/docs/data/';
+      const SOURCE_STORAGE_KEY = 'oktv:iphone:selectedSource:v3';
+      const DEFAULT_SOURCE_RE = /爱奇艺|愛奇藝/i;
+      const QUANTUM_MANIFEST_URL = '../data/quantum-lzi/manifest.json';
+      const QUANTUM_BASE_URL = '../data/quantum-lzi/';
+      const QUERY_MANIFEST_URL = '../data/vod-query/manifest.json';
+      const QUANTUM_API_RE = /cj\.lziapi\.com/i;
+      const ADULT_ITEM_TEXT_RE =
+        /18\+|\u6210\u4eba|\u9ebb\u8c46|\u756a\u53f7|\u9ec4\u8272|\u9ec3\u8272|\u9ec4\u6f2b|\u9ec3\u6f2b|\u6210\u4eba\u52a8\u6f2b|\u6210\u4eba\u52d5\u6f2b|\u6fc0\u60c5\u52a8\u6f2b|\u6fc0\u60c5\u52d5\u6f2b|\u60c5\u8272|\u4e09\u7ea7|\u4e09\u7d1a|\u8001\u8272|\u5927\u5976|\u4e1d\u889c|\u7d72\u896a|\u65e0\u7801|\u7121\u78bc|\u6709\u7801|\u6709\u78bc|\u4e71\u4f26|\u4e82\u502b|\u798f\u5229\u59ec|\u5f3a\u5978|\u5f37\u59e6|\u841d\u8389|\u863f\u8389|\u91cc\u756a|\u88cf\u756a|\u5236\u670d\u8bf1\u60d1|\u5236\u670d\u8a98\u60d1|\u4f26\u7406|\u502b\u7406|\u5199\u771f|\u5beb\u771f|\u5973\u512a|\u5973\u4f18|\u5de8\u4e73|\u4e73\u4ea4|\u53e3\u4ea4|\u6deb|\u5077\u62cd|\u4eba\u59bb|\u56fd\u4ea7\u81ea\u62cd|\u570b\u7522\u81ea\u62cd|\bAV\b/i;
+      const CLIENT_KIND_RULES = [
+        ['short', /\u77ed\u5267|\u77ed\u5287|\u5fae\u77ed\u5267|\u5fae\u77ed\u5287|\u723d\u6587\u77ed\u5267|\u723d\u6587\u77ed\u5287|\u53cd\u8f6c\u723d\u5267|\u53cd\u8f49\u723d\u5287|\u53cd\u8f6c\u723d\u6587|\u53cd\u8f49\u723d\u6587|\u5973\u9891\u604b\u7231|\u5973\u983b\u6200\u611b|\u53e4\u88c5\u4ed9\u4fa0|\u53e4\u88dd\u4ed9\u4fe0|\u5e74\u4ee3\u7a7f\u8d8a|\u7a7f\u8d8a\u5e74\u4ee3|\u73b0\u4ee3\u90fd\u5e02|\u73fe\u4ee3\u90fd\u5e02|\u73b0\u4ee3\u8a00\u60c5|\u73fe\u4ee3\u8a00\u60c5|\u5973\u604b\u603b\u88c1|\u5973\u6200\u7e3d\u88c1|\u8a00\u60c5\u603b\u88c1|\u8a00\u60c5\u7e3d\u88c1|\u95ea\u5a5a\u79bb\u5a5a|\u9583\u5a5a\u96e2\u5a5a|\u8d58\u5a7f|\u8d05\u5a7f|\u64e6\u8fb9\u77ed\u5267|\u64e6\u908a\u77ed\u5287/i],
+        ['variety', /\u7efc\u827a|\u7d9c\u85dd|\u771f\u4eba\u79c0|\u8131\u53e3\u79c0|\u9078\u79c0|\u9009\u79c0/i],
+        ['series', /\u8fde\u7eed\u5267|\u9023\u7e8c\u5287|\u7535\u89c6\u5267|\u96fb\u8996\u5287|\u5267\u96c6|\u5287\u96c6|\u5927\u9646\u5267|\u5927\u9678\u5287|\u9646\u5267|\u9678\u5287|\u56fd\u4ea7\u5267|\u570b\u7522\u5287|\u5185\u5730\u5267|\u5167\u5730\u5287|\u9999\u6e2f\u5267|\u9999\u6e2f\u5287|\u6e2f\u5267|\u6e2f\u5287|\u53f0\u6e7e\u5267|\u53f0\u7063\u5287|\u53f0\u5267|\u53f0\u5287|\u65e5\u672c\u5267|\u65e5\u5267|\u97e9\u56fd\u5267|\u97d3\u570b\u5287|\u97e9\u5267|\u97d3\u5287|\u7f8e\u56fd\u5267|\u7f8e\u570b\u5287|\u7f8e\u5267|\u6b27\u7f8e\u5267|\u6b50\u7f8e\u5287|\u6cf0\u56fd\u5267|\u6cf0\u570b\u5287|\u6cf0\u5267|\u9a6c\u6cf0\u5267|\u99ac\u6cf0\u5287|\u6d77\u5916\u5267|Netflix\s*\u81ea\u5236\u5267|Netflix\s*\u81ea\u88fd\u5287|\u81ea\u5236\u5267|\u81ea\u88fd\u5287/i],
+        ['anime', /\u52a8\u6f2b|\u52d5\u6f2b|\u52a8\u753b|\u52d5\u756b|\u756a\u5267|\u756a\u5287|\u756a\u7ec4|\u756a\u7d44|\u56fd\u6f2b|\u570b\u6f2b|\u56fd\u4ea7\u52a8\u6f2b|\u570b\u7522\u52d5\u6f2b|\u52a8\u6f2b\u7535\u5f71|\u52d5\u6f2b\u96fb\u5f71|\u52a8\u753b\u7535\u5f71|\u52d5\u756b\u96fb\u5f71|\u52a8\u753b\u7247|\u52d5\u756b\u7247|\u5361\u901a|\u5c11\u513f|\u5c11\u5152|\u4e8c\u6b21\u5143/i],
+        ['movie', /\u7535\u5f71|\u96fb\u5f71|\u5f71\u7247|\u52a8\u4f5c\u7247|\u52d5\u4f5c\u7247|\u559c\u5267\u7247|\u559c\u5287\u7247|\u7231\u60c5\u7247|\u611b\u60c5\u7247|\u79d1\u5e7b\u7247|\u6050\u6016\u7247|\u5267\u60c5\u7247|\u5287\u60c5\u7247|\u6218\u4e89\u7247|\u6230\u722d\u7247|\u7eaa\u5f55\u7247|\u7d00\u9304\u7247|\u8bb0\u5f55\u7247|\u72af\u7f6a\u7247|\u60ac\u7591\u7247|\u9a5a\u609a\u7247|\u60ca\u609a\u7247|\u5192\u9669\u7247|\u5947\u5e7b\u7247|\u707e\u96be\u7247|\u707d\u96e3\u7247|\u9884\u544a\u7247|\u9810\u544a\u7247|\u90b5\u6c0f\u7535\u5f71|\u90b5\u6c0f\u96fb\u5f71|Netflix\s*\u7535\u5f71|Netflix\s*\u96fb\u5f71|4K\s*\u7535\u5f71|4K\s*\u96fb\u5f71|\u897f\u90e8\u7247|\u5bb6\u5ead\u7247|\u77ed\u7247|\u5f71\u89c6\u89e3\u8bf4|\u5f71\u8996\u89e3\u8aaa/i],
+        ['other', /\u4f53\u80b2|\u9ad4\u80b2|\u8db3\u7403|\u7bee\u7403|\u7db2\u7403|\u7f51\u7403|\u65af\u8bfa\u514b|\u65af\u8afe\u514b|\u7535\u7ade|\u96fb\u7af6|\u6f14\u5531\u4f1a|\u6f14\u5531\u6703|\u97f3\u4e50|\u97f3\u6a02|\u65b0\u95fb|\u65b0\u805e|\u8d44\u8baf|\u8cc7\u8a0a/i],
+      ];
+      const VALID_VOD_KINDS = new Set(['movie', 'series', 'short', 'anime', 'variety', 'adult', 'other']);
+
+      const state = {
+        tab: 'home',
+        query: '',
+        selectedSource: localStorage.getItem(SOURCE_STORAGE_KEY) || 'default',
+        visibleLimit: 36,
+        filters: {
+          year: 'all',
+          area: 'all',
+          genre: 'all',
+          sort: 'hot',
+        },
+        sourceSheetMode: 'normal',
+        sourceLoading: false,
+        searchComposing: false,
+        refocusSearch: false,
+        catalog: { totals: {}, sources: [], items: [], filters: { years: [], areas: [], genres: [] } },
+        latest: { items: [] },
+        quantum: {
+          manifest: null,
+          loadedKinds: new Set(),
+          loadingKinds: new Map(),
+        },
+        live: [],
+        health: { failed: [] },
+        healthIndex: { sources: new Set(), posters: new Set(), live: new Set() },
+        detailCache: new Map(),
+        detailPathLookupCache: new Map(),
+        queryIndex: {
+          manifest: null,
+          cache: new Map(),
+          health: new Map(),
+        },
+        loadedSourceIds: new Set(),
+        sourceMap: new Map(),
+        itemById: new Map(),
+        seedItemIds: new Set(),
+        searchItemIds: new Set(),
+        sourcePageState: new Map(),
+        viewCache: new Map(),
+        itemsRevision: 0,
+        activeItem: null,
+        playerUrl: '',
+        searchLoading: false,
+        searchLoadInFlight: null,
+        searchAbortController: null,
+        searchDeadlineTimer: null,
+        searchProgress: { query: '', completed: 0, total: 0, failed: 0, status: 'idle' },
+        renderLayoutKey: '',
+      };
+
+      const topNav = document.querySelector('#topNav');
+      const screen = document.querySelector('#screen');
+      const sourceSheet = document.querySelector('#sourceSheet');
+      const sourceSheetMeta = document.querySelector('#sourceSheetMeta');
+      const sourceSheetBody = document.querySelector('#sourceSheetBody');
+      const filterSheet = document.querySelector('#filterSheet');
+      const filterSheetBody = document.querySelector('#filterSheetBody');
+      const detailSheet = document.querySelector('#detailSheet');
+      const detailBody = document.querySelector('#detailBody');
+      const detailTitle = document.querySelector('#detailTitle');
+      const detailMeta = document.querySelector('#detailMeta');
+      const playerSheet = document.querySelector('#playerSheet');
+      const player = document.querySelector('#player');
+      const playerFrame = document.querySelector('#playerFrame');
+      const playerTitle = document.querySelector('#playerTitle');
+      const playerMeta = document.querySelector('#playerMeta');
+      const EPISODES_PER_PAGE = 20;
+      const SOURCE_DETAIL_PAGE_SIZE = 100;
+      const GROUP_SEARCH_TARGET_RESULTS = 48;
+      const SEARCH_INDEX_MATCH_LIMIT = 320;
+      const SEARCH_INDEX_YIELD_EVERY = 200;
+      const QUERY_SHARD_CACHE_LIMIT = 6;
+      const QUERY_SEARCH_CONCURRENCY = 4;
+      const QUERY_SHARD_TIMEOUT_MS = 6000;
+      const QUERY_SEARCH_TIMEOUT_MS = 15000;
+      const QUERY_SHARD_COOLDOWN_MS = 30000;
+      const SEARCH_PROGRESS_RENDER_MS = 120;
+      const DETAIL_CACHE_LIMIT = 12;
+      const AUTO_SIGNAL_FALLBACK_LIMIT = 8;
+      let hls = null;
+      let searchRenderTimer = null;
+      let loadMoreInFlight = null;
+
+      document.addEventListener(
+        'error',
+        (event) => {
+          const target = event.target;
+          if (target instanceof HTMLImageElement && target.closest('.poster-art')) target.classList.add('is-broken');
+        },
+        true,
+      );
+
+      function icon(name) {
+        const paths = {
+          filter: '<path d="M3 5h18l-7 8v5l-4 2v-7L3 5z"></path>',
+          signal: '<path d="M2 20h.01"></path><path d="M7 20a5 5 0 0 0-5-5"></path><path d="M12 20A10 10 0 0 0 2 10"></path><path d="M17 20A15 15 0 0 0 2 5"></path>',
+          search: '<circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path>',
+          play: '<path d="m8 5 11 7-11 7V5z"></path>',
+          chevron: '<path d="m6 9 6 6 6-6"></path>',
+          close: '<path d="M18 6 6 18"></path><path d="m6 6 12 12"></path>',
+          check: '<path d="M20 6 9 17l-5-5"></path>',
+          alert: '<path d="M12 9v4"></path><path d="M12 17h.01"></path><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>',
+        };
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.play}</svg>`;
+      }
+
+      function onlineDataUrl(url) {
+        const match = String(url || '').match(/(?:^|\/)data\/(.+?)(?:[?#].*)?$/);
+        if (!match) return '';
+        return `${ONLINE_DATA_BASE}${match[1]}?ts=${Date.now()}`;
+      }
+
+      function archiveDataUrl(url) {
+        const match = String(url || '').match(/(?:^|\/)data\/(.+?)(?:[?#].*)?$/);
+        if (!match) return '';
+        return `${ARCHIVE_DATA_BASE}${match[1]}?ts=${Date.now()}`;
+      }
+
+      function archiveRawDataUrl(url) {
+        const match = String(url || '').match(/(?:^|\/)data\/(.+?)(?:[?#].*)?$/);
+        if (!match) return '';
+        return `${ARCHIVE_RAW_DATA_BASE}${match[1]}?ts=${Date.now()}`;
+      }
+
+      function cacheBustedUrl(url) {
+        const value = String(url || '');
+        return `${value}${value.includes('?') ? '&' : '?'}ts=${Date.now()}`;
+      }
+
+      const MAX_COMPRESSED_JSON_BYTES = 8 * 1024 * 1024;
+      const MAX_DECOMPRESSED_JSON_BYTES = 64 * 1024 * 1024;
+      const GZIP_DECOMPRESSION_TIMEOUT_MS = 2500;
+
+      function parseBoundedJsonBytes(bytes) {
+        if (bytes.byteLength > MAX_DECOMPRESSED_JSON_BYTES) throw new Error('JSON payload exceeds safe size limit');
+        return JSON.parse(new TextDecoder().decode(bytes));
+      }
+
+      async function responseJson(res, target) {
+        if (!/\.gz(?:$|[?#])/i.test(target)) return await res.json();
+        const buffer = await res.arrayBuffer();
+        if (buffer.byteLength > MAX_COMPRESSED_JSON_BYTES) throw new Error('Compressed JSON exceeds safe size limit');
+        const bytes = new Uint8Array(buffer);
+        try {
+          if (window.pako?.ungzip) {
+            return parseBoundedJsonBytes(window.pako.ungzip(bytes));
+          }
+        } catch {
+          undefined;
+        }
+        try {
+          if ('DecompressionStream' in window) {
+            let timeoutId = null;
+            const stream = new Blob([buffer]).stream().pipeThrough(new DecompressionStream('gzip'));
+            const decompressed = new Response(stream).arrayBuffer();
+            const timed = new Promise((_, reject) => {
+              timeoutId = window.setTimeout(
+                () => reject(new DOMException('Gzip decompression timed out', 'TimeoutError')),
+                GZIP_DECOMPRESSION_TIMEOUT_MS,
+              );
+            });
+            try {
+              return parseBoundedJsonBytes(new Uint8Array(await Promise.race([decompressed, timed])));
+            } finally {
+              if (timeoutId !== null) window.clearTimeout(timeoutId);
+            }
+          }
+        } catch {
+          undefined;
+        }
+        return parseBoundedJsonBytes(bytes);
+      }
+
+      async function getJson(url, fallback, options = {}) {
+        const online = onlineDataUrl(url);
+        const archive = archiveDataUrl(url);
+        const archiveRaw = archiveRawDataUrl(url);
+        const dataPath = String(url || '').match(/(?:^|\/)data\/(.+?)(?:[?#].*)?$/)?.[1] || '';
+        const freshData = /^(?:[^/]+\.json|vod-index\/|vod-detail\/|vod-search\/|vod-query\/|quantum-lzi\/)/i.test(dataPath);
+        const localUrl = freshData ? cacheBustedUrl(url) : url;
+        const preferOnline = /^vod-search\//i.test(dataPath);
+        const capacitorNative = Boolean(window.Capacitor?.isNativePlatform?.());
+        const localHost = !capacitorNative && /^(?:localhost|127\.0\.0\.1|::1)$/i.test(location.hostname);
+        const preferLocal = localHost || (!preferOnline && location.hostname === 'sylong7708.github.io');
+        const candidates = online
+          ? preferLocal
+            ? [localUrl, online]
+            : [online, localUrl]
+          : [localUrl];
+        const urls = [];
+        const seenUrls = new Set();
+        const addUrl = (candidate) => {
+          if (!candidate) return;
+          let identity = candidate;
+          try {
+            const normalized = new URL(candidate, location.href);
+            normalized.search = '';
+            normalized.hash = '';
+            identity = normalized.href;
+          } catch {
+            undefined;
+          }
+          if (seenUrls.has(identity)) return;
+          seenUrls.add(identity);
+          urls.push(candidate);
+        };
+        candidates.forEach(addUrl);
+        // The current repository is always preferred, so newly refreshed
+        // detail pages win. Missing historical pages fall back to the
+        // read-only raw archive, which is not affected by Pages rebuilds.
+        addUrl(archiveRaw);
+        addUrl(archive);
+        const requestController = new AbortController();
+        let timedOut = false;
+        let lastError = null;
+        const forwardAbort = () => requestController.abort(options.signal?.reason);
+        if (options.signal?.aborted) forwardAbort();
+        else options.signal?.addEventListener('abort', forwardAbort, { once: true });
+        const timeoutId = options.timeoutMs
+          ? window.setTimeout(() => {
+              timedOut = true;
+              requestController.abort(new DOMException('Request timed out', 'TimeoutError'));
+            }, options.timeoutMs)
+          : null;
+        try {
+          for (const target of urls) {
+            try {
+              if (options.signal?.aborted) throw new DOMException('Search aborted', 'AbortError');
+              const res = await fetch(target, {
+                cache: freshData ? 'no-store' : 'default',
+                signal: requestController.signal,
+              });
+              if (!res.ok) {
+                lastError = new Error(`HTTP ${res.status} for ${new URL(target, location.href).pathname}`);
+                continue;
+              }
+              return await responseJson(res, target);
+            } catch (error) {
+              if (options.signal?.aborted) throw new DOMException('Search aborted', 'AbortError');
+              lastError = timedOut ? new DOMException('Request timed out', 'TimeoutError') : error;
+              if (timedOut) break;
+            }
+          }
+        } finally {
+          if (timeoutId !== null) window.clearTimeout(timeoutId);
+          options.signal?.removeEventListener('abort', forwardAbort);
+        }
+        if (options.throwOnFailure) throw lastError || new Error(`Unable to load ${String(url || '')}`);
+        return fallback;
+      }
+
+      function clearViewCache() {
+        state.viewCache.clear();
+      }
+
+      function setBoundedCache(cache, key, value, limit) {
+        cache.delete(key);
+        cache.set(key, value);
+        while (cache.size > limit) {
+          cache.delete(cache.keys().next().value);
+        }
+        return value;
+      }
+
+      function normalizeVodKind(value) {
+        return VALID_VOD_KINDS.has(value) ? value : '';
+      }
+
+      function classifyClientKindFromText(value) {
+        const text = normalizedText(value);
+        if (!text) return '';
+        for (const [kind, rule] of CLIENT_KIND_RULES) {
+          if (rule.test(text)) return kind;
+        }
+        return '';
+      }
+
+      const NON_PRIMARY_CATEGORY_RE =
+        /\u7535\u5f71\u89e3\u8bf4|\u96fb\u5f71\u89e3\u8aaa|\u5f71\u89c6\u89e3\u8bf4|\u5f71\u8996\u89e3\u8aaa|\u89e3\u8bf4|\u89e3\u8aaa|\u5f71\u8bc4|\u5f71\u8a55|\u9884\u544a|\u9810\u544a|\u82b1\u7d6e|\u7247\u82b1|\u4f53\u80b2|\u9ad4\u80b2|\u8db3\u7403|\u7bee\u7403|\u7db2\u7403|\u7f51\u7403|\u65af\u8bfa\u514b|\u65af\u8afe\u514b|\u7535\u7ade|\u96fb\u7af6|\u65b0\u95fb|\u65b0\u805e|\u8d44\u8baf|\u8cc7\u8a0a/i;
+
+      function classifyCatalogKind(value) {
+        const text = normalizedText(value);
+        if (!text) return '';
+        if (NON_PRIMARY_CATEGORY_RE.test(text)) return 'other';
+        return classifyClientKindFromText(text);
+      }
+
+      function classifyTitleKindFromText(value) {
+        const text = normalizedText(value);
+        if (!text) return '';
+        if (NON_PRIMARY_CATEGORY_RE.test(text)) return 'other';
+        for (const [kind, rule] of CLIENT_KIND_RULES) {
+          if (kind === 'movie') continue;
+          if (rule.test(text)) return kind;
+        }
+        return '';
+      }
+
+      function displayVodKind(item) {
+        const source = sourceById(item?.sourceId);
+        const sourceAdult = Boolean(source?.adult || item?.sourceAdult || item?.adult);
+        const categoryText = normalizedText(item?.categoryName || item?.typeName || item?.type_name || item?.category || '');
+        const genreText = Array.isArray(item?.genre) ? normalizedText(item.genre.join(' ')) : normalizedText(item?.genre || item?.vod_class || item?.class || '');
+        const titleText = normalizedText(item?.title || item?.vod_name || '');
+        if (sourceAdult || ADULT_ITEM_TEXT_RE.test(`${categoryText} ${genreText}`)) return 'adult';
+        return classifyCatalogKind(categoryText) || classifyCatalogKind(genreText) || classifyTitleKindFromText(titleText) || normalizeVodKind(item?.kind) || 'movie';
+      }
+
+      function cleanFilterToken(value) {
+        return normalizedText(value)
+          .replace(/^[\s:：,_\-，、.·]+|[\s:：,_\-，、.·]+$/g, '')
+          .replace(/\s*\/\s*/g, ' / ')
+          .trim();
+      }
+
+      function cleanFilterYear(value) {
+        const match = String(value || '').match(/\b(19\d{2}|20\d{2})\b/);
+        if (!match) return '';
+        const year = Number(match[1]);
+        const maxYear = new Date().getFullYear() + 1;
+        return year >= 1900 && year <= maxYear ? String(year) : '';
+      }
+
+      function splitFilterValues(value) {
+        return String(value || '')
+          .split(/[\/／|,，、]+/g)
+          .map(cleanFilterToken)
+          .filter(Boolean);
+      }
+
+      function cleanAreaValues(value) {
+        return splitFilterValues(value).filter((item) => item.length >= 2 && item.length <= 12 && !/^\d+$/.test(item));
+      }
+
+      function cleanGenreValues(values) {
+        const rows = Array.isArray(values) ? values : [values];
+        const out = [];
+        for (const row of rows) {
+          for (const token of splitFilterValues(row)) {
+            if (token.length < 2 || token.length > 10) continue;
+            if (/^\[db:/i.test(token) || /^_?m$/i.test(token)) continue;
+            if (/^\d+$/.test(token)) continue;
+            if (!/[\p{Script=Han}A-Za-z0-9]/u.test(token)) continue;
+            if (/性霸凌|美臀|美穴|巨乳|主播|啪啪|G奶|色誘|色诱/i.test(token)) continue;
+            if (ADULT_ITEM_TEXT_RE.test(token) && state.selectedSource !== 'adult18') continue;
+            out.push(token);
+          }
+        }
+        return [...new Set(out)];
+      }
+
+      function prepareCatalogItem(item) {
+        if (!item) return item;
+        item.kind = displayVodKind(item);
+        if (item.kind === 'adult') item.adult = true;
+        item._filterYear = cleanFilterYear(item.year);
+        item._filterAreas = cleanAreaValues(item.area);
+        item._filterGenres = cleanGenreValues([...itemGenres(item), item.categoryName, item.typeName, item.type_name]);
+        item.year = item._filterYear || '';
+        item.area = item._filterAreas.join(' / ');
+        item.genre = item._filterGenres;
+        const searchSource = [
+          item.title,
+          item.originalName,
+          item.vodId,
+          item.categoryName,
+          item.year,
+          item.area,
+          itemGenres(item).join(' '),
+          item.sourceName,
+          item.actor,
+          item.director,
+          item.remarks,
+        ].join(' ');
+        item._posterKey = normalizedPoster(item.poster);
+        item._duplicateKey =
+          compactNormalizedText(toSimplifiedSearchText(item.title)) ||
+          (item._posterKey ? `poster:${item._posterKey}` : item.id || '');
+        item._searchText = normalizedText(searchSource);
+        item._searchCompact = compactNormalizedText(item._searchText);
+        return item;
+      }
+
+      function registerCatalogItems(rows, options = {}) {
+        if (!Array.isArray(rows) || !rows.length) return 0;
+        let changed = 0;
+        for (const row of rows) {
+          if (!row?.id) continue;
+          const prepared = prepareCatalogItem(row);
+          const existing = state.itemById.get(prepared.id);
+          if (existing) {
+            Object.assign(existing, prepared);
+            prepareCatalogItem(existing);
+          } else {
+            state.itemById.set(prepared.id, prepared);
+            state.catalog.items.push(prepared);
+            if (options.searchResult && !state.seedItemIds.has(prepared.id)) {
+              state.searchItemIds.add(prepared.id);
+            }
+          }
+          changed += 1;
+        }
+        if (changed) {
+          state.itemsRevision += 1;
+          clearViewCache();
+        }
+        return changed;
+      }
+
+      function clearTransientSearchItems() {
+        if (!state.searchItemIds.size) return;
+        const transientIds = state.searchItemIds;
+        state.catalog.items = state.catalog.items.filter((item) => !transientIds.has(item.id));
+        for (const id of transientIds) state.itemById.delete(id);
+        transientIds.clear();
+        state.itemsRevision += 1;
+        clearViewCache();
+      }
+
+      function markLatestPagesLoaded(rows) {
+        const sourcePages = new Map();
+        for (const item of rows || []) {
+          const page = Number(item?.detailPage || 0);
+          if (!item?.sourceId || page < 1) continue;
+          if (!sourcePages.has(item.sourceId)) sourcePages.set(item.sourceId, new Set());
+          sourcePages.get(item.sourceId).add(page);
+        }
+        for (const [sourceId, pages] of sourcePages) {
+          const source = sourceById(sourceId);
+          const pageState = getSourcePageState(source);
+          if (!pageState) continue;
+          for (const page of pages) pageState.loaded.add(page);
+          while (pageState.loaded.has(pageState.nextPage)) pageState.nextPage += 1;
+        }
+      }
+
+      function sourcePageCount(source) {
+        const expectedPages =
+          Number(source?.detailExpectedPages || 0) ||
+          Number(source?.checks?.find?.((check) => Number(check.pagecount) > 0)?.pagecount || 0);
+        const checkPages = Number(source?.checks?.find?.((check) => Number(check.pages) > 0)?.pages || 0);
+        return Math.max(
+          0,
+          Number(
+            expectedPages ||
+              checkPages ||
+              Math.ceil(Number(source?.itemCount || source?.sourceTotalCount || 0) / SOURCE_DETAIL_PAGE_SIZE),
+          ),
+        );
+      }
+
+      function sourceDetailPath(source, page) {
+        if (!source?.detailPathPattern) return '';
+        return source.detailPathPattern.replace('{page}', String(page).padStart(4, '0'));
+      }
+
+      function getSourcePageState(source) {
+        if (!source?.id) return null;
+        if (!state.sourcePageState.has(source.id)) {
+          state.sourcePageState.set(source.id, {
+            loaded: new Set(),
+            loading: new Map(),
+            nextPage: 1,
+            totalPages: sourcePageCount(source),
+          });
+        }
+        return state.sourcePageState.get(source.id);
+      }
+
+      async function ensureSourcePage(source, page) {
+        const pageState = getSourcePageState(source);
+        const path = sourceDetailPath(source, page);
+        if (!pageState || !path || page < 1 || (pageState.totalPages && page > pageState.totalPages)) return false;
+        if (pageState.loaded.has(page)) return true;
+        if (pageState.loading.has(page)) return await pageState.loading.get(page);
+        const promise = (async () => {
+          const payload = await getJson(`../data/${path}`, null);
+          const rows = Array.isArray(payload?.items) ? payload.items : [];
+          if (!rows.length) return false;
+          setBoundedCache(state.detailCache, path, payload, DETAIL_CACHE_LIMIT);
+          registerCatalogItems(rows);
+          pageState.loaded.add(page);
+          while (pageState.loaded.has(pageState.nextPage)) pageState.nextPage += 1;
+          return true;
+        })()
+          .catch(() => false)
+          .finally(() => pageState.loading.delete(page));
+        pageState.loading.set(page, promise);
+        return await promise;
+      }
+
+      async function ensureNextSourcePage() {
+        if (['all', 'normal', 'adult18'].includes(state.selectedSource)) {
+          return await ensureSelectedSourceItems(state.selectedSource, { eager: true, limit: 4 });
+        }
+        const source = sourceById(state.selectedSource);
+        const pageState = getSourcePageState(source);
+        if (!source?.detailPathPattern || !pageState || !pageState.nextPage || pageState.nextPage > pageState.totalPages) return false;
+        return await ensureSourcePage(source, pageState.nextPage);
+      }
+
+      function itemIdentityMatches(entry, item) {
+        return Boolean(entry && (entry.id === item.id || (entry.vodId && entry.vodId === item.vodId)));
+      }
+
+      async function detailItemAtPath(item, detailPath) {
+        if (!detailPath) return null;
+        let detail = state.detailCache.get(detailPath);
+        if (!detail) {
+          detail = await getJson(`../data/${detailPath}`, null);
+          if (!detail) return null;
+          setBoundedCache(state.detailCache, detailPath, detail, DETAIL_CACHE_LIMIT);
+        }
+        return (detail.items || []).find((entry) => itemIdentityMatches(entry, item)) || null;
+      }
+
+      async function indexedDetailPathFor(item) {
+        return item?.detailPath || '';
+      }
+
+      async function hydrateItemDetail(item) {
+        if (Array.isArray(item?.episodes) && item.episodes.length) return item;
+        if (!item?.detailPath) return item;
+        const indexedDetailPath = await indexedDetailPathFor(item);
+        const found = await detailItemAtPath(item, indexedDetailPath);
+        if (!found) throw new Error('detail-item-not-found');
+        Object.assign(item, found, { lazyEpisodes: false });
+        return item;
+      }
+
+      function hasRegisteredSourceItems(sourceId) {
+        return state.catalog.items.some((item) => item.sourceId === sourceId);
+      }
+
+      function sourceSupportsCurrentTab(source) {
+        if (!source) return false;
+        if (state.tab === 'home' || state.tab === 'rank') return true;
+        if (state.tab === 'live') return false;
+        const categories = Array.isArray(source.categories) ? source.categories : [];
+        if (!categories.length) return true;
+        return categories.some((category) => classifyCatalogKind(category) === state.tab);
+      }
+
+      function combinedSourceCandidates(sourceId) {
+        const wantAdult = sourceId === 'adult18';
+        return state.catalog.sources.filter((source) => {
+          if (!source.indexed || state.loadedSourceIds.has(source.id)) return false;
+          if (sourceId !== 'all' && Boolean(source.adult) !== wantAdult) return false;
+          return true;
+        });
+      }
+
+      async function ensureSourceIndex(source) {
+        if (!source || state.loadedSourceIds.has(source.id)) return false;
+        if (hasRegisteredSourceItems(source.id)) {
+          state.loadedSourceIds.add(source.id);
+          return false;
+        }
+        if (source.detailPathPattern) {
+          const loaded = await ensureSourcePage(source, 1);
+          if (loaded) {
+            state.loadedSourceIds.add(source.id);
+            return true;
+          }
+          const pageState = getSourcePageState(source);
+          if (pageState) {
+            pageState.nextPage = 0;
+            pageState.totalPages = 0;
+          }
+        }
+        if (!source.indexPath) return false;
+        const payload = await getJson(`../data/${source.indexPath}`, null);
+        const rows = Array.isArray(payload?.items) ? payload.items : [];
+        if (!rows.length && source.itemCount) throw new Error('source-index-empty');
+        registerCatalogItems(rows);
+        state.loadedSourceIds.add(source.id);
+        return rows.length > 0;
+      }
+
+      function searchIndexItemText(item) {
+        return [
+          item?.title,
+          item?.originalName,
+          item?.vodId,
+          item?.categoryName,
+          item?.typeName,
+          item?.type_name,
+          item?.year,
+          item?.area,
+          Array.isArray(item?.genre) ? item.genre.join(' ') : item?.genre,
+          item?.sourceName,
+          item?.actor,
+          item?.director,
+          item?.remarks,
+        ]
+          .filter(Boolean)
+          .join(' ');
+      }
+
+      function buildRawSearchCandidate(value) {
+        const query = String(value ?? '').trim().replace(/\s+/g, ' ').toLowerCase();
+        const compact = compactNormalizedText(query);
+        const tokens = query.split(/\s+/g).map((token) => token.trim()).filter(Boolean);
+        const compactTokens = tokens.map((token) => compactNormalizedText(token));
+        return { query, compact, tokens, compactTokens };
+      }
+
+      function rawSearchIndexNeedle(needle) {
+        if (needle.rawIndexNeedle) return needle.rawIndexNeedle;
+        const values = [];
+        for (const candidate of needle.candidates?.length ? needle.candidates : [needle]) {
+          values.push(candidate.query, toSimplifiedSearchText(candidate.query));
+        }
+        const seen = new Set();
+        const candidates = [];
+        for (const value of values) {
+          const candidate = buildRawSearchCandidate(value);
+          if (!candidate.compact || seen.has(candidate.compact)) continue;
+          seen.add(candidate.compact);
+          candidates.push(candidate);
+        }
+        needle.rawIndexNeedle = { candidates };
+        return needle.rawIndexNeedle;
+      }
+
+      async function matchingSearchIndexRows(rows, needle, signal) {
+        if (!needle?.query) return rows;
+        const matches = [];
+        const rawNeedle = rawSearchIndexNeedle(needle);
+        for (let index = 0; index < rows.length; index += 1) {
+          if (index && index % SEARCH_INDEX_YIELD_EVERY === 0) {
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            if (signal?.aborted) throw new DOMException('Search aborted', 'AbortError');
+            if (currentSearchNeedle().query !== needle.query) return matches;
+          }
+          const row = rows[index];
+          const searchText = searchIndexItemText(row).trim().replace(/\s+/g, ' ').toLowerCase();
+          if (!searchTextMatchesNeedle(searchText, compactNormalizedText(searchText), rawNeedle)) continue;
+          matches.push(row);
+          if (matches.length >= SEARCH_INDEX_MATCH_LIMIT) break;
+        }
+        return matches;
+      }
+
+      async function mapAsyncLimit(items, limit, worker) {
+        let next = 0;
+        const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+          while (next < items.length) {
+            const index = next++;
+            await worker(items[index], index);
+          }
+        });
+        await Promise.all(workers);
+      }
+
+      async function ensureSourceListItems(sources) {
+        if (!sources.length) return false;
+        let loaded = 0;
+        await mapAsyncLimit(sources, 4, async (source) => {
+          try {
+            if (await ensureSourceIndex(source)) loaded += 1;
+          } catch {
+            // Keep the combined catalog usable even when one remote source is temporarily empty.
+          }
+        });
+        return loaded > 0;
+      }
+
+      async function ensureSelectedSourceItems(sourceId, options = {}) {
+        if (!['all', 'normal', 'adult18'].includes(sourceId)) {
+          return await ensureSourceIndex(sourceById(sourceId));
+        }
+        if (!options.eager) return false;
+        const limit = Math.max(1, Number(options.limit || 4));
+        const candidates = combinedSourceCandidates(sourceId);
+        const supported = candidates.filter(sourceSupportsCurrentTab);
+        const sources = (supported.length ? supported : candidates).slice(0, limit);
+        return await ensureSourceListItems(sources);
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? '')
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#039;');
+      }
+
+      const ZH_PHRASES = [
+        ['国产', '國產'],
+        ['大陆', '大陸'],
+        ['台湾', '台灣'],
+        ['韩国', '韓國'],
+        ['欧美', '歐美'],
+        ['日韩', '日韓'],
+        ['港台', '港台'],
+        ['综艺', '綜藝'],
+        ['动漫', '動漫'],
+        ['动画', '動畫'],
+        ['纪录', '紀錄'],
+        ['记录', '紀錄'],
+        ['剧情', '劇情'],
+        ['动作', '動作'],
+        ['战争', '戰爭'],
+        ['爱情', '愛情'],
+        ['喜剧', '喜劇'],
+        ['悬疑', '懸疑'],
+        ['惊悚', '驚悚'],
+        ['冒险', '冒險'],
+        ['短剧', '短劇'],
+        ['资源', '資源'],
+        ['视频', '視頻'],
+        ['追剧', '追劇'],
+        ['电影', '電影'],
+        ['电视剧', '電視劇'],
+        ['内地', '內地'],
+        ['会员', '會員'],
+        ['免费', '免費'],
+        ['评分', '評分'],
+        ['更新', '更新'],
+      ];
+
+      const ZH_CHAR_MAP = {
+        万: '萬',
+        与: '與',
+        东: '東',
+        丝: '絲',
+        两: '兩',
+        严: '嚴',
+        丧: '喪',
+        个: '個',
+        临: '臨',
+        为: '為',
+        丽: '麗',
+        举: '舉',
+        么: '麼',
+        义: '義',
+        乌: '烏',
+        乐: '樂',
+        乔: '喬',
+        习: '習',
+        乡: '鄉',
+        书: '書',
+        买: '買',
+        乱: '亂',
+        争: '爭',
+        于: '於',
+        亏: '虧',
+        云: '雲',
+        亚: '亞',
+        产: '產',
+        亲: '親',
+        亿: '億',
+        仅: '僅',
+        从: '從',
+        仑: '侖',
+        仓: '倉',
+        仪: '儀',
+        们: '們',
+        优: '優',
+        会: '會',
+        传: '傳',
+        伤: '傷',
+        伦: '倫',
+        伪: '偽',
+        体: '體',
+        余: '餘',
+        侠: '俠',
+        侣: '侶',
+        侦: '偵',
+        侧: '側',
+        侨: '僑',
+        侩: '儈',
+        俩: '倆',
+        俪: '儷',
+        债: '債',
+        倾: '傾',
+        偿: '償',
+        储: '儲',
+        儿: '兒',
+        兑: '兌',
+        党: '黨',
+        兰: '蘭',
+        关: '關',
+        兴: '興',
+        养: '養',
+        兽: '獸',
+        内: '內',
+        冈: '岡',
+        册: '冊',
+        写: '寫',
+        军: '軍',
+        农: '農',
+        冲: '衝',
+        决: '決',
+        况: '況',
+        冻: '凍',
+        净: '淨',
+        凉: '涼',
+        减: '減',
+        凑: '湊',
+        几: '幾',
+        凤: '鳳',
+        凭: '憑',
+        凯: '凱',
+        击: '擊',
+        凿: '鑿',
+        划: '劃',
+        刘: '劉',
+        则: '則',
+        刚: '剛',
+        创: '創',
+        删: '刪',
+        别: '別',
+        刹: '剎',
+        刽: '劊',
+        剂: '劑',
+        剧: '劇',
+        剩: '剩',
+        劝: '勸',
+        办: '辦',
+        务: '務',
+        动: '動',
+        励: '勵',
+        劲: '勁',
+        劳: '勞',
+        势: '勢',
+        勋: '勳',
+        勐: '猛',
+        勚: '勩',
+        勤: '勤',
+        勾: '勾',
+        匀: '勻',
+        区: '區',
+        医: '醫',
+        华: '華',
+        协: '協',
+        单: '單',
+        卖: '賣',
+        卢: '盧',
+        卧: '臥',
+        卫: '衛',
+        却: '卻',
+        厂: '廠',
+        厅: '廳',
+        历: '歷',
+        厉: '厲',
+        压: '壓',
+        厌: '厭',
+        厕: '廁',
+        厢: '廂',
+        厦: '廈',
+        厨: '廚',
+        县: '縣',
+        叁: '參',
+        参: '參',
+        双: '雙',
+        发: '發',
+        变: '變',
+        叙: '敘',
+        叶: '葉',
+        号: '號',
+        后: '後',
+        吓: '嚇',
+        吗: '嗎',
+        启: '啟',
+        吴: '吳',
+        员: '員',
+        呗: '唄',
+        员: '員',
+        呛: '嗆',
+        呐: '吶',
+        咏: '詠',
+        咙: '嚨',
+        咸: '鹹',
+        响: '響',
+        哑: '啞',
+        哒: '噠',
+        哗: '嘩',
+        哟: '喲',
+        唤: '喚',
+        售: '售',
+        啧: '嘖',
+        啬: '嗇',
+        啭: '囀',
+        啮: '嚙',
+        啰: '囉',
+        喷: '噴',
+        喽: '嘍',
+        嗳: '噯',
+        嘘: '噓',
+        团: '團',
+        园: '園',
+        围: '圍',
+        国: '國',
+        图: '圖',
+        圆: '圓',
+        圣: '聖',
+        场: '場',
+        坏: '壞',
+        块: '塊',
+        坚: '堅',
+        坛: '壇',
+        坝: '壩',
+        坞: '塢',
+        坟: '墳',
+        坠: '墜',
+        垄: '壟',
+        垒: '壘',
+        垦: '墾',
+        垩: '堊',
+        垫: '墊',
+        垭: '埡',
+        垱: '壋',
+        垲: '塏',
+        垴: '堖',
+        埘: '塒',
+        埙: '塤',
+        埚: '堝',
+        埯: '垵',
+        堑: '塹',
+        堕: '墮',
+        墙: '牆',
+        壮: '壯',
+        声: '聲',
+        壳: '殼',
+        壶: '壺',
+        处: '處',
+        备: '備',
+        复: '復',
+        够: '夠',
+        头: '頭',
+        夹: '夾',
+        夺: '奪',
+        奋: '奮',
+        奖: '獎',
+        奥: '奧',
+        妆: '妝',
+        妇: '婦',
+        妈: '媽',
+        娄: '婁',
+        娇: '嬌',
+        娱: '娛',
+        娲: '媧',
+        娴: '嫻',
+        婴: '嬰',
+        婵: '嬋',
+        媪: '媼',
+        嫒: '嬡',
+        嫔: '嬪',
+        嫱: '嬙',
+        孙: '孫',
+        学: '學',
+        孪: '孿',
+        宁: '寧',
+        宝: '寶',
+        实: '實',
+        宠: '寵',
+        审: '審',
+        宪: '憲',
+        宫: '宮',
+        宽: '寬',
+        宾: '賓',
+        寝: '寢',
+        对: '對',
+        寻: '尋',
+        导: '導',
+        寿: '壽',
+        将: '將',
+        尔: '爾',
+        尘: '塵',
+        尝: '嘗',
+        尧: '堯',
+        尴: '尷',
+        尸: '屍',
+        尽: '盡',
+        层: '層',
+        屉: '屜',
+        属: '屬',
+        屡: '屢',
+        岁: '歲',
+        岂: '豈',
+        岖: '嶇',
+        岗: '崗',
+        岘: '峴',
+        岚: '嵐',
+        岛: '島',
+        岭: '嶺',
+        岳: '嶽',
+        峡: '峽',
+        峣: '嶢',
+        峤: '嶠',
+        峥: '崢',
+        峦: '巒',
+        巅: '巔',
+        巩: '鞏',
+        巯: '巰',
+        币: '幣',
+        帅: '帥',
+        师: '師',
+        帐: '帳',
+        帘: '簾',
+        帜: '幟',
+        带: '帶',
+        帧: '幀',
+        帮: '幫',
+        帱: '幬',
+        帻: '幘',
+        帼: '幗',
+        幂: '冪',
+        干: '幹',
+        并: '並',
+        广: '廣',
+        庄: '莊',
+        庆: '慶',
+        庐: '廬',
+        库: '庫',
+        应: '應',
+        庙: '廟',
+        庞: '龐',
+        废: '廢',
+        开: '開',
+        异: '異',
+        弃: '棄',
+        弑: '弒',
+        张: '張',
+        弥: '彌',
+        弪: '弳',
+        弯: '彎',
+        弹: '彈',
+        强: '強',
+        归: '歸',
+        当: '當',
+        录: '錄',
+        彻: '徹',
+        径: '徑',
+        徕: '徠',
+        忆: '憶',
+        忏: '懺',
+        忧: '憂',
+        忾: '愾',
+        怀: '懷',
+        态: '態',
+        怂: '慫',
+        怜: '憐',
+        总: '總',
+        恋: '戀',
+        恳: '懇',
+        恶: '惡',
+        恸: '慟',
+        恹: '懨',
+        恺: '愷',
+        恻: '惻',
+        恼: '惱',
+        恽: '惲',
+        悦: '悅',
+        悫: '愨',
+        悬: '懸',
+        惊: '驚',
+        惧: '懼',
+        惨: '慘',
+        惩: '懲',
+        惫: '憊',
+        惬: '愜',
+        惭: '慚',
+        惮: '憚',
+        惯: '慣',
+        愠: '慍',
+        愤: '憤',
+        愦: '憒',
+        愿: '願',
+        慑: '懾',
+        懑: '懣',
+        懒: '懶',
+        戏: '戲',
+        戗: '戧',
+        战: '戰',
+        戬: '戩',
+        户: '戶',
+        扑: '撲',
+        执: '執',
+        扩: '擴',
+        扪: '捫',
+        扫: '掃',
+        扬: '揚',
+        扰: '擾',
+        抚: '撫',
+        抛: '拋',
+        抟: '摶',
+        抠: '摳',
+        抡: '掄',
+        抢: '搶',
+        护: '護',
+        报: '報',
+        担: '擔',
+        拟: '擬',
+        拢: '攏',
+        拣: '揀',
+        拥: '擁',
+        拦: '攔',
+        拧: '擰',
+        拨: '撥',
+        择: '擇',
+        挂: '掛',
+        挚: '摯',
+        挛: '攣',
+        挜: '掗',
+        挝: '撾',
+        挞: '撻',
+        挟: '挾',
+        挠: '撓',
+        挡: '擋',
+        挢: '撟',
+        挣: '掙',
+        挤: '擠',
+        挥: '揮',
+        挦: '撏',
+        捞: '撈',
+        损: '損',
+        捡: '撿',
+        换: '換',
+        捣: '搗',
+        据: '據',
+        掳: '擄',
+        掴: '摑',
+        掷: '擲',
+        掸: '撣',
+        掺: '摻',
+        揽: '攬',
+        揾: '搵',
+        搀: '攙',
+        搁: '擱',
+        搂: '摟',
+        搅: '攪',
+        携: '攜',
+        摄: '攝',
+        摅: '攄',
+        摆: '擺',
+        摇: '搖',
+        摈: '擯',
+        摊: '攤',
+        撄: '攖',
+        撑: '撐',
+        撵: '攆',
+        撷: '擷',
+       撸: '擼',
+        撺: '攛',
+        擞: '擻',
+        攒: '攢',
+        敌: '敵',
+        敛: '斂',
+        数: '數',
+        斋: '齋',
+        斓: '斕',
+        斗: '鬥',
+        斩: '斬',
+        断: '斷',
+        无: '無',
+        旧: '舊',
+        时: '時',
+        旷: '曠',
+        昙: '曇',
+        昼: '晝',
+        显: '顯',
+        晋: '晉',
+        晒: '曬',
+        晓: '曉',
+        晔: '曄',
+        晕: '暈',
+        暂: '暫',
+        暧: '曖',
+        术: '術',
+        机: '機',
+        杀: '殺',
+        杂: '雜',
+        权: '權',
+        条: '條',
+        来: '來',
+        杨: '楊',
+        杩: '榪',
+        杰: '傑',
+        极: '極',
+        构: '構',
+        枪: '槍',
+        枫: '楓',
+        枭: '梟',
+        柜: '櫃',
+        柠: '檸',
+        查: '查',
+        标: '標',
+        栈: '棧',
+        栉: '櫛',
+        栋: '棟',
+        栌: '櫨',
+        栎: '櫟',
+        栏: '欄',
+        树: '樹',
+        栖: '棲',
+        样: '樣',
+        栾: '欒',
+        桠: '椏',
+        桡: '橈',
+        桢: '楨',
+        档: '檔',
+        桥: '橋',
+        桦: '樺',
+        桧: '檜',
+        桨: '槳',
+        桩: '樁',
+        梦: '夢',
+        梼: '檮',
+        梾: '棶',
+        梿: '槤',
+        检: '檢',
+        棂: '欞',
+        椁: '槨',
+        椟: '櫝',
+        椠: '槧',
+        椤: '欏',
+        楼: '樓',
+        榄: '欖',
+        榇: '櫬',
+        榈: '櫚',
+        榉: '櫸',
+        槚: '檟',
+        槛: '檻',
+        槟: '檳',
+        槠: '櫧',
+        横: '橫',
+        樯: '檣',
+        樱: '櫻',
+        橥: '櫫',
+        橱: '櫥',
+        橹: '櫓',
+        橼: '櫞',
+        檩: '檁',
+        欢: '歡',
+        欤: '歟',
+        欧: '歐',
+        欲: '欲',
+        步: '步',
+        歼: '殲',
+        殁: '歿',
+        残: '殘',
+        殒: '殞',
+        殓: '殮',
+        殚: '殫',
+        殡: '殯',
+        殴: '毆',
+        毁: '毀',
+        毕: '畢',
+        毙: '斃',
+        毡: '氈',
+        气: '氣',
+        氢: '氫',
+        氩: '氬',
+        氲: '氳',
+        汇: '匯',
+        汉: '漢',
+        汤: '湯',
+        汹: '洶',
+        沟: '溝',
+        没: '沒',
+        沣: '灃',
+        沤: '漚',
+        沥: '瀝',
+        沦: '淪',
+        沧: '滄',
+        沨: '渢',
+        沩: '溈',
+        沪: '滬',
+        泞: '濘',
+        泪: '淚',
+        泶: '澩',
+        泷: '瀧',
+        泸: '瀘',
+        泺: '濼',
+        泻: '瀉',
+        泼: '潑',
+        泽: '澤',
+        泾: '涇',
+        洁: '潔',
+        洒: '灑',
+        洼: '窪',
+        浅: '淺',
+        浆: '漿',
+        浇: '澆',
+        浊: '濁',
+        测: '測',
+        济: '濟',
+        浏: '瀏',
+        浐: '滻',
+        浑: '渾',
+        浒: '滸',
+        浓: '濃',
+        浔: '潯',
+        涛: '濤',
+        涝: '澇',
+        涞: '淶',
+        涟: '漣',
+        涡: '渦',
+        涣: '渙',
+        涤: '滌',
+        润: '潤',
+        涧: '澗',
+        涨: '漲',
+        涩: '澀',
+        淀: '澱',
+        渊: '淵',
+        渌: '淥',
+        渍: '漬',
+        渎: '瀆',
+        渐: '漸',
+        渑: '澠',
+        渔: '漁',
+        渖: '瀋',
+        渗: '滲',
+        温: '溫',
+        湾: '灣',
+        湿: '濕',
+        溃: '潰',
+        溅: '濺',
+        溆: '漵',
+        溇: '漊',
+        滗: '潷',
+        滚: '滾',
+        滞: '滯',
+        滟: '灩',
+        滠: '灄',
+        满: '滿',
+        滢: '瀅',
+        滤: '濾',
+        滥: '濫',
+        滦: '灤',
+        滨: '濱',
+        滩: '灘',
+        滪: '澦',
+        漓: '灕',
+        漤: '濫',
+        潆: '瀠',
+        潇: '瀟',
+        潋: '瀲',
+        潍: '濰',
+        潴: '瀦',
+        澜: '瀾',
+        濑: '瀨',
+        濒: '瀕',
+        灏: '灝',
+        灭: '滅',
+        灯: '燈',
+        灵: '靈',
+        灾: '災',
+        灿: '燦',
+        炀: '煬',
+        炉: '爐',
+        炖: '燉',
+        炜: '煒',
+        炝: '熗',
+        点: '點',
+        炼: '煉',
+        炽: '熾',
+        烁: '爍',
+        烂: '爛',
+        烃: '烴',
+        烛: '燭',
+        烟: '煙',
+        烦: '煩',
+        烧: '燒',
+        烨: '燁',
+        烩: '燴',
+        烫: '燙',
+        烬: '燼',
+        热: '熱',
+        焕: '煥',
+        焖: '燜',
+        焘: '燾',
+        爱: '愛',
+        爷: '爺',
+        牍: '牘',
+        牵: '牽',
+        牺: '犧',
+        状: '狀',
+        犷: '獷',
+        犸: '獁',
+        犹: '猶',
+        狈: '狽',
+        狝: '獮',
+        狞: '獰',
+        独: '獨',
+        狭: '狹',
+        狮: '獅',
+        狯: '獪',
+        狰: '猙',
+        狱: '獄',
+        狲: '猻',
+        猃: '獫',
+        猕: '獼',
+        猡: '玀',
+        猫: '貓',
+        献: '獻',
+        獭: '獺',
+        玑: '璣',
+        玚: '瑒',
+        玛: '瑪',
+        玮: '瑋',
+        环: '環',
+        现: '現',
+        玱: '瑲',
+        玺: '璽',
+        珐: '琺',
+        珑: '瓏',
+        珰: '璫',
+        珲: '琿',
+        琏: '璉',
+        琐: '瑣',
+        琼: '瓊',
+        瑶: '瑤',
+        瑷: '璦',
+        璎: '瓔',
+        瓒: '瓚',
+        电: '電',
+        画: '畫',
+        畅: '暢',
+        畴: '疇',
+        疖: '癤',
+        疗: '療',
+        疟: '瘧',
+        疠: '癘',
+        疡: '瘍',
+        疬: '癧',
+        疮: '瘡',
+        疯: '瘋',
+        疱: '皰',
+        疴: '痾',
+        痈: '癰',
+        痉: '痙',
+        痒: '癢',
+        痨: '癆',
+        痪: '瘓',
+        痫: '癇',
+        瘅: '癉',
+        瘗: '瘞',
+        瘘: '瘺',
+        瘪: '癟',
+        瘫: '癱',
+        瘾: '癮',
+        瘿: '癭',
+        癞: '癩',
+        癣: '癬',
+        皑: '皚',
+        皱: '皺',
+        皲: '皸',
+        盏: '盞',
+        盐: '鹽',
+        监: '監',
+        盖: '蓋',
+        盗: '盜',
+        盘: '盤',
+        着: '著',
+        睁: '睜',
+        睐: '睞',
+        睑: '瞼',
+        瞒: '瞞',
+        矫: '矯',
+        矶: '磯',
+        矾: '礬',
+        矿: '礦',
+        砀: '碭',
+        码: '碼',
+        砖: '磚',
+        砗: '硨',
+        砚: '硯',
+        砜: '碸',
+        砺: '礪',
+        砻: '礱',
+        砾: '礫',
+        础: '礎',
+        硕: '碩',
+        硖: '硤',
+        硗: '磽',
+        硙: '磑',
+        硚: '礄',
+        确: '確',
+        碍: '礙',
+        碛: '磧',
+        礼: '禮',
+        祎: '禕',
+        祯: '禎',
+        祷: '禱',
+        祸: '禍',
+        禀: '稟',
+        禄: '祿',
+        禅: '禪',
+        离: '離',
+        秃: '禿',
+        秆: '稈',
+        种: '種',
+        积: '積',
+        称: '稱',
+        秽: '穢',
+        税: '稅',
+        稣: '穌',
+        稳: '穩',
+        穑: '穡',
+        穷: '窮',
+        窃: '竊',
+        窍: '竅',
+        窑: '窯',
+        窜: '竄',
+        窝: '窩',
+        窥: '窺',
+        窦: '竇',
+        竖: '豎',
+        竞: '競',
+        笃: '篤',
+        笋: '筍',
+        笔: '筆',
+        笕: '筧',
+        笺: '箋',
+        笼: '籠',
+        笾: '籩',
+        筑: '築',
+        筚: '篳',
+        筛: '篩',
+        筜: '簹',
+        筝: '箏',
+        筹: '籌',
+        筼: '篔',
+        签: '簽',
+        简: '簡',
+        箓: '籙',
+        箦: '簀',
+        箧: '篋',
+        箨: '籜',
+        箩: '籮',
+        箪: '簞',
+        箫: '簫',
+        篑: '簣',
+        篓: '簍',
+        篮: '籃',
+        篱: '籬',
+        簖: '籪',
+        籁: '籟',
+        粤: '粵',
+        粪: '糞',
+        粮: '糧',
+        糁: '糝',
+        糇: '餱',
+        糍: '糍',
+        糕: '糕',
+        糟: '糟',
+        系: '系',
+        紧: '緊',
+        絷: '縶',
+        纟: '糹',
+        纠: '糾',
+        纡: '紆',
+        红: '紅',
+        纣: '紂',
+        纤: '纖',
+        纥: '紇',
+        约: '約',
+        级: '級',
+        纨: '紈',
+        纩: '纊',
+        纪: '紀',
+        纫: '紉',
+        纬: '緯',
+        纭: '紜',
+        纯: '純',
+        纰: '紕',
+        纱: '紗',
+        纲: '綱',
+        纳: '納',
+        纵: '縱',
+        纶: '綸',
+        纷: '紛',
+        纸: '紙',
+        纹: '紋',
+        纺: '紡',
+        纽: '紐',
+        纾: '紓',
+        线: '線',
+        绀: '紺',
+        绁: '紲',
+        绂: '紱',
+        练: '練',
+        组: '組',
+        绅: '紳',
+        细: '細',
+        织: '織',
+        终: '終',
+        绉: '縐',
+        绊: '絆',
+        绋: '紼',
+        绌: '絀',
+        绍: '紹',
+        绎: '繹',
+        经: '經',
+        绐: '紿',
+        绑: '綁',
+        绒: '絨',
+        结: '結',
+        绔: '絝',
+        绕: '繞',
+        绗: '絎',
+        绘: '繪',
+        给: '給',
+        绚: '絢',
+        绛: '絳',
+        络: '絡',
+        绝: '絕',
+        绞: '絞',
+        统: '統',
+        绠: '綆',
+        绡: '綃',
+        绢: '絹',
+        绣: '繡',
+        绥: '綏',
+        绦: '絛',
+        继: '繼',
+        绨: '綈',
+        绩: '績',
+        绪: '緒',
+        绫: '綾',
+        绬: '緓',
+        续: '續',
+        绮: '綺',
+        绯: '緋',
+        绰: '綽',
+        绱: '緔',
+        绲: '緄',
+        绳: '繩',
+        维: '維',
+        绵: '綿',
+        绶: '綬',
+        绷: '繃',
+        绸: '綢',
+        绹: '綯',
+        绺: '綹',
+        绻: '綣',
+        综: '綜',
+        绽: '綻',
+        绾: '綰',
+        绿: '綠',
+        缀: '綴',
+        缁: '緇',
+        缂: '緙',
+        缃: '緗',
+        缄: '緘',
+        缅: '緬',
+        缆: '纜',
+        缇: '緹',
+        缈: '緲',
+        缉: '緝',
+        缊: '縕',
+        缋: '繢',
+        缌: '緦',
+        缍: '綞',
+        缎: '緞',
+        缏: '緶',
+        缑: '緱',
+        缒: '縋',
+        缓: '緩',
+        缔: '締',
+        缕: '縷',
+        编: '編',
+        缗: '緡',
+        缘: '緣',
+        缙: '縉',
+        缚: '縛',
+        缛: '縟',
+        缜: '縝',
+        缝: '縫',
+        缟: '縞',
+        缠: '纏',
+        缡: '縭',
+        缢: '縊',
+        缣: '縑',
+        缤: '繽',
+        缥: '縹',
+        缦: '縵',
+        缧: '縲',
+        缨: '纓',
+        缩: '縮',
+        缪: '繆',
+        缫: '繅',
+        缬: '纈',
+        缭: '繚',
+        缮: '繕',
+        缯: '繒',
+        缰: '韁',
+        缱: '繾',
+        缲: '繰',
+        缳: '繯',
+        缴: '繳',
+        缵: '纘',
+        网: '網',
+        罗: '羅',
+        罚: '罰',
+        罢: '罷',
+        罴: '羆',
+        羁: '羈',
+        羟: '羥',
+        羡: '羨',
+        群: '群',
+        翘: '翹',
+        耢: '耮',
+        耧: '耬',
+        耸: '聳',
+        耻: '恥',
+        聂: '聶',
+        聋: '聾',
+        职: '職',
+        聍: '聹',
+        联: '聯',
+        聩: '聵',
+        聪: '聰',
+        肃: '肅',
+        肠: '腸',
+        肤: '膚',
+        肮: '骯',
+        肴: '餚',
+        肾: '腎',
+        肿: '腫',
+        胀: '脹',
+        胁: '脅',
+        胆: '膽',
+        胜: '勝',
+        胧: '朧',
+        胨: '腖',
+        胪: '臚',
+        胫: '脛',
+        胶: '膠',
+        脉: '脈',
+        脍: '膾',
+        脏: '髒',
+        脐: '臍',
+        脑: '腦',
+        脓: '膿',
+        脔: '臠',
+        脚: '腳',
+        脱: '脫',
+        脶: '腡',
+        脸: '臉',
+        腊: '臘',
+        腻: '膩',
+        腼: '靦',
+        腽: '膃',
+        腾: '騰',
+        膑: '臏',
+        臜: '臢',
+        舆: '輿',
+        舰: '艦',
+        舱: '艙',
+        艰: '艱',
+        艳: '豔',
+        艺: '藝',
+        节: '節',
+        芈: '羋',
+        芗: '薌',
+        芜: '蕪',
+        芦: '蘆',
+        苁: '蓯',
+        苇: '葦',
+        苈: '藶',
+        苋: '莧',
+        苌: '萇',
+        苍: '蒼',
+        苎: '苧',
+        苏: '蘇',
+        苹: '蘋',
+        范: '範',
+        茎: '莖',
+        茏: '蘢',
+        茑: '蔦',
+        茔: '塋',
+        茕: '煢',
+        茧: '繭',
+        荆: '荊',
+        荐: '薦',
+        荙: '薘',
+        荚: '莢',
+        荛: '蕘',
+        荜: '蓽',
+        荞: '蕎',
+        荟: '薈',
+        荠: '薺',
+        荡: '蕩',
+        荣: '榮',
+        荤: '葷',
+        荥: '滎',
+        荦: '犖',
+        荧: '熒',
+        荨: '蕁',
+        荩: '藎',
+        荪: '蓀',
+        荫: '蔭',
+        荬: '蕒',
+        荭: '葒',
+        荮: '葤',
+        药: '藥',
+        莅: '蒞',
+        莱: '萊',
+        莲: '蓮',
+        莳: '蒔',
+        莴: '萵',
+        莶: '薟',
+        获: '獲',
+        莸: '蕕',
+        莹: '瑩',
+        莺: '鶯',
+        莼: '蓴',
+        萚: '蘀',
+        萝: '蘿',
+        萤: '螢',
+        营: '營',
+        萦: '縈',
+        萧: '蕭',
+        萨: '薩',
+        葱: '蔥',
+        蒇: '蕆',
+        蒉: '蕢',
+        蒋: '蔣',
+        蒌: '蔞',
+        蓝: '藍',
+        蓟: '薊',
+        蓠: '蘺',
+        蓣: '蕷',
+        蓥: '鎣',
+        蓦: '驀',
+        蔑: '衊',
+        蔷: '薔',
+        蔹: '蘞',
+        蔺: '藺',
+        蕲: '蘄',
+        蕴: '蘊',
+        薮: '藪',
+        藓: '蘚',
+        蘖: '櫱',
+        虏: '虜',
+        虑: '慮',
+        虚: '虛',
+        虫: '蟲',
+        虬: '虯',
+        虮: '蟣',
+        虽: '雖',
+        虾: '蝦',
+        虿: '蠆',
+        蚀: '蝕',
+        蚁: '蟻',
+        蚂: '螞',
+        蚕: '蠶',
+        蚝: '蠔',
+        蚬: '蜆',
+        蛊: '蠱',
+        蛎: '蠣',
+        蛏: '蟶',
+        蛮: '蠻',
+        蛰: '蟄',
+        蛱: '蛺',
+        蛲: '蟯',
+        蛳: '螄',
+        蛴: '蠐',
+        蜕: '蛻',
+        蜗: '蝸',
+        蜡: '蠟',
+        蝇: '蠅',
+        蝈: '蟈',
+        蝉: '蟬',
+        蝼: '螻',
+        蝾: '蠑',
+        螀: '螿',
+        螨: '蟎',
+        蟏: '蠨',
+        衅: '釁',
+        衔: '銜',
+        补: '補',
+        表: '表',
+        衬: '襯',
+        衮: '袞',
+        袄: '襖',
+        袅: '裊',
+        袜: '襪',
+        袭: '襲',
+        袯: '襏',
+        装: '裝',
+        裆: '襠',
+        裢: '褳',
+        裤: '褲',
+        裥: '襇',
+        褛: '褸',
+        褴: '襤',
+        见: '見',
+        观: '觀',
+        规: '規',
+        觅: '覓',
+        视: '視',
+        览: '覽',
+        觉: '覺',
+        觊: '覬',
+        觋: '覡',
+        觌: '覿',
+        觎: '覦',
+        觏: '覯',
+        觐: '覲',
+        觑: '覷',
+        觞: '觴',
+        触: '觸',
+        订: '訂',
+        讣: '訃',
+        计: '計',
+        讯: '訊',
+        讧: '訌',
+        讨: '討',
+        让: '讓',
+        讪: '訕',
+        讫: '訖',
+        训: '訓',
+        议: '議',
+        讯: '訊',
+        记: '記',
+        讲: '講',
+        讳: '諱',
+        讴: '謳',
+        讵: '詎',
+        讶: '訝',
+        讷: '訥',
+        许: '許',
+        讹: '訛',
+        论: '論',
+        讼: '訟',
+        讽: '諷',
+        设: '設',
+        访: '訪',
+        诀: '訣',
+        证: '證',
+        诂: '詁',
+        诃: '訶',
+        评: '評',
+        诅: '詛',
+        识: '識',
+        诈: '詐',
+        诉: '訴',
+        诊: '診',
+        诋: '詆',
+        诌: '謅',
+        词: '詞',
+        诎: '詘',
+        诏: '詔',
+        译: '譯',
+        诒: '詒',
+        诓: '誆',
+        诔: '誄',
+        试: '試',
+        诖: '詿',
+        诗: '詩',
+        诘: '詰',
+        诙: '詼',
+        诚: '誠',
+        诛: '誅',
+        诜: '詵',
+        话: '話',
+        诞: '誕',
+        诟: '詬',
+        诠: '詮',
+        诡: '詭',
+        询: '詢',
+        诣: '詣',
+        诤: '諍',
+        该: '該',
+        详: '詳',
+        诧: '詫',
+        诨: '諢',
+        诩: '詡',
+        诫: '誡',
+        诬: '誣',
+        语: '語',
+        诮: '誚',
+        误: '誤',
+        诰: '誥',
+        诱: '誘',
+        诲: '誨',
+        诳: '誑',
+        说: '說',
+        诵: '誦',
+        诶: '誒',
+        请: '請',
+        诸: '諸',
+        诹: '諏',
+        诺: '諾',
+        读: '讀',
+        诼: '諑',
+        诽: '誹',
+        课: '課',
+        诿: '諉',
+        谀: '諛',
+        谁: '誰',
+        谂: '諗',
+        调: '調',
+        谄: '諂',
+        谅: '諒',
+        谆: '諄',
+        谇: '誶',
+        谈: '談',
+        谊: '誼',
+        谋: '謀',
+        谌: '諶',
+        谍: '諜',
+        谎: '謊',
+        谏: '諫',
+        谐: '諧',
+        谑: '謔',
+        谒: '謁',
+        谓: '謂',
+        谔: '諤',
+        谕: '諭',
+        谖: '諼',
+        谗: '讒',
+        谘: '諮',
+        谙: '諳',
+        谚: '諺',
+        谛: '諦',
+        谜: '謎',
+        谝: '諞',
+        谞: '諝',
+        谟: '謨',
+        谠: '讜',
+        谡: '謖',
+        谢: '謝',
+        谣: '謠',
+        谤: '謗',
+        谥: '諡',
+        谦: '謙',
+        谧: '謐',
+        谨: '謹',
+        谩: '謾',
+        谪: '謫',
+        谫: '譾',
+        谬: '謬',
+        谭: '譚',
+        谮: '譖',
+        谯: '譙',
+        谰: '讕',
+        谱: '譜',
+        谲: '譎',
+        谳: '讞',
+        谴: '譴',
+        谵: '譫',
+        谶: '讖',
+        谷: '谷',
+        象: '象',
+        贝: '貝',
+        贞: '貞',
+        负: '負',
+        贡: '貢',
+        财: '財',
+        责: '責',
+        贤: '賢',
+        败: '敗',
+        账: '賬',
+        货: '貨',
+        质: '質',
+        贩: '販',
+        贪: '貪',
+        贫: '貧',
+        贬: '貶',
+        购: '購',
+        贮: '貯',
+        贯: '貫',
+        贰: '貳',
+        贱: '賤',
+        贲: '賁',
+        贳: '貰',
+        贴: '貼',
+        贵: '貴',
+        贶: '貺',
+        贷: '貸',
+        贸: '貿',
+        费: '費',
+        贺: '賀',
+        贻: '貽',
+        贼: '賊',
+        贽: '贄',
+        贾: '賈',
+        贿: '賄',
+        赀: '貲',
+        赁: '賃',
+        赂: '賂',
+        赃: '贓',
+        资: '資',
+        赅: '賅',
+        赆: '贐',
+        赇: '賕',
+        赈: '賑',
+        赉: '賚',
+        赊: '賒',
+        赋: '賦',
+        赌: '賭',
+        赍: '齎',
+        赎: '贖',
+        赏: '賞',
+        赐: '賜',
+        赑: '贔',
+        赒: '賙',
+        赓: '賡',
+        赔: '賠',
+        赕: '賧',
+        赖: '賴',
+        赗: '賵',
+        赘: '贅',
+        赙: '賻',
+        赚: '賺',
+        赛: '賽',
+        赜: '賾',
+        赝: '贗',
+        赞: '讚',
+        赟: '贇',
+        赠: '贈',
+        赡: '贍',
+        赢: '贏',
+        赣: '贛',
+        赵: '趙',
+        赶: '趕',
+        趋: '趨',
+        趱: '趲',
+        跃: '躍',
+        跄: '蹌',
+        跖: '蹠',
+        跞: '躒',
+        践: '踐',
+        跷: '蹺',
+        跸: '蹕',
+        跹: '躚',
+        跻: '躋',
+        踊: '踴',
+        踌: '躊',
+        踪: '蹤',
+        踬: '躓',
+        踯: '躑',
+        蹑: '躡',
+        蹒: '蹣',
+        蹰: '躕',
+        蹿: '躥',
+        躏: '躪',
+        躯: '軀',
+        车: '車',
+        轧: '軋',
+        轨: '軌',
+        轩: '軒',
+        轫: '軔',
+        转: '轉',
+        轮: '輪',
+        软: '軟',
+        轰: '轟',
+        轱: '軲',
+        轲: '軻',
+        轳: '轤',
+        轴: '軸',
+        轵: '軹',
+        轶: '軼',
+        轷: '軤',
+        轸: '軫',
+        轹: '轢',
+        轺: '軺',
+        轻: '輕',
+        轼: '軾',
+        载: '載',
+        轾: '輊',
+        轿: '轎',
+        辀: '輈',
+        辁: '輇',
+        辂: '輅',
+        较: '較',
+        辄: '輒',
+        辅: '輔',
+        辆: '輛',
+        辇: '輦',
+        辈: '輩',
+        辉: '輝',
+        辊: '輥',
+        辋: '輞',
+        辌: '輬',
+        辍: '輟',
+        辎: '輜',
+        辏: '輳',
+        辐: '輻',
+        辑: '輯',
+        输: '輸',
+        辔: '轡',
+        辕: '轅',
+        辖: '轄',
+        辗: '輾',
+        辘: '轆',
+        辙: '轍',
+        辚: '轔',
+        辞: '辭',
+        辟: '闢',
+        辩: '辯',
+        辫: '辮',
+        边: '邊',
+        辽: '遼',
+        达: '達',
+        迁: '遷',
+        过: '過',
+        迈: '邁',
+        运: '運',
+        还: '還',
+        这: '這',
+        进: '進',
+        远: '遠',
+        违: '違',
+        连: '連',
+        迟: '遲',
+        迩: '邇',
+        迳: '逕',
+        迹: '跡',
+        适: '適',
+        选: '選',
+        逊: '遜',
+        递: '遞',
+        逻: '邏',
+        遗: '遺',
+        遥: '遙',
+        邓: '鄧',
+        邝: '鄺',
+        邬: '鄔',
+        邮: '郵',
+        邹: '鄒',
+        邺: '鄴',
+        邻: '鄰',
+        郁: '鬱',
+        郏: '郟',
+        郐: '鄶',
+        郑: '鄭',
+        郓: '鄆',
+        郦: '酈',
+        郧: '鄖',
+        郸: '鄲',
+        酝: '醞',
+        酦: '醱',
+        酱: '醬',
+        酽: '釅',
+        酾: '釃',
+        酿: '釀',
+        释: '釋',
+        里: '裡',
+        鉴: '鑑',
+        针: '針',
+        钉: '釘',
+        钊: '釗',
+        钋: '釙',
+        钌: '釕',
+        钍: '釷',
+        钎: '釺',
+        钏: '釧',
+        钐: '釤',
+        钒: '釩',
+        钓: '釣',
+        钔: '鍆',
+        钕: '釹',
+        钖: '鍚',
+        钗: '釵',
+        钘: '鈃',
+        钙: '鈣',
+        钚: '鈈',
+        钛: '鈦',
+        钜: '鉅',
+        钝: '鈍',
+        钞: '鈔',
+        钟: '鐘',
+        钠: '鈉',
+        钡: '鋇',
+        钢: '鋼',
+        钣: '鈑',
+        钤: '鈐',
+        钥: '鑰',
+        钦: '欽',
+        钧: '鈞',
+        钨: '鎢',
+        钩: '鉤',
+        钪: '鈧',
+        钫: '鈁',
+        钬: '鈥',
+        钭: '鈄',
+        钮: '鈕',
+        钯: '鈀',
+        钰: '鈺',
+        钱: '錢',
+        钲: '鉦',
+        钳: '鉗',
+        钴: '鈷',
+        钵: '缽',
+        钶: '鈳',
+        钷: '鉕',
+        钸: '鈽',
+        钹: '鈸',
+        钺: '鉞',
+        钻: '鑽',
+        钼: '鉬',
+        钽: '鉭',
+        钾: '鉀',
+        钿: '鈿',
+        铀: '鈾',
+        铁: '鐵',
+        铂: '鉑',
+        铃: '鈴',
+        铄: '鑠',
+        铅: '鉛',
+        铆: '鉚',
+        铈: '鈰',
+        铉: '鉉',
+        铊: '鉈',
+        铋: '鉍',
+        铌: '鈮',
+        铍: '鈹',
+        铎: '鐸',
+        铏: '鉶',
+        铐: '銬',
+        铑: '銠',
+        铒: '鉺',
+        铓: '鋩',
+        铔: '錏',
+        铕: '銪',
+        铖: '鋮',
+        铗: '鋏',
+        铘: '鋣',
+        铙: '鐃',
+        铚: '銍',
+        铛: '鐺',
+        铜: '銅',
+        铝: '鋁',
+        铞: '銱',
+        铟: '銦',
+        铠: '鎧',
+        铡: '鍘',
+        铢: '銖',
+        铣: '銑',
+        铤: '鋌',
+        铥: '銩',
+        铦: '銛',
+        铧: '鏵',
+        铨: '銓',
+        铩: '鎩',
+        铪: '鉿',
+        铫: '銚',
+        铬: '鉻',
+        铭: '銘',
+        铮: '錚',
+        铯: '銫',
+        铰: '鉸',
+        铱: '銥',
+        铲: '鏟',
+        铳: '銃',
+        铴: '鐋',
+        铵: '銨',
+        银: '銀',
+        铷: '銣',
+        铸: '鑄',
+        铹: '鐒',
+        铺: '鋪',
+        铻: '鋙',
+        铼: '錸',
+        铽: '鋱',
+        链: '鏈',
+        铿: '鏗',
+        销: '銷',
+        锁: '鎖',
+        锂: '鋰',
+        锃: '鋥',
+        锄: '鋤',
+        锅: '鍋',
+        锆: '鋯',
+        锇: '鋨',
+        锈: '鏽',
+        锉: '銼',
+        锊: '鋝',
+        锋: '鋒',
+        锌: '鋅',
+        锍: '鋶',
+        锎: '鐦',
+        锏: '鐧',
+        锐: '銳',
+        锑: '銻',
+        锒: '鋃',
+        锓: '鋟',
+        锔: '鋦',
+        锕: '錒',
+        锖: '錆',
+        锗: '鍺',
+        锘: '鍩',
+        错: '錯',
+        锚: '錨',
+        锛: '錛',
+        锜: '錡',
+        锝: '鍀',
+        锞: '錁',
+        锟: '錕',
+        锠: '錩',
+        锡: '錫',
+        锢: '錮',
+        锣: '鑼',
+        锤: '錘',
+        锥: '錐',
+        锦: '錦',
+        锧: '鑕',
+        锨: '杴',
+        锩: '錈',
+        锪: '鍃',
+        锫: '錇',
+        锬: '錟',
+        锭: '錠',
+        键: '鍵',
+        锯: '鋸',
+        锰: '錳',
+        锱: '錙',
+        锲: '鍥',
+        锳: '鍈',
+        锴: '鍇',
+        锵: '鏘',
+        锶: '鍶',
+        锷: '鍔',
+        锸: '鍤',
+        锹: '鍬',
+        锺: '鍾',
+        锻: '鍛',
+        锼: '鎪',
+        锽: '鍠',
+        锾: '鍰',
+        锿: '鎄',
+        镀: '鍍',
+        镁: '鎂',
+        镂: '鏤',
+        镃: '鎡',
+        镄: '鐨',
+        镅: '鎇',
+        镆: '鏌',
+        镇: '鎮',
+        镈: '鎛',
+        镉: '鎘',
+        镊: '鑷',
+        镌: '鐫',
+        镍: '鎳',
+        镎: '鎿',
+        镏: '鎦',
+        镐: '鎬',
+        镑: '鎊',
+        镒: '鎰',
+        镓: '鎵',
+        镔: '鑌',
+        镕: '鎔',
+        镖: '鏢',
+        镗: '鏜',
+        镘: '鏝',
+        镙: '鏍',
+        镚: '鏰',
+        镛: '鏞',
+        镜: '鏡',
+        镝: '鏑',
+        镞: '鏃',
+        镟: '鏇',
+        镠: '鏐',
+        镡: '鐔',
+        镢: '钁',
+        镣: '鐐',
+        镤: '鏷',
+        镥: '鑥',
+        镦: '鐓',
+        镧: '鑭',
+        镨: '鐠',
+        镩: '鑹',
+        镪: '鏹',
+        镫: '鐙',
+        镬: '鑊',
+        镭: '鐳',
+        镮: '鐶',
+        镯: '鐲',
+        镰: '鐮',
+        镱: '鐿',
+        镲: '鑔',
+        镳: '鑣',
+        镴: '鑞',
+        长: '長',
+        门: '門',
+        闩: '閂',
+        闪: '閃',
+        闫: '閆',
+        闭: '閉',
+        问: '問',
+        闯: '闖',
+        闰: '閏',
+        闱: '闈',
+        闲: '閒',
+        闳: '閎',
+        间: '間',
+        闵: '閔',
+        闶: '閌',
+        闷: '悶',
+        闸: '閘',
+        闹: '鬧',
+        闺: '閨',
+        闻: '聞',
+        闼: '闥',
+        闽: '閩',
+        闾: '閭',
+        闿: '闓',
+        阀: '閥',
+        阁: '閣',
+        阂: '閡',
+        阃: '閫',
+        阄: '鬮',
+        阅: '閱',
+        阆: '閬',
+        阇: '闍',
+        阈: '閾',
+        阉: '閹',
+        阊: '閶',
+        阋: '鬩',
+        阌: '閿',
+        阍: '閽',
+        阎: '閻',
+        阏: '閼',
+        阐: '闡',
+        阑: '闌',
+        阒: '闃',
+        阔: '闊',
+        阕: '闋',
+        阖: '闔',
+        阗: '闐',
+        阘: '闒',
+        阙: '闕',
+        阚: '闞',
+        队: '隊',
+        阳: '陽',
+        阴: '陰',
+        阵: '陣',
+        阶: '階',
+        际: '際',
+        陆: '陸',
+        陇: '隴',
+        陈: '陳',
+        陉: '陘',
+        陕: '陝',
+        陧: '隉',
+        陨: '隕',
+        险: '險',
+        随: '隨',
+        隐: '隱',
+        隶: '隸',
+        隽: '雋',
+        难: '難',
+        雏: '雛',
+        雠: '讎',
+        雳: '靂',
+        雾: '霧',
+        霁: '霽',
+        霉: '黴',
+        靓: '靚',
+        静: '靜',
+        靥: '靨',
+        鞑: '韃',
+        鞒: '鞽',
+        鞯: '韉',
+        韦: '韋',
+        韧: '韌',
+        韩: '韓',
+        韪: '韙',
+        韫: '韞',
+        韬: '韜',
+        页: '頁',
+        顶: '頂',
+        顷: '頃',
+        顸: '頇',
+        项: '項',
+        顺: '順',
+        须: '須',
+        顼: '頊',
+        顽: '頑',
+        顾: '顧',
+        顿: '頓',
+        颀: '頎',
+        颁: '頒',
+        颂: '頌',
+        颃: '頏',
+        预: '預',
+        颅: '顱',
+        领: '領',
+        颇: '頗',
+        颈: '頸',
+        颉: '頡',
+        颊: '頰',
+        颌: '頜',
+        颍: '潁',
+        颎: '熲',
+        颏: '頦',
+        颐: '頤',
+        频: '頻',
+        颓: '頹',
+        颔: '頷',
+        颖: '穎',
+        颗: '顆',
+        题: '題',
+        颙: '顒',
+        颚: '顎',
+        颛: '顓',
+        颜: '顏',
+        额: '額',
+        颞: '顳',
+        颟: '顢',
+        颠: '顛',
+        颡: '顙',
+        颢: '顥',
+        颤: '顫',
+        颥: '顬',
+        颦: '顰',
+        风: '風',
+        飏: '颺',
+        飐: '颭',
+        飑: '颮',
+        飒: '颯',
+        飓: '颶',
+        飔: '颸',
+        飕: '颼',
+        飖: '颻',
+        飘: '飄',
+        飞: '飛',
+        饥: '飢',
+        饭: '飯',
+        饮: '飲',
+        饯: '餞',
+        饰: '飾',
+        饱: '飽',
+        饲: '飼',
+        饳: '飿',
+        饴: '飴',
+        饵: '餌',
+        饶: '饒',
+        饷: '餉',
+        饺: '餃',
+        饼: '餅',
+        饽: '餑',
+        饿: '餓',
+        馀: '餘',
+        馁: '餒',
+        馄: '餛',
+        馅: '餡',
+        馆: '館',
+        馈: '饋',
+        馊: '餿',
+        馋: '饞',
+        馍: '饃',
+        馏: '餾',
+        馐: '饈',
+        馑: '饉',
+        馒: '饅',
+        馓: '饊',
+        馔: '饌',
+        馕: '饢',
+        马: '馬',
+        驭: '馭',
+        驮: '馱',
+        驯: '馴',
+        驰: '馳',
+        驱: '驅',
+        驲: '馹',
+        驳: '駁',
+        驴: '驢',
+        驵: '駔',
+        驶: '駛',
+        驷: '駟',
+        驸: '駙',
+        驹: '駒',
+        驺: '騶',
+        驻: '駐',
+        驼: '駝',
+        驽: '駑',
+        驾: '駕',
+        驿: '驛',
+        骀: '駘',
+        骁: '驍',
+        骂: '罵',
+        骄: '驕',
+        骅: '驊',
+        骆: '駱',
+        骇: '駭',
+        骈: '駢',
+        骊: '驪',
+        骋: '騁',
+        验: '驗',
+        骏: '駿',
+        骐: '騏',
+        骑: '騎',
+        骒: '騍',
+        骓: '騅',
+        骖: '驂',
+        骗: '騙',
+        骘: '騭',
+        骙: '騤',
+        骚: '騷',
+        骛: '騖',
+        骜: '驁',
+        骝: '騮',
+        骞: '騫',
+        骟: '騸',
+        骠: '驃',
+        骡: '騾',
+        骢: '驄',
+        骣: '驏',
+        骤: '驟',
+        骥: '驥',
+        骧: '驤',
+        髅: '髏',
+        髋: '髖',
+        髌: '髕',
+        鬓: '鬢',
+        魇: '魘',
+        鱼: '魚',
+        鲁: '魯',
+        鲂: '魴',
+        鲅: '鮁',
+        鲆: '鮃',
+        鲇: '鯰',
+        鲈: '鱸',
+        鲋: '鮒',
+        鲍: '鮑',
+        鲎: '鱟',
+        鲐: '鮐',
+        鲑: '鮭',
+        鲒: '鮚',
+        鲔: '鮪',
+        鲕: '鮞',
+        鲚: '鱭',
+        鲛: '鮫',
+        鲜: '鮮',
+        鲞: '鯗',
+        鲟: '鱘',
+        鲠: '鯁',
+        鲡: '鱺',
+        鲢: '鰱',
+        鲣: '鰹',
+        鲤: '鯉',
+        鲥: '鰣',
+        鲦: '鰷',
+        鲧: '鯀',
+        鲨: '鯊',
+        鲩: '鯇',
+        鲫: '鯽',
+        鲭: '鯖',
+        鲮: '鯪',
+        鲰: '鯫',
+        鲱: '鯡',
+        鲲: '鯤',
+        鲳: '鯧',
+        鲴: '鯝',
+        鲵: '鯢',
+        鲶: '鯰',
+        鲷: '鯛',
+        鲸: '鯨',
+        鲺: '鯴',
+        鲻: '鯔',
+        鲼: '鱝',
+        鲽: '鰈',
+        鳄: '鱷',
+        鳅: '鰍',
+        鳇: '鰉',
+        鳌: '鰲',
+        鳍: '鰭',
+        鳎: '鰨',
+        鳏: '鰥',
+        鳐: '鰩',
+        鳓: '鰳',
+        鳔: '鰾',
+        鳕: '鱈',
+        鳖: '鱉',
+        鳗: '鰻',
+        鳘: '鰵',
+        鳙: '鱅',
+        鳜: '鱖',
+        鳝: '鱔',
+        鳞: '鱗',
+        鳟: '鱒',
+        鳢: '鱧',
+        鸟: '鳥',
+        鸠: '鳩',
+        鸡: '雞',
+        鸢: '鳶',
+        鸣: '鳴',
+        鸥: '鷗',
+        鸦: '鴉',
+        鸧: '鶬',
+        鸨: '鴇',
+        鸩: '鴆',
+        鸪: '鴣',
+        鸫: '鶇',
+        鸬: '鸕',
+        鸭: '鴨',
+        鸯: '鴦',
+        鸱: '鴟',
+        鸲: '鴝',
+        鸳: '鴛',
+        鸴: '鷽',
+        鸵: '鴕',
+        鸶: '鷥',
+        鸷: '鷙',
+        鸸: '鴯',
+        鸹: '鴰',
+        鸺: '鵂',
+        鸻: '鴴',
+        鸼: '鵃',
+        鸽: '鴿',
+        鸾: '鸞',
+        鹀: '鵐',
+        鹁: '鵓',
+        鹂: '鸝',
+        鹄: '鵠',
+        鹅: '鵝',
+        鹆: '鵒',
+        鹇: '鷳',
+        鹈: '鵜',
+        鹉: '鵡',
+        鹊: '鵲',
+        鹋: '鶓',
+        鹌: '鵪',
+        鹎: '鵯',
+        鹏: '鵬',
+        鹑: '鶉',
+        鹕: '鶘',
+        鹗: '鶚',
+        鹘: '鶻',
+        鹚: '鶿',
+        鹛: '鶥',
+        鹜: '鶩',
+        鹞: '鷂',
+        鹟: '鶲',
+        鹠: '鶹',
+        鹡: '鶺',
+        鹢: '鷁',
+        鹣: '鶼',
+        鹤: '鶴',
+        鹦: '鸚',
+        鹧: '鷓',
+        鹨: '鷚',
+        鹩: '鷯',
+        鹪: '鷦',
+        鹫: '鷲',
+        鹬: '鷸',
+        鹭: '鷺',
+        鹯: '鸇',
+        鹰: '鷹',
+        鹱: '鸌',
+        鹳: '鸛',
+        鹴: '鸘',
+        黄: '黃',
+        黉: '黌',
+        黩: '黷',
+        黪: '黲',
+        黾: '黽',
+        鼋: '黿',
+        鼍: '鼉',
+        鼹: '鼴',
+        齐: '齊',
+        齑: '齏',
+        齿: '齒',
+        龀: '齔',
+        龃: '齟',
+        龄: '齡',
+        龅: '齙',
+        龆: '齠',
+        龇: '齜',
+        龈: '齦',
+        龉: '齬',
+        龊: '齪',
+        龋: '齲',
+        龌: '齷',
+        龙: '龍',
+        龚: '龔',
+        龛: '龕',
+        龟: '龜',
+      };
+
+      const ZH_SIMPLIFIED_CHAR_MAP = Object.fromEntries(
+        Object.entries(ZH_CHAR_MAP).map(([simplified, traditional]) => [traditional, simplified]),
+      );
+      const ZH_PHRASE_MAP = new Map(ZH_PHRASES);
+      const ZH_PHRASE_RE = new RegExp(
+        [...ZH_PHRASE_MAP.keys()].sort((left, right) => right.length - left.length).join('|'),
+        'g',
+      );
+
+      function toTraditional(value) {
+        let text = String(value ?? '');
+        text = text.replace(ZH_PHRASE_RE, (phrase) => ZH_PHRASE_MAP.get(phrase) ?? phrase);
+        return text.replace(/[\u3400-\u9fff]/g, (char) => ZH_CHAR_MAP[char] || char);
+      }
+
+      function toSimplifiedSearchText(value) {
+        return String(value ?? '').replace(
+          /[\u3400-\u9fff]/g,
+          (char) => ZH_SIMPLIFIED_CHAR_MAP[char] || char,
+        );
+      }
+
+      function displayText(value) {
+        return toTraditional(value);
+      }
+
+      function displayHtml(value) {
+        return escapeHtml(displayText(value));
+      }
+
+      function plainTextFromMarkup(value) {
+        const raw = String(value ?? '').trim();
+        if (!raw || !/[<&]/.test(raw)) return raw;
+        return raw
+          .replace(/<[^>]*>/g, ' ')
+          .replace(/&nbsp;/gi, ' ')
+          .replace(/&amp;/gi, '&')
+          .replace(/&lt;/gi, '<')
+          .replace(/&gt;/gi, '>')
+          .replace(/&quot;/gi, '"')
+          .replace(/&#0*39;|&apos;/gi, "'")
+          .replace(/&#(\d{1,7});/g, (_, code) => {
+            const point = Number(code);
+            return Number.isInteger(point) && point > 0 && point <= 0x10ffff ? String.fromCodePoint(point) : ' ';
+          })
+          .replace(/&#x([\da-f]{1,6});/gi, (_, code) => {
+            const point = Number.parseInt(code, 16);
+            return Number.isInteger(point) && point > 0 && point <= 0x10ffff ? String.fromCodePoint(point) : ' ';
+          })
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      function initials(value) {
+        return [...displayText(value || '影視').replace(/\s+/g, '')].slice(0, 2).join('');
+      }
+
+      function imageSrc(value) {
+        return safeHttpUrl(value);
+      }
+
+      function safeHttpUrl(value) {
+        const raw = String(value || '').trim();
+        if (!raw) return '';
+        try {
+          const url = new URL(raw, location.href);
+          if (url.protocol === 'http:') url.protocol = 'https:';
+          if (url.protocol !== 'https:') return '';
+          url.username = '';
+          url.password = '';
+          return url.href;
+        } catch {
+          return '';
+        }
+      }
+
+      function safeEmbedUrl(value) {
+        const safe = safeHttpUrl(value);
+        if (!safe) return '';
+        const url = new URL(safe);
+        const allowedHosts = new Set(['www.youtube.com', 'youtube.com', 'www.youtube-nocookie.com']);
+        if (!allowedHosts.has(url.hostname) || !url.pathname.startsWith('/embed/')) return '';
+        return url.href;
+      }
+
+      function normalizedText(value) {
+        return toTraditional(value).trim().replace(/\s+/g, ' ').toLowerCase();
+      }
+
+      function compactNormalizedText(value) {
+        return String(value ?? '').replace(/[\s\-_.:：\/\\|,，。！!？?·'"()[\]{}]+/g, '');
+      }
+
+      function compactSearchText(value) {
+        return compactNormalizedText(normalizedText(value));
+      }
+
+      function uniqueSearchValues(values) {
+        const seen = new Set();
+        const out = [];
+        for (const value of values) {
+          const text = normalizedText(value);
+          const key = compactNormalizedText(text);
+          if (!key || seen.has(key)) continue;
+          seen.add(key);
+          out.push(text);
+        }
+        return out;
+      }
+
+      function searchAliasQueries(query, compact) {
+        const aliases = [];
+        for (const group of state.queryIndex.manifest?.titleAliases || []) {
+          const variants = uniqueSearchValues([group?.canonicalTraditional, ...(group?.aliases || [])]);
+          for (const variant of variants) {
+            if (!query.includes(variant)) continue;
+            for (const replacement of variants) {
+              if (replacement !== variant) aliases.push(query.replaceAll(variant, replacement));
+            }
+          }
+        }
+        if (query.includes('特務')) aliases.push(query.replaceAll('特務', '特工'));
+        if (query.includes('特工')) aliases.push(query.replaceAll('特工', '特務'));
+        if (/金(?:牌)?特(?:務|工)|kingsman/i.test(compact)) {
+          aliases.push('王牌特工', '王牌特工 黃金圈', '王牌特工 特工學院', '王牌特工 源起', 'kingsman');
+        }
+        return aliases;
+      }
+
+      function buildSearchCandidate(value) {
+        const query = normalizedText(value);
+        const compact = compactNormalizedText(query);
+        const tokens = query.split(/\s+/g).map((token) => token.trim()).filter(Boolean);
+        const compactTokens = tokens.map((token) => compactNormalizedText(token));
+        return { query, compact, tokens, compactTokens };
+      }
+
+      function fuzzySearchMinLength(value) {
+        const hanCount = (value.match(/\p{Script=Han}/gu) || []).length;
+        return hanCount >= 3 ? 3 : 4;
+      }
+
+      function searchTargetResultCount(needle) {
+        if ((needle.candidates?.length || 0) > 2) return 2;
+        if ((needle.compact || '').length >= 4) return 24;
+        return GROUP_SEARCH_TARGET_RESULTS;
+      }
+
+      let searchNeedleCache = { raw: null, needle: null };
+
+      function currentSearchNeedle() {
+        const raw = state.query || '';
+        if (searchNeedleCache.raw === raw) return searchNeedleCache.needle;
+        const query = normalizedText(raw);
+        const compact = compactNormalizedText(query);
+        const tokens = query.split(/\s+/g).map((token) => token.trim()).filter(Boolean);
+        const compactTokens = tokens.map((token) => compactNormalizedText(token));
+        const candidates = uniqueSearchValues([query, ...searchAliasQueries(query, compact)]).map(buildSearchCandidate);
+        const needle = { query, compact, tokens, compactTokens, candidates };
+        searchNeedleCache = { raw, needle };
+        return needle;
+      }
+
+      function compactIncludesInOrder(haystack, needle) {
+        if (!needle) return true;
+        let offset = 0;
+        for (const char of needle) {
+          offset = haystack.indexOf(char, offset);
+          if (offset < 0) return false;
+          offset += char.length;
+        }
+        return true;
+      }
+
+      function searchCandidateMatches(searchText, compactText, needle) {
+        if (!needle.query) return true;
+        if (searchText.includes(needle.query)) return true;
+        if (needle.compact && compactText.includes(needle.compact)) return true;
+        if (
+          needle.tokens.length > 1 &&
+          needle.tokens.every((token, index) => searchText.includes(token) || compactText.includes(needle.compactTokens[index]))
+        ) {
+          return true;
+        }
+        return needle.compact.length >= fuzzySearchMinLength(needle.compact) && compactIncludesInOrder(compactText, needle.compact);
+      }
+
+      function searchTextMatchesNeedle(searchText, compactText, needle) {
+        const candidates = needle.candidates?.length ? needle.candidates : [needle];
+        return candidates.some((candidate) => searchCandidateMatches(searchText, compactText, candidate));
+      }
+
+      function normalizedPoster(value) {
+        return imageSrc(value).split(/[?#]/)[0].toLowerCase();
+      }
+
+      function activeSource() {
+        if (['all', 'normal', 'adult18'].includes(state.selectedSource)) return null;
+        return sourceById(state.selectedSource);
+      }
+
+      function quantumSource() {
+        return state.catalog.sources.find((source) => QUANTUM_API_RE.test(source.api || '')) || null;
+      }
+
+      function isQuantumSelected() {
+        const source = activeSource();
+        return Boolean(source && QUANTUM_API_RE.test(source.api || ''));
+      }
+
+      function areaWeight(value) {
+        const text = String(value || '');
+        if (text === '韓國') return -100;
+        if (text.includes('韓')) return -90;
+        return 0;
+      }
+
+      async function loadQuantumManifest() {
+        if (state.quantum.manifest) return state.quantum.manifest;
+        const manifest = await getJson(QUANTUM_MANIFEST_URL, null);
+        if (!manifest) return null;
+        state.quantum.manifest = manifest;
+        const source = quantumSource();
+        if (source) {
+          source.indexed = true;
+          source.adult = false;
+          source.itemCount = manifest.totals?.normalizedItems || source.itemCount || 0;
+          source.playableCount = manifest.totals?.playableItems || source.playableCount || 0;
+          source.sourceTotalCount = manifest.totals?.apiTotal || source.sourceTotalCount || source.itemCount || 0;
+          source.categories = (manifest.classes || []).map((item) => ({
+            id: String(item.type_id || item.id || item.type_name || item.name || ''),
+            name: item.type_name || item.name || String(item),
+            kind: item.type_name || item.name || String(item),
+          }));
+          source.checks = [{ label: '全量索引', ok: true, count: source.itemCount, total: source.sourceTotalCount }];
+          source.error = '';
+        }
+        return manifest;
+      }
+
+      function quantumKindsForCurrentView() {
+        if (!isQuantumSelected()) return [];
+        if (state.tab === 'home') return ['movie'];
+        if (['movie', 'series', 'anime', 'variety'].includes(state.tab)) return [state.tab];
+        if (state.tab === 'short') return ['short'];
+        if (state.tab === 'rank') return ['movie', 'series', 'short', 'anime', 'variety'];
+        return [];
+      }
+
+      async function loadQuantumKind(kind) {
+        if (state.quantum.loadedKinds.has(kind)) return;
+        if (state.quantum.loadingKinds.has(kind)) return state.quantum.loadingKinds.get(kind);
+        const task = (async () => {
+          const manifest = await loadQuantumManifest();
+          const chunk = manifest?.chunks?.find((item) => item.kind === kind);
+          if (!chunk?.file) return;
+          const payload = await getJson(`${QUANTUM_BASE_URL}${chunk.file}`, null);
+          const source = quantumSource();
+          const sourceId = source?.id || 'quantum-lzi';
+          const sourceName = source?.name || '量子影視｜追劇';
+          const rows = (payload?.items || []).map((item) => ({
+            ...item,
+            sourceId,
+            sourceName,
+            adult: item.kind === 'adult' || Boolean(item.adult),
+            genre: Array.isArray(item.genre) ? item.genre : [],
+            episodes: Array.isArray(item.episodes) ? item.episodes : [],
+            lazyEpisodes: false,
+          }));
+          registerCatalogItems(rows);
+          state.quantum.loadedKinds.add(kind);
+        })().finally(() => state.quantum.loadingKinds.delete(kind));
+        state.quantum.loadingKinds.set(kind, task);
+        return task;
+      }
+
+      function ensureQuantumForCurrentView() {
+        const kinds = quantumKindsForCurrentView().filter((kind) => !state.quantum.loadedKinds.has(kind) && !state.quantum.loadingKinds.has(kind));
+        if (!kinds.length) return;
+        Promise.all(kinds.map(loadQuantumKind)).then(render).catch(() => undefined);
+      }
+
+      function sourceLabel() {
+        if (state.selectedSource === 'normal') return '全部一般來源';
+        if (state.selectedSource === 'adult18') return '成人 18+';
+        return activeSource()?.name || '全部來源';
+      }
+
+      function sourceById(sourceId) {
+        return state.sourceMap.get(sourceId) || null;
+      }
+
+      function itemGenres(item) {
+        return Array.isArray(item.genre) ? item.genre : [];
+      }
+
+      function generatedSourceIcon(className = 'source-icon') {
+        return `<img class="${className}" src="${SOURCE_ICON}" alt="" aria-hidden="true" />`;
+      }
+
+      function adultIcon(className = 'adult-source-icon') {
+        return `<img class="${className}" src="${ADULT_ICON}" alt="18+" />`;
+      }
+
+      function sourceNameMarkup(source) {
+        return `<span class="source-name">${source.adult ? adultIcon() : ''}<span>${displayHtml(source.name)}</span></span>`;
+      }
+
+      function itemIsAdult(item, source = sourceById(item?.sourceId)) {
+        if (item?.adult || item?.kind === 'adult' || source?.adult) return true;
+        const text = [
+          item?.title,
+          item?.categoryName,
+          item?.year,
+          item?.area,
+          Array.isArray(item?.genre) ? item.genre.join(' ') : '',
+          item?.actor,
+          item?.director,
+          item?.content,
+          item?.remarks,
+          item?.sourceName,
+        ]
+          .map((value) => String(value || ''))
+          .join(' ');
+        return ADULT_ITEM_TEXT_RE.test(text);
+      }
+
+      function signalSourceEntry(item) {
+        const source = sourceById(item.sourceId);
+        return {
+          itemId: item.id,
+          sourceId: item.sourceId,
+          sourceName: item.sourceName || source?.name || '',
+          adult: itemIsAdult(item, source),
+          episodeCount: item.episodeCount || item.episodes?.length || 0,
+          remarks: item.remarks || '',
+        };
+      }
+
+      function signalSourcesFor(item) {
+        return Array.isArray(item?.signalSources) && item.signalSources.length ? item.signalSources : [signalSourceEntry(item)];
+      }
+
+      function signalSourceLabel(item) {
+        const signals = signalSourcesFor(item);
+        if (signals.length > 1) return `${signals.length} 個信號源`;
+        return signals[0]?.sourceName || item.sourceName || '';
+      }
+
+      function baseVisibleLimit() {
+        return state.tab === 'home' ? 30 : 48;
+      }
+
+      function resetVisibleLimit() {
+        state.visibleLimit = baseVisibleLimit();
+      }
+
+      function resetPageViewport() {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      }
+
+      function itemDuplicateKey(item) {
+        if (item._duplicateKey) return item._duplicateKey;
+        const title = compactNormalizedText(toSimplifiedSearchText(item.title));
+        const poster = normalizedPoster(item.poster);
+        if (title) return title;
+        if (poster) return `poster:${poster}`;
+        return item.id || '';
+      }
+
+      function uniqueItems(items) {
+        const groups = new Map();
+        const passthrough = [];
+        for (const item of items) {
+          const key = itemDuplicateKey(item);
+          if (!key) {
+            passthrough.push(item);
+            continue;
+          }
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key).push(item);
+        }
+        const rows = [];
+        for (const group of groups.values()) {
+          const primary =
+            group.find((item) => Array.isArray(item.episodes) && item.episodes.length) ||
+            group.find((item) => item.playable && item.detailPath) ||
+            group.find((item) => item.playable) ||
+            group[0];
+          const signalSources = [];
+          const seenSignals = new Set();
+          for (const item of group) {
+            const signal = signalSourceEntry(item);
+            const signalKey = `${signal.sourceId || ''}\u001f${signal.itemId || ''}`;
+            if (seenSignals.has(signalKey)) continue;
+            seenSignals.add(signalKey);
+            signalSources.push(signal);
+          }
+          primary.signalSources = signalSources;
+          primary.signalCount = signalSources.length;
+          primary._duplicateKey = itemDuplicateKey(primary);
+          rows.push(primary);
+        }
+        for (const item of passthrough) {
+          item.signalSources = [signalSourceEntry(item)];
+          item.signalCount = 1;
+          rows.push(item);
+        }
+        return rows;
+      }
+
+      function visibleItems() {
+        const cacheKey = viewCacheKey('visible');
+        if (state.viewCache.has(cacheKey)) return state.viewCache.get(cacheKey);
+        const rows = uniqueItems(sortedItems(sourceItems()));
+        state.viewCache.set(cacheKey, rows);
+        return rows;
+      }
+
+      async function maybeLoadMore() {
+        if (state.tab === 'live') return;
+        if (window.innerHeight + window.scrollY < document.documentElement.scrollHeight - 900) return;
+        const all = visibleItems();
+        if (state.visibleLimit < all.length) {
+          state.visibleLimit = Math.min(all.length, state.visibleLimit + baseVisibleLimit());
+          render();
+          requestAnimationFrame(() => {
+            if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 900) maybeLoadMore();
+          });
+          return;
+        }
+        if (loadMoreInFlight) return;
+        loadMoreInFlight = ensureNextSourcePage().finally(() => {
+          loadMoreInFlight = null;
+        });
+        const loaded = await loadMoreInFlight;
+        if (!loaded) return;
+        const nextRows = visibleItems();
+        if (!nextRows.length) {
+          render();
+          return;
+        }
+        state.visibleLimit = Math.min(nextRows.length, state.visibleLimit + baseVisibleLimit());
+        render();
+        if (state.visibleLimit < nextRows.length) {
+          requestAnimationFrame(() => {
+            if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 900) maybeLoadMore();
+          });
+        }
+      }
+
+      function viewCacheKey(kind, sourceId = state.selectedSource, skipFilter = '') {
+        return [
+          kind,
+          state.itemsRevision,
+          state.tab,
+          sourceId,
+          skipFilter,
+          state.query,
+          state.filters.year,
+          state.filters.area,
+          state.filters.genre,
+          state.filters.sort,
+        ].join('\u001f');
+      }
+
+      function itemMatches(item, sourceId, enforceSource, skipFilter = '') {
+        const source = sourceById(item.sourceId);
+        if (state.healthIndex.posters.has(item.id)) return false;
+        const adult = itemIsAdult(item, source);
+        if ((sourceId === 'all' || sourceId === 'normal') && adult) return false;
+        if (sourceId === 'adult18' && !adult) return false;
+        if (enforceSource && !['all', 'normal', 'adult18'].includes(sourceId) && item.sourceId !== sourceId) return false;
+        if (state.tab !== 'home' && state.tab !== 'rank' && item.kind !== state.tab) return false;
+        if (skipFilter !== 'year' && state.filters.year !== 'all' && item._filterYear !== state.filters.year) return false;
+        if (skipFilter !== 'area' && state.filters.area !== 'all' && !item._filterAreas?.includes(state.filters.area)) return false;
+        if (skipFilter !== 'genre' && state.filters.genre !== 'all' && !item._filterGenres?.includes(state.filters.genre)) return false;
+        const needle = currentSearchNeedle();
+        if (!needle.query) return true;
+        const searchText =
+          item._searchText ||
+          normalizedText(
+            `${item.title} ${item.originalName} ${item.vodId} ${item.categoryName} ${item.year} ${item.area} ${itemGenres(item).join(' ')} ${item.sourceName}`,
+          );
+        return searchTextMatchesNeedle(searchText, item._searchCompact || compactNormalizedText(searchText), needle);
+      }
+
+      function sourceItems(sourceId = state.selectedSource, skipFilter = '') {
+        const cacheKey = viewCacheKey('source', sourceId, skipFilter);
+        if (state.viewCache.has(cacheKey)) return state.viewCache.get(cacheKey);
+        const rows = state.catalog.items.filter((item) => itemMatches(item, sourceId, true, skipFilter));
+        if (['all', 'normal', 'adult18'].includes(sourceId)) {
+          state.viewCache.set(cacheKey, rows);
+          return rows;
+        }
+        if (!rows.length && state.tab === 'short' && state.filters.area !== 'all') {
+          const fallbackRows = state.catalog.items.filter((item) => itemMatches(item, 'normal', true, skipFilter));
+          state.viewCache.set(cacheKey, fallbackRows);
+          return fallbackRows;
+        }
+        state.viewCache.set(cacheKey, rows);
+        return rows;
+      }
+
+      function fnv1aQueryShard(value) {
+        let hash = 0x811c9dc5;
+        const text = String(value || '');
+        for (let index = 0; index < text.length; index += 1) {
+          hash ^= text.charCodeAt(index);
+          hash = Math.imul(hash, 0x01000193);
+        }
+        return hash >>> 0;
+      }
+
+      function queryShardPrefixes(needle, minimum) {
+        const prefixes = new Set();
+        for (const candidate of needle.candidates?.length ? needle.candidates : [needle]) {
+          for (const value of [candidate.query, toSimplifiedSearchText(candidate.query)]) {
+            const compact = compactNormalizedText(value);
+            const characters = [...compact];
+            if (characters.length >= minimum) prefixes.add(characters.slice(0, minimum).join(''));
+          }
+        }
+        return [...prefixes];
+      }
+
+      function queryShardScopes() {
+        if (state.selectedSource === 'all') return ['normal', 'adult'];
+        if (state.selectedSource === 'adult18') return ['adult'];
+        if (state.selectedSource === 'normal') return ['normal'];
+        return [sourceById(state.selectedSource)?.adult ? 'adult' : 'normal'];
+      }
+
+      function queryShardFile(scope, bucket, manifest) {
+        const width = Math.max(4, String(Math.max(0, Number(manifest.bucketCount || 1) - 1)).length);
+        const bucketName = String(bucket).padStart(width, '0');
+        const path = manifest.scopes?.[scope]?.path?.replace('{bucket}', bucketName);
+        return path ? `../data/${path}` : '';
+      }
+
+      function expandQueryShard(payload) {
+        const rows = [];
+        for (const group of payload?.groups || []) {
+          for (const signal of group?.signals || []) {
+            rows.push({
+              title: group.title || '',
+              originalName: group.originalName || '',
+              kind: group.kind || '',
+              categoryName: group.categoryName || '',
+              year: group.year || '',
+              area: group.area || '',
+              genre: Array.isArray(group.genre) ? group.genre : [],
+              poster: group.poster || '',
+              score: Number(signal.score || group.score || 0),
+              hot: Number(signal.hot || group.hot || 0),
+              updatedAt: signal.updatedAt || group.updatedAt || '',
+              ...signal,
+            });
+          }
+        }
+        return rows;
+      }
+
+      function queryShardHealth(key) {
+        if (!state.queryIndex.health.has(key)) {
+          state.queryIndex.health.set(key, {
+            score: 100,
+            successes: 0,
+            failures: 0,
+            consecutiveFailures: 0,
+            averageLatencyMs: 0,
+            cooldownUntil: 0,
+          });
+        }
+        return state.queryIndex.health.get(key);
+      }
+
+      function recordQueryShardHealth(key, ok, latencyMs) {
+        const health = queryShardHealth(key);
+        if (ok) {
+          health.successes += 1;
+          health.consecutiveFailures = 0;
+          health.cooldownUntil = 0;
+          health.score = Math.min(100, health.score + 4);
+          health.averageLatencyMs = health.averageLatencyMs
+            ? Math.round(health.averageLatencyMs * 0.7 + latencyMs * 0.3)
+            : Math.round(latencyMs);
+          return;
+        }
+        health.failures += 1;
+        health.consecutiveFailures += 1;
+        health.score = Math.max(0, health.score - 25);
+        if (health.consecutiveFailures >= 2) health.cooldownUntil = Date.now() + QUERY_SHARD_COOLDOWN_MS;
+      }
+
+      function queryShardHealthSummary() {
+        const rows = [...state.queryIndex.health.values()];
+        if (!rows.length) return { score: 100, cooling: 0 };
+        return {
+          score: Math.round(rows.reduce((sum, item) => sum + item.score, 0) / rows.length),
+          cooling: rows.filter((item) => item.cooldownUntil > Date.now()).length,
+        };
+      }
+
+      async function loadQueryShard(scope, bucket, signal) {
+        const manifest = state.queryIndex.manifest;
+        const key = `${scope}\u001f${bucket}`;
+        if (state.queryIndex.cache.has(key)) {
+          const cached = state.queryIndex.cache.get(key);
+          setBoundedCache(state.queryIndex.cache, key, cached, QUERY_SHARD_CACHE_LIMIT);
+          return cached;
+        }
+        const file = queryShardFile(scope, bucket, manifest);
+        if (!file) return { groups: [] };
+        const health = queryShardHealth(key);
+        if (health.cooldownUntil > Date.now()) {
+          const error = new Error('Query shard is cooling down after repeated failures');
+          error.name = 'CircuitOpenError';
+          throw error;
+        }
+        const startedAt = performance.now();
+        try {
+          const payload = await getJson(file, null, {
+            signal,
+            timeoutMs: QUERY_SHARD_TIMEOUT_MS,
+            throwOnFailure: true,
+          });
+          recordQueryShardHealth(key, true, performance.now() - startedAt);
+          return setBoundedCache(state.queryIndex.cache, key, payload || { groups: [] }, QUERY_SHARD_CACHE_LIMIT);
+        } catch (error) {
+          if (error?.name !== 'AbortError') recordQueryShardHealth(key, false, performance.now() - startedAt);
+          throw error;
+        }
+      }
+
+      function searchProgressLabel() {
+        const progress = state.searchProgress;
+        if (!state.query || progress.query !== currentSearchNeedle().query) return '';
+        const successful = Math.max(0, progress.completed - progress.failed);
+        if (progress.status === 'loading') {
+          return `搜尋 ${progress.completed}/${progress.total}，成功 ${successful}，失敗 ${progress.failed}`;
+        }
+        if (progress.status === 'timed-out') return `搜尋已逾時，保留已完成結果（${successful}/${progress.total}）`;
+        if (progress.status === 'cancelled') return `搜尋已取消，保留已完成結果（${successful}/${progress.total}）`;
+        if (progress.status === 'complete' && progress.failed) return `搜尋完成 ${successful}/${progress.total}，${progress.failed} 個分片暫時失敗`;
+        if (progress.status === 'complete') return `搜尋完成 ${successful}/${progress.total}`;
+        return '';
+      }
+
+      function searchProgressMarkup() {
+        const label = searchProgressLabel();
+        if (!label) return `<span class="status-pill ok">${icon('check')} ${displayHtml(catalogFreshnessLabel() ? `資料 ${catalogFreshnessLabel()}` : 'OKTV')}</span>`;
+        if (state.searchLoading) {
+          return `<button class="status-pill warn" type="button" data-cancel-search aria-label="取消搜尋">${icon('x')} ${displayHtml(label)}</button>`;
+        }
+        const health = queryShardHealthSummary();
+        const statusClass = state.searchProgress.failed || state.searchProgress.status !== 'complete' ? 'warn' : 'ok';
+        return `<span class="status-pill ${statusClass}">${icon(statusClass === 'ok' ? 'check' : 'signal')} ${displayHtml(`${label}｜健康 ${health.score}`)}</span>`;
+      }
+
+      function cancelActiveSearch(status = 'cancelled') {
+        const active = state.searchLoadInFlight;
+        if (state.searchDeadlineTimer !== null) window.clearTimeout(state.searchDeadlineTimer);
+        state.searchDeadlineTimer = null;
+        if (!active) return false;
+        if (active.renderTimer) window.clearTimeout(active.renderTimer);
+        state.searchProgress.status = status;
+        state.searchLoading = false;
+        state.searchLoadInFlight = null;
+        if (state.searchAbortController === active.controller) state.searchAbortController = null;
+        active.controller.abort(new DOMException('Search cancelled', 'AbortError'));
+        return true;
+      }
+
+      function queueProgressiveSearchRender(loadToken, immediate = false) {
+        if (state.searchLoadInFlight !== loadToken || loadToken.controller.signal.aborted) return;
+        const renderNow = () => {
+          loadToken.renderTimer = null;
+          if (state.searchLoadInFlight !== loadToken || loadToken.controller.signal.aborted) return;
+          loadToken.lastRenderAt = performance.now();
+          state.refocusSearch = document.activeElement?.id === 'searchBox';
+          clearViewCache();
+          resetVisibleLimit();
+          render();
+        };
+        const delay = immediate ? 0 : Math.max(0, SEARCH_PROGRESS_RENDER_MS - (performance.now() - loadToken.lastRenderAt));
+        if (!delay) {
+          if (loadToken.renderTimer) window.clearTimeout(loadToken.renderTimer);
+          renderNow();
+        } else if (!loadToken.renderTimer) {
+          loadToken.renderTimer = window.setTimeout(renderNow, delay);
+        }
+      }
+
+      function triggerSearchIndexLoad() {
+        const needle = currentSearchNeedle();
+        const manifest = state.queryIndex.manifest;
+        const minimum = Math.max(2, Number(manifest?.minQueryLength || 2));
+        if (state.tab === 'live' || [...needle.query].length < minimum || !manifest) {
+          cancelActiveSearch('cancelled');
+          state.searchAbortController = null;
+          state.searchLoading = false;
+          return;
+        }
+        const scopeKey = [state.tab, state.selectedSource, needle.query].join('\u001f');
+        if (state.searchLoadInFlight?.scopeKey === scopeKey) return;
+        if (
+          state.searchProgress.scopeKey === scopeKey &&
+          ['complete', 'timed-out', 'cancelled'].includes(state.searchProgress.status)
+        ) {
+          return;
+        }
+        cancelActiveSearch('cancelled');
+        const controller = new AbortController();
+        state.searchAbortController = controller;
+        const prefixes = queryShardPrefixes(needle, minimum);
+        const targets = [];
+        const targetKeys = new Set();
+        for (const scope of queryShardScopes()) {
+          const scopeManifest = manifest.scopes?.[scope];
+          if (!scopeManifest) continue;
+          const available = new Set(scopeManifest.buckets || []);
+          for (const prefix of prefixes) {
+            const bucket = fnv1aQueryShard(prefix) % Number(manifest.bucketCount || 1);
+            const key = `${scope}\u001f${bucket}`;
+            if (!available.has(bucket) || targetKeys.has(key)) continue;
+            targetKeys.add(key);
+            targets.push({ scope, bucket });
+          }
+        }
+        if (!targets.length) {
+          state.searchLoading = false;
+          state.searchLoadInFlight = null;
+          state.searchProgress = {
+            query: needle.query,
+            scopeKey,
+            completed: 0,
+            total: 0,
+            failed: 0,
+            status: 'complete',
+          };
+          return;
+        }
+        state.searchLoading = true;
+        const startedAt =
+          state.searchProgress.query === needle.query && Number(state.searchProgress.startedAt) > 0
+            ? state.searchProgress.startedAt
+            : Date.now();
+        state.searchProgress = {
+          query: needle.query,
+          scopeKey,
+          completed: 0,
+          total: targets.length,
+          failed: 0,
+          status: 'loading',
+          startedAt,
+        };
+        const loadToken = {
+          scopeKey,
+          controller,
+          promise: null,
+          renderTimer: null,
+          lastRenderAt: 0,
+          timedOut: false,
+        };
+        state.searchLoadInFlight = loadToken;
+        if (state.searchDeadlineTimer !== null) window.clearTimeout(state.searchDeadlineTimer);
+        const deadlineDelay = Math.max(0, startedAt + QUERY_SEARCH_TIMEOUT_MS - Date.now());
+        state.searchDeadlineTimer = window.setTimeout(() => {
+          if (state.searchProgress.query !== needle.query || state.searchProgress.status !== 'loading') return;
+          const active = state.searchLoadInFlight;
+          if (active) active.timedOut = true;
+          state.searchProgress.status = 'timed-out';
+          state.searchLoading = false;
+          state.searchLoadInFlight = null;
+          state.searchDeadlineTimer = null;
+          if (state.searchAbortController === active?.controller) state.searchAbortController = null;
+          active?.controller.abort(new DOMException('Search timed out', 'TimeoutError'));
+          clearViewCache();
+          resetVisibleLimit();
+          render();
+        }, deadlineDelay);
+        const promise = (async () => {
+          let nextIndex = 0;
+          const worker = async () => {
+            while (nextIndex < targets.length) {
+              const targetIndex = nextIndex;
+              nextIndex += 1;
+              const target = targets[targetIndex];
+              if (controller.signal.aborted || state.searchLoadInFlight !== loadToken) return;
+              try {
+                const payload = await loadQueryShard(target.scope, target.bucket, controller.signal);
+                if (controller.signal.aborted || state.searchLoadInFlight !== loadToken) return;
+                const selectedRows = await matchingSearchIndexRows(expandQueryShard(payload), needle, controller.signal);
+                if (controller.signal.aborted || state.searchLoadInFlight !== loadToken) return;
+                registerCatalogItems(selectedRows, { searchResult: true });
+              } catch (error) {
+                if (controller.signal.aborted || error?.name === 'AbortError') return;
+                state.searchProgress.failed += 1;
+                console.warn('query-shard-load-failed', target.scope, target.bucket, error?.name || 'Error');
+              } finally {
+                if (!controller.signal.aborted && state.searchLoadInFlight === loadToken) {
+                  state.searchProgress.completed += 1;
+                  queueProgressiveSearchRender(loadToken);
+                }
+              }
+            }
+          };
+          await Promise.all(
+            Array.from({ length: Math.min(QUERY_SEARCH_CONCURRENCY, targets.length) }, () => worker()),
+          );
+        })()
+          .catch((error) => {
+            if (error?.name !== 'AbortError') console.warn('query-shard-search-failed', error);
+          })
+          .finally(() => {
+            if (loadToken.renderTimer) window.clearTimeout(loadToken.renderTimer);
+            if (state.searchLoadInFlight !== loadToken) return;
+            if (state.searchDeadlineTimer !== null) window.clearTimeout(state.searchDeadlineTimer);
+            state.searchDeadlineTimer = null;
+            state.searchLoading = false;
+            state.searchLoadInFlight = null;
+            if (state.searchAbortController === controller) state.searchAbortController = null;
+            if (loadToken.timedOut) state.searchProgress.status = 'timed-out';
+            else if (state.searchProgress.status === 'loading') state.searchProgress.status = 'complete';
+            clearViewCache();
+            resetVisibleLimit();
+            render();
+          });
+        loadToken.promise = promise;
+      }
+
+      function numericValue(value) {
+        const number = Number(String(value ?? '').replace(/[^\d.-]/g, ''));
+        return Number.isFinite(number) ? number : 0;
+      }
+
+      function itemTimeValue(item) {
+        const raw = String(item?.updatedAt || item?.updateTime || item?.vod_time || '').trim();
+        if (!raw) return 0;
+        const time = Date.parse(raw.replace(' ', 'T'));
+        return Number.isFinite(time) ? time : 0;
+      }
+
+      function compactDateTime(value) {
+        const raw = String(value || '').trim();
+        if (!raw) return '';
+        const time = Date.parse(raw.includes('T') ? raw : raw.replace(' ', 'T'));
+        if (!Number.isFinite(time)) return '';
+        const date = new Date(time);
+        const pad = (number) => String(number).padStart(2, '0');
+        return `${pad(date.getMonth() + 1)}/${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      }
+
+      function formatCount(value) {
+        const count = Number(value || 0);
+        return Number.isFinite(count) ? new Intl.NumberFormat('zh-TW').format(count) : '0';
+      }
+
+      function catalogFreshnessLabel() {
+        return compactDateTime(state.catalog?.generatedAt) || compactDateTime(state.catalog?.source?.generatedAt);
+      }
+
+      function itemRecencyScore(item) {
+        const time = itemTimeValue(item);
+        if (!time) return 0;
+        const ageDays = Math.max(0, (Date.now() - time) / 86400000);
+        return 720 / (1 + ageDays / 21);
+      }
+
+      function itemScoreValue(item) {
+        const score = numericValue(item?.score);
+        if (!score) return 0;
+        return score > 10 ? Math.min(10, score / 10) : Math.min(10, score);
+      }
+
+      function itemCompletionScore(item) {
+        const text = normalizedText(`${item?.remarks || ''} ${item?.categoryName || ''}`);
+        let score = 0;
+        if (/\u6b63\u7247|HD|BD|\u5b8c\u7ed3|\u5b8c\u7d50|\u5168\d+|\u5168\u96c6/i.test(text)) score += 120;
+        if (/\u66f4\u65b0\u81f3|\u7b2c\d+\u96c6|\u7b2c\d+\u671f/i.test(text)) score += 70;
+        const episodes = numericValue(item?.episodeCount);
+        if (item?.kind === 'movie' && episodes > 3) score -= 520;
+        if (['series', 'short', 'anime', 'variety'].includes(item?.kind)) score += Math.min(episodes, 80) * 3;
+        return score;
+      }
+
+      function itemSignalScore(item) {
+        return Math.min(numericValue(item?.signalCount || 1), 8) * 18;
+      }
+
+      function sourceHealthScore(source) {
+        if (!source) return 50;
+        if (source.error || state.healthIndex.sources.has(source.id)) return 0;
+        const checks = Array.isArray(source.checks) ? source.checks.filter((check) => typeof check?.ok === 'boolean') : [];
+        const passedRatio = checks.length ? checks.filter((check) => check.ok).length / checks.length : 0.7;
+        const coverage = Math.max(0, Math.min(1, Number(source.coverageGuard?.retention ?? 1)));
+        const completeness = source.complete ? 10 : source.indexed ? 5 : 0;
+        return Math.round(Math.max(0, Math.min(100, passedRatio * 70 + coverage * 20 + completeness)));
+      }
+
+      function itemSourceHealthScore(item) {
+        return sourceHealthScore(sourceById(item?.sourceId));
+      }
+
+      function itemRankScore(item, mode = 'hot') {
+        const views = numericValue(item?.views);
+        const hot = numericValue(item?.hot);
+        const score = itemScoreValue(item);
+        const recency = itemRecencyScore(item);
+        const completion = itemCompletionScore(item);
+        const signal = itemSignalScore(item);
+        const sourceHealth = itemSourceHealthScore(item) * 2;
+        const viewScore = views > 0 ? Math.log10(views + 1) * 2600 : 0;
+        const base = Math.max(hot, viewScore) + score * 135 + recency + completion + signal + sourceHealth;
+        if (mode === 'views') {
+          return views > 0 ? viewScore + hot * 0.18 + score * 80 + recency * 0.55 + completion + signal : base;
+        }
+        if (mode === 'score') return score * 1200 + base * 0.08;
+        if (mode === 'latest') return itemTimeValue(item) / 1000000 + base * 0.02;
+        return base;
+      }
+
+      function compareRankedItems(a, b, mode = state.filters.sort) {
+        if (mode === 'name') return a.title.localeCompare(b.title, 'zh-Hant');
+        const rankDiff = itemRankScore(b, mode) - itemRankScore(a, mode);
+        if (Math.abs(rankDiff) > 0.0001) return rankDiff;
+        const timeDiff = itemTimeValue(b) - itemTimeValue(a);
+        if (timeDiff) return timeDiff;
+        const scoreDiff = itemScoreValue(b) - itemScoreValue(a);
+        if (scoreDiff) return scoreDiff;
+        return String(a.title || '').localeCompare(String(b.title || ''), 'zh-Hant');
+      }
+
+      function sortedItems(items) {
+        return [...items].sort((a, b) => compareRankedItems(a, b));
+      }
+
+      function renderNav() {
+        topNav.innerHTML = `<button class="nav-source-btn" type="button" data-open-source-nav aria-label="點播訊號源">${generatedSourceIcon()}</button>${tabs
+          .map(([id, label]) => `<button class="nav-btn ${state.tab === id ? 'is-active' : ''}" type="button" data-tab="${id}">${displayHtml(label)}</button>`)
+          .join('')}`;
+        topNav.querySelectorAll('[data-tab]').forEach((button) => {
+          button.addEventListener('click', () => {
+            state.tab = button.dataset.tab || 'home';
+            state.query = '';
+            cancelActiveSearch('cancelled');
+            state.searchProgress = { query: '', completed: 0, total: 0, failed: 0, status: 'idle' };
+            clearTransientSearchItems();
+            clearViewCache();
+            resetVisibleLimit();
+            resetPageViewport();
+            render();
+          });
+        });
+        topNav.querySelector('[data-open-source-nav]')?.addEventListener('click', openSourceSheet);
+      }
+
+      function render() {
+        renderNav();
+        if (state.tab === 'live') {
+          state.renderLayoutKey = '';
+          return renderLive();
+        }
+        if (state.tab === 'rank') {
+          state.renderLayoutKey = '';
+          return renderRank();
+        }
+        return renderVodScreen();
+      }
+
+      function renderToolbar(placeholder = '搜尋片名、類型、年份') {
+        return `
+          <div class="toolbar">
+            <input class="search" id="searchBox" type="search" value="${escapeHtml(state.query)}" placeholder="${displayHtml(placeholder)}" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" />
+            <button class="icon-btn" type="button" data-open-filter aria-label="篩選器">${icon('filter')}</button>
+          </div>
+        `;
+      }
+
+      function focusSearchBox() {
+        if (!state.refocusSearch) return;
+        state.refocusSearch = false;
+        requestAnimationFrame(() => {
+          const input = document.querySelector('#searchBox');
+          if (!input) return;
+          input.focus({ preventScroll: true });
+          try {
+            input.setSelectionRange(state.query.length, state.query.length);
+          } catch {
+            undefined;
+          }
+        });
+      }
+
+      function scheduleSearchRender(value, delay = 260) {
+        if (state.query === value && !state.refocusSearch) return;
+        cancelActiveSearch('cancelled');
+        clearTransientSearchItems();
+        state.query = value;
+        state.searchProgress = { query: '', completed: 0, total: 0, failed: 0, status: 'idle' };
+        clearViewCache();
+        resetVisibleLimit();
+        window.clearTimeout(searchRenderTimer);
+        searchRenderTimer = window.setTimeout(() => {
+          if (!state.searchComposing) render();
+        }, delay);
+      }
+
+      function bindToolbar() {
+        const input = document.querySelector('#searchBox');
+        input?.addEventListener('compositionstart', () => {
+          state.searchComposing = true;
+          window.clearTimeout(searchRenderTimer);
+        });
+        input?.addEventListener('compositionend', (event) => {
+          state.searchComposing = false;
+          scheduleSearchRender(event.target.value, 0);
+        });
+        input?.addEventListener('input', (event) => {
+          if (state.searchComposing || event.isComposing) return;
+          scheduleSearchRender(event.target.value);
+        });
+        input?.addEventListener('search', (event) => scheduleSearchRender(event.target.value, 0));
+        input?.addEventListener('change', (event) => scheduleSearchRender(event.target.value, 0));
+        input?.addEventListener('keyup', (event) => {
+          if (state.searchComposing || event.isComposing) return;
+          if (event.target.value !== state.query) scheduleSearchRender(event.target.value, 0);
+        });
+        document.querySelector('[data-open-filter]')?.addEventListener('click', openFilterSheet);
+        focusSearchBox();
+      }
+
+      function bindSearchProgress() {
+        document.querySelector('[data-cancel-search]')?.addEventListener('click', () => {
+          if (!cancelActiveSearch('cancelled')) return;
+          clearViewCache();
+          resetVisibleLimit();
+          render();
+        });
+      }
+
+      function renderFilterSummary() {
+        const chips = [
+          ['訊號源', sourceLabel()],
+          ['年份', state.filters.year === 'all' ? '全部' : state.filters.year],
+          ['國家', state.filters.area === 'all' ? '全部' : state.filters.area],
+          ['類型', state.filters.genre === 'all' ? '全部' : state.filters.genre],
+          ['排序', sortLabel(state.filters.sort)],
+        ];
+        return `<div class="filter-summary">${chips.map(([k, v]) => `<span class="status-pill">${displayHtml(k)} ${displayHtml(v)}</span>`).join('')}</div>`;
+      }
+
+      function startCombinedPreviewLoad() {
+        if (state.sourceLoading || state.tab === 'live') return;
+        if (!['all', 'normal', 'adult18'].includes(state.selectedSource)) return;
+        if (!combinedSourceCandidates(state.selectedSource).length) return;
+        state.sourceLoading = true;
+        ensureSelectedSourceItems(state.selectedSource, { eager: true, limit: 4 })
+          .finally(() => {
+            state.sourceLoading = false;
+            clearViewCache();
+            resetVisibleLimit();
+            render();
+          });
+      }
+
+      function renderVodScreen() {
+        ensureQuantumForCurrentView();
+        triggerSearchIndexLoad();
+        ensureAvailableFilters();
+        const allRows = visibleItems();
+        if (!allRows.length && !state.query) startCombinedPreviewLoad();
+        const rows = allRows.slice(0, state.visibleLimit);
+        const title = tabs.find(([id]) => id === state.tab)?.[1] || '主頁';
+        const emptyMessage = state.searchLoading ? '正在搜尋安全分片...' : '目前沒有符合篩選的影片';
+        const countLabel = state.query
+          ? `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部搜尋結果`
+          : `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部已載入，完整索引 ${formatCount(state.catalog.totals.playableItems)} 部可播放`;
+        const layoutKey = `vod:${state.tab}`;
+        if (state.renderLayoutKey !== layoutKey || !document.querySelector('#vodGrid')) {
+          screen.innerHTML = `
+            ${renderToolbar()}
+            <div id="vodQuickFilters"></div>
+            <div id="vodShortRail"></div>
+            <section class="section-head search-section-head" id="vodSectionHead"></section>
+            <section class="poster-grid" id="vodGrid"></section>
+            <div id="vodFloatingFilter"></div>
+          `;
+          state.renderLayoutKey = layoutKey;
+          bindToolbar();
+        }
+        document.querySelector('#vodQuickFilters').innerHTML = renderQuickFilters();
+        document.querySelector('#vodShortRail').innerHTML = state.tab === 'short' ? renderShortAreaRail() : '';
+        document.querySelector('#vodSectionHead').innerHTML = `
+          <div><h1>${displayHtml(title)}</h1><span>${countLabel}</span></div>
+          ${searchProgressMarkup()}
+        `;
+        document.querySelector('#vodGrid').innerHTML =
+          rows.map(renderPoster).join('') ||
+          emptyState(state.sourceLoading ? '\u6b63\u5728\u8f09\u5165\u5206\u985e\u5167\u5bb9...' : emptyMessage);
+        document.querySelector('#vodFloatingFilter').innerHTML = renderFloatingFilter();
+        bindPosters();
+        bindQuickFilters();
+        bindShortAreaRail();
+        bindFloatingFilter();
+        bindSearchProgress();
+      }
+
+      function renderHero(item) {
+        return `
+          <section class="hero">
+            <div class="hero-copy">
+              <span class="hero-kicker">${displayHtml(item.sourceName || 'OKTV')}</span>
+              <h1>${displayHtml(item.title)}</h1>
+              <div class="hero-meta">${displayHtml([item.year, item.area, item.categoryName].filter(Boolean).join(' / '))}</div>
+              <div class="load-more-status">
+                <button class="play-btn" type="button" data-open-detail="${escapeHtml(item.id)}">${icon('play')}播放</button>
+              </div>
+            </div>
+            <div class="hero-poster">${renderPosterArt(item)}</div>
+          </section>
+        `;
+      }
+
+      function renderSourceRail() {
+        return '';
+      }
+
+      function filterValues(key) {
+        const cacheKey = viewCacheKey(`filter:${key}`, state.selectedSource, key);
+        if (state.viewCache.has(cacheKey)) return state.viewCache.get(cacheKey);
+        const values = sourceItems(state.selectedSource, key)
+          .map((item) => {
+            if (key === 'year') return [item._filterYear];
+            if (key === 'area') return item._filterAreas || [];
+            if (key === 'genre') return item._filterGenres || [];
+            return [item[key]];
+          })
+          .flat()
+          .filter(Boolean);
+        const unique = [...new Set(values)];
+        const result = unique.sort((a, b) => (key === 'year' ? b.localeCompare(a) : a.localeCompare(b, 'zh-Hant')));
+        state.viewCache.set(cacheKey, result);
+        return result;
+      }
+
+      function ensureAvailableFilters() {
+        for (let index = 0; index < 2; index += 1) {
+          for (const key of ['year', 'area', 'genre']) {
+            const values = key === 'area' && state.tab === 'short' ? shortAreas() : filterValues(key);
+            if (state.filters[key] !== 'all' && !values.includes(state.filters[key])) state.filters[key] = 'all';
+          }
+        }
+      }
+
+      function quickFilterRows() {
+        const rows = [
+          {
+            label: '排序',
+            key: 'sort',
+            values: [
+              ['hot', '全部'],
+              ['views', '熱播榜'],
+              ['score', '好評榜'],
+              ['latest', '新上線'],
+            ],
+          },
+        ];
+        const years = filterValues('year').slice(0, 24);
+        const areas = filterValues('area').slice(0, 28);
+        const genres = filterValues('genre').slice(0, 36);
+        if (years.length) rows.push({ label: '年分', key: 'year', values: [['all', '全部'], ...years.map((year) => [year, year])] });
+        if (areas.length) rows.push({ label: '地區', key: 'area', values: [['all', '全部'], ...areas.map((area) => [area, area])] });
+        if (genres.length) rows.push({ label: '類型', key: 'genre', values: [['all', '全部'], ...genres.map((genre) => [genre, genre])] });
+        return rows;
+      }
+
+      function renderQuickFilterRow(label, key, values) {
+        return `
+          <div class="quick-filter-block" aria-label="${displayHtml(label)}">
+            <div class="quick-filter-row">
+              ${values
+                .map(
+                  ([value, text]) =>
+                    `<button class="chip ${state.filters[key] === value ? 'is-active' : ''}" type="button" data-quick-filter-key="${key}" data-quick-filter-value="${escapeHtml(value)}">${displayHtml(text)}</button>`,
+                )
+                .join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderQuickFilters() {
+        const rows = quickFilterRows();
+        return `<div class="quick-filters">${rows.map((row) => renderQuickFilterRow(row.label, row.key, row.values)).join('')}</div>`;
+      }
+
+      function bindQuickFilters() {
+        document.querySelectorAll('[data-quick-filter-key]').forEach((button) => {
+          button.addEventListener('click', () => {
+            state.filters[button.dataset.quickFilterKey] = button.dataset.quickFilterValue || 'all';
+            clearViewCache();
+            resetVisibleLimit();
+            resetPageViewport();
+            render();
+          });
+        });
+      }
+
+      function shortAreas() {
+        const areas = [
+          ...new Set(
+            state.catalog.items
+              .filter((item) => item.kind === 'short')
+              .flatMap((item) => item._filterAreas || [])
+              .filter(Boolean),
+          ),
+        ];
+        return areas.sort((a, b) => {
+          return areaWeight(a) - areaWeight(b) || a.localeCompare(b, 'zh-Hant');
+        });
+      }
+
+      function renderShortAreaRail() {
+        const areas = shortAreas();
+        if (!areas.length) return '';
+        return `
+          <div class="area-rail">
+            <button class="chip ${state.filters.area === 'all' ? 'is-active' : ''}" type="button" data-short-area="all">全部地區</button>
+            ${areas
+              .map((area) => `<button class="chip ${state.filters.area === area ? 'is-active' : ''}" type="button" data-short-area="${escapeHtml(area)}">${displayHtml(area)}</button>`)
+              .join('')}
+          </div>
+        `;
+      }
+
+      function bindShortAreaRail() {
+        document.querySelectorAll('[data-short-area]').forEach((button) => {
+          button.addEventListener('click', () => {
+            state.filters.area = button.dataset.shortArea || 'all';
+            clearViewCache();
+            resetVisibleLimit();
+            resetPageViewport();
+            render();
+          });
+        });
+      }
+
+      function renderFloatingFilter() {
+        return `<button class="floating-filter" type="button" data-open-filter aria-label="篩選器">${icon('filter')}</button>`;
+      }
+
+      function bindFloatingFilter() {
+        document.querySelectorAll('[data-open-filter]').forEach((button) => button.addEventListener('click', openFilterSheet));
+      }
+
+      function renderRank() {
+        ensureQuantumForCurrentView();
+        triggerSearchIndexLoad();
+        ensureAvailableFilters();
+        const allRows = visibleItems();
+        const rows = allRows.slice(0, state.visibleLimit);
+        const emptyMessage = state.searchLoading ? '正在搜尋完整點播索引...' : '目前沒有榜單內容';
+        screen.innerHTML = `
+          ${renderToolbar('搜尋榜單內容')}
+          ${renderQuickFilters()}
+          <section class="section-head search-section-head">
+            <div><h1>排行</h1><span>${rows.length} / ${allRows.length} 部內容，觀看人數與評分排序</span></div>
+            ${searchProgressMarkup()}
+          </section>
+          <section class="rank-list">
+            ${rows.map(renderRankRow).join('') || emptyState(emptyMessage)}
+          </section>
+          ${renderFloatingFilter()}
+        `;
+        bindToolbar();
+        bindQuickFilters();
+        bindFloatingFilter();
+        bindSearchProgress();
+        document.querySelectorAll('[data-open-detail]').forEach((button) => {
+          button.addEventListener('click', () => openDetail(button.dataset.openDetail));
+        });
+      }
+
+      function renderLive() {
+        const query = state.query.trim().toLowerCase();
+        const rows = state.live
+          .filter((item) => !state.healthIndex.live.has(item.id))
+          .filter((item) => !query || `${item.name} ${item.group} ${item.kind}`.toLowerCase().includes(query));
+        screen.innerHTML = `
+          <div class="toolbar">
+            <input class="search" id="searchBox" type="search" value="${escapeHtml(state.query)}" placeholder="搜尋直播頻道" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" />
+            <button class="icon-btn" type="button" data-open-filter aria-label="篩選器">${icon('filter')}</button>
+          </div>
+          <section class="section-head">
+            <div><h1>直播</h1><span>${rows.length} 條頻道，${state.live.filter((item) => item.playable && !state.healthIndex.live.has(item.id)).length} 條可播放</span></div>
+          </section>
+          <section class="live-list">
+            ${rows.map(renderLiveRow).join('') || emptyState('目前沒有符合搜尋的直播')}
+          </section>
+          ${renderFloatingFilter()}
+        `;
+        bindToolbar();
+        bindFloatingFilter();
+        document.querySelectorAll('[data-live-play]').forEach((button) => {
+          button.addEventListener('click', () => {
+            const item = state.live.find((entry) => entry.id === button.dataset.livePlay);
+            if (!item) return;
+            if (item.kind === 'external' && !item.embedUrl) {
+              const externalUrl = safeHttpUrl(item.url);
+              if (externalUrl) window.open(externalUrl, '_blank', 'noopener,noreferrer');
+              return;
+            }
+            if (item.playable || item.embedUrl) openPlayer(item.name, `${item.group} / ${kindLabel(item.kind)}`, item.url, item.embedUrl || '');
+          });
+        });
+      }
+
+      function renderSources() {
+        const rows = state.catalog.sources;
+        screen.innerHTML = `
+          ${renderToolbar('搜尋點播源')}
+          <section class="section-head">
+            <div><h1>點播源</h1><span>${formatCount(state.catalog.totals.indexedSources)} 個來源，完整索引 ${formatCount(state.catalog.totals.items)} 部</span></div>
+          </section>
+          <section class="source-list">
+            ${rows.map(renderSourceRow).join('') || emptyState('沒有點播源資料')}
+          </section>
+        `;
+        bindToolbar();
+        document.querySelectorAll('[data-select-source]').forEach((button) => {
+          button.addEventListener('click', () => selectSource(button.dataset.selectSource || 'all'));
+        });
+      }
+
+      function renderPoster(item) {
+        const adult = itemIsAdult(item);
+        const signalLabel = signalSourceLabel(item);
+        return `
+          <button class="poster-card" type="button" data-open-detail="${escapeHtml(item.id)}">
+            ${renderPosterArt(item)}
+            <strong class="poster-title">${adult ? adultIcon() : ''}<span>${displayHtml(item.title)}</span></strong>
+            <div class="poster-sub"><span>${displayHtml(item.year || item.categoryName || item.kind)}</span><span>${displayHtml(item.area || signalLabel)}</span>${item.signalCount > 1 ? `<span>${displayHtml(`${item.signalCount} 個信號源`)}</span>` : ''}</div>
+          </button>
+        `;
+      }
+
+      function renderPosterArt(item) {
+        const poster = imageSrc(item.poster);
+        return `
+          <div class="poster-art">
+            ${poster ? `<img src="${escapeHtml(poster)}" alt="${displayHtml(item.title)}" loading="lazy" decoding="async" fetchpriority="low" referrerpolicy="no-referrer" />` : ''}
+            <div class="poster-fallback">${displayHtml(initials(item.title))}</div>
+            ${itemIsAdult(item) ? `<span class="adult-content-badge">${adultIcon('adult-content-icon')}18+</span>` : ''}
+            <span class="score">${displayHtml(item.score ? `評分 ${item.score}` : item.remarks || item.year || 'OKTV')}</span>
+            <span class="badge">${displayHtml(item.remarks || item.categoryName || item.kind)}</span>
+          </div>
+        `;
+      }
+
+      function renderRankRow(item, index) {
+        return `
+          <article class="row">
+            <div class="avatar">${index + 1}</div>
+            <div class="row-main">
+              <strong>${displayHtml(item.title)}</strong>
+              <span>${displayHtml([item.sourceName, item.year, item.area, item.categoryName].filter(Boolean).join(' / '))}</span>
+            </div>
+            <button class="play-btn" type="button" data-open-detail="${escapeHtml(item.id)}">${icon('play')}播放</button>
+          </article>
+        `;
+      }
+
+      function renderLiveRow(item) {
+        const playable = item.playable || item.kind === 'external' || item.embedUrl;
+        return `
+          <article class="row">
+            <div class="avatar">${displayHtml(initials(item.name))}</div>
+            <div class="row-main">
+              <strong>${displayHtml(item.name)}</strong>
+              <span>${displayHtml(item.group)} / ${displayHtml(kindLabel(item.kind))}</span>
+            </div>
+            <button class="play-btn" type="button" data-live-play="${escapeHtml(item.id)}" ${playable ? '' : 'disabled'}>${icon(item.kind === 'external' && !item.embedUrl ? 'signal' : 'play')}${item.kind === 'external' && !item.embedUrl ? '外部' : '播放'}</button>
+          </article>
+        `;
+      }
+
+      function renderSourceRow(source) {
+        const active = state.selectedSource === source.id;
+        const canSelect = source.indexed;
+        const healthScore = sourceHealthScore(source);
+        return `
+          <article class="source-row">
+            <div class="avatar">${source.adult ? adultIcon() : generatedSourceIcon()}</div>
+            <div class="row-main">
+              <strong>${sourceNameMarkup(source)}</strong>
+              <span>${displayHtml(source.origin)} / ${displayHtml(source.host || source.key)} / ${formatCount(source.itemCount)} 部 / 健康 ${healthScore}</span>
+            </div>
+            ${
+              canSelect
+                ? `<button class="play-btn" type="button" data-select-source="${escapeHtml(source.id)}">${icon(active ? 'check' : 'signal')}${active ? '使用中' : '切換'}</button>`
+                : `<span class="status-pill warn">${source.adult ? '18+' : source.type === 3 ? 'Spider' : '未索引'}</span>`
+            }
+          </article>
+        `;
+      }
+
+      function bindPosters() {
+        document.querySelectorAll('[data-open-detail]').forEach((button) => {
+          button.addEventListener('click', () => openDetail(button.dataset.openDetail));
+        });
+      }
+
+      async function resolvePlayableSignal(item, { allowAlternates = true } = {}) {
+        const signals = signalSourcesFor(item);
+        const candidates = [item];
+        if (allowAlternates) {
+          for (const signal of signals) {
+            const candidate = state.itemById.get(signal.itemId);
+            if (candidate && !candidates.some((entry) => entry.id === candidate.id)) candidates.push(candidate);
+          }
+        }
+        candidates.sort((left, right) => {
+          const leftEmbedded = Array.isArray(left.episodes) ? left.episodes.length : 0;
+          const rightEmbedded = Array.isArray(right.episodes) ? right.episodes.length : 0;
+          return rightEmbedded - leftEmbedded || Number(Boolean(right.detailPath)) - Number(Boolean(left.detailPath));
+        });
+        const failures = [];
+        for (const candidate of candidates.slice(0, AUTO_SIGNAL_FALLBACK_LIMIT)) {
+          try {
+            const hydrated = await hydrateItemDetail(candidate);
+            if (!Array.isArray(hydrated.episodes) || !hydrated.episodes.length) {
+              failures.push(signalSourceLabel(candidate) || candidate.sourceName || candidate.id);
+              continue;
+            }
+            hydrated.signalSources = signals;
+            hydrated.signalCount = signals.length;
+            delete hydrated.playbackError;
+            return hydrated;
+          } catch {
+            failures.push(signalSourceLabel(candidate) || candidate.sourceName || candidate.id);
+          }
+        }
+        item.signalSources = signals;
+        item.signalCount = signals.length;
+        item.playbackError = failures.length
+          ? `已檢查 ${failures.length} 個訊號源，目前均沒有有效集數。請稍後再試或切換其他來源。`
+          : '目前沒有有效播放訊號。請稍後再試。';
+        return item;
+      }
+
+      async function openDetail(id) {
+        const item = state.itemById.get(id);
+        if (!item) return;
+        state.activeItem = item;
+        detailTitle.textContent = displayText(item.title);
+        detailMeta.textContent = displayText([signalSourceLabel(item), item.year, item.area, item.categoryName].filter(Boolean).join(' / '));
+        renderDetailLoading(item);
+        openSheet(detailSheet);
+        const resolved = await resolvePlayableSignal(item);
+        if (state.activeItem?.id === item.id) {
+          state.activeItem = resolved;
+          detailTitle.textContent = displayText(resolved.title);
+          detailMeta.textContent = displayText(
+            [signalSourceLabel(resolved), resolved.year, resolved.area, resolved.categoryName].filter(Boolean).join(' / '),
+          );
+          renderDetailBody(resolved, 0);
+        }
+      }
+
+      function episodePageCount(item) {
+        return Math.max(1, Math.ceil((item.episodes?.length || 0) / EPISODES_PER_PAGE));
+      }
+
+      function renderEpisodePager(item, page) {
+        const total = item.episodes?.length || 0;
+        const pages = episodePageCount(item);
+        if (pages <= 1) return '';
+        return `
+          <div class="episode-toolbar">
+            <small>${displayHtml(`共 ${total} 集，每頁 20 集`)}</small>
+            <div class="episode-pages" aria-label="集數分頁">
+              ${Array.from({ length: pages }, (_, index) => {
+                const start = index * EPISODES_PER_PAGE + 1;
+                const end = Math.min(total, (index + 1) * EPISODES_PER_PAGE);
+                return `<button class="${index === page ? 'is-active' : ''}" type="button" data-episode-page="${index}">${displayHtml(`${start}-${end} 集`)}</button>`;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      function renderSignalSourceControls(item) {
+        const signals = signalSourcesFor(item);
+        if (signals.length <= 1) return '';
+        return `
+          <section class="section-head"><h2>信號源</h2><span>${signals.length} 個來源</span></section>
+          <div class="signal-strip">
+            ${signals
+              .map(
+                (signal) =>
+                  `<button class="signal-chip ${signal.itemId === item.id ? 'is-active' : ''}" type="button" data-signal-item="${escapeHtml(signal.itemId)}">${signal.adult ? adultIcon('adult-content-icon') : icon('signal')}${displayHtml(signal.sourceName || 'OKTV')}</button>`,
+              )
+              .join('')}
+          </div>
+        `;
+      }
+
+      function bindDetailEpisodeControls(item) {
+        detailBody.querySelectorAll('[data-signal-item]').forEach((button) => {
+          button.addEventListener('click', async () => {
+            const next = state.itemById.get(button.dataset.signalItem);
+            if (!next) return;
+            next.signalSources = signalSourcesFor(item);
+            next.signalCount = next.signalSources.length;
+            state.activeItem = next;
+            detailTitle.textContent = displayText(next.title);
+            detailMeta.textContent = displayText([signalSourceLabel(next), next.year, next.area, next.categoryName].filter(Boolean).join(' / '));
+            renderDetailLoading(next);
+            const resolved = await resolvePlayableSignal(next, { allowAlternates: false });
+            if (state.activeItem?.id === next.id) {
+              state.activeItem = resolved;
+              renderDetailBody(resolved, 0);
+            }
+          });
+        });
+        detailBody.querySelectorAll('[data-episode-page]').forEach((button) => {
+          button.addEventListener('click', () => renderDetailBody(item, Number(button.dataset.episodePage || 0)));
+        });
+        detailBody.querySelectorAll('[data-episode]').forEach((button) => {
+          button.addEventListener('click', () => {
+            const episode = item.episodes[Number(button.dataset.episode || 0)];
+            if (episode) openPlayer(item.title, episode.name, episode.url);
+          });
+        });
+      }
+
+      function renderDetailLoading(item) {
+        detailBody.innerHTML = `
+          <div class="detail-grid">
+            ${renderPosterArt(item)}
+            <div class="detail-copy">
+              <h2>${displayHtml(item.title)}</h2>
+              <div class="item-meta">${displayHtml([item.remarks, item.episodeCount ? `${item.episodeCount} 集` : '', item.updatedAt].filter(Boolean).join(' / '))}</div>
+              <p>${displayHtml('正在讀取播放資料...')}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderDetailBody(item, page = 0) {
+        const total = item.episodes?.length || 0;
+        const pages = episodePageCount(item);
+        const safePage = Math.min(Math.max(Number(page) || 0, 0), pages - 1);
+        const start = safePage * EPISODES_PER_PAGE;
+        const rows = (item.episodes || []).slice(start, start + EPISODES_PER_PAGE);
+        detailBody.innerHTML = `
+          <div class="detail-grid">
+            ${renderPosterArt(item)}
+            <div class="detail-copy">
+              <h2>${displayHtml(item.title)}</h2>
+              <div class="item-meta">${displayHtml([item.remarks, item.score ? `評分 ${item.score}` : '', item.updatedAt].filter(Boolean).join(' / '))}</div>
+              <p>${displayHtml(plainTextFromMarkup(item.content || item.actor || item.director) || '此內容已建立 OKTV 手機索引。')}</p>
+            </div>
+          </div>
+          ${renderSignalSourceControls(item)}
+          <section class="section-head"><h2>播放</h2><span>${total} 集</span></section>
+          ${renderEpisodePager(item, safePage)}
+          <div class="episode-grid">
+            ${
+              rows.length
+                ? rows
+                    .map((episode, index) => `<button type="button" data-episode="${start + index}">${displayHtml(episode.name || `第 ${start + index + 1} 集`)}</button>`)
+                    .join('')
+                : `<span>${displayHtml(item.playbackError || '目前沒有有效播放訊號；可嘗試上方其他訊號源。')}</span>`
+            }
+          </div>
+        `;
+        bindDetailEpisodeControls(item);
+      }
+
+      function openPlayer(title, meta, url, embedUrl = '') {
+        const verifiedEmbedUrl = embedUrl ? safeEmbedUrl(embedUrl) : '';
+        const verifiedMediaUrl = embedUrl ? '' : safeHttpUrl(url);
+        closeDetail(false);
+        hls?.destroy?.();
+        hls = null;
+        player.pause();
+        player.removeAttribute('src');
+        player.load();
+        playerFrame.removeAttribute('src');
+        playerFrame.classList.add('hidden');
+        player.classList.remove('hidden');
+        playerTitle.textContent = displayText(title);
+        playerMeta.textContent =
+          (embedUrl && !verifiedEmbedUrl) || (!embedUrl && !verifiedMediaUrl)
+            ? '已阻擋不安全或不支援的播放網址'
+            : displayText(meta);
+        state.playerUrl = verifiedEmbedUrl || verifiedMediaUrl;
+        openSheet(playerSheet);
+
+        if (!state.playerUrl) return;
+
+        if (verifiedEmbedUrl) {
+          player.classList.add('hidden');
+          playerFrame.classList.remove('hidden');
+          playerFrame.src = verifiedEmbedUrl;
+          return;
+        }
+
+        if (/\.m3u8(?:$|\?)/i.test(verifiedMediaUrl) && window.Hls?.isSupported?.()) {
+          hls = new window.Hls({
+            lowLatencyMode: false,
+            enableWorker: true,
+            backBufferLength: 30,
+            maxBufferLength: 30,
+            manifestLoadingTimeOut: 15000,
+            fragLoadingTimeOut: 20000,
+          });
+          hls.loadSource(verifiedMediaUrl);
+          hls.attachMedia(player);
+          hls.on(window.Hls.Events.ERROR, (_event, data) => {
+            if (!data?.fatal) return;
+            playerMeta.textContent = '此訊號目前無法播放，請返回並切換其他訊號源。';
+            hls?.destroy?.();
+            hls = null;
+          });
+        } else {
+          player.src = verifiedMediaUrl;
+        }
+        player.onerror = () => {
+          playerMeta.textContent = '此訊號目前無法播放，請返回並切換其他訊號源。';
+        };
+        player.play().catch(() => undefined);
+      }
+
+      function closePlayer() {
+        hls?.destroy?.();
+        hls = null;
+        playerFrame.removeAttribute('src');
+        playerFrame.classList.add('hidden');
+        player.classList.remove('hidden');
+        player.pause();
+        player.onerror = null;
+        player.removeAttribute('src');
+        player.load();
+        state.playerUrl = '';
+        closeSheet(playerSheet);
+      }
+
+      function openSourceSheet() {
+        const current = activeSource();
+        state.sourceSheetMode = state.selectedSource === 'adult18' || current?.adult ? 'adult' : 'normal';
+        renderSourceSheetBody();
+        openSheet(sourceSheet);
+      }
+
+      function renderSourceSheetBody() {
+        const normalSources = state.catalog.sources.filter((source) => !source.adult);
+        const adultSources = state.catalog.sources.filter((source) => source.adult);
+        const mode = state.sourceSheetMode === 'adult' ? 'adult' : 'normal';
+        const rows = mode === 'adult' ? adultSources : normalSources;
+        const allSourceId = mode === 'adult' ? 'adult18' : 'normal';
+        const allLabel = mode === 'adult' ? '成人 18+ 全部' : '全部一般來源';
+        const allIcon = mode === 'adult' ? adultIcon() : generatedSourceIcon();
+        const itemCount = rows.reduce((sum, source) => sum + Number(source.itemCount || 0), 0);
+        sourceSheetMeta.textContent = mode === 'adult' ? '成人 18+ 已獨立分類，不混入一般來源' : '一般來源，不含成人 18+';
+        sourceSheetBody.innerHTML = `
+          <div class="source-mode-row">
+            <button class="chip ${mode === 'normal' ? 'is-active' : ''}" type="button" data-source-mode="normal">一般點播源</button>
+            <button class="chip ${mode === 'adult' ? 'is-active' : ''}" type="button" data-source-mode="adult">${adultIcon()} 成人 18+</button>
+          </div>
+          <section class="source-list">
+            <div class="source-section-label ${mode === 'adult' ? 'is-adult' : ''}"><span>${mode === 'adult' ? adultIcon() : ''}${mode === 'adult' ? '成人 18+' : '一般點播源'}</span><small>${rows.length} 個來源</small></div>
+            <article class="source-row">
+              <div class="avatar">${allIcon}</div>
+              <div class="row-main"><strong>${allIcon} ${allLabel}</strong><span>${formatCount(itemCount)} 部完整索引內容</span></div>
+              <button class="play-btn" type="button" data-sheet-source="${allSourceId}">${icon(state.selectedSource === allSourceId ? 'check' : 'signal')}${state.selectedSource === allSourceId ? '使用中' : '切換'}</button>
+            </article>
+            ${rows.map((source) => renderSheetSourceRow(source)).join('') || emptyState('目前沒有此分類來源')}
+          </section>
+        `;
+        sourceSheetBody.querySelectorAll('[data-source-mode]').forEach((button) => {
+          button.addEventListener('click', () => {
+            state.sourceSheetMode = button.dataset.sourceMode || 'normal';
+            renderSourceSheetBody();
+          });
+        });
+        sourceSheetBody.querySelectorAll('[data-sheet-source]').forEach((button) => {
+          button.addEventListener('click', async () => {
+            await selectSource(button.dataset.sheetSource || 'all');
+            closeSheet(sourceSheet);
+          });
+        });
+      }
+
+      function renderSheetSourceRow(source) {
+        const active = state.selectedSource === source.id;
+        const canSelect = source.indexed;
+        const healthScore = sourceHealthScore(source);
+        return `
+          <article class="source-row">
+            <div class="avatar">${source.adult ? adultIcon() : generatedSourceIcon()}</div>
+            <div class="row-main">
+              <strong>${sourceNameMarkup(source)}</strong>
+              <span>${displayHtml(source.origin)} / ${formatCount(source.itemCount)} 部 / ${formatCount(source.playableCount)} 可播放 / 健康 ${healthScore}</span>
+            </div>
+            ${
+              canSelect
+                ? `<button class="play-btn" type="button" data-sheet-source="${escapeHtml(source.id)}">${icon(active ? 'check' : 'signal')}${active ? '使用中' : '切換'}</button>`
+                : `<span class="status-pill warn">${source.adult ? '18+' : source.type === 3 ? 'Spider' : '未索引'}</span>`
+            }
+          </article>
+        `;
+      }
+
+      function openFilterSheet() {
+        const filter = (label, key, values) => `
+          <section class="section-head"><h2>${label}</h2></section>
+          <div class="chip-row">
+            ${values
+              .map(
+                ([value, text]) =>
+                  `<button class="chip ${state.filters[key] === value ? 'is-active' : ''}" type="button" data-filter-key="${key}" data-filter-value="${escapeHtml(value)}">${displayHtml(text)}</button>`,
+              )
+              .join('')}
+          </div>
+        `;
+        const years = filterValues('year').slice(0, 36);
+        const areas = filterValues('area').slice(0, 36);
+        const genres = filterValues('genre').slice(0, 48);
+        const sorts = [
+          ['hot', '熱門'],
+          ['views', '觀看人數'],
+          ['latest', '發布時間'],
+          ['score', '評分'],
+          ['name', '名稱'],
+        ];
+        filterSheetBody.innerHTML = `
+          ${years.length ? filter('年份', 'year', [['all', '全部年份'], ...years.map((year) => [year, year])]) : ''}
+          ${areas.length ? filter('地區', 'area', [['all', '全部地區'], ...areas.map((area) => [area, area])]) : ''}
+          ${genres.length ? filter('類型', 'genre', [['all', '全部類型'], ...genres.map((genre) => [genre, genre])]) : ''}
+          ${filter('排序', 'sort', sorts)}
+          <button class="play-btn reset-filter-btn" type="button" data-reset-filter>重設篩選</button>
+        `;
+        filterSheetBody.querySelectorAll('[data-filter-key]').forEach((button) => {
+          button.addEventListener('click', () => {
+            state.filters[button.dataset.filterKey] = button.dataset.filterValue || 'all';
+            clearViewCache();
+            resetVisibleLimit();
+            resetPageViewport();
+            openFilterSheet();
+            render();
+          });
+        });
+        filterSheetBody.querySelector('[data-reset-filter]')?.addEventListener('click', () => {
+          state.filters = { year: 'all', area: 'all', genre: 'all', sort: 'hot' };
+          clearViewCache();
+          resetVisibleLimit();
+          resetPageViewport();
+          closeSheet(filterSheet);
+          render();
+        });
+        openSheet(filterSheet);
+      }
+
+      async function selectSource(sourceId) {
+        cancelActiveSearch('cancelled');
+        state.searchProgress = { query: '', completed: 0, total: 0, failed: 0, status: 'idle' };
+        clearTransientSearchItems();
+        state.selectedSource = sourceId;
+        localStorage.setItem(SOURCE_STORAGE_KEY, sourceId);
+        state.tab = state.tab === 'sources' ? 'movie' : state.tab;
+        clearViewCache();
+        resetVisibleLimit();
+        resetPageViewport();
+        const combinedSource = ['all', 'normal', 'adult18'].includes(sourceId);
+        state.sourceLoading = !combinedSource;
+        render();
+        if (combinedSource) return;
+        try {
+          await ensureSelectedSourceItems(sourceId);
+        } finally {
+          if (state.selectedSource === sourceId) {
+            state.sourceLoading = false;
+            render();
+          }
+        }
+      }
+
+      function sortLabel(value) {
+        return { hot: '熱門', views: '觀看人數', latest: '發布時間', score: '評分', name: '名稱' }[value] || value;
+      }
+
+      function kindLabel(kind) {
+        return { hls: 'M3U8', youtube: 'YouTube', stream: 'HTTP', external: '外部', network: '內網', unknown: '未知' }[kind] || kind;
+      }
+
+      function emptyState(text) {
+        return `<p class="notice">${displayHtml(text)}</p>`;
+      }
+
+      function openSheet(sheet) {
+        sheet.classList.add('is-open');
+        sheet.setAttribute('aria-hidden', 'false');
+      }
+
+      function closeSheet(sheet) {
+        sheet.classList.remove('is-open');
+        sheet.setAttribute('aria-hidden', 'true');
+      }
+
+      function closeDetail(close = true) {
+        if (close) closeSheet(detailSheet);
+      }
+
+      function applyHealthIndex(health) {
+        state.health = health || { failed: [] };
+        const currentLiveUrls = new Map(state.live.map((item) => [item.id, item.url]));
+        state.healthIndex = {
+          sources: new Set((state.health.failed || []).filter((row) => row.kind === 'source').map((row) => row.id)),
+          posters: new Set((state.health.failed || []).filter((row) => row.kind === 'poster').map((row) => row.id)),
+          live: new Set(
+            (state.health.failed || [])
+              .filter((row) => row.kind === 'live' && currentLiveUrls.get(row.id) === row.url)
+              .map((row) => row.id),
+          ),
+        };
+        clearViewCache();
+      }
+
+      document.querySelectorAll('[data-close-sheet]').forEach((item) => item.addEventListener('click', () => closeSheet(sourceSheet)));
+      document.querySelectorAll('[data-close-filter]').forEach((item) => item.addEventListener('click', () => closeSheet(filterSheet)));
+      document.querySelectorAll('[data-close-detail]').forEach((item) => item.addEventListener('click', () => closeDetail(true)));
+      document.querySelectorAll('[data-close-player]').forEach((item) => item.addEventListener('click', closePlayer));
+      document.querySelector('#sourceSheet [data-close-sheet].icon-btn').innerHTML = icon('close');
+      document.querySelector('#filterSheet [data-close-filter].icon-btn').innerHTML = icon('close');
+      document.querySelector('#detailSheet [data-close-detail].icon-btn').innerHTML = icon('close');
+      document.querySelector('#playerSheet [data-close-player].icon-btn').innerHTML = icon('close');
+
+      [state.catalog, state.latest, state.live, state.queryIndex.manifest] = await Promise.all([
+        getJson('../data/iphone-vod-catalog.json', state.catalog),
+        getJson('../data/iphone-vod-latest.json', { items: [] }),
+        getJson('../data/live-channels.json', []),
+        getJson(QUERY_MANIFEST_URL, null),
+      ]);
+      state.catalog.sources = Array.isArray(state.catalog.sources) ? state.catalog.sources : [];
+      state.sourceMap = new Map(state.catalog.sources.map((source) => [source.id, source]));
+      await loadQuantumManifest();
+      const initialCatalogItems = Array.isArray(state.catalog.items) ? state.catalog.items : [];
+      const latestCatalogItems = Array.isArray(state.latest.items) ? state.latest.items : [];
+      const fallbackQueryItems = Array.isArray(state.queryIndex.manifest?.fallbackItems)
+        ? state.queryIndex.manifest.fallbackItems
+        : [];
+      state.catalog.items = [];
+      state.itemById.clear();
+      registerCatalogItems(initialCatalogItems);
+      registerCatalogItems(latestCatalogItems);
+      registerCatalogItems(fallbackQueryItems);
+      state.seedItemIds = new Set(state.itemById.keys());
+      markLatestPagesLoaded(latestCatalogItems);
+      applyHealthIndex({ failed: [] });
+      localStorage.removeItem('oktv:iphone:selectedSource');
+      const storedSource = localStorage.getItem(SOURCE_STORAGE_KEY);
+      if (!storedSource || storedSource === 'all' || state.selectedSource === 'default') {
+        state.selectedSource = 'normal';
+        localStorage.setItem(SOURCE_STORAGE_KEY, state.selectedSource);
+      }
+      if (
+        !['all', 'normal', 'adult18'].includes(state.selectedSource) &&
+        !state.catalog.sources.some((source) => source.id === state.selectedSource && source.indexed)
+      ) {
+        state.selectedSource = 'normal';
+        localStorage.setItem(SOURCE_STORAGE_KEY, state.selectedSource);
+      }
+      const selectedSourceAtBoot = state.selectedSource;
+      const combinedSourceAtBoot = ['all', 'normal', 'adult18'].includes(selectedSourceAtBoot);
+      state.sourceLoading = !combinedSourceAtBoot;
+      if (!combinedSourceAtBoot) {
+        await ensureSelectedSourceItems(selectedSourceAtBoot);
+        state.sourceLoading = false;
+      }
+      window.addEventListener('scroll', maybeLoadMore, { passive: true });
+      resetVisibleLimit();
+      render();
+      getJson('../data/iphone-health-check-latest.json', { failed: [] }).then((health) => {
+        applyHealthIndex(health);
+        render();
+      });
+    </script>
+  </body>
+</html>
