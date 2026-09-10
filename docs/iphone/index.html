@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-fblyiwenDTl/lLwbMRH6ejVT7TpAe1ySctah9acOpnE=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-q02F97qqlOr202beJ5VnHrLJYWm/Qm53QwnFgiZg0VQ='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-hhTVjY/gAvORPMjDZAan2oAoW7cIG7RS++vWtrHjjFo=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-q02F97qqlOr202beJ5VnHrLJYWm/Qm53QwnFgiZg0VQ='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1255,7 +1255,10 @@
         const preferLocal = localHost || (!preferOnline && location.hostname === 'sylong7708.github.io');
         const bulkData = /^(?:vod-index|vod-detail|vod-search|vod-query|quantum-lzi)\//i.test(dataPath);
         const currentRaw = dataPath ? `${CURRENT_RAW_DATA_BASE}${dataPath}` : '';
-        const candidates = bulkData && !localHost
+        // A cached HTML shell must not combine a newer Pages catalog with its
+        // older pinned search shards. Keep all deployed data on one revision.
+        const revisionPinned = !localHost && Boolean(dataPath) && /^[a-f0-9]{40}$/.test(DATA_REVISION);
+        const candidates = revisionPinned || (bulkData && !localHost)
           ? [currentRaw]
           : online
           ? preferLocal
@@ -1281,11 +1284,12 @@
         };
         candidates.forEach(addUrl);
         addUrl(currentRaw);
-        // The current repository is always preferred, so newly refreshed
-        // detail pages win. Missing historical pages fall back to the
-        // read-only raw archive, which is not affected by Pages rebuilds.
-        addUrl(archiveRaw);
-        addUrl(archive);
+        // Historical detail pages may exist only in the preserved archive.
+        // Catalogs and search indexes must never cross deployed revisions.
+        if (!revisionPinned || /^vod-detail\//i.test(dataPath)) {
+          addUrl(archiveRaw);
+          addUrl(archive);
+        }
         const requestController = new AbortController();
         let timedOut = false;
         let lastError = null;
@@ -1303,7 +1307,7 @@
             try {
               if (options.signal?.aborted) throw new DOMException('Search aborted', 'AbortError');
               const res = await fetch(target, {
-                cache: freshData ? 'no-store' : 'default',
+                cache: revisionPinned ? 'default' : freshData ? 'no-store' : 'default',
                 signal: requestController.signal,
               });
               if (!res.ok) {
