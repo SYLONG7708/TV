@@ -88,19 +88,19 @@ node .\tools\build-live-signal-index.mjs --tvRoot .
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\install-youtube-live-autoupdate-task.ps1
 ```
 
-### No-cookies GitHub Actions mode
+### 無 cookies 的雲端更新
 
-When GitHub runner has no YouTube cookies, the workflow still runs public best-effort extraction on the schedule. Channels that cannot produce a fresh HLS URL remain available through their official YouTube watch URL and the iPhone/Android WebView iframe fallback. Expired generated HLS URLs are no longer treated as the only usable copy.
+GitHub runner 沒有 YouTube cookies 時，定時更新會保留有效播放清單，並為手機網頁建立公開 YouTube watch／iframe 備援；不會把過期的 HLS 當成唯一可用來源，也不會逐一等待受阻的頻道解析。直接 HLS 與網頁嵌入播放是不同路徑：APK 的 TXT 播放清單仍需有效 HLS，手機網頁可使用官方嵌入播放器。
 
-This means scheduled runs can auto-detect changed YouTube live signals and commit them when they differ, while still protecting the playlist from YouTube bot-block or regional failures. To improve direct-HLS `hlsSuccessRate`, set `YOUTUBE_COOKIES_B64`; the iframe fallback does not require that secret.
+### 雲端自動診斷與修復
 
-## Automatic diagnosis and recovery
+已啟用每小時診斷，以及直播、點播、部署或完整性工作失敗後的自動檢查。系統檢查公開網頁、完整目錄加總、最新內容、每個來源索引、API 可用率與直播資料，只重新派送需要修復的工作；已有更新執行時會等待。首次失敗可立即重試，連續失敗依次延後 15／60／360 分鐘，後續排程仍會繼續處理。
 
-`.github/workflows/oktv-self-heal.yml` runs every hour and checks the public shell, metadata, complete catalog totals, newest feed, every published source index, VOD API availability, and live fallbacks. It dispatches only the affected updater and applies a six-hour cooldown to avoid retry storms.
+2026-09-10 起，GitHub Pages 僅部署約 18 MB 的網頁與必要清單，設 100 MiB 硬上限；大型索引保留在 `gh-pages`，按固定資料 commit 讀取，避免原本約 3.56 GB 部署包造成的逾時。直播與點播共用部署流程，上線後核對實際版本與索引；單獨部署失敗時優先重新部署，避免重做完整來源更新。
 
-Generated gzip files use content-stable writes, so a changed timestamp cannot rewrite multi-gigabyte indexes. `tools/publish-gh-pages-batched.ps1` uploads in bounded batches and publishes a single current snapshot commit, preventing generated deployment history from growing without limit. `tools/push-commit-with-recovery.ps1` distinguishes quota and permission failures from transient network or concurrent-update failures.
+gzip 穩定輸出、分批發布及推送衝突恢復機制持續保留。排程與處理範圍詳見 [自動修復說明](docs/AUTOMATIC_RECOVERY.md)。日常更新由 GitHub 雲端執行，不需本機開機或手動下命令；外部來源關站、登入或地區限制無法由本專案強制修復。
 
-Run the same complete public diagnosis locally:
+開發人員可使用相同診斷命令：
 
 ```powershell
 node .\tools\check-oktv-system-health.mjs --baseUrl "https://sylong7708.github.io/TV" --probeApis true
@@ -121,7 +121,8 @@ Paste the Base64 text into GitHub `Settings` → `Secrets and variables` → `Ac
 
 完整網頁版教學在：
 
-- [`docs/index.html`](docs/index.html)
+- [手機網頁版](https://sylong7708.github.io/TV/docs/iphone/index.html)
+- [原始教學 HTML（安全封存，可下載開啟）](https://github.com/SYLONG7708/TV-archive-20260904/blob/main/docs/index.html)
 
 若 GitHub Pages 設定為從 `main` 分支根目錄或 `/docs` 發佈，可用網頁方式閱讀。
 
