@@ -60,6 +60,9 @@ jobs:
           node --check tools/build-iphone-vod-latest.mjs
           node --check tools/check-public-freshness.mjs
           node --check tools/check-oktv-system-health.mjs
+          node --check tools/recover-oktv.mjs
+          node --check tools/build-pages-shell.mjs
+          node --check tools/verify-pages-deployment.mjs
           node --check tools/stable-gzip-json.mjs
           node --check tools/update-iphone-csp.mjs
           node tools/update-iphone-csp.mjs --check

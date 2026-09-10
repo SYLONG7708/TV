@@ -13,6 +13,7 @@ for (let index = 2; index < process.argv.length; index += 1) {
 
 const baseUrl = String(args.get('baseUrl') || 'https://sylong7708.github.io/TV').replace(/\/+$/, '');
 const dataBase = `${baseUrl}/docs/data`;
+let bulkDataBase = dataBase;
 const timeoutMs = Number(args.get('timeoutMs') || 10_000);
 const concurrency = Math.max(1, Number(args.get('concurrency') || 10));
 const maxVodAgeHours = Number(args.get('maxVodAgeHours') || 30);
@@ -71,7 +72,7 @@ async function mapLimit(items, limit, mapper) {
 
 async function probeStaticIndex(source) {
   if (!source?.indexPath) return { id: source?.id || '', name: source?.name || '', ok: false, error: 'missing indexPath' };
-  const url = new URL(source.indexPath.replace(/^\/+/, ''), `${dataBase}/`).href;
+  const url = new URL(source.indexPath.replace(/^\/+/, ''), `${bulkDataBase}/`).href;
   let lastError = '';
   for (let attempt = 1; attempt <= 2; attempt += 1) {
     try {
@@ -169,8 +170,19 @@ const catalogReport = values['iphone-vod-catalog-report.json'] || {};
 const catalog = values['iphone-vod-catalog.json'] || {};
 const latest = values['iphone-vod-latest.json'] || {};
 const summary = values['source-summary.json'] || {};
-const liveChannels = Array.isArray(values['live-channels.json']) ? values['live-channels.json'] : [];
+const livePayload = values['live-channels.json'];
+const liveChannels = Array.isArray(livePayload) ? livePayload : Array.isArray(livePayload?.channels) ? livePayload.channels : [];
 const sources = Array.isArray(catalog.sources) ? catalog.sources : [];
+let deployment = null;
+try {
+  deployment = await fetchJson('deployment-state.json');
+  if (deployment.bulkDataExternal) {
+    if (!/^[a-f0-9]{40}$/.test(String(deployment.dataCommit || ''))) throw new Error('Invalid deployment data commit');
+    bulkDataBase = `https://raw.githubusercontent.com/SYLONG7708/TV/${deployment.dataCommit}/docs/data`;
+  }
+} catch {
+  deployment = null;
+}
 
 let pageOk = false;
 let pageError = '';
@@ -215,10 +227,13 @@ const report = {
   baseUrl,
   ok: Object.values(checks).every(Boolean),
   repair: {
+    pages: !checks.coreFiles || !checks.pageShell,
     vod: !checks.coreFiles || !checks.pageShell || !checks.vodFresh || !checks.catalogStructure || !checks.latestFeed || !checks.sourceIndexes || !checks.sourceApis,
     live: !checks.coreFiles || !checks.liveFresh || !checks.liveUsable,
   },
   checks,
+  deployment,
+  bulkDataBase,
   metrics: {
     vodAgeHours: Number.isFinite(vodAge) ? Number(vodAge.toFixed(2)) : null,
     liveAgeHours: Number.isFinite(liveAge) ? Number(liveAge.toFixed(2)) : null,

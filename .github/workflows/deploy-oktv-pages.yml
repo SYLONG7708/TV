@@ -1,0 +1,119 @@
+name: Deploy OKTV lightweight Pages
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/deploy-oktv-pages.yml
+      - tools/build-pages-shell.mjs
+      - docs/iphone/**
+      - docs/assets/**
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    concurrency:
+      group: oktv-lightweight-pages-deployment
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url || steps.retry.outputs.page_url }}
+    steps:
+      - name: Checkout current trusted publishing tools
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: main
+          path: app
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            docs/iphone/*
+            docs/assets/*
+            tools/*.mjs
+
+      - name: Resolve immutable public data revision
+        id: revision
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          revision="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/gh-pages" --jq '.object.sha')"
+          [[ "$revision" =~ ^[0-9a-f]{40}$ ]]
+          echo "data=$revision" >> "$GITHUB_OUTPUT"
+          echo "code=$(git -C app rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout only public shell and metadata
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: ${{ steps.revision.outputs.data }}
+          path: data
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /docs/iphone/*
+            /docs/assets/*
+            /docs/data/*.json
+            /docs/data/*.csv
+            !/docs/data/*/
+            /sources/*
+
+      - name: Build bounded Pages artifact and pin bulk data URLs
+        env:
+          DATA_REVISION: ${{ steps.revision.outputs.data }}
+          CODE_REVISION: ${{ steps.revision.outputs.code }}
+        run: |
+          node app/tools/build-pages-shell.mjs --dataRoot data --codeRoot app --output site \
+            --dataRevision "$DATA_REVISION" --codeRevision "$CODE_REVISION" > pages-payload-report.json
+          cat pages-payload-report.json
+          cat pages-payload-report.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Configure Pages
+        uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+
+      - name: Upload lightweight site
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        continue-on-error: true
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
+
+      - name: Back off before automatic deployment retry
+        if: steps.deploy.outcome == 'failure'
+        run: sleep 30
+
+      - name: Retry transient Pages deployment
+        id: retry
+        if: steps.deploy.outcome == 'failure'
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
+
+      - name: Verify deployed revision, catalog, live data, and every source index
+        env:
+          DATA_REVISION: ${{ steps.revision.outputs.data }}
+          CODE_REVISION: ${{ steps.revision.outputs.code }}
+        run: |
+          node app/tools/verify-pages-deployment.mjs --dataRevision "$DATA_REVISION" --codeRevision "$CODE_REVISION"
+          node app/tools/check-oktv-system-health.mjs --probeApis false --failOnDegraded false --output public-health.json
+          node -e "const r=require('./public-health.json'); for (const k of ['coreFiles','pageShell','catalogStructure','latestFeed','sourceIndexes','liveUsable']) if (!r.checks[k]) throw Error(k+' failed');"
+          cat public-health.json >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Preserve deployment verification
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: pages-verification-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            pages-payload-report.json
+            public-health.json
+          retention-days: 14
+          if-no-files-found: ignore

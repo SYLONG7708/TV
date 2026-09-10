@@ -10,6 +10,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: oktv-data-publish-${{ github.ref }}
@@ -17,6 +19,8 @@ concurrency:
 
 jobs:
   update:
+    outputs:
+      should_run: ${{ steps.gate.outputs.should_run }}
     runs-on: windows-latest
     timeout-minutes: 240
     steps:
@@ -427,42 +431,7 @@ jobs:
             -RetryDelaySeconds 15
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Verify complete public system
-        if: success() && steps.gate.outputs.should_run == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: pwsh
-        run: |
-          $expectedPagesCommit = ((git ls-remote origin refs/heads/gh-pages) -split '\s+')[0]
-          if ($expectedPagesCommit -notmatch '^[0-9a-f]{40,64}$') { throw "Unable to resolve the published gh-pages commit." }
-          $deployed = $false
-          for ($attempt = 1; $attempt -le 60; $attempt++) {
-            $build = gh api "repos/$env:GITHUB_REPOSITORY/pages/builds/latest" | ConvertFrom-Json
-            if ($build.status -eq 'errored' -and $build.commit -eq $expectedPagesCommit) {
-              throw "GitHub Pages failed to deploy $expectedPagesCommit."
-            }
-            if ($build.status -eq 'built' -and $build.commit -eq $expectedPagesCommit) {
-              $deployed = $true
-              break
-            }
-            Start-Sleep -Seconds 15
-          }
-          if (-not $deployed) { throw "GitHub Pages did not deploy $expectedPagesCommit within 15 minutes." }
-
-          $verified = $false
-          for ($attempt = 1; $attempt -le 8; $attempt++) {
-            node .\tools\check-oktv-system-health.mjs `
-              --baseUrl "https://sylong7708.github.io/TV" `
-              --output .\oktv-system-health.json `
-              --probeApis true `
-              --failOnDegraded false
-            $health = Get-Content -LiteralPath .\oktv-system-health.json -Raw -Encoding UTF8 | ConvertFrom-Json
-            if ($health.checks.coreFiles -and $health.checks.pageShell -and $health.checks.catalogStructure -and
-                $health.checks.latestFeed -and $health.checks.sourceIndexes) {
-              $verified = $true
-              break
-            }
-            Start-Sleep -Seconds 30
-          }
-          if (-not $verified) { throw "Public VOD deployment did not become healthy within the verification window." }
-          Get-Content -LiteralPath .\oktv-system-health.json -Raw -Encoding UTF8 | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Encoding UTF8
+  deploy:
+    needs: update
+    if: needs.update.outputs.should_run == 'true'
+    uses: ./.github/workflows/deploy-oktv-pages.yml

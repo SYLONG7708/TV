@@ -21,6 +21,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: oktv-data-publish-${{ github.ref }}
@@ -29,7 +31,7 @@ concurrency:
 jobs:
   update:
     runs-on: windows-latest
-    timeout-minutes: 25
+    timeout-minutes: 65
     steps:
       - name: Checkout
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
@@ -230,27 +232,6 @@ jobs:
             -RunAttempt "${{ github.run_attempt }}"
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      - name: Verify GitHub Pages live deployment
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: pwsh
-        run: |
-          $expectedPagesCommit = ((git ls-remote origin refs/heads/gh-pages) -split '\s+')[0]
-          if ($expectedPagesCommit -notmatch '^[0-9a-f]{40,64}$') { throw "Unable to resolve the published gh-pages commit." }
-          $deployed = $false
-          for ($attempt = 1; $attempt -le 60; $attempt++) {
-            $build = gh api "repos/$env:GITHUB_REPOSITORY/pages/builds/latest" | ConvertFrom-Json
-            if ($build.status -eq 'errored' -and $build.commit -eq $expectedPagesCommit) {
-              throw "GitHub Pages failed to deploy $expectedPagesCommit."
-            }
-            if ($build.status -eq 'built' -and $build.commit -eq $expectedPagesCommit) {
-              $deployed = $true
-              break
-            }
-            Start-Sleep -Seconds 15
-          }
-          if (-not $deployed) { throw "GitHub Pages did not deploy $expectedPagesCommit within 15 minutes." }
-          $live = Invoke-RestMethod -Uri "https://sylong7708.github.io/TV/docs/data/live-channels.json?verify=$([DateTimeOffset]::UtcNow.ToUnixTimeSeconds())" -TimeoutSec 30
-          $channels = @($live.channels)
-          if ($channels.Count -lt 10) { throw "Published live channel count is too low: $($channels.Count)." }
-          Write-Host "Verified $($channels.Count) published live channels at $expectedPagesCommit."
+  deploy:
+    needs: update
+    uses: ./.github/workflows/deploy-oktv-pages.yml
