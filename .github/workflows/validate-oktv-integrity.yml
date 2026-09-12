@@ -1,0 +1,96 @@
+name: Validate OKTV integrity
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/*.yml"
+      - "docs/iphone/**"
+      - "docs/data/iphone-vod-catalog.json"
+      - "sources/title-aliases.json"
+      - "tests/**"
+      - "tools/*.mjs"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/*.yml"
+      - "docs/iphone/**"
+      - "docs/data/iphone-vod-catalog.json"
+      - "sources/title-aliases.json"
+      - "tests/**"
+      - "tools/*.mjs"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oktv-integrity-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout validation scope
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .gitattributes
+            .github/workflows/*.yml
+            docs/iphone/index.html
+            docs/data/iphone-vod-catalog.json
+            /sources/title-aliases.json
+            tests/*
+            tools/*.mjs
+
+      - name: Run regression tests
+        shell: bash
+        run: node --test tests/*.test.mjs
+
+      - name: Validate scripts and CSP
+        shell: bash
+        run: |
+          node --check tools/guard-vod-catalog-coverage.mjs
+          node --check tools/build-pages-public-catalog.mjs
+          node --check tools/build-iphone-vod-latest.mjs
+          node --check tools/check-public-freshness.mjs
+          node --check tools/check-oktv-system-health.mjs
+          node --check tools/stable-gzip-json.mjs
+          node --check tools/update-iphone-csp.mjs
+          node tools/update-iphone-csp.mjs --check
+
+      - name: Run PowerShell integration tests
+        shell: pwsh
+        run: |
+          & .\tests\push-commit-with-recovery.integration.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & .\tests\publish-gh-pages-batched.integration.ps1
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Verify catalog floor and totals
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const catalog = JSON.parse(fs.readFileSync('docs/data/iphone-vod-catalog.json', 'utf8'));
+          const sources = Array.isArray(catalog.sources) ? catalog.sources : [];
+          const items = sources.reduce((sum, source) => sum + Number(source.itemCount || 0), 0);
+          const playableItems = sources.reduce((sum, source) => sum + Number(source.playableCount || 0), 0);
+          if (sources.length < 1) throw new Error('Catalog has no sources.');
+          if (items < 1_000_000 || playableItems < 1_000_000) {
+            throw new Error(`Catalog floor failed: ${items} items, ${playableItems} playable.`);
+          }
+          if (Number(catalog.totals?.items || 0) !== items) {
+            throw new Error(`Catalog item total mismatch: declared ${catalog.totals?.items}, summed ${items}.`);
+          }
+          if (Number(catalog.totals?.playableItems || 0) !== playableItems) {
+            throw new Error(
+              `Catalog playable total mismatch: declared ${catalog.totals?.playableItems}, summed ${playableItems}.`,
+            );
+          }
+          console.log(JSON.stringify({ sources: sources.length, items, playableItems }));
+          NODE

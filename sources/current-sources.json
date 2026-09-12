@@ -1,0 +1,52 @@
+{
+    "app":  "影視",
+    "versionName":  "5.1.6",
+    "versionCode":  516,
+    "icon":  "branding/icon-tech-20260528.png",
+    "privateLivePassword":  "7708",
+    "vod":  {
+                "name":  "點播",
+                "type":  0,
+                "url":  "https://raw.githubusercontent.com/SYLONG7708/TV/refs/heads/main/sources/TVBOX",
+                "compareUrl":  "https://raw.githubusercontent.com/SYLONG7708/TV/refs/heads/main/sources/TVBOX",
+                "autoRefresh":  "APK 與 iPhone 網頁點播源固定讀取本 repo 的 sources/TVBOX；TVBOX 由 tools/build-tvbox-config.mjs 從 All on-demand sources 產生，成人 18+ 來源與分類由工具自動檢測。"
+            },
+    "vodCandidate":  {
+                         "name":  "LunaTV 點播候選源",
+                         "type":  0,
+                         "url":  "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-jin18-oktv.json",
+                         "report":  "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-jin18-report.json",
+                         "status":  "review_required",
+                         "note":  "已驗活與去重，但內容授權需人工確認後才可設為預設播放源。"
+                     },
+    "vodFullCandidate":  {
+                             "name":  "TVBOX 全量點播源",
+                             "type":  0,
+                             "url":  "https://raw.githubusercontent.com/SYLONG7708/TV/refs/heads/main/sources/TVBOX",
+                             "report":  "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/All%20on-demand%20sources-report.json",
+                             "analysis":  "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-full-analysis.csv",
+                             "status":  "enabled",
+                             "note":  "影視 OKTV 與 iPhone 影視 OKTV 使用 sources/TVBOX；成人 18+ 來源保留獨立分類。"
+                         },
+    "vodAdult18Sorted":  {
+                             "name":  "LunaTV 成人 18+ 分類排序資源區",
+                             "type":  0,
+                             "url":  "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-adult18-sorted-oktv.json",
+                             "report":  "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-adult18-sorted-report.json",
+                             "analysis":  "https://raw.githubusercontent.com/SYLONG7708/TV/main/sources/vod-lunatv-adult18-sorted-analysis.csv",
+                             "status":  "adult_review_required",
+                             "note":  "成人 18+ 來源已依類別排序，僅作審核候選與技術檢測，不覆蓋預設點播。"
+                         },
+    "live":  {
+                 "name":  "直播",
+                 "type":  1,
+                 "url":  "https://raw.githubusercontent.com/SYLONG7708/TV/refs/heads/main/sources/live-stable.txt",
+                 "saveLocation":  "APK 預設值寫在 classes.dex 的 com.fongmi.android.tv.bean.Config.live()；使用者在 App 設定畫面修改後，會保存到 Android App 私有資料庫。repo 內保存位置為 sources/current-sources.json 的 live.url。"
+             },
+    "youtubeLive":  {
+                        "channelCsv":  "sources/youtube-live-channels.csv",
+                        "generatedSource":  "sources/live-youtube-stable.txt",
+                        "report":  "sources/live-youtube-report.json",
+                        "autoRefresh":  "GitHub Actions 推送後與每 2 小時刷新一次公開 YouTube 直播短效 URL"
+                    }
+}
