@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-09-12T06:26:36.306Z",
+  "checkedAt": "2026-09-12T12:27:56.988Z",
   "inputs": {
     "catalogPath": "D:\\a\\TV\\TV\\docs\\data\\iphone-vod-catalog.json",
     "livePath": "D:\\a\\TV\\TV\\docs\\data\\live-channels.json"
@@ -7,8 +7,8 @@
   "summary": {
     "sources": {
       "total": 78,
-      "ok": 72,
-      "failed": 6
+      "ok": 71,
+      "failed": 7
     },
     "posters": {
       "total": 0,
@@ -24,11 +24,24 @@
       "ok": 110,
       "failed": 0,
       "qualityOk": 110,
-      "probeReliable": true,
-      "ignoredFailures": 0
+      "probeReliable": false,
+      "ignoredFailures": 110
     }
   },
   "failed": [
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-豆豆资源-https-api-douapi-cc-api-php-provide-vod-55",
+      "name": "豆豆资源｜追劇",
+      "type": 1,
+      "url": "https://api.douapi.cc/api.php/provide/vod/",
+      "indexed": true,
+      "adult": true,
+      "ok": false,
+      "status": 0,
+      "elapsedMs": 298,
+      "error": "fetch failed"
+    },
     {
       "kind": "source",
       "id": "tvbox-细胞资源-https-www-xxibaozyw-com-api-php-provide-vod-59",
@@ -39,7 +52,7 @@
       "adult": true,
       "ok": false,
       "status": 500,
-      "elapsedMs": 524,
+      "elapsedMs": 350,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -52,7 +65,7 @@
       "adult": true,
       "ok": false,
       "status": 500,
-      "elapsedMs": 270,
+      "elapsedMs": 204,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -65,7 +78,7 @@
       "adult": true,
       "ok": false,
       "status": 200,
-      "elapsedMs": 430,
+      "elapsedMs": 406,
       "error": "XML source did not return an XML list"
     },
     {
@@ -78,7 +91,7 @@
       "adult": true,
       "ok": false,
       "status": 502,
-      "elapsedMs": 435,
+      "elapsedMs": 382,
       "error": "Unexpected token '<', \"<html>\r\n<h\"... is not valid JSON"
     },
     {
@@ -91,7 +104,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 120,
+      "elapsedMs": 163,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -104,7 +117,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 2533,
+      "elapsedMs": 2434,
       "error": "fetch failed"
     }
   ],
@@ -119,7 +132,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 587,
+      "elapsedMs": 1058,
       "error": ""
     },
     {
@@ -132,7 +145,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 282,
+      "elapsedMs": 230,
       "error": ""
     },
     {
@@ -145,7 +158,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1458,
+      "elapsedMs": 1043,
       "error": ""
     },
     {
@@ -158,7 +171,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 959,
+      "elapsedMs": 1010,
       "error": ""
     },
     {
@@ -171,7 +184,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1199,
+      "elapsedMs": 351,
       "error": ""
     },
     {
@@ -184,7 +197,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1105,
+      "elapsedMs": 1576,
       "error": ""
     },
     {
@@ -197,7 +210,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 784,
+      "elapsedMs": 816,
       "error": ""
     },
     {
@@ -210,7 +223,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 639,
+      "elapsedMs": 731,
       "error": ""
     },
     {
@@ -223,7 +236,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1008,
+      "elapsedMs": 985,
       "error": ""
     },
     {
@@ -236,7 +249,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 207,
+      "elapsedMs": 618,
       "error": ""
     },
     {
@@ -249,7 +262,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 338,
+      "elapsedMs": 236,
       "error": ""
     },
     {
@@ -262,7 +275,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 341,
+      "elapsedMs": 240,
       "error": ""
     },
     {
@@ -275,7 +288,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 732,
+      "elapsedMs": 601,
       "error": ""
     },
     {
@@ -288,7 +301,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 573,
+      "elapsedMs": 470,
       "error": ""
     },
     {
@@ -301,7 +314,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 511,
+      "elapsedMs": 220,
       "error": ""
     },
     {
@@ -314,7 +327,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 149,
+      "elapsedMs": 210,
       "error": ""
     },
     {
@@ -327,7 +340,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 190,
+      "elapsedMs": 237,
       "error": ""
     },
     {
@@ -340,7 +353,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 604,
+      "elapsedMs": 776,
       "error": ""
     },
     {
@@ -353,7 +366,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 632,
+      "elapsedMs": 417,
       "error": ""
     },
     {
@@ -366,7 +379,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 434,
+      "elapsedMs": 349,
       "error": ""
     },
     {
@@ -379,7 +392,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 426,
+      "elapsedMs": 382,
       "error": ""
     },
     {
@@ -392,7 +405,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 415,
+      "elapsedMs": 448,
       "error": ""
     },
     {
@@ -405,7 +418,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 592,
+      "elapsedMs": 601,
       "error": ""
     },
     {
@@ -418,7 +431,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1355,
+      "elapsedMs": 1334,
       "error": ""
     },
     {
@@ -431,7 +444,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 232,
+      "elapsedMs": 141,
       "error": ""
     },
     {
@@ -444,7 +457,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 273,
+      "elapsedMs": 255,
       "error": ""
     },
     {
@@ -457,7 +470,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 284,
+      "elapsedMs": 267,
       "error": ""
     },
     {
@@ -470,7 +483,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 742,
+      "elapsedMs": 649,
       "error": ""
     },
     {
@@ -483,7 +496,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 707,
+      "elapsedMs": 533,
       "error": ""
     },
     {
@@ -496,7 +509,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 282,
+      "elapsedMs": 311,
       "error": ""
     },
     {
@@ -509,7 +522,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 125,
+      "elapsedMs": 151,
       "error": ""
     },
     {
@@ -522,7 +535,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 293,
+      "elapsedMs": 252,
       "error": ""
     },
     {
@@ -535,7 +548,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 249,
+      "elapsedMs": 286,
       "error": ""
     },
     {
@@ -548,7 +561,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 490,
+      "elapsedMs": 447,
       "error": ""
     },
     {
@@ -561,7 +574,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 676,
+      "elapsedMs": 484,
       "error": ""
     },
     {
@@ -574,7 +587,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 238,
+      "elapsedMs": 251,
       "error": ""
     },
     {
@@ -587,7 +600,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 639,
+      "elapsedMs": 534,
       "error": ""
     },
     {
@@ -600,7 +613,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 345,
+      "elapsedMs": 280,
       "error": ""
     },
     {
@@ -613,7 +626,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 368,
+      "elapsedMs": 285,
       "error": ""
     },
     {
@@ -626,7 +639,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 150,
+      "elapsedMs": 164,
       "error": ""
     },
     {
@@ -639,7 +652,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 486,
+      "elapsedMs": 455,
       "error": ""
     },
     {
@@ -652,7 +665,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 224,
+      "elapsedMs": 169,
       "error": ""
     },
     {
@@ -665,7 +678,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 973,
+      "elapsedMs": 848,
       "error": ""
     },
     {
@@ -678,7 +691,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 222,
+      "elapsedMs": 705,
       "error": ""
     },
     {
@@ -691,7 +704,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 438,
+      "elapsedMs": 329,
       "error": ""
     },
     {
@@ -702,10 +715,10 @@
       "url": "https://api.douapi.cc/api.php/provide/vod/",
       "indexed": true,
       "adult": true,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 213,
-      "error": ""
+      "ok": false,
+      "status": 0,
+      "elapsedMs": 298,
+      "error": "fetch failed"
     },
     {
       "kind": "source",
@@ -717,7 +730,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 244,
+      "elapsedMs": 291,
       "error": ""
     },
     {
@@ -730,7 +743,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 838,
+      "elapsedMs": 943,
       "error": ""
     },
     {
@@ -743,7 +756,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 273,
+      "elapsedMs": 246,
       "error": ""
     },
     {
@@ -756,7 +769,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 321,
+      "elapsedMs": 257,
       "error": ""
     },
     {
@@ -769,7 +782,7 @@
       "adult": true,
       "ok": false,
       "status": 500,
-      "elapsedMs": 524,
+      "elapsedMs": 350,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -782,7 +795,7 @@
       "adult": true,
       "ok": false,
       "status": 500,
-      "elapsedMs": 270,
+      "elapsedMs": 204,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -808,7 +821,7 @@
       "adult": true,
       "ok": false,
       "status": 200,
-      "elapsedMs": 430,
+      "elapsedMs": 406,
       "error": "XML source did not return an XML list"
     },
     {
@@ -821,7 +834,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 370,
+      "elapsedMs": 368,
       "error": ""
     },
     {
@@ -834,7 +847,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 7177,
+      "elapsedMs": 7369,
       "error": ""
     },
     {
@@ -847,7 +860,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 265,
+      "elapsedMs": 257,
       "error": ""
     },
     {
@@ -860,7 +873,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 277,
+      "elapsedMs": 263,
       "error": ""
     },
     {
@@ -873,7 +886,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 152,
+      "elapsedMs": 87,
       "error": ""
     },
     {
@@ -886,7 +899,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 399,
+      "elapsedMs": 359,
       "error": ""
     },
     {
@@ -899,7 +912,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1218,
+      "elapsedMs": 1150,
       "error": ""
     },
     {
@@ -912,7 +925,7 @@
       "adult": false,
       "ok": true,
       "status": 206,
-      "elapsedMs": 192,
+      "elapsedMs": 316,
       "error": ""
     },
     {
@@ -925,7 +938,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1035,
+      "elapsedMs": 635,
       "error": ""
     },
     {
@@ -938,7 +951,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 524,
+      "elapsedMs": 507,
       "error": ""
     },
     {
@@ -951,7 +964,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 436,
+      "elapsedMs": 443,
       "error": ""
     },
     {
@@ -964,7 +977,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1037,
+      "elapsedMs": 1141,
       "error": ""
     },
     {
@@ -977,7 +990,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 665,
+      "elapsedMs": 437,
       "error": ""
     },
     {
@@ -990,7 +1003,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 703,
+      "elapsedMs": 427,
       "error": ""
     },
     {
@@ -1003,7 +1016,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 344,
+      "elapsedMs": 284,
       "error": ""
     },
     {
@@ -1016,7 +1029,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 250,
+      "elapsedMs": 160,
       "error": ""
     },
     {
@@ -1029,7 +1042,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 302,
+      "elapsedMs": 298,
       "error": ""
     },
     {
@@ -1042,7 +1055,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 369,
+      "elapsedMs": 255,
       "error": ""
     },
     {
@@ -1055,7 +1068,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 696,
+      "elapsedMs": 662,
       "error": ""
     },
     {
@@ -1068,7 +1081,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 988,
+      "elapsedMs": 1445,
       "error": ""
     },
     {
@@ -1081,7 +1094,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 2788,
+      "elapsedMs": 1856,
       "error": ""
     },
     {
@@ -1094,7 +1107,7 @@
       "adult": true,
       "ok": false,
       "status": 502,
-      "elapsedMs": 435,
+      "elapsedMs": 382,
       "error": "Unexpected token '<', \"<html>\r\n<h\"... is not valid JSON"
     },
     {
@@ -1107,7 +1120,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 120,
+      "elapsedMs": 163,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -1120,7 +1133,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 2533,
+      "elapsedMs": 2434,
       "error": "fetch failed"
     },
     {
@@ -1130,14 +1143,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=pF507BLtbqU",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 234,
+      "status": 429,
+      "elapsedMs": 369,
       "error": ""
     },
     {
@@ -1147,14 +1160,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=Ej3LQM_lTEw",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 260,
+      "status": 429,
+      "elapsedMs": 555,
       "error": ""
     },
     {
@@ -1164,14 +1177,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=1I2iq41Akmo",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 239,
+      "status": 429,
+      "elapsedMs": 404,
       "error": ""
     },
     {
@@ -1181,14 +1194,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=dlTbFSt2spc",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 228,
+      "status": 429,
+      "elapsedMs": 326,
       "error": ""
     },
     {
@@ -1198,14 +1211,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=TCnaIE_SAtM",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 265,
+      "status": 429,
+      "elapsedMs": 339,
       "error": ""
     },
     {
@@ -1215,14 +1228,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=ylYJSBUgaMA",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 223,
+      "status": 429,
+      "elapsedMs": 349,
       "error": ""
     },
     {
@@ -1232,14 +1245,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=sNtCBxP-8LY",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 289,
+      "status": 429,
+      "elapsedMs": 383,
       "error": ""
     },
     {
@@ -1249,14 +1262,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=QsGswQvRmtU",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 248,
+      "status": 429,
+      "elapsedMs": 421,
       "error": ""
     },
     {
@@ -1266,14 +1279,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=m_dhMSvUCIc",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 227,
+      "status": 429,
+      "elapsedMs": 468,
       "error": ""
     },
     {
@@ -1283,14 +1296,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=vr3XyVCR4T0",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 248,
+      "status": 429,
+      "elapsedMs": 452,
       "error": ""
     },
     {
@@ -1300,14 +1313,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=fN9uYWCjQaw",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 239,
+      "status": 429,
+      "elapsedMs": 479,
       "error": ""
     },
     {
@@ -1317,14 +1330,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=Bhp_V7H5QoY",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 232,
+      "status": 429,
+      "elapsedMs": 415,
       "error": ""
     },
     {
@@ -1334,14 +1347,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=5n0y6b0Q25o",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 171,
+      "status": 429,
+      "elapsedMs": 355,
       "error": ""
     },
     {
@@ -1351,14 +1364,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=jMGAopbbmEE",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 119,
+      "status": 429,
+      "elapsedMs": 544,
       "error": ""
     },
     {
@@ -1368,14 +1381,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=72d-gkakiek",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 257,
+      "status": 429,
+      "elapsedMs": 427,
       "error": ""
     },
     {
@@ -1385,14 +1398,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=yAUQQ0DhPxI",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 127,
+      "status": 429,
+      "elapsedMs": 427,
       "error": ""
     },
     {
@@ -1402,14 +1415,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=RRybv1kEnCU",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 161,
+      "status": 429,
+      "elapsedMs": 247,
       "error": ""
     },
     {
@@ -1419,14 +1432,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=quwqlazU-c8",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 125,
+      "status": 429,
+      "elapsedMs": 285,
       "error": ""
     },
     {
@@ -1436,14 +1449,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=wM0g8EoUZ_E",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 124,
+      "status": 429,
+      "elapsedMs": 493,
       "error": ""
     },
     {
@@ -1453,14 +1466,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=meHTKm4XBS8",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 165,
+      "status": 429,
+      "elapsedMs": 464,
       "error": ""
     },
     {
@@ -1470,14 +1483,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=V1p33hqPrUk",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 127,
+      "status": 429,
+      "elapsedMs": 254,
       "error": ""
     },
     {
@@ -1487,14 +1500,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=C6gYqSHLRw4",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 118,
+      "status": 429,
+      "elapsedMs": 467,
       "error": ""
     },
     {
@@ -1504,14 +1517,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=XWq5kBlakcQ",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 115,
+      "status": 429,
+      "elapsedMs": 348,
       "error": ""
     },
     {
@@ -1521,14 +1534,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=6ZowCmLBcMY",
       "group": "YouTube新聞台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 120,
+      "status": 429,
+      "elapsedMs": 371,
       "error": ""
     },
     {
@@ -1538,14 +1551,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=_pZQ1Lk0xMA",
       "group": "YouTube購物台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 111,
+      "status": 429,
+      "elapsedMs": 386,
       "error": ""
     },
     {
@@ -1555,14 +1568,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=xbNWkUyxQGM",
       "group": "YouTube購物台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 116,
+      "status": 429,
+      "elapsedMs": 464,
       "error": ""
     },
     {
@@ -1572,14 +1585,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=2IGZjBPTPT8",
       "group": "YouTube購物台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 110,
+      "status": 429,
+      "elapsedMs": 505,
       "error": ""
     },
     {
@@ -1589,14 +1602,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=tUvQg2HgIbs",
       "group": "YouTube購物台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 136,
+      "status": 429,
+      "elapsedMs": 488,
       "error": ""
     },
     {
@@ -1606,14 +1619,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=vZHktiRowRg",
       "group": "YouTube購物台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 104,
+      "status": 429,
+      "elapsedMs": 449,
       "error": ""
     },
     {
@@ -1623,14 +1636,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=J3t9N0vciPI",
       "group": "YouTube購物台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 125,
+      "status": 429,
+      "elapsedMs": 430,
       "error": ""
     },
     {
@@ -1640,14 +1653,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=8TBJDKRcg6c",
       "group": "YouTube購物台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 129,
+      "status": 429,
+      "elapsedMs": 527,
       "error": ""
     },
     {
@@ -1657,14 +1670,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=MHoyggBaFW4",
       "group": "YouTube購物台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 127,
+      "status": 429,
+      "elapsedMs": 394,
       "error": ""
     },
     {
@@ -1674,14 +1687,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=3MakY86sYn8",
       "group": "YouTube綜合娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 166,
+      "status": 429,
+      "elapsedMs": 372,
       "error": ""
     },
     {
@@ -1691,14 +1704,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=fdHutVy5SUM",
       "group": "YouTube綜合娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 117,
+      "status": 429,
+      "elapsedMs": 474,
       "error": ""
     },
     {
@@ -1708,14 +1721,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=0ePhPlTJbGo",
       "group": "YouTube綜合娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 120,
+      "status": 429,
+      "elapsedMs": 418,
       "error": ""
     },
     {
@@ -1725,14 +1738,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=ADDSmXoPDY8",
       "group": "YouTube綜合娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 138,
+      "status": 429,
+      "elapsedMs": 360,
       "error": ""
     },
     {
@@ -1742,14 +1755,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=6LNCDdQpv-w",
       "group": "YouTube綜合娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 127,
+      "status": 429,
+      "elapsedMs": 437,
       "error": ""
     },
     {
@@ -1759,14 +1772,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=Kc5OXLZ9NEw",
       "group": "YouTube綜合娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 123,
+      "status": 429,
+      "elapsedMs": 301,
       "error": ""
     },
     {
@@ -1776,14 +1789,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=v8MUGB4vst8",
       "group": "YouTube綜合娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 124,
+      "status": 429,
+      "elapsedMs": 325,
       "error": ""
     },
     {
@@ -1793,14 +1806,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=6UQA6Qp0Bks",
       "group": "YouTube綜合娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 98,
+      "status": 429,
+      "elapsedMs": 323,
       "error": ""
     },
     {
@@ -1810,14 +1823,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=NyrdWXddfR4",
       "group": "YouTube綜合娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 130,
+      "status": 429,
+      "elapsedMs": 264,
       "error": ""
     },
     {
@@ -1827,14 +1840,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=ipqTkEH3mhE",
       "group": "YouTube綜合娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 109,
+      "status": 429,
+      "elapsedMs": 516,
       "error": ""
     },
     {
@@ -1844,14 +1857,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=cimbpAZUjzw",
       "group": "YouTube綜合娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 120,
+      "status": 429,
+      "elapsedMs": 273,
       "error": ""
     },
     {
@@ -1861,14 +1874,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=RvSOIM620bA",
       "group": "YouTube綜合娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 129,
+      "status": 429,
+      "elapsedMs": 529,
       "error": ""
     },
     {
@@ -1878,14 +1891,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=LuKwFajn37U",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 121,
+      "status": 429,
+      "elapsedMs": 333,
       "error": ""
     },
     {
@@ -1895,14 +1908,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=N8xxOD0nT1Y",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 176,
+      "status": 429,
+      "elapsedMs": 259,
       "error": ""
     },
     {
@@ -1912,14 +1925,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=IkKbZ_TC9Tc",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 125,
+      "status": 429,
+      "elapsedMs": 391,
       "error": ""
     },
     {
@@ -1929,14 +1942,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=vNVp6bxkL1c",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 135,
+      "status": 429,
+      "elapsedMs": 526,
       "error": ""
     },
     {
@@ -1946,14 +1959,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=s4KIyYkwiM0",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 137,
+      "status": 429,
+      "elapsedMs": 298,
       "error": ""
     },
     {
@@ -1963,14 +1976,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=grQjlyyQsn4",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 124,
+      "status": 429,
+      "elapsedMs": 257,
       "error": ""
     },
     {
@@ -1980,14 +1993,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=paEJskVBz_M",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 111,
+      "status": 429,
+      "elapsedMs": 383,
       "error": ""
     },
     {
@@ -1997,14 +2010,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=pykpO5kQJ98",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 104,
+      "status": 429,
+      "elapsedMs": 480,
       "error": ""
     },
     {
@@ -2014,14 +2027,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=HvZt-nh9sGg",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 138,
+      "status": 429,
+      "elapsedMs": 449,
       "error": ""
     },
     {
@@ -2031,14 +2044,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=fDYFTkFJtdM",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 133,
+      "status": 429,
+      "elapsedMs": 311,
       "error": ""
     },
     {
@@ -2048,14 +2061,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=gCNeDWCI0vo",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 104,
+      "status": 429,
+      "elapsedMs": 271,
       "error": ""
     },
     {
@@ -2065,14 +2078,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=LLWrwAKROfY",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 111,
+      "status": 429,
+      "elapsedMs": 336,
       "error": ""
     },
     {
@@ -2082,14 +2095,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=9fTzGUvzjQw",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 143,
+      "status": 429,
+      "elapsedMs": 243,
       "error": ""
     },
     {
@@ -2099,14 +2112,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=EMNH8Gg8BzM",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 135,
+      "status": 429,
+      "elapsedMs": 499,
       "error": ""
     },
     {
@@ -2116,14 +2129,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=Vrs-AeKZIEg",
       "group": "YouTube國際新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 125,
+      "status": 429,
+      "elapsedMs": 371,
       "error": ""
     },
     {
@@ -2133,14 +2146,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=vpZ5af6irzA",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 114,
+      "status": 429,
+      "elapsedMs": 457,
       "error": ""
     },
     {
@@ -2150,14 +2163,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=s0LLVQeMmtU",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 115,
+      "status": 429,
+      "elapsedMs": 365,
       "error": ""
     },
     {
@@ -2167,14 +2180,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=D1uFPfCvtRI",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 118,
+      "status": 429,
+      "elapsedMs": 526,
       "error": ""
     },
     {
@@ -2184,14 +2197,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=mkVyNaGee8A",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 111,
+      "status": 429,
+      "elapsedMs": 488,
       "error": ""
     },
     {
@@ -2201,14 +2214,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=Y9lhb97xlhY",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 131,
+      "status": 429,
+      "elapsedMs": 530,
       "error": ""
     },
     {
@@ -2218,14 +2231,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=o6OP0iB5zvE",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 123,
+      "status": 429,
+      "elapsedMs": 418,
       "error": ""
     },
     {
@@ -2235,14 +2248,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=-8d8-c0yvyU",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 167,
+      "status": 429,
+      "elapsedMs": 309,
       "error": ""
     },
     {
@@ -2252,14 +2265,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=d8Rm7OKE9mA",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 114,
+      "status": 429,
+      "elapsedMs": 538,
       "error": ""
     },
     {
@@ -2269,14 +2282,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=hGs-nKaNc88",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 138,
+      "status": 429,
+      "elapsedMs": 520,
       "error": ""
     },
     {
@@ -2286,14 +2299,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=1wECsnGZcfc",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 128,
+      "status": 429,
+      "elapsedMs": 483,
       "error": ""
     },
     {
@@ -2303,14 +2316,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=CJVBX7KI5nU",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 130,
+      "status": 429,
+      "elapsedMs": 385,
       "error": ""
     },
     {
@@ -2320,14 +2333,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=tvgbZZYS4Nk",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 136,
+      "status": 429,
+      "elapsedMs": 521,
       "error": ""
     },
     {
@@ -2337,14 +2350,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=p5W8X3vziJ8",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 136,
+      "status": 429,
+      "elapsedMs": 484,
       "error": ""
     },
     {
@@ -2354,14 +2367,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=XGSEjlkjK8o",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 117,
+      "status": 429,
+      "elapsedMs": 321,
       "error": ""
     },
     {
@@ -2371,14 +2384,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=6lrvdOedqgk",
       "group": "YouTube亞洲新聞",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 110,
+      "status": 429,
+      "elapsedMs": 317,
       "error": ""
     },
     {
@@ -2388,14 +2401,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=8FHerid3vag",
       "group": "YouTube兒童動畫",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 123,
+      "status": 429,
+      "elapsedMs": 456,
       "error": ""
     },
     {
@@ -2405,14 +2418,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=Lh6xiMlkRrg",
       "group": "YouTube兒童動畫",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 124,
+      "status": 429,
+      "elapsedMs": 348,
       "error": ""
     },
     {
@@ -2422,14 +2435,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=KbG88GiZmBI",
       "group": "YouTube兒童動畫",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 126,
+      "status": 429,
+      "elapsedMs": 437,
       "error": ""
     },
     {
@@ -2439,14 +2452,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=MxK0SaEVQFs",
       "group": "YouTube兒童動畫",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 132,
+      "status": 429,
+      "elapsedMs": 520,
       "error": ""
     },
     {
@@ -2456,14 +2469,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=2wqCOO4gAUs",
       "group": "YouTube兒童動畫",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 144,
+      "status": 429,
+      "elapsedMs": 457,
       "error": ""
     },
     {
@@ -2473,14 +2486,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=FxmuSm_wgng",
       "group": "YouTube兒童動畫",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 146,
+      "status": 429,
+      "elapsedMs": 303,
       "error": ""
     },
     {
@@ -2490,14 +2503,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=NU-7Xmj514E",
       "group": "YouTube兒童動畫",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 114,
+      "status": 429,
+      "elapsedMs": 534,
       "error": ""
     },
     {
@@ -2507,14 +2520,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=wgFPP9dRO-w",
       "group": "YouTube兒童動畫",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 130,
+      "status": 429,
+      "elapsedMs": 338,
       "error": ""
     },
     {
@@ -2524,14 +2537,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=k7iNXiw1zL4",
       "group": "YouTube兒童動畫",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 112,
+      "status": 429,
+      "elapsedMs": 518,
       "error": ""
     },
     {
@@ -2541,14 +2554,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=pcPhqxOUv8A",
       "group": "YouTube文化紀實",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 115,
+      "status": 429,
+      "elapsedMs": 246,
       "error": ""
     },
     {
@@ -2558,14 +2571,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=pM-1ytfQhos",
       "group": "YouTube文化紀實",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 117,
+      "status": 429,
+      "elapsedMs": 270,
       "error": ""
     },
     {
@@ -2575,14 +2588,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=DxvKbRgUXc8",
       "group": "YouTube文化紀實",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 127,
+      "status": 429,
+      "elapsedMs": 369,
       "error": ""
     },
     {
@@ -2592,14 +2605,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=QDxRJP-wfeI",
       "group": "YouTube文化紀實",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 118,
+      "status": 429,
+      "elapsedMs": 487,
       "error": ""
     },
     {
@@ -2609,14 +2622,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=UQnVkK1kcDI",
       "group": "YouTube文化紀實",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 119,
+      "status": 429,
+      "elapsedMs": 277,
       "error": ""
     },
     {
@@ -2626,14 +2639,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=kyjN8rvSnio",
       "group": "YouTube文化紀實",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 137,
+      "status": 429,
+      "elapsedMs": 280,
       "error": ""
     },
     {
@@ -2643,14 +2656,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=JVocS7Yftw8",
       "group": "YouTube音樂體育風景",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 120,
+      "status": 429,
+      "elapsedMs": 480,
       "error": ""
     },
     {
@@ -2660,14 +2673,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=qGohtGC5Rtk",
       "group": "YouTube音樂體育風景",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 104,
+      "status": 429,
+      "elapsedMs": 356,
       "error": ""
     },
     {
@@ -2677,14 +2690,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=r1K7DyQn3jg",
       "group": "YouTube音樂體育風景",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 139,
+      "status": 429,
+      "elapsedMs": 385,
       "error": ""
     },
     {
@@ -2694,14 +2707,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=wKiClrFLjZs",
       "group": "YouTube音樂體育風景",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 125,
+      "status": 429,
+      "elapsedMs": 383,
       "error": ""
     },
     {
@@ -2711,14 +2724,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=lDcWeklf6DI",
       "group": "YouTube韓綜娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 113,
+      "status": 429,
+      "elapsedMs": 454,
       "error": ""
     },
     {
@@ -2728,14 +2741,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=6TsaEYaKueE",
       "group": "YouTube台灣節目",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 118,
+      "status": 429,
+      "elapsedMs": 246,
       "error": ""
     },
     {
@@ -2745,14 +2758,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=Sa0UpjTdJT4",
       "group": "YouTube互動娛樂",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 108,
+      "status": 429,
+      "elapsedMs": 334,
       "error": ""
     },
     {
@@ -2762,14 +2775,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=4FBW3mkdKOs",
       "group": "YouTube動漫台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 128,
+      "status": 429,
+      "elapsedMs": 258,
       "error": ""
     },
     {
@@ -2779,14 +2792,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=PxAQgmdBgug",
       "group": "YouTube動漫台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 127,
+      "status": 429,
+      "elapsedMs": 417,
       "error": ""
     },
     {
@@ -2796,14 +2809,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=fK1M3oM7ZPQ",
       "group": "YouTube動漫台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 115,
+      "status": 429,
+      "elapsedMs": 290,
       "error": ""
     },
     {
@@ -2813,14 +2826,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=YrUJXdCamNs",
       "group": "YouTube動漫台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 122,
+      "status": 429,
+      "elapsedMs": 248,
       "error": ""
     },
     {
@@ -2830,14 +2843,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=mRCXonM5ru8",
       "group": "YouTube動漫台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 120,
+      "status": 429,
+      "elapsedMs": 503,
       "error": ""
     },
     {
@@ -2847,14 +2860,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=e1gbvCkwxFE",
       "group": "YouTube動漫台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 116,
+      "status": 429,
+      "elapsedMs": 298,
       "error": ""
     },
     {
@@ -2864,14 +2877,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=gnDok9gtopw",
       "group": "YouTube動漫台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 102,
+      "status": 429,
+      "elapsedMs": 322,
       "error": ""
     },
     {
@@ -2881,14 +2894,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=ENnjj7jQ23g",
       "group": "YouTube動漫台",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 129,
+      "status": 429,
+      "elapsedMs": 489,
       "error": ""
     },
     {
@@ -2898,14 +2911,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=1z_V6alJa2U",
       "group": "YouTube電影劇集",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 119,
+      "status": 429,
+      "elapsedMs": 314,
       "error": ""
     },
     {
@@ -2915,14 +2928,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=Y0vqwbt0A0w",
       "group": "YouTube電影劇集",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 159,
+      "status": 429,
+      "elapsedMs": 455,
       "error": ""
     },
     {
@@ -2932,14 +2945,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=quxkJY6GYvY",
       "group": "YouTube電影劇集",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 116,
+      "status": 429,
+      "elapsedMs": 360,
       "error": ""
     },
     {
@@ -2949,14 +2962,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=5CDcgYH0Ot0",
       "group": "YouTube電影劇集",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 119,
+      "status": 429,
+      "elapsedMs": 388,
       "error": ""
     },
     {
@@ -2966,14 +2979,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=4oqyCiX-93Q",
       "group": "YouTube電影劇集",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 113,
+      "status": 429,
+      "elapsedMs": 471,
       "error": ""
     },
     {
@@ -2983,14 +2996,14 @@
       "type": "youtube",
       "url": "https://www.youtube.com/watch?v=DcXiauXqrPM",
       "group": "YouTube電影劇集",
-      "ok": true,
-      "qualityOk": true,
-      "qualityLabel": "text/html; charset=utf-8",
+      "ok": false,
+      "qualityOk": false,
+      "qualityLabel": "text/html",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 200,
-      "elapsedMs": 122,
+      "status": 429,
+      "elapsedMs": 287,
       "error": ""
     }
   ]
