@@ -1,0 +1,241 @@
+name: Update YouTube live sources
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "sources/youtube-live-channels.csv"
+      - "sources/live-base.txt"
+      - "sources/live-verified-only.txt"
+      - "tools/update-youtube-live.ps1"
+      - "tools/update-youtube-live-local.ps1"
+      - "tools/build-live-channels-json.mjs"
+      - "tools/build-live-signal-index.mjs"
+      - "sources/live-cleaned-backup.txt"
+      - "sources/live-signal-sources.json"
+      - "sources/live-signal-sources.csv"
+      - "docs/iphone/index.html"
+      - ".github/workflows/update-youtube-live.yml"
+  schedule:
+    - cron: "17 */3 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: oktv-data-publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 1
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/workflows/update-youtube-live.yml
+            tools/update-youtube-live.ps1
+            tools/update-youtube-live-local.ps1
+            tools/build-live-channels-json.mjs
+            tools/build-live-signal-index.mjs
+            tools/push-commit-with-recovery.ps1
+            tools/update-iphone-csp.mjs
+            sources/youtube-live-channels.csv
+            sources/live-base.txt
+            sources/live-cleaned-backup.txt
+            sources/live-verified-only.txt
+            sources/live-stable.txt
+            sources/live-youtube-stable.txt
+            sources/live-youtube-report.json
+            sources/live-signal-sources.json
+            sources/live-signal-sources.csv
+            docs/data/live-channels.json
+            docs/data/source-summary.json
+            docs/iphone/index.html
+
+      - name: Validate iPhone security policy
+        shell: pwsh
+        run: node .\tools\update-iphone-csp.mjs --check
+
+      - name: Restore optional YouTube cookies
+        shell: pwsh
+        env:
+          YOUTUBE_COOKIES_B64: ${{ secrets.YOUTUBE_COOKIES_B64 }}
+        run: |
+          if (-not [string]::IsNullOrWhiteSpace($env:YOUTUBE_COOKIES_B64)) {
+            $cookieFile = Join-Path $env:RUNNER_TEMP "youtube-cookies.txt"
+            [System.IO.File]::WriteAllBytes($cookieFile, [System.Convert]::FromBase64String($env:YOUTUBE_COOKIES_B64))
+            "YOUTUBE_COOKIES_FILE=$cookieFile" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+            Write-Host "YouTube cookies restored from repository secret."
+          } else {
+            Write-Host "YOUTUBE_COOKIES_B64 secret is not set; using public best-effort YouTube extraction."
+          }
+
+      - name: Refresh YouTube live URLs
+        shell: pwsh
+        run: |
+          $args = @(
+            "-NoProfile",
+            "-ExecutionPolicy", "Bypass",
+            "-File", ".\tools\update-youtube-live.ps1",
+            "-DownloadYtDlp",
+            "-IncludeOriginalOnFailure",
+            "-KeepFallbackInPlaylist",
+            "-MaxHeight", "1080",
+            "-SocketTimeoutSec", "10",
+            "-ProcessTimeoutSec", "25",
+            "-StreamValidationTimeoutSec", "15",
+            "-SegmentProbeBytes", "262144",
+            "-MinSegmentBytes", "65536",
+            "-MinSegmentKbps", "900",
+            "-MinPlaylistEntries", "10",
+            "-RetryCount", "1"
+          )
+          if (-not [string]::IsNullOrWhiteSpace($env:YOUTUBE_COOKIES_FILE)) {
+            $args += @("-CookiesFile", $env:YOUTUBE_COOKIES_FILE)
+          }
+          powershell @args
+
+      - name: Read live refresh report
+        id: live_report
+        shell: pwsh
+        run: |
+          $preserved = "False"
+          $entries = "0"
+          $reportPath = ".\sources\live-youtube-report.json"
+          if (Test-Path -LiteralPath $reportPath) {
+            $report = Get-Content -LiteralPath $reportPath -Raw -Encoding UTF8 | ConvertFrom-Json
+            $preserved = [string][bool]$report.outputsPreserved
+            $entries = [string][int]$report.playlistEntries
+            Write-Host "Playlist entries: $entries; outputs preserved: $preserved"
+          } else {
+            Write-Host "Live refresh report was not found."
+          }
+          "LIVE_OUTPUTS_PRESERVED=$preserved" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "LIVE_PLAYLIST_ENTRIES=$entries" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          "outputs_preserved=$preserved" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "playlist_entries=$entries" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Rebuild public live JSON
+        if: steps.live_report.outputs.outputs_preserved != 'True'
+        shell: pwsh
+        run: |
+          node .\tools\build-live-channels-json.mjs `
+            --tvRoot . `
+            --input .\sources\live-stable.txt `
+            --output .\docs\data\live-channels.json `
+            --summary .\docs\data\source-summary.json `
+            --minValidSeconds 600
+
+      - name: Build live signal source index
+        if: steps.live_report.outputs.outputs_preserved != 'True'
+        shell: pwsh
+        run: |
+          node .\tools\build-live-signal-index.mjs `
+            --tvRoot . `
+            --json .\sources\live-signal-sources.json `
+            --csv .\sources\live-signal-sources.csv
+
+      - name: Record live refresh attempt
+        shell: pwsh
+        run: |
+          $summaryPath = ".\docs\data\source-summary.json"
+          if (Test-Path -LiteralPath $summaryPath) {
+            $summary = Get-Content -LiteralPath $summaryPath -Raw -Encoding UTF8 | ConvertFrom-Json
+          } else {
+            $summary = [pscustomobject]@{}
+          }
+          if (-not $summary.live) {
+            $summary | Add-Member -NotePropertyName live -NotePropertyValue ([pscustomobject]@{}) -Force
+          }
+          $attemptAt = [DateTimeOffset]::UtcNow.ToString("o")
+          $preserved = [bool]::Parse("$env:LIVE_OUTPUTS_PRESERVED")
+          $summary | Add-Member -NotePropertyName lastLiveAttemptAt -NotePropertyValue $attemptAt -Force
+          $summary.live | Add-Member -NotePropertyName lastAttemptAt -NotePropertyValue $attemptAt -Force
+          $summary.live | Add-Member -NotePropertyName refreshStatus -NotePropertyValue $(if ($preserved) { "preserved" } else { "updated" }) -Force
+          $summary.live | Add-Member -NotePropertyName outputsPreserved -NotePropertyValue $preserved -Force
+          $summary.live | Add-Member -NotePropertyName playlistEntries -NotePropertyValue ([int]$env:LIVE_PLAYLIST_ENTRIES) -Force
+          Set-Content -LiteralPath $summaryPath -Value (($summary | ConvertTo-Json -Depth 12) + "`n") -Encoding UTF8
+
+      - name: Commit changes
+        if: steps.live_report.outputs.outputs_preserved != 'True'
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config http.postBuffer 524288000
+          git config http.version HTTP/1.1
+          git config core.autocrlf false
+          git config core.eol lf
+          git add sources/live-stable.txt sources/live-youtube-stable.txt sources/live-youtube-report.json `
+            sources/live-signal-sources.json sources/live-signal-sources.csv `
+            docs/data/live-channels.json docs/data/source-summary.json `
+            tools/build-live-channels-json.mjs tools/build-live-signal-index.mjs
+          git diff --cached --quiet
+          $diffExit = $LASTEXITCODE
+          $hasChanges = $diffExit -eq 1
+          if ($diffExit -gt 1) { exit $diffExit }
+          if (-not $hasChanges) {
+            Write-Host "No live source changes."
+          } else {
+            git commit -m "Auto update YouTube live sources"
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            & .\tools\push-commit-with-recovery.ps1 `
+              -RepositoryRoot . `
+              -Branch main `
+              -Commit HEAD `
+              -PushAttempts 3 `
+              -RetryDelaySeconds 20
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+      - name: Publish GitHub Pages live page data
+        shell: pwsh
+        run: |
+          git fetch origin gh-pages
+          $pages = Join-Path $env:RUNNER_TEMP "gh-pages"
+          git worktree add --no-checkout $pages origin/gh-pages
+          git -C $pages config core.autocrlf false
+          git -C $pages config core.eol lf
+          @(
+            "/docs/data/live-channels.json",
+            "/docs/data/source-summary.json",
+            "/docs/iphone/index.html"
+          ) | git -C $pages sparse-checkout set --no-cone --stdin
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git -C $pages checkout
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          New-Item -ItemType Directory -Force -Path (Join-Path $pages "docs\data") | Out-Null
+          New-Item -ItemType Directory -Force -Path (Join-Path $pages "docs\iphone") | Out-Null
+          Copy-Item -LiteralPath ".\docs\data\live-channels.json" -Destination (Join-Path $pages "docs\data\live-channels.json") -Force
+          Copy-Item -LiteralPath ".\docs\data\source-summary.json" -Destination (Join-Path $pages "docs\data\source-summary.json") -Force
+          Copy-Item -LiteralPath ".\docs\iphone\index.html" -Destination (Join-Path $pages "docs\iphone\index.html") -Force
+          Push-Location $pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/data/live-channels.json docs/data/source-summary.json docs/iphone/index.html
+          git diff --cached --quiet
+          $diffExit = $LASTEXITCODE
+          $hasChanges = $diffExit -eq 1
+          if ($diffExit -gt 1) { exit $diffExit }
+          if (-not $hasChanges) {
+            Write-Host "No gh-pages live data changes."
+          } else {
+            git commit -m "Publish refreshed live data"
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            & "$env:GITHUB_WORKSPACE\tools\push-commit-with-recovery.ps1" `
+              -RepositoryRoot $pages `
+              -Branch gh-pages `
+              -Commit HEAD `
+              -PushAttempts 3 `
+              -RetryDelaySeconds 20
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          Pop-Location

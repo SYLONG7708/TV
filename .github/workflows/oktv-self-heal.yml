@@ -1,0 +1,108 @@
+name: OKTV automatic diagnosis and recovery
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "47 * * * *"
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: oktv-automatic-diagnosis
+  cancel-in-progress: false
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout diagnostic tools
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            tools/check-oktv-system-health.mjs
+            tools/vod-payload-parser.mjs
+
+      - name: Inspect public page, catalog, every index, APIs, and live data
+        id: health
+        shell: bash
+        run: |
+          set +e
+          node tools/check-oktv-system-health.mjs \
+            --baseUrl "https://sylong7708.github.io/TV" \
+            --output oktv-system-health.json \
+            --probeApis true \
+            --failOnDegraded false
+          status=$?
+          set -e
+          if [ "$status" -ne 0 ]; then
+            echo "::warning::The health checker encountered a degraded public system."
+          fi
+          node -e "const r=require('./oktv-system-health.json'); console.log('vod=' + Boolean(r.repair.vod)); console.log('live=' + Boolean(r.repair.live)); console.log('ok=' + Boolean(r.ok));" >> "$GITHUB_OUTPUT"
+          {
+            echo '## OKTV automatic diagnosis'
+            echo
+            echo '```json'
+            cat oktv-system-health.json
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Classify workflow and repository failures
+        id: workflow_doctor
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          size_kb="$(gh api "repos/${GITHUB_REPOSITORY}" --jq '.size')"
+          echo "repository_size_kb=$size_kb" >> "$GITHUB_OUTPUT"
+          quota_blocked=false
+          for workflow in update-lunatv-vod.yml update-youtube-live.yml; do
+            run_id="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" --status failure --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+            if [ -n "$run_id" ] && gh run view "$run_id" --repo "$GITHUB_REPOSITORY" --log-failed 2>/dev/null | grep -Eqi 'above its size quota|repository size quota'; then
+              quota_blocked=true
+            fi
+          done
+          echo "quota_blocked=$quota_blocked" >> "$GITHUB_OUTPUT"
+          if [ "$quota_blocked" = true ]; then
+            echo "::error title=Repository quota requires structural recovery::Automatic retries are paused because GitHub rejects every write while the repository exceeds its storage quota."
+          fi
+
+      - name: Dispatch affected recovery workflows
+        if: steps.workflow_doctor.outputs.quota_blocked != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NEED_VOD: ${{ steps.health.outputs.vod }}
+          NEED_LIVE: ${{ steps.health.outputs.live }}
+        shell: bash
+        run: |
+          dispatch_if_idle() {
+            workflow="$1"
+            need="$2"
+            if [ "$need" != true ]; then return 0; fi
+            active="$({ gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" --status in_progress --limit 1 --json databaseId; gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" --status queued --limit 1 --json databaseId; } | jq -s 'map(length) | add')"
+            if [ "$active" -gt 0 ]; then
+              echo "$workflow already has an active run."
+              return 0
+            fi
+            latest="$(gh run list --repo "$GITHUB_REPOSITORY" --workflow "$workflow" --limit 1 --json createdAt --jq '.[0].createdAt // empty')"
+            if [ -n "$latest" ]; then
+              age_seconds="$(( $(date -u +%s) - $(date -u -d "$latest" +%s) ))"
+              if [ "$age_seconds" -lt 21600 ]; then
+                echo "$workflow is degraded but remains inside the six-hour repair cooldown."
+                return 0
+              fi
+            fi
+            gh workflow run "$workflow" --repo "$GITHUB_REPOSITORY" --ref main
+            echo "Dispatched $workflow."
+          }
+          dispatch_if_idle update-lunatv-vod.yml "$NEED_VOD"
+          dispatch_if_idle update-youtube-live.yml "$NEED_LIVE"
+
+      - name: Stop retry storm on permanent quota failure
+        if: steps.workflow_doctor.outputs.quota_blocked == 'true'
+        shell: bash
+        run: exit 1
