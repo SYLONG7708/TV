@@ -1,0 +1,445 @@
+name: Update LunaTV VOD sources
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 02:00, 08:00, 14:00, 20:00 Asia/Shanghai. The job checks the last
+    # successful public update state and refreshes once per day; failed or
+    # stale public attempts retry on the next 6-hour trigger.
+    - cron: "0 18,0,6,12 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: oktv-data-publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: windows-latest
+    timeout-minutes: 240
+    steps:
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .gitattributes
+            .github/workflows/update-lunatv-vod.yml
+            docs/assets/*
+            docs/iphone/*
+            docs/data/adult18-sources.json
+            docs/data/iphone-health-check-latest.csv
+            docs/data/iphone-health-check-latest.json
+            docs/data/iphone-vod-latest.json
+            docs/data/iphone-vod-catalog.json
+            docs/data/iphone-vod-catalog-report.json
+            docs/data/live-channels.json
+            docs/data/lunatv-vod-update-state.json
+            docs/data/source-summary.json
+            docs/data/vod-sources.json
+            sources/*
+            tools/*
+
+      - name: Validate iPhone security policy
+        shell: pwsh
+        run: node .\tools\update-iphone-csp.mjs --check
+
+      - name: Check daily update window
+        id: gate
+        shell: pwsh
+        run: |
+          $statePath = ".\docs\data\lunatv-vod-update-state.json"
+          $intervalDays = 1
+          $scheduleHour = 2
+          $timeZone = [TimeZoneInfo]::FindSystemTimeZoneById("China Standard Time")
+          $nowUtc = [DateTimeOffset]::UtcNow
+          $shouldRun = $true
+          $reason = "manual"
+
+          if ("${{ github.event_name }}" -ne "workflow_dispatch") {
+            $reason = "no previous success state"
+            if (Test-Path -LiteralPath $statePath) {
+              try {
+                $state = Get-Content -LiteralPath $statePath -Raw -Encoding UTF8 | ConvertFrom-Json
+                if ($state.nextDueAt) {
+                  $nextDue = [DateTimeOffset]::Parse([string]$state.nextDueAt)
+                } elseif ($state.lastSuccessAt) {
+                  $lastSuccess = [DateTimeOffset]::Parse([string]$state.lastSuccessAt)
+                  $localSuccess = [TimeZoneInfo]::ConvertTime($lastSuccess, $timeZone)
+                  $nextLocal = $localSuccess.Date.AddDays($intervalDays).AddHours($scheduleHour)
+                  if ($nextLocal -le $localSuccess.DateTime) { $nextLocal = $nextLocal.AddDays(1) }
+                  $nextDue = [DateTimeOffset]::new($nextLocal, $timeZone.GetUtcOffset($nextLocal))
+                }
+
+                if ($nextDue -and $nowUtc -lt $nextDue.ToUniversalTime()) {
+                  $shouldRun = $false
+                  $reason = "next due $($nextDue.ToString("yyyy-MM-dd HH:mm:ss zzz"))"
+                } else {
+                  $reason = "due"
+                }
+              } catch {
+                $reason = "state unreadable, run update: $($_.Exception.Message)"
+              }
+            }
+          }
+
+          "should_run=$($shouldRun.ToString().ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "reason=$reason" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          Write-Host "should_run=$shouldRun; $reason"
+
+      - name: Seed previous public VOD data
+        if: steps.gate.outputs.should_run == 'true'
+        shell: pwsh
+        run: |
+          $mainBaseline = Join-Path $env:RUNNER_TEMP "main-iphone-vod-catalog-baseline.json"
+          $publicBaseline = Join-Path $env:RUNNER_TEMP "public-iphone-vod-catalog-baseline.json"
+          if (Test-Path -LiteralPath ".\docs\data\iphone-vod-catalog.json") {
+            Copy-Item -LiteralPath ".\docs\data\iphone-vod-catalog.json" -Destination $mainBaseline -Force
+          }
+          git fetch origin gh-pages
+          $pages = Join-Path $env:RUNNER_TEMP "gh-pages-seed"
+          git worktree add --no-checkout $pages origin/gh-pages
+          @(
+            "/docs/data/iphone-vod-catalog.json",
+            "/docs/data/iphone-vod-catalog-report.json"
+          ) | git -C $pages sparse-checkout set --no-cone --stdin
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git -C $pages checkout
+          $items = @(
+            @{ From = "docs\data\iphone-vod-catalog.json"; To = "docs\data\iphone-vod-catalog.json"; Directory = $false },
+            @{ From = "docs\data\iphone-vod-catalog-report.json"; To = "docs\data\iphone-vod-catalog-report.json"; Directory = $false },
+            @{ From = "docs\data\source-summary.json"; To = "docs\data\source-summary.json"; Directory = $false },
+            @{ From = "docs\data\live-channels.json"; To = "docs\data\live-channels.json"; Directory = $false }
+          )
+          foreach ($item in $items) {
+            $from = Join-Path $pages $item.From
+            $to = Join-Path "." $item.To
+            if (-not (Test-Path -LiteralPath $from)) { continue }
+            if ($item.From -eq "docs\data\iphone-vod-catalog.json") {
+              Copy-Item -LiteralPath $from -Destination $publicBaseline -Force
+            }
+            New-Item -ItemType Directory -Force -Path (Split-Path -Parent $to) | Out-Null
+            if ($item.Directory) {
+              Copy-Item -LiteralPath $from -Destination (Split-Path -Parent $to) -Recurse -Force
+            } else {
+              Copy-Item -LiteralPath $from -Destination $to -Force
+            }
+          }
+          git worktree remove $pages --force
+
+      - name: Refresh LunaTV VOD sources
+        if: steps.gate.outputs.should_run == 'true'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $PSNativeCommandUseErrorActionPreference = $true
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-lunatv-vod.ps1 `
+            -SourceName "jin18" `
+            -TimeoutSec 12 `
+            -MaxDetailProbe 2 `
+            -RedactSampleNames
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\update-lunatv-vod.ps1 `
+            -SourceName "full" `
+            -TimeoutSec 12 `
+            -MaxDetailProbe 2 `
+            -RedactSampleNames
+          node .\tools\build-lunatv-adult18-sorted.mjs --repoRoot .
+          node .\tools\build-iphone-vod-catalog.mjs `
+            --tvRoot . `
+            --output .\docs\data\iphone-vod-catalog.json `
+            --reportOutput .\docs\data\iphone-vod-catalog-report.json `
+            --maxSources 120 `
+            --maxItemsPerSource 70 `
+            --maxCategoriesPerSource 8 `
+            --includeAdult true `
+            --includeLegacySources false `
+            --mergeExisting true `
+            --timeoutMs 8000
+          node .\tools\build-full-vod-chunked-catalog.mjs `
+            --tvRoot . `
+            --catalog .\docs\data\iphone-vod-catalog.json `
+            --report .\docs\data\iphone-vod-catalog-report.json `
+            --detailRoot .\docs\data\vod-detail `
+            --includeAdult true `
+            --pageSize 100 `
+            --sourceConcurrency 2 `
+            --pageConcurrency 8 `
+            --outputPageSize 500 `
+            --fetchRetries 3 `
+            --timeoutMs 20000 `
+            --appendDetailPages true `
+            --skipExistingPages true `
+            --keepPartialPages true `
+            --refreshLeadingPages 10 `
+            --maxNewPagesPerSource 10 `
+            --maxFailedPages 20 `
+            --detailOnly true
+          node .\tools\build-type3-spider-catalog.mjs `
+            --tvRoot . `
+            --catalog .\docs\data\iphone-vod-catalog.json `
+            --report .\docs\data\iphone-vod-catalog-report.json `
+            --detailRoot .\docs\data\vod-detail `
+            --maxPagesPerCategory 0 `
+            --maxCategoryPageSafetyLimit 200 `
+            --fetchRetries 5 `
+            --timeoutMs 30000
+          node .\tools\assemble-vod-index-from-detail.mjs `
+            --tvRoot . `
+            --catalog .\docs\data\iphone-vod-catalog.json `
+            --report .\docs\data\iphone-vod-catalog-report.json `
+            --detailRoot .\docs\data\vod-detail `
+            --indexRoot .\docs\data\vod-index `
+            --dropEmptySources true
+          node .\tools\apply-vod-kind-rules.mjs --tvRoot . --skipDetail true --skipQuantum true
+          node .\tools\build-iphone-vod-latest.mjs `
+            --tvRoot . `
+            --catalog .\docs\data\iphone-vod-catalog.json `
+            --output .\docs\data\iphone-vod-latest.json `
+            --maxItems 3600 `
+            --maxItemsPerSource 80 `
+            --embedEpisodesPerSource 12
+          node .\tools\compact-iphone-catalog.mjs `
+            --tvRoot . `
+            --catalog .\docs\data\iphone-vod-catalog.json `
+            --report .\docs\data\iphone-vod-catalog-report.json `
+            --detailRoot .\docs\data\iphone-detail `
+            --pageSize 240
+          $mainBaseline = Join-Path $env:RUNNER_TEMP "main-iphone-vod-catalog-baseline.json"
+          $publicBaseline = Join-Path $env:RUNNER_TEMP "public-iphone-vod-catalog-baseline.json"
+          $baselines = @($publicBaseline, $mainBaseline) | Where-Object { Test-Path -LiteralPath $_ }
+          if ($baselines.Count -eq 0) { throw "No VOD catalog coverage baseline is available." }
+          for ($baselineIndex = 0; $baselineIndex -lt $baselines.Count; $baselineIndex++) {
+            $baseline = $baselines[$baselineIndex]
+            $minimumItems = if ($baselineIndex -eq $baselines.Count - 1) { 1000000 } else { 0 }
+            node .\tools\guard-vod-catalog-coverage.mjs `
+              --tvRoot . `
+              --catalog .\docs\data\iphone-vod-catalog.json `
+              --report .\docs\data\iphone-vod-catalog-report.json `
+              --baseline $baseline `
+              --minSourceRetention 0.90 `
+              --minGlobalRetention 0.95 `
+              --minTotalItems $minimumItems
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+          node .\tools\build-tvbox-config.mjs `
+            --repoRoot . `
+            --output .\sources\TVBOX
+          node .\tools\check-iphone-catalog-health.mjs `
+            --tvRoot . `
+            --catalog .\docs\data\iphone-vod-catalog.json `
+            --live .\docs\data\live-channels.json `
+            --output .\docs\data\iphone-health-check-latest.json `
+            --csvOutput .\docs\data\iphone-health-check-latest.csv `
+            --timeoutMs 8000 `
+            --concurrency 18
+
+      - name: Mark successful update
+        if: steps.gate.outputs.should_run == 'true'
+        shell: pwsh
+        run: |
+          $statePath = ".\docs\data\lunatv-vod-update-state.json"
+          $intervalDays = 1
+          $scheduleHour = 2
+          $timeZone = [TimeZoneInfo]::FindSystemTimeZoneById("China Standard Time")
+          $nowUtc = [DateTimeOffset]::UtcNow
+          $localNow = [TimeZoneInfo]::ConvertTime($nowUtc, $timeZone)
+          $nextLocal = $localNow.Date.AddDays($intervalDays).AddHours($scheduleHour)
+          if ($nextLocal -le $localNow.DateTime) { $nextLocal = $nextLocal.AddDays(1) }
+          $nextDue = [DateTimeOffset]::new($nextLocal, $timeZone.GetUtcOffset($nextLocal))
+          $state = [ordered]@{
+            status = "success"
+            lastSuccessAt = $nowUtc.ToString("o")
+            nextDueAt = $nextDue.ToString("o")
+            intervalDays = $intervalDays
+            scheduleHour = $scheduleHour
+            timeZone = "Asia/Shanghai"
+            updatedBy = "github-actions"
+            runId = "${{ github.run_id }}"
+          }
+          New-Item -ItemType Directory -Force -Path (Split-Path -Parent $statePath) | Out-Null
+          Set-Content -LiteralPath $statePath -Value (($state | ConvertTo-Json -Depth 4) + "`n") -Encoding UTF8
+          Write-Host "Next VOD update: $($nextDue.ToString("yyyy-MM-dd HH:mm:ss zzz"))"
+
+      - name: Commit changes
+        if: steps.gate.outputs.should_run == 'true'
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config http.postBuffer 524288000
+          git config http.version HTTP/1.1
+          git config core.autocrlf false
+          git config core.eol lf
+          $paths = @(
+            "sources/current-sources.json",
+            "sources/TVBOX",
+            "sources/All on-demand sources",
+            "sources/All on-demand sources-report.json",
+            "sources/vod-lunatv-jin18-oktv.json",
+            "sources/vod-lunatv-jin18-report.json",
+            "sources/vod-lunatv-jin18-analysis.csv",
+            "sources/vod-lunatv-full-oktv.json",
+            "sources/vod-lunatv-full-report.json",
+            "sources/vod-lunatv-full-analysis.csv",
+            "sources/vod-lunatv-adult18-sorted-oktv.json",
+            "sources/vod-lunatv-adult18-sorted-report.json",
+            "sources/vod-lunatv-adult18-sorted-analysis.csv",
+            "docs/data/vod-sources.json",
+            "docs/data/source-summary.json",
+            "docs/data/iphone-vod-latest.json",
+            "docs/data/iphone-vod-catalog.json",
+            "docs/data/iphone-vod-catalog-report.json",
+            "docs/data/iphone-health-check-latest.json",
+            "docs/data/iphone-health-check-latest.csv",
+            "docs/iphone/index.html"
+          )
+          $existingPaths = @($paths | Where-Object { Test-Path -LiteralPath $_ })
+          $missingPaths = @($paths | Where-Object { -not (Test-Path -LiteralPath $_) })
+          if ($missingPaths.Count -gt 0) {
+            Write-Host "Skipping missing paths: $($missingPaths -join ', ')"
+          }
+          git add -- $existingPaths
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git diff --cached --quiet
+          $diffExit = $LASTEXITCODE
+          $hasChanges = $diffExit -eq 1
+          if ($diffExit -gt 1) { exit $diffExit }
+          if (-not $hasChanges) {
+            Write-Host "No LunaTV VOD source changes."
+          } else {
+            git commit -m "Auto refresh LunaTV VOD sources"
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            & .\tools\push-commit-with-recovery.ps1 `
+              -RepositoryRoot . `
+              -Branch main `
+              -Commit HEAD `
+              -PushAttempts 3 `
+              -RetryDelaySeconds 20
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          }
+
+      - name: Publish GitHub Pages data
+        if: steps.gate.outputs.should_run == 'true'
+        shell: pwsh
+        run: |
+          git fetch origin gh-pages
+          $pages = Join-Path $env:RUNNER_TEMP "gh-pages"
+          git worktree add --no-checkout $pages origin/gh-pages
+          @(
+            "/.gitattributes",
+            "/docs/iphone/*",
+            "/docs/assets/*",
+            "/docs/data/*.json",
+            "/docs/data/*.csv",
+            "/docs/data/vod-index/**",
+            "/docs/data/vod-query/**"
+          ) | git -C $pages sparse-checkout set --no-cone --stdin
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git -C $pages checkout
+          git -C $pages config core.autocrlf false
+          git -C $pages config core.eol lf
+          New-Item -ItemType Directory -Force -Path (Join-Path $pages "docs") | Out-Null
+          New-Item -ItemType Directory -Force -Path (Join-Path $pages "docs\data") | Out-Null
+          Copy-Item -LiteralPath .\.gitattributes -Destination (Join-Path $pages ".gitattributes") -Force
+          Write-Host "Preserving existing public vod-detail/vod-index data; this run only adds or refreshes changed data."
+          Copy-Item -Path .\docs\iphone -Destination (Join-Path $pages "docs") -Recurse -Force
+          Copy-Item -Path .\docs\assets -Destination (Join-Path $pages "docs") -Recurse -Force
+          Get-ChildItem -Path .\docs\data -File | Where-Object {
+            $_.Name -notin @("iphone-vod-catalog.json", "iphone-vod-catalog-report.json")
+          } | ForEach-Object {
+            Copy-Item -Path $_.FullName -Destination (Join-Path $pages "docs\data") -Force
+          }
+          Write-Host "Publishing indexed vod-detail/vod-index for iPhone lazy loading."
+          node .\tools\build-pages-public-catalog.mjs `
+            --tvRoot . `
+            --pagesRoot $pages `
+            --catalog .\docs\data\iphone-vod-catalog.json `
+            --smallCatalog (Join-Path $pages "docs\data\iphone-vod-catalog.json") `
+            --output (Join-Path $pages "docs\data\iphone-vod-catalog.json") `
+            --reportOutput (Join-Path $pages "docs\data\iphone-vod-catalog-report.json") `
+            --preservePreviousPublicSources true `
+            --trustPreviousPublicSources true `
+            --minSourceIndexRetention 0.90 `
+            --minCatalogRetention 0.95 `
+            --minExpectedItems 1000000
+          node .\tools\build-iphone-query-shards.mjs `
+            --repoRoot $pages `
+            --catalog docs\data\iphone-vod-catalog.json `
+            --searchRoot docs\data\vod-index `
+            --inputPathField indexPath `
+            --outputRoot docs\data\vod-query `
+            --iphoneHtml (Join-Path $pages "docs\iphone\index.html") `
+            --titleAliases (Join-Path $env:GITHUB_WORKSPACE "sources\title-aliases.json") `
+            --maxSignalsPerTitle 0 `
+            --maxGroupsPerPrefix 0
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & .\tools\publish-gh-pages-batched.ps1 `
+            -RepositoryRoot $pages `
+            -RunId "${{ github.run_id }}" `
+            -RunAttempt "${{ github.run_attempt }}"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Clean temporary Pages upload branch
+        if: always() && steps.gate.outputs.should_run == 'true'
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $branch = "oktv-pages-upload-${{ github.run_id }}-${{ github.run_attempt }}"
+          git ls-remote --exit-code --heads origin "refs/heads/$branch" | Out-Null
+          $probeExit = $LASTEXITCODE
+          if ($probeExit -eq 0) {
+            git push origin --delete $branch
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          } elseif ($probeExit -eq 2) {
+            Write-Host "No temporary Pages upload branch remains."
+          } else {
+            throw "Unable to inspect temporary Pages upload branch."
+          }
+
+      - name: Commit successful public update state
+        if: success() && steps.gate.outputs.should_run == 'true'
+        shell: pwsh
+        run: |
+          git add -- .\docs\data\lunatv-vod-update-state.json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          git diff --cached --quiet
+          $diffExit = $LASTEXITCODE
+          if ($diffExit -gt 1) { exit $diffExit }
+          if ($diffExit -eq 0) {
+            Write-Host "Public update state is already current."
+            exit 0
+          }
+          git commit -m "Mark LunaTV VOD public update successful"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & .\tools\push-commit-with-recovery.ps1 `
+            -RepositoryRoot . `
+            -Branch main `
+            -Commit HEAD `
+            -PushAttempts 3 `
+            -RetryDelaySeconds 15
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+      - name: Verify complete public system
+        if: success() && steps.gate.outputs.should_run == 'true'
+        shell: pwsh
+        run: |
+          $verified = $false
+          for ($attempt = 1; $attempt -le 8; $attempt++) {
+            node .\tools\check-oktv-system-health.mjs `
+              --baseUrl "https://sylong7708.github.io/TV" `
+              --output .\oktv-system-health.json `
+              --probeApis true `
+              --failOnDegraded false
+            $health = Get-Content -LiteralPath .\oktv-system-health.json -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($health.checks.coreFiles -and $health.checks.pageShell -and $health.checks.catalogStructure -and
+                $health.checks.latestFeed -and $health.checks.sourceIndexes) {
+              $verified = $true
+              break
+            }
+            Start-Sleep -Seconds 30
+          }
+          if (-not $verified) { throw "Public VOD deployment did not become healthy within the verification window." }
+          Get-Content -LiteralPath .\oktv-system-health.json -Raw -Encoding UTF8 | Add-Content -LiteralPath $env:GITHUB_STEP_SUMMARY -Encoding UTF8
