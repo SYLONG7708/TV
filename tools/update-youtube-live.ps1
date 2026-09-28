@@ -370,7 +370,7 @@ while ($youtubeLines.Count -gt 0 -and $youtubeLines[$youtubeLines.Count - 1] -eq
     $youtubeLines.RemoveAt($youtubeLines.Count - 1)
 }
 
-$candidatePlaylistEntries = $playlistResolved.Count
+$candidatePlaylistEntries = @($playlistResolved | Where-Object { $null -ne $_ }).Count
 $outputsPreserved = $false
 if ($candidatePlaylistEntries -lt $MinPlaylistEntries) {
     $existingYoutubeLines = Read-Utf8LinesOrEmpty $YoutubeOutput

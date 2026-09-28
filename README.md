@@ -72,7 +72,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\build-stable-live.ps
 
 已將提供的 YouTube 直播整理為新聞、購物、綜合娛樂、國際新聞、亞洲新聞、兒童動畫、文化紀實、音樂體育風景等群組，並以三位數序號排列。
 
-YouTube 的真實播放 URL 會過期，OKTV 直播 TXT 不能直接播放 `https://www.youtube.com/watch?v=...` 頁面。本機已加入 Windows 排程，每次開機 / 登入後會執行 `tools/update-youtube-live-local.ps1`，之後每 3 小時使用 `yt-dlp` 重新擷取 480p HLS、測試實際影片分段速度，只有達到 600 kbps 以上的項目才會合併到 APK 目前讀取的 `sources/live-stable.txt` 並推送到 GitHub。修改直播表不需要重新打包 APK，因為 APK 讀的是同一個 raw URL。
+YouTube 的真實播放 URL 會過期，OKTV 直播 TXT 不能直接播放 `https://www.youtube.com/watch?v=...` 頁面。店內 Windows 排程在專用的 `E:\CODEX\Automation\OKTVLiveUpdate` checkout 執行 `tools/run-youtube-live-managed.ps1`，每 3 小時使用本機 `yt-dlp` 擷取與驗證 HLS。至少 10 個頻道通過分段測速後，才會更新雲端資料；不足時保留舊版並記錄狀態。APK 讀取雲端 TXT，來源更新無須重包 APK。
 
 手動更新：
 
@@ -90,15 +90,15 @@ node .\tools\build-live-signal-index.mjs --tvRoot .
 
 這會更新 `sources/live-signal-sources.json` 與 `sources/live-signal-sources.csv`。`direct-hls` 與 `youtube-page` 會標記為可持續更新；`youtube-generated-hls` 是短效播放 URL，只作為目前播放產物記錄。
 
-安裝或重裝本機開機自動更新：
+從專用 checkout 安裝或重裝本機隱藏排程：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\install-youtube-live-autoupdate-task.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\install-youtube-live-autoupdate-task.ps1 -RepoRoot 'E:\CODEX\Automation\OKTVLiveUpdate'
 ```
 
 ### 無 cookies 的雲端更新
 
-GitHub runner 沒有 YouTube cookies 時，定時更新會保留有效播放清單，並為手機網頁建立公開 YouTube watch／iframe 備援；不會把過期的 HLS 當成唯一可用來源，也不會逐一等待受阻的頻道解析。直接 HLS 與網頁嵌入播放是不同路徑：APK 的 TXT 播放清單仍需有效 HLS，手機網頁可使用官方嵌入播放器。
+GitHub runner 沒有 YouTube cookies 時，定時工作只檢查並保留現有資料，不再用 watch 頁面網址重建直播 TXT 或寫入時間戳。店內排程負責取得可供 APK 使用的 HLS；手機網頁仍可透過官方嵌入播放器使用 YouTube 頁面。執行記錄與狀態保存在專用 checkout 的 `.patch-work/youtube-live-managed.log` 和 `.patch-work/youtube-live-managed-status.json`。
 
 ### 雲端自動診斷與修復
 
@@ -106,7 +106,7 @@ GitHub runner 沒有 YouTube cookies 時，定時更新會保留有效播放清�
 
 2026-09-10 起，GitHub Pages 僅部署約 18 MB 的網頁與必要清單，設 100 MiB 硬上限；大型索引保留在 `gh-pages`，按固定資料 commit 讀取，避免原本約 3.56 GB 部署包造成的逾時。直播與點播共用部署流程，上線後核對實際版本與索引；單獨部署失敗時優先重新部署，避免重做完整來源更新。
 
-gzip 穩定輸出、分批發布及推送衝突恢復機制持續保留。排程與處理範圍詳見 [自動修復說明](docs/AUTOMATIC_RECOVERY.md)。日常更新由 GitHub 雲端執行，不需本機開機或手動下命令；外部來源關站、登入或地區限制無法由本專案強制修復。
+gzip 穩定輸出、分批發布及推送衝突恢復機制持續保留。排程與處理範圍詳見 [自動修復說明](docs/AUTOMATIC_RECOVERY.md)。點播等日常更新由 GitHub 雲端執行；YouTube HLS 由店內電腦執行，電腦需保持開機與連網。外部來源關站、登入或地區限制無法由本專案強制修復。
 
 開發人員可使用相同診斷命令：
 

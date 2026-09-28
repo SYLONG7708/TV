@@ -12,13 +12,13 @@ if ([string]::IsNullOrWhiteSpace($RepoRoot)) {
     $RepoRoot = Resolve-Path $RepoRoot
 }
 
-$scriptPath = Join-Path $RepoRoot "tools\update-youtube-live-local.ps1"
+$scriptPath = Join-Path $RepoRoot "tools\run-youtube-live-managed.ps1"
 if (-not (Test-Path -LiteralPath $scriptPath)) {
     throw "Local updater script not found: $scriptPath"
 }
 
-$actionArgs = '-NoProfile -ExecutionPolicy Bypass -File "{0}" -RepoRoot "{1}"' -f $scriptPath, $RepoRoot
-$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $actionArgs
+$actionArgs = '-NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "{0}" -RepoRoot "{1}"' -f $scriptPath, $RepoRoot
+$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument $actionArgs -WorkingDirectory $RepoRoot
 $triggers = @(
     (New-ScheduledTaskTrigger -AtLogOn),
     (New-ScheduledTaskTrigger -AtStartup),
@@ -28,8 +28,9 @@ $settings = New-ScheduledTaskSettingsSet `
     -StartWhenAvailable `
     -AllowStartIfOnBatteries `
     -DontStopIfGoingOnBatteries `
+    -Hidden `
     -MultipleInstances IgnoreNew `
-    -ExecutionTimeLimit (New-TimeSpan -Minutes 45)
+    -ExecutionTimeLimit (New-TimeSpan -Minutes 120)
 $user = [Security.Principal.WindowsIdentity]::GetCurrent().Name
 $principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Highest
 
