@@ -17,7 +17,7 @@ const output = path.resolve(args.get('output') || path.join(tvRoot, 'docs', 'dat
 const summaryOutput = path.resolve(args.get('summary') || path.join(tvRoot, 'docs', 'data', 'source-summary.json'));
 const minValidSeconds = Number(args.get('minValidSeconds') || 600);
 const nowEpoch = Math.floor(Date.now() / 1000);
-const liveNote = '直播來源由 sources/live-stable.txt 重建為 docs/data/live-channels.json，YouTube 簽名 HLS 會由自動排程重新刷新。';
+const liveNote = '直播 TXT 只收錄可直接播放的來源；手機網頁另外保留 YouTube 官方嵌入入口，短效 HLS 由店內排程更新。';
 
 function normalizeText(value) {
   return String(value || '').replace(/^\uFEFF/, '').trim();
@@ -113,6 +113,72 @@ function parseLive(text) {
   return channels;
 }
 
+function parseCsvRow(line) {
+  const cells = [];
+  let cell = '';
+  let quoted = false;
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index];
+    if (char === '"') {
+      if (quoted && line[index + 1] === '"') {
+        cell += '"';
+        index += 1;
+      } else {
+        quoted = !quoted;
+      }
+    } else if (char === ',' && !quoted) {
+      cells.push(cell);
+      cell = '';
+    } else {
+      cell += char;
+    }
+  }
+  cells.push(cell);
+  return cells.map(normalizeText);
+}
+
+async function addWebYouTubeFallbacks(channels) {
+  const csvPath = path.join(tvRoot, 'sources', 'youtube-live-channels.csv');
+  let csvText;
+  try {
+    csvText = await fs.readFile(csvPath, 'utf8');
+  } catch {
+    return channels;
+  }
+  const rows = csvText.split(/\r?\n/).filter(Boolean).map(parseCsvRow);
+  if (!rows.length) return channels;
+  const header = rows.shift().map((cell) => cell.toLowerCase());
+  const column = (name) => header.indexOf(name.toLowerCase());
+  if (['Order', 'Group', 'Name', 'Url'].some((name) => column(name) < 0)) return channels;
+  const existingIds = new Set(channels.map((channel) => youtubeVideoId(channel.url)).filter(Boolean));
+  const existingNames = new Set(channels.map((channel) => `${channel.group}|${channel.name}`));
+  for (const row of rows) {
+    const pageUrl = row[column('Url')];
+    const videoId = youtubeVideoId(pageUrl);
+    if (!videoId || existingIds.has(videoId)) continue;
+    const group = row[column('Group')] || 'YouTube';
+    const order = Number(row[column('Order')]);
+    const rawName = row[column('Name')];
+    const name = Number.isFinite(order) && order > 0 ? `${String(order).padStart(3, '0')} ${rawName}` : rawName;
+    if (!rawName || existingNames.has(`${group}|${name}`)) continue;
+    const urls = youtubeUrls(pageUrl);
+    channels.push({
+      id: `${slug(group)}-${slug(name)}-web`,
+      name,
+      group,
+      url: urls.pageUrl,
+      logo: '',
+      kind: 'youtube',
+      playable: true,
+      origin: 'youtube-live-channels.csv',
+      ...urls,
+    });
+    existingIds.add(videoId);
+    existingNames.add(`${group}|${name}`);
+  }
+  return channels;
+}
+
 async function readJson(file, fallback) {
   try {
     return JSON.parse(await fs.readFile(file, 'utf8'));
@@ -130,7 +196,7 @@ function countBy(items, key) {
 }
 
 const sourceText = await fs.readFile(input, 'utf8');
-const channels = parseLive(sourceText);
+const channels = await addWebYouTubeFallbacks(parseLive(sourceText));
 const groups = [...new Set(channels.map((channel) => channel.group))];
 const kinds = countBy(channels, 'kind');
 
@@ -146,13 +212,15 @@ summary.input = {
 summary.live = {
   count: channels.length,
   playableCount: channels.filter((channel) => channel.playable).length,
+  directStreamCount: channels.filter((channel) => !/youtu\.be\/|youtube\.com\/(?:watch|live|embed)/i.test(channel.url)).length,
+  webYouTubeFallbackCount: channels.filter((channel) => channel.origin === 'youtube-live-channels.csv').length,
   externalCount: channels.filter((channel) => channel.kind === 'external').length,
   networkOnlyCount: channels.filter((channel) => !/^https?:\/\//i.test(channel.url)).length,
   kinds,
   groups,
 };
 summary.notes = Array.isArray(summary.notes) ? summary.notes : [];
-summary.notes = summary.notes.filter((note) => note !== liveNote && !/YouTube.*external|直播.*external/i.test(note));
+summary.notes = summary.notes.filter((note) => note !== liveNote && !/^直播來源由 sources\/live-stable\.txt/.test(note) && !/YouTube.*external|直播.*external/i.test(note));
 summary.notes.push(liveNote);
 
 await fs.mkdir(path.dirname(summaryOutput), { recursive: true });
