@@ -15,6 +15,14 @@
 
 相容性：保留 Android 6.0+ / arm64-v8a 架構，並把相機、Wi-Fi、橫向螢幕等硬體需求設為非必須，補上全尺寸螢幕支援，方便手機、平板、電視盒與模擬器安裝。
 
+## 行動雲端版 APK（最新點播介面）
+
+- [下載影視 OKTV 2.1.3 雲端同步版 APK](https://github.com/SYLONG7708/TV/releases/download/oktv-cloud-2.1.3-20260929/OKTV_2.1.3_cloud_20260929.apk)
+- [下載可重新建置的 Android 專案](https://github.com/SYLONG7708/TV/releases/download/oktv-cloud-2.1.3-20260929/OKTV_2.1.3_cloud_source_20260929.zip)
+- 套件：`com.yingshi.player`；版本代碼：`7`。
+
+這個版本直接開啟[正式點播網頁](https://sylong7708.github.io/TV/docs/iphone/)，介面、分類、片單與搜尋資料皆由雲端載入，APK 不含點播來源或搜尋索引。雲端發布更新後，重新開啟 App 即會讀取新版。可覆蓋安裝同套件的 2.1.2 行動版；上方的影視 5.1.6 使用不同套件，不會被取代。
+
 ## 目前內置來源
 
 - 點播：`https://raw.githubusercontent.com/SYLONG7708/TV/refs/heads/main/sources/TVBOX`
