@@ -207,6 +207,11 @@ jobs:
             --maxItems 3600 `
             --maxItemsPerSource 80 `
             --embedEpisodesPerSource 12
+          node .\tools\build-iphone-series-seeds.mjs `
+            --tvRoot . `
+            --catalog .\docs\data\iphone-vod-catalog.json `
+            --output .\docs\iphone\category-seeds.json `
+            --limitPerCategory 80
           node .\tools\compact-iphone-catalog.mjs `
             --tvRoot . `
             --catalog .\docs\data\iphone-vod-catalog.json `
@@ -300,6 +305,7 @@ jobs:
             "docs/data/iphone-vod-catalog-report.json",
             "docs/data/iphone-health-check-latest.json",
             "docs/data/iphone-health-check-latest.csv",
+            "docs/iphone/category-seeds.json",
             "docs/iphone/index.html"
           )
           $existingPaths = @($paths | Where-Object { Test-Path -LiteralPath $_ })

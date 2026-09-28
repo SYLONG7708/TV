@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-to+48ROaZ9pRwgR9gGEHgmjC9EexaZ+YpNg5N6X2LC4=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-q02F97qqlOr202beJ5VnHrLJYWm/Qm53QwnFgiZg0VQ='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-VDfL5ffclf9RdGhM4bxgfzY2CQq8HOO/bGbAZbK+0Q0=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-q02F97qqlOr202beJ5VnHrLJYWm/Qm53QwnFgiZg0VQ='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1087,6 +1087,7 @@
         refocusSearch: false,
         catalog: { totals: {}, sources: [], items: [], filters: { years: [], areas: [], genres: [] } },
         latest: { items: [] },
+        seriesSeeds: { items: [] },
         quantum: {
           manifest: null,
           loadedKinds: new Set(),
@@ -5903,9 +5904,10 @@
       document.querySelector('#detailSheet [data-close-detail].icon-btn').innerHTML = icon('close');
       document.querySelector('#playerSheet [data-close-player].icon-btn').innerHTML = icon('close');
 
-      [state.catalog, state.latest, state.live, state.queryIndex.manifest] = await Promise.all([
+      [state.catalog, state.latest, state.seriesSeeds, state.live, state.queryIndex.manifest] = await Promise.all([
         getJson('../data/iphone-vod-catalog.json', state.catalog),
         getJson('../data/iphone-vod-latest.json', { items: [] }),
+        getJson('./category-seeds.json', { items: [] }),
         getJson('../data/live-channels.json', []),
         getJson(QUERY_MANIFEST_URL, null),
       ]);
@@ -5914,6 +5916,7 @@
       await loadQuantumManifest();
       const initialCatalogItems = Array.isArray(state.catalog.items) ? state.catalog.items : [];
       const latestCatalogItems = Array.isArray(state.latest.items) ? state.latest.items : [];
+      const seriesSeedItems = Array.isArray(state.seriesSeeds.items) ? state.seriesSeeds.items : [];
       const fallbackQueryItems = Array.isArray(state.queryIndex.manifest?.fallbackItems)
         ? state.queryIndex.manifest.fallbackItems
         : [];
@@ -5921,7 +5924,20 @@
       state.itemById.clear();
       registerCatalogItems(initialCatalogItems);
       registerCatalogItems(latestCatalogItems);
+      registerCatalogItems(seriesSeedItems);
       registerCatalogItems(fallbackQueryItems);
+      const seededCategories = new Map();
+      for (const item of seriesSeedItems) {
+        for (const category of state.itemById.get(item.id)?._seriesCategories || []) {
+          seededCategories.set(category, (seededCategories.get(category) || 0) + 1);
+        }
+      }
+      for (const [category, count] of seededCategories) {
+        if (count < 12) continue;
+        for (const sourceId of ['normal', 'all', state.seriesSeeds.sourceId].filter(Boolean)) {
+          state.categoryIndexAttempted.add(`${sourceId}\u001f${category}`);
+        }
+      }
       state.seedItemIds = new Set(state.itemById.keys());
       markLatestPagesLoaded(latestCatalogItems);
       applyHealthIndex({ failed: [] });
