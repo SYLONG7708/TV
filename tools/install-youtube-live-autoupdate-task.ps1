@@ -1,5 +1,5 @@
 param(
-    [string]$TaskName = "OKTV YouTube Live Auto Update",
+    [string]$TaskName = "OKTV YouTube Live Local HLS",
     [string]$RepoRoot = "",
     [switch]$RunNow
 )
@@ -32,22 +32,36 @@ $settings = New-ScheduledTaskSettingsSet `
     -MultipleInstances IgnoreNew `
     -ExecutionTimeLimit (New-TimeSpan -Minutes 120)
 $user = [Security.Principal.WindowsIdentity]::GetCurrent().Name
-$principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Highest
+$principal = New-ScheduledTaskPrincipal -UserId $user -LogonType Interactive -RunLevel Limited
 
-Register-ScheduledTask `
-    -TaskName $TaskName `
-    -Action $action `
-    -Trigger $triggers `
-    -Settings $settings `
-    -Principal $principal `
-    -Description "Refresh OKTV YouTube HLS live URLs at startup/logon and every 3 hours, then push playable sources to GitHub." `
-    -Force | Out-Null
+try {
+    Register-ScheduledTask `
+        -TaskName $TaskName `
+        -Action $action `
+        -Trigger $triggers `
+        -Settings $settings `
+        -Principal $principal `
+        -Description "Refresh OKTV YouTube HLS live URLs at startup/logon and every 3 hours, then push playable sources to GitHub." `
+        -Force | Out-Null
+    Write-Host "Registered hidden scheduled task: $TaskName"
+    if ($RunNow) { Start-ScheduledTask -TaskName $TaskName }
+} catch {
+    if ($_.Exception.Message -notmatch 'Access is denied|拒絕存取') { throw }
+    $loopPath = Join-Path $RepoRoot 'tools\run-youtube-live-loop.ps1'
+    if (-not (Test-Path -LiteralPath $loopPath)) { throw "Local loop script not found: $loopPath" }
+    $startupDir = [Environment]::GetFolderPath('Startup')
+    if ([string]::IsNullOrWhiteSpace($startupDir)) { throw 'Windows Startup folder is unavailable.' }
+    $launcherPath = Join-Path $startupDir 'OKTV YouTube Live Local HLS.vbs'
+    $command = 'powershell.exe -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "{0}" -RepoRoot "{1}"' -f $loopPath, $RepoRoot
+    $escaped = $command.Replace('"', '""')
+    $launcher = 'CreateObject("WScript.Shell").Run "' + $escaped + '", 0, False'
+    [IO.File]::WriteAllText($launcherPath, $launcher + "`r`n", [Text.Encoding]::ASCII)
+    Write-Host "Task Scheduler access was denied; installed hidden Startup launcher: $launcherPath"
+    if ($RunNow) {
+        Start-Process -FilePath 'wscript.exe' -ArgumentList ('"{0}"' -f $launcherPath) -WindowStyle Hidden
+        Write-Host 'Started the hidden local HLS refresh loop.'
+    }
+}
 
-Write-Host "Registered scheduled task: $TaskName"
 Write-Host "Repo: $RepoRoot"
 Write-Host "Script: $scriptPath"
-
-if ($RunNow) {
-    Start-ScheduledTask -TaskName $TaskName
-    Write-Host "Started scheduled task now."
-}

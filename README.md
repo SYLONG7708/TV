@@ -90,7 +90,7 @@ node .\tools\build-live-signal-index.mjs --tvRoot .
 
 這會更新 `sources/live-signal-sources.json` 與 `sources/live-signal-sources.csv`。`direct-hls` 與 `youtube-page` 會標記為可持續更新；`youtube-generated-hls` 是短效播放 URL，只作為目前播放產物記錄。
 
-從專用 checkout 安裝或重裝本機隱藏排程：
+從專用 checkout 安裝或重裝本機隱藏排程；若 Windows 不允許建立排程，安裝程式會改用使用者登入時啟動的隱藏背景程序，每 3 小時更新一次：
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\install-youtube-live-autoupdate-task.ps1 -RepoRoot 'E:\CODEX\Automation\OKTVLiveUpdate'
