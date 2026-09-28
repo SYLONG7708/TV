@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-VDfL5ffclf9RdGhM4bxgfzY2CQq8HOO/bGbAZbK+0Q0=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-q02F97qqlOr202beJ5VnHrLJYWm/Qm53QwnFgiZg0VQ='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-apX/FWr1g3d9WJnWl9EfSBY3/HWkHKLzeMeY3O9qYkk=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-q02F97qqlOr202beJ5VnHrLJYWm/Qm53QwnFgiZg0VQ='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1416,7 +1416,8 @@
         return splitFilterValues(value).filter((item) => item.length >= 2 && item.length <= 12 && !/^\d+$/.test(item));
       }
 
-      const FEATURED_AREA_ORDER = ['韓國', '大陸', '日本', '台灣', '香港', '歐美', '美國', '英國', '泰國', '印度', '其他'];
+      const PRIMARY_AREA_ORDER = ['大陸', '日本', '台灣', '韓國'];
+      const FEATURED_AREA_ORDER = [...PRIMARY_AREA_ORDER, '香港', '歐美', '美國', '英國', '泰國', '印度', '其他'];
 
       function areaGroup(value) {
         const text = normalizedText(value).replace(/\s+/g, '');
@@ -5149,7 +5150,7 @@
           .filter(Boolean);
         const unique = [...new Set(values)];
         const result = key === 'area'
-          ? sortAreaGroups(unique)
+          ? sortAreaGroups([...PRIMARY_AREA_ORDER, ...unique, '其他'])
           : unique.sort((a, b) => (key === 'year' ? b.localeCompare(a) : a.localeCompare(b, 'zh-Hant')));
         state.viewCache.set(cacheKey, result);
         return result;
