@@ -2,7 +2,8 @@
 param(
   [Parameter(Mandatory = $true)][string]$RepoRoot,
   [int]$MaxChannels = 0,
-  [switch]$DryRun
+  [switch]$DryRun,
+  [switch]$PublishOnly
 )
 
 $ErrorActionPreference = 'Stop'
@@ -95,7 +96,7 @@ function Refresh-LiveData([string]$YtDlp) {
 }
 
 function Publish-LivePages {
-  Invoke-GitManaged @('fetch', 'origin', 'gh-pages')
+  Invoke-GitManaged @('fetch', '--filter=blob:none', '--depth=1', 'origin', 'gh-pages')
   if (-not (Test-Path -LiteralPath (Join-Path $pages '.git'))) {
     Invoke-GitManaged @('worktree', 'add', '--no-checkout', '--detach', $pages, 'origin/gh-pages')
     & git -C $pages sparse-checkout set --no-cone '/docs/data/live-channels.json' '/docs/data/source-summary.json'
@@ -123,6 +124,19 @@ try {
 }
 try {
   Start-Transcript -Path $logPath -Append | Out-Null
+  Write-Status 'running' 'Checking YouTube channels and validating HLS streams.'
+  if ($PublishOnly) {
+    if ($DryRun) { throw 'PublishOnly and DryRun cannot be combined.' }
+    Invoke-GitManaged @('fetch', 'origin', 'main')
+    $localRevision = (& git -C $repo rev-parse HEAD).Trim()
+    $remoteRevision = (& git -C $repo rev-parse origin/main).Trim()
+    if ($localRevision -ne $remoteRevision) { throw 'The managed checkout is not at the latest main revision.' }
+    $report = Get-Content -LiteralPath (Join-Path $repo 'sources\live-youtube-report.json') -Raw -Encoding UTF8 | ConvertFrom-Json
+    if ($report.outputsPreserved -or [int]$report.playable -lt 10) { throw 'There are not enough validated HLS streams to publish.' }
+    Publish-LivePages
+    Write-Status 'updated' 'Validated HLS sources are available on main and Pages.' ([int]$report.playable)
+    return
+  }
   $binary = Resolve-YtDlpBinary
   for ($attempt = 1; $attempt -le 2; $attempt++) {
     Prepare-ManagedCheckout
