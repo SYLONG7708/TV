@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-apX/FWr1g3d9WJnWl9EfSBY3/HWkHKLzeMeY3O9qYkk=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-DiKQrPab0GushGi1D/434VjLE+hPFqI+Zt5nLCvrD00='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-TDeVfqO9QiuIi1KO4wp0MxkO48CFGNc7HorJbazoECQ=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-yZOt7dJ1ZYDq72aWTxiD+M80Boa4NIU4ceIPul+tO5s='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -799,7 +799,7 @@
       #detailSheet .episode-pages {
         scrollbar-width: thin;
         scrollbar-color: rgba(255, 255, 255, 0.45) transparent;
-        touch-action: pan-x;
+        touch-action: pan-x pan-y;
       }
 
       #detailSheet .signal-strip::-webkit-scrollbar,
@@ -5551,6 +5551,7 @@
         detailTitle.textContent = displayText(item.title);
         detailMeta.textContent = displayText([signalSourceLabel(item), item.year, item.area, item.categoryName].filter(Boolean).join(' / '));
         renderDetailLoading(item);
+        detailBody.scrollTop = 0;
         openSheet(detailSheet);
         const resolved = await resolvePlayableSignal(item);
         if (state.activeItem?.id === item.id) {
@@ -5606,6 +5607,10 @@
           button.addEventListener('click', async () => {
             const next = state.itemById.get(button.dataset.signalItem);
             if (!next) return;
+            const scrollState = {
+              y: detailBody.scrollTop,
+              x: detailBody.querySelector('.signal-strip')?.scrollLeft || 0,
+            };
             next.signalSources = signalSourcesFor(item);
             next.signalCount = next.signalSources.length;
             state.activeItem = next;
@@ -5615,7 +5620,7 @@
             const resolved = await resolvePlayableSignal(next, { allowAlternates: false });
             if (state.activeItem?.id === next.id) {
               state.activeItem = resolved;
-              renderDetailBody(resolved, 0);
+              renderDetailBody(resolved, 0, scrollState);
             }
           });
         });
@@ -5643,7 +5648,10 @@
         `;
       }
 
-      function renderDetailBody(item, page = 0) {
+      function renderDetailBody(item, page = 0, scrollState = {}) {
+        const previousY = scrollState.y ?? detailBody.scrollTop;
+        const previousX = scrollState.x ?? detailBody.querySelector('.signal-strip')?.scrollLeft ?? 0;
+        const previousPagerX = scrollState.pagerX ?? detailBody.querySelector('.episode-pages')?.scrollLeft ?? 0;
         const total = item.episodes?.length || 0;
         const pages = episodePageCount(item);
         const safePage = Math.min(Math.max(Number(page) || 0, 0), pages - 1);
@@ -5671,6 +5679,11 @@
             }
           </div>
         `;
+        detailBody.scrollTop = previousY;
+        const signalStrip = detailBody.querySelector('.signal-strip');
+        if (signalStrip) signalStrip.scrollLeft = previousX;
+        const episodePages = detailBody.querySelector('.episode-pages');
+        if (episodePages) episodePages.scrollLeft = previousPagerX;
         bindDetailEpisodeControls(item);
       }
 
