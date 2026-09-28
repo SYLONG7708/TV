@@ -34,7 +34,6 @@ const DEFAULT_EXCLUDED_SOURCE_KEYS = new Set([
   '旺旺资源',
   '旺旺短剧',
   '卧龙资源',
-  '金鹰点播',
   '华视影院',
   '百万资源',
   '美少女',

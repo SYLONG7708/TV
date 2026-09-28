@@ -18,7 +18,6 @@ const EXCLUDED_TVBOX_SOURCE_KEYS = new Set([
   '旺旺资源',
   '旺旺短剧',
   '卧龙资源',
-  '金鹰点播',
   '华视影院',
   '百万资源',
   '美少女',
@@ -193,7 +192,9 @@ function normalizeSite(site, index) {
   const name = adult ? adultName(trimString(site.name || key)) : trimString(site.name || key);
   const api = trimString(site.api);
   const ext = trimString(site.ext);
-  const categories = normalizeTvboxCategories(site.categories, adult);
+  const categories = Array.isArray(site.tvboxCategories)
+    ? normalizeCategories(site.tvboxCategories)
+    : normalizeTvboxCategories(site.categories, adult);
 
   const normalized = {
     key,
@@ -207,6 +208,7 @@ function normalizeSite(site, index) {
 
   if (ext) normalized.ext = ext;
   if (categories) normalized.categories = categories;
+  if (Array.isArray(site.tvboxCategories)) normalized.refreshCategories = categories;
   if (adult) normalized.adult = true;
   if (site.changeable !== undefined) normalized.changeable = normalizeInt(site.changeable, site.changeable);
   if (site.playerType !== undefined) normalized.playerType = normalizeInt(site.playerType, site.playerType);

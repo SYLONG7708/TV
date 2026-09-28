@@ -2,7 +2,7 @@
   "generatedAt": "2026-06-11T17:13:35.387Z",
   "reportUrl": "https://raw.githubusercontent.com/hafrey1/LunaTV-config/main/report.md",
   "totalRows": 73,
-  "totalSources": 91,
+  "totalSources": 94,
   "extraConfigUrls": [
     "https://raw.githubusercontent.com/FGBLH/GHK/a1c46cb76810cd6d53b73e1c6f0a0789586151c5/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json"
   ],
@@ -59,10 +59,10 @@
   ],
   "duplicateSources": 17,
   "adultSources": 38,
-  "okRows": 88,
+  "okRows": 92,
   "failedRows": 1,
-  "categoriesOk": 89,
-  "categoriesFailed": 2,
+  "categoriesOk": 93,
+  "categoriesFailed": 1,
   "sources": [
     {
       "key": "爱奇艺",
@@ -3956,46 +3956,21 @@
     {
       "key": "金鹰点播",
       "name": "金鹰点播｜追劇",
-      "api": "https://jinyingzy.com/api.php/provide/vod/",
+      "api": "https://jyzyapi.com/provide/vod/",
       "ext": "",
-      "host": "jinyingzy.com",
+      "host": "jyzyapi.com",
       "adult": false,
-      "origin": "https://raw.githubusercontent.com/hafrey1/LunaTV-config/main/report.md",
-      "status": "unknown",
-      "successRate": "76.7%",
+      "origin": "pinned:user-request:2026-09-28",
+      "status": "ok",
+      "successRate": "pinned",
       "categories": [
-        "国产剧",
-        "短剧",
-        "韩国剧",
-        "香港剧",
-        "台湾剧",
-        "欧美剧",
-        "动作片",
-        "科幻片",
-        "战争片",
-        "奇幻片",
-        "喜剧片",
-        "爱情片",
-        "恐怖片",
-        "犯罪片",
-        "悬疑片",
-        "惊悚片",
         "剧情片",
-        "冒险片",
-        "记录片",
-        "日本剧",
-        "泰剧",
-        "国产综艺",
-        "港台综艺",
-        "欧美综艺",
-        "日韩综艺",
-        "国产动漫",
-        "港台动漫",
-        "日韩动漫"
+        "韩剧",
+        "现代都市"
       ],
-      "categoriesOk": false,
+      "categoriesOk": true,
       "categoriesSkipped": false,
-      "categoriesError": "HTTP 403"
+      "categoriesError": ""
     },
     {
       "key": "优优资源",
@@ -4965,6 +4940,63 @@
       "categoriesOk": true,
       "categoriesSkipped": false,
       "categoriesError": ""
+    },
+    {
+      "key": "无水印资源",
+      "name": "无水印资源｜追劇",
+      "api": "https://api.wsyzy.net/api.php/provide/vod/",
+      "ext": "",
+      "host": "api.wsyzy.net",
+      "adult": false,
+      "origin": "pinned:user-request:2026-09-28",
+      "status": "ok",
+      "successRate": "pinned",
+      "categories": [
+        "剧情片",
+        "韩剧",
+        "现代都市"
+      ],
+      "categoriesOk": true,
+      "categoriesSkipped": false,
+      "categoriesError": ""
+    },
+    {
+      "key": "吉吉资源",
+      "name": "吉吉资源｜追劇",
+      "api": "https://caiji.jjzyapi.com/api.php/provide/vod/",
+      "ext": "",
+      "host": "caiji.jjzyapi.com",
+      "adult": false,
+      "origin": "pinned:user-request:2026-09-28",
+      "status": "ok",
+      "successRate": "pinned",
+      "categories": [
+        "剧情片",
+        "韩国剧",
+        "短剧"
+      ],
+      "categoriesOk": true,
+      "categoriesSkipped": false,
+      "categoriesError": ""
+    },
+    {
+      "key": "第一资源",
+      "name": "第一资源｜追劇",
+      "api": "https://caiji.diyizy.net/api.php/provide/vod/",
+      "ext": "",
+      "host": "caiji.diyizy.net",
+      "adult": false,
+      "origin": "pinned:user-request:2026-09-28",
+      "status": "ok",
+      "successRate": "pinned",
+      "categories": [
+        "剧情片",
+        "韩国剧",
+        "现代都市"
+      ],
+      "categoriesOk": true,
+      "categoriesSkipped": false,
+      "categoriesError": ""
     }
   ],
   "duplicates": [
@@ -5123,5 +5155,6 @@
       "adult": false,
       "duplicateReason": "replaced_by_pinned_source"
     }
-  ]
+  ],
+  "curatedSourcesUpdatedAt": "2026-09-28T15:45:07.898Z"
 }

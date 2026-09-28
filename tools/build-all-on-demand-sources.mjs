@@ -618,6 +618,66 @@ const pinnedRows = [
     origin: 'pinned:user-request',
     adult: false,
   },
+  {
+    status: 'ok',
+    key: '无水印资源',
+    name: '无水印资源｜追劇',
+    site: 'https://www.wsyzy.cc/',
+    api: 'https://api.wsyzy.net/api.php/provide/vod/',
+    type: 1,
+    searchable: 1,
+    quickSearch: 1,
+    filterable: 1,
+    tvboxCategories: ['剧情片', '韩剧', '现代都市'],
+    successRate: 'pinned',
+    origin: 'pinned:user-request:2026-09-28',
+    adult: false,
+  },
+  {
+    status: 'ok',
+    key: '金鹰点播',
+    name: '金鹰点播｜追劇',
+    site: 'https://jyzyapi.com/',
+    api: 'https://jyzyapi.com/provide/vod/',
+    type: 1,
+    searchable: 1,
+    quickSearch: 1,
+    filterable: 1,
+    tvboxCategories: ['剧情片', '韩剧', '现代都市'],
+    successRate: 'pinned',
+    origin: 'pinned:user-request:2026-09-28',
+    adult: false,
+  },
+  {
+    status: 'ok',
+    key: '吉吉资源',
+    name: '吉吉资源｜追劇',
+    site: 'https://www.jjzy.tv/',
+    api: 'https://caiji.jjzyapi.com/api.php/provide/vod/',
+    type: 1,
+    searchable: 1,
+    quickSearch: 1,
+    filterable: 1,
+    tvboxCategories: ['剧情片', '韩国剧', '短剧'],
+    successRate: 'pinned',
+    origin: 'pinned:user-request:2026-09-28',
+    adult: false,
+  },
+  {
+    status: 'ok',
+    key: '第一资源',
+    name: '第一资源｜追劇',
+    site: 'https://www.diyizy.com/',
+    api: 'https://caiji.diyizy.net/api.php/provide/vod/',
+    type: 1,
+    searchable: 1,
+    quickSearch: 1,
+    filterable: 1,
+    tvboxCategories: ['剧情片', '韩国剧', '现代都市'],
+    successRate: 'pinned',
+    origin: 'pinned:user-request:2026-09-28',
+    adult: false,
+  },
 ];
 const dedupedRows = [];
 const duplicateRows = [];
@@ -687,7 +747,7 @@ dedupedRows.sort((left, right) => {
 
 const categoryChecks = await mapLimit(dedupedRows, concurrency, async (row) => fetchCategories(row));
 const sites = dedupedRows.map((row, index) => {
-  const categories = categoryChecks[index]?.categories || DEFAULT_CATEGORIES;
+  const categories = row.tvboxCategories || categoryChecks[index]?.categories || DEFAULT_CATEGORIES;
   const key = row.key ? cleanSourceName(row.key) : sourceKey(row.name, index);
   row.adult = isAdultSource({ ...row, key, name: row.name || key, categories });
   const site = {
@@ -700,6 +760,7 @@ const sites = dedupedRows.map((row, index) => {
     categories,
   };
   if (row.ext) site.ext = row.ext;
+  if (Array.isArray(row.tvboxCategories)) site.tvboxCategories = row.tvboxCategories;
   if (row.changeable !== undefined) site.changeable = row.changeable;
   if (row.filterable !== undefined) site.filterable = row.filterable;
   return site;

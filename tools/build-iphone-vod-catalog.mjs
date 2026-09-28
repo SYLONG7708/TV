@@ -540,6 +540,9 @@ function sourceFromSite(site, index, origin) {
     origin,
     indexable: INDEXABLE_TYPES.has(type) && /^https?:\/\//i.test(api),
     adult,
+    refreshCategories: Array.isArray(site.refreshCategories)
+      ? site.refreshCategories.map((category) => normalizeText(category)).filter(Boolean)
+      : [],
   };
 }
 
@@ -604,7 +607,7 @@ async function getSourceCategories(source) {
   try {
     const payload = await fetchPayload(addVodQuery(source.api, 'ac=list'));
     const seen = new Set();
-    return extractCategories(payload)
+    const categories = extractCategories(payload)
       .map((item, index) => normalizeCategory(item, index, source.adult))
       .filter((item) => {
         const key = `${item.id}|${item.name}`;
@@ -612,6 +615,12 @@ async function getSourceCategories(source) {
         seen.add(key);
         return true;
       });
+    if (!source.refreshCategories.length) return categories;
+    const byName = new Map(categories.map((category) => [category.name.normalize('NFKC'), category]));
+    const selected = source.refreshCategories
+      .map((name) => byName.get(name.normalize('NFKC')))
+      .filter(Boolean);
+    return selected.length ? selected : categories;
   } catch (error) {
     source.error = `分類讀取失敗: ${error.message}`;
     return [];
