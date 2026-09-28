@@ -100,6 +100,16 @@ export async function buildIphoneSeriesSeeds({ catalogPath, dataRoot, output, ra
   try {
     compressed = await fs.readFile(localPath);
   } catch (error) {
+    if (error?.code === 'ENOENT' && !rawBase) {
+      try {
+        const previous = JSON.parse(await fs.readFile(output, 'utf8'));
+        if (previous.itemCount >= 12 && Object.keys(previous.categories || {}).some((category) => KOREAN_CATEGORY_RE.test(category))) {
+          return { output, source: previous.sourceName, items: previous.itemCount, categories: previous.categories, preservedPrevious: true };
+        }
+      } catch {
+        // A missing or unusable previous seed cannot cover a missing source index.
+      }
+    }
     if (!rawBase || error?.code !== 'ENOENT') throw error;
     const url = new URL(source.indexPath, `${rawBase.replace(/\/$/, '')}/`);
     if (url.protocol !== 'https:') throw new Error('Remote source index must use HTTPS');

@@ -1,6 +1,9 @@
 import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
 import test from 'node:test';
-import { buildSeedPayload, selectSeedSource } from '../tools/build-iphone-series-seeds.mjs';
+import { buildIphoneSeriesSeeds, buildSeedPayload, selectSeedSource } from '../tools/build-iphone-series-seeds.mjs';
 
 test('series seeds use a complete normal source and retain newest Korean dramas', () => {
   const source = {
@@ -25,4 +28,20 @@ test('series seeds use a complete normal source and retain newest Korean dramas'
   assert.equal(payload.itemCount, 1);
   assert.equal(payload.items[0].id, 'new');
   assert.equal(payload.categories['韩剧'], 1);
+});
+
+test('daily refresh preserves published category seeds when an index is temporarily missing', async (t) => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'oktv-series-seeds-'));
+  t.after(() => fs.rm(root, { recursive: true, force: true }));
+  const catalogPath = path.join(root, 'catalog.json');
+  const output = path.join(root, 'category-seeds.json');
+  const source = {
+    id: 'complete', name: 'Complete', indexed: true, adult: false, itemCount: 9000,
+    indexPath: 'vod-index/complete.json.gz', categories: [{ name: '韩剧' }],
+  };
+  await fs.writeFile(catalogPath, JSON.stringify({ sources: [source] }));
+  await fs.writeFile(output, JSON.stringify({ sourceName: 'Previous', itemCount: 67, categories: { 韩剧: 67 }, items: [] }));
+  const report = await buildIphoneSeriesSeeds({ catalogPath, dataRoot: root, output });
+  assert.equal(report.preservedPrevious, true);
+  assert.equal(report.items, 67);
 });
