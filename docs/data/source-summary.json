@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-09-28T16:39:15.54Z",
+  "generatedAt": "2026-09-28T17:12:01.161Z",
   "input": {
-    "live": "D:\\a\\TV\\TV\\sources\\live-stable.txt",
+    "live": "E:\\CODEX\\Automation\\OKTVLiveUpdate\\sources\\live-stable.txt",
     "vodUrl": "https://raw.githubusercontent.com/FGBLH/GHK/a1c46cb76810cd6d53b73e1c6f0a0789586151c5/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json",
     "includeLegacySources": false
   },
@@ -21,6 +21,8 @@
   "live": {
     "count": 110,
     "playableCount": 110,
+    "directStreamCount": 43,
+    "webYouTubeFallbackCount": 67,
     "externalCount": 0,
     "networkOnlyCount": 0,
     "kinds": {
@@ -32,26 +34,21 @@
       "YouTube綜合娛樂",
       "YouTube國際新聞",
       "YouTube亞洲新聞",
+      "YouTube音樂體育風景",
+      "YouTube台灣節目",
+      "YouTube電影劇集",
       "YouTube兒童動畫",
       "YouTube文化紀實",
-      "YouTube音樂體育風景",
       "YouTube韓綜娛樂",
-      "YouTube台灣節目",
       "YouTube互動娛樂",
-      "YouTube動漫台",
-      "YouTube電影劇集"
-    ],
-    "lastAttemptAt": "2026-09-28T16:39:17.5523790+00:00",
-    "refreshStatus": "updated",
-    "outputsPreserved": false,
-    "playlistEntries": 112
+      "YouTube動漫台"
+    ]
   },
   "notes": [
     "VOD source is loaded from sources/current-sources.json vod.url.",
     "Legacy All on-demand and LunaTV VOD data is excluded unless --includeLegacySources true is set.",
     "Live data continues to use docs/data/live-channels.json.",
-    "直播來源由 sources/live-stable.txt 重建為 docs/data/live-channels.json，YouTube 簽名 HLS 過期前會被本機排程重新刷新。",
-    "直播來源由 sources/live-stable.txt 重建為 docs/data/live-channels.json，YouTube 簽名 HLS 會由自動排程重新刷新。"
+    "直播 TXT 只收錄可直接播放的來源；手機網頁另外保留 YouTube 官方嵌入入口，短效 HLS 由店內排程更新。"
   ],
   "adult18": {
     "count": 34,
@@ -61,4 +58,3 @@
   },
   "lastLiveAttemptAt": "2026-09-28T16:39:17.5523790+00:00"
 }
-
