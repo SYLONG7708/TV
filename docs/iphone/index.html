@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-hhTVjY/gAvORPMjDZAan2oAoW7cIG7RS++vWtrHjjFo=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-q02F97qqlOr202beJ5VnHrLJYWm/Qm53QwnFgiZg0VQ='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-to+48ROaZ9pRwgR9gGEHgmjC9EexaZ+YpNg5N6X2LC4=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-q02F97qqlOr202beJ5VnHrLJYWm/Qm53QwnFgiZg0VQ='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1078,6 +1078,7 @@
           year: 'all',
           area: 'all',
           genre: 'all',
+          seriesCategory: 'all',
           sort: 'hot',
         },
         sourceSheetMode: 'normal',
@@ -1101,6 +1102,8 @@
           cache: new Map(),
           health: new Map(),
         },
+        categoryIndexLoading: new Map(),
+        categoryIndexAttempted: new Set(),
         loadedSourceIds: new Set(),
         sourceMap: new Map(),
         itemById: new Map(),
@@ -1412,6 +1415,27 @@
         return splitFilterValues(value).filter((item) => item.length >= 2 && item.length <= 12 && !/^\d+$/.test(item));
       }
 
+      const FEATURED_AREA_ORDER = ['韓國', '大陸', '日本', '台灣', '香港', '歐美', '美國', '英國', '泰國', '印度', '其他'];
+
+      function areaGroup(value) {
+        const text = normalizedText(value).replace(/\s+/g, '');
+        if (/^(韓國|南韓|韓)$/.test(text)) return '韓國';
+        if (/^(大陸|中國大陸|中國|內地|國產)$/.test(text)) return '大陸';
+        if (/^(日本|日)$/.test(text)) return '日本';
+        if (/^(台灣|臺灣|台)$/.test(text)) return '台灣';
+        if (/^(香港|港)$/.test(text)) return '香港';
+        if (/^(歐美|歐洲|北美|美歐)$/.test(text)) return '歐美';
+        if (/^(美國|美)$/.test(text)) return '美國';
+        if (/^(英國|英)$/.test(text)) return '英國';
+        if (/^(泰國|泰)$/.test(text)) return '泰國';
+        if (/^(印度|印)$/.test(text)) return '印度';
+        return '其他';
+      }
+
+      function sortAreaGroups(values) {
+        return [...new Set(values)].sort((a, b) => FEATURED_AREA_ORDER.indexOf(a) - FEATURED_AREA_ORDER.indexOf(b));
+      }
+
       function cleanGenreValues(values) {
         const rows = Array.isArray(values) ? values : [values];
         const out = [];
@@ -1429,13 +1453,30 @@
         return [...new Set(out)];
       }
 
+      function canonicalSeriesCategory(value) {
+        const text = normalizedText(value);
+        if (!text || classifyCatalogKind(text) !== 'series') return '';
+        if (/^(韓劇|韓國劇|南韓劇)$/.test(text)) return '韓劇';
+        if (/^(大陸劇|國產劇|內地劇|中國劇|陸劇)$/.test(text)) return '大陸劇';
+        if (/^(日劇|日本劇)$/.test(text)) return '日劇';
+        if (/^(港劇|香港劇)$/.test(text)) return '港劇';
+        if (/^(台劇|台灣劇)$/.test(text)) return '台劇';
+        if (/^(泰劇|泰國劇|馬泰劇)$/.test(text)) return '泰劇';
+        if (/^(美劇|美國劇)$/.test(text)) return '美劇';
+        return toTraditional(String(value || '').trim());
+      }
+
       function prepareCatalogItem(item) {
         if (!item) return item;
         item.kind = displayVodKind(item);
         if (item.kind === 'adult') item.adult = true;
         item._filterYear = cleanFilterYear(item.year);
         item._filterAreas = cleanAreaValues(item.area);
-        item._filterGenres = cleanGenreValues([...itemGenres(item), item.categoryName, item.typeName, item.type_name]);
+        item._filterAreaGroups = sortAreaGroups(item._filterAreas.map(areaGroup));
+        const areaTokens = new Set(item._filterAreas.map(normalizedText));
+        item._filterGenres = cleanGenreValues([...itemGenres(item), item.categoryName, item.typeName, item.type_name])
+          .filter((token) => !areaTokens.has(normalizedText(token)));
+        item._seriesCategories = [...new Set([item.categoryName, item.typeName, item.type_name, ...item._filterGenres].map(canonicalSeriesCategory).filter(Boolean))];
         item.year = item._filterYear || '';
         item.area = item._filterAreas.join(' / ');
         item.genre = item._filterGenres;
@@ -1618,7 +1659,7 @@
         if (state.tab === 'live') return false;
         const categories = Array.isArray(source.categories) ? source.categories : [];
         if (!categories.length) return true;
-        return categories.some((category) => classifyCatalogKind(category) === state.tab);
+        return categories.some((category) => classifyCatalogKind(category?.name || category?.kind || category) === state.tab);
       }
 
       function combinedSourceCandidates(sourceId) {
@@ -1754,7 +1795,11 @@
         const limit = Math.max(1, Number(options.limit || 4));
         const candidates = combinedSourceCandidates(sourceId);
         const supported = candidates.filter(sourceSupportsCurrentTab);
-        const sources = (supported.length ? supported : candidates).slice(0, limit);
+        const category = state.tab === 'series' ? state.filters.seriesCategory : 'all';
+        const matchingCategory = category === 'all'
+          ? []
+          : supported.filter((source) => source.categories?.some((entry) => canonicalSeriesCategory(entry?.name || entry) === category));
+        const sources = (matchingCategory.length ? matchingCategory : supported.length ? supported : candidates).slice(0, limit);
         return await ensureSourceListItems(sources);
       }
 
@@ -4169,13 +4214,6 @@
         return Boolean(source && QUANTUM_API_RE.test(source.api || ''));
       }
 
-      function areaWeight(value) {
-        const text = String(value || '');
-        if (text === '韓國') return -100;
-        if (text.includes('韓')) return -90;
-        return 0;
-      }
-
       async function loadQuantumManifest() {
         if (state.quantum.manifest) return state.quantum.manifest;
         const manifest = await getJson(QUANTUM_MANIFEST_URL, null);
@@ -4421,6 +4459,7 @@
           state.filters.year,
           state.filters.area,
           state.filters.genre,
+          state.filters.seriesCategory,
           state.filters.sort,
         ].join('\u001f');
       }
@@ -4434,8 +4473,9 @@
         if (enforceSource && !['all', 'normal', 'adult18'].includes(sourceId) && item.sourceId !== sourceId) return false;
         if (state.tab !== 'home' && state.tab !== 'rank' && item.kind !== state.tab) return false;
         if (skipFilter !== 'year' && state.filters.year !== 'all' && item._filterYear !== state.filters.year) return false;
-        if (skipFilter !== 'area' && state.filters.area !== 'all' && !item._filterAreas?.includes(state.filters.area)) return false;
+        if (skipFilter !== 'area' && state.filters.area !== 'all' && !item._filterAreaGroups?.includes(state.filters.area)) return false;
         if (skipFilter !== 'genre' && state.filters.genre !== 'all' && !item._filterGenres?.includes(state.filters.genre)) return false;
+        if (state.tab === 'series' && state.filters.seriesCategory !== 'all' && !item._seriesCategories?.includes(state.filters.seriesCategory)) return false;
         const needle = currentSearchNeedle();
         if (!needle.query) return true;
         const searchText =
@@ -5004,6 +5044,7 @@
       function renderFilterSummary() {
         const chips = [
           ['訊號源', sourceLabel()],
+          ...(state.tab === 'series' ? [['劇集分類', state.filters.seriesCategory === 'all' ? '全部' : state.filters.seriesCategory]] : []),
           ['年份', state.filters.year === 'all' ? '全部' : state.filters.year],
           ['國家', state.filters.area === 'all' ? '全部' : state.filters.area],
           ['類型', state.filters.genre === 'all' ? '全部' : state.filters.genre],
@@ -5013,7 +5054,8 @@
       }
 
       function startCombinedPreviewLoad() {
-        if (state.sourceLoading || state.tab === 'live') return;
+        if (state.sourceLoading || state.searchLoading || state.tab === 'live') return;
+        if (state.tab === 'series' && state.categoryIndexLoading.has(`${state.selectedSource}\u001f${state.filters.seriesCategory}`)) return;
         if (!['all', 'normal', 'adult18'].includes(state.selectedSource)) return;
         if (!combinedSourceCandidates(state.selectedSource).length) return;
         state.sourceLoading = true;
@@ -5030,11 +5072,18 @@
         ensureQuantumForCurrentView();
         triggerSearchIndexLoad();
         ensureAvailableFilters();
+        ensureSeriesCategoryContent();
         const allRows = visibleItems();
         if (!allRows.length && !state.query) startCombinedPreviewLoad();
         const rows = allRows.slice(0, state.visibleLimit);
         const title = tabs.find(([id]) => id === state.tab)?.[1] || '主頁';
-        const emptyMessage = state.searchLoading ? '正在搜尋安全分片...' : '目前沒有符合篩選的影片';
+        const categoryKey = `${state.selectedSource}\u001f${state.filters.seriesCategory}`;
+        const categoryLoading = state.tab === 'series' && state.categoryIndexLoading.has(categoryKey);
+        const emptyMessage = categoryLoading
+          ? `正在載入${state.filters.seriesCategory}分類...`
+          : state.searchLoading
+          ? '正在搜尋安全分片...'
+          : '目前沒有符合篩選的影片';
         const countLabel = state.query
           ? `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部搜尋結果`
           : `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部已載入，完整索引 ${formatCount(state.catalog.totals.playableItems)} 部可播放`;
@@ -5043,7 +5092,6 @@
           screen.innerHTML = `
             ${renderToolbar()}
             <div id="vodQuickFilters"></div>
-            <div id="vodShortRail"></div>
             <section class="section-head search-section-head" id="vodSectionHead"></section>
             <section class="poster-grid" id="vodGrid"></section>
             <div id="vodFloatingFilter"></div>
@@ -5052,7 +5100,6 @@
           bindToolbar();
         }
         document.querySelector('#vodQuickFilters').innerHTML = renderQuickFilters();
-        document.querySelector('#vodShortRail').innerHTML = state.tab === 'short' ? renderShortAreaRail() : '';
         document.querySelector('#vodSectionHead').innerHTML = `
           <div><h1>${displayHtml(title)}</h1><span>${countLabel}</span></div>
           ${searchProgressMarkup()}
@@ -5063,7 +5110,6 @@
         document.querySelector('#vodFloatingFilter').innerHTML = renderFloatingFilter();
         bindPosters();
         bindQuickFilters();
-        bindShortAreaRail();
         bindFloatingFilter();
         bindSearchProgress();
       }
@@ -5094,29 +5140,108 @@
         const values = sourceItems(state.selectedSource, key)
           .map((item) => {
             if (key === 'year') return [item._filterYear];
-            if (key === 'area') return item._filterAreas || [];
+            if (key === 'area') return item._filterAreaGroups || [];
             if (key === 'genre') return item._filterGenres || [];
             return [item[key]];
           })
           .flat()
           .filter(Boolean);
         const unique = [...new Set(values)];
-        const result = unique.sort((a, b) => (key === 'year' ? b.localeCompare(a) : a.localeCompare(b, 'zh-Hant')));
+        const result = key === 'area'
+          ? sortAreaGroups(unique)
+          : unique.sort((a, b) => (key === 'year' ? b.localeCompare(a) : a.localeCompare(b, 'zh-Hant')));
         state.viewCache.set(cacheKey, result);
         return result;
       }
 
+      function seriesCategoryOptions() {
+        const cacheKey = `series-category-options\u001f${state.itemsRevision}\u001f${state.selectedSource}`;
+        if (state.viewCache.has(cacheKey)) return state.viewCache.get(cacheKey);
+        const combined = ['all', 'normal', 'adult18'].includes(state.selectedSource);
+        const values = new Set();
+        for (const source of state.catalog.sources) {
+          if (source.adult || !source.indexed || !source.indexPath || (!combined && source.id !== state.selectedSource)) continue;
+          for (const entry of source.categories || []) {
+            const category = canonicalSeriesCategory(entry?.name || entry?.kind || entry);
+            if (category) values.add(category);
+          }
+        }
+        for (const item of state.catalog.items) {
+          if (item.kind !== 'series' || itemIsAdult(item)) continue;
+          if (!combined && item.sourceId !== state.selectedSource) continue;
+          for (const category of item._seriesCategories || []) values.add(category);
+        }
+        const categories = [...values].sort((a, b) => {
+          const priority = (value) => value === '韓劇' ? 0 : value === '大陸劇' ? 1 : 2;
+          return priority(a) - priority(b) || a.localeCompare(b, 'zh-Hant');
+        });
+        state.viewCache.set(cacheKey, categories);
+        return categories;
+      }
+
+      function ensureSeriesCategoryContent() {
+        if (state.tab !== 'series' || state.filters.seriesCategory === 'all') return;
+        const category = state.filters.seriesCategory;
+        const key = `${state.selectedSource}\u001f${category}`;
+        if (state.categoryIndexAttempted.has(key) || state.categoryIndexLoading.has(key)) return;
+        const combined = ['all', 'normal', 'adult18'].includes(state.selectedSource);
+        const candidates = state.catalog.sources
+          .filter((source) => !source.adult && source.indexed && source.indexPath)
+          .filter((source) => combined || source.id === state.selectedSource)
+          .filter((source) => source.categories?.some((entry) => canonicalSeriesCategory(entry?.name || entry?.kind || entry) === category))
+          .sort((a, b) => Number(a.itemCount || Infinity) - Number(b.itemCount || Infinity));
+        if (!candidates.length) {
+          state.categoryIndexAttempted.add(key);
+          return;
+        }
+        const task = (async () => {
+          for (const source of candidates.slice(0, 3)) {
+            try {
+              const payload = await getJson(`../data/${source.indexPath}`, null, { timeoutMs: 45000, throwOnFailure: true });
+              const matches = (payload?.items || [])
+                .filter((item) => item?.id && !item.adult)
+                .filter((item) => {
+                  const labels = [item.categoryName, ...(Array.isArray(item.genre) ? item.genre : [])];
+                  return labels.some((label) => canonicalSeriesCategory(label) === category);
+                })
+                .sort((a, b) => itemTimeValue(b) - itemTimeValue(a))
+                .slice(0, 160);
+              if (!matches.length) continue;
+              registerCatalogItems(matches);
+              break;
+            } catch (error) {
+              console.warn('series-category-index-load-failed', source.id, error?.name || 'Error');
+            }
+          }
+        })().finally(() => {
+          state.categoryIndexAttempted.add(key);
+          state.categoryIndexLoading.delete(key);
+          render();
+        });
+        state.categoryIndexLoading.set(key, task);
+      }
+
       function ensureAvailableFilters() {
+        if (state.tab === 'series' && state.filters.seriesCategory !== 'all' && !seriesCategoryOptions().includes(state.filters.seriesCategory)) {
+          state.filters.seriesCategory = 'all';
+        }
         for (let index = 0; index < 2; index += 1) {
           for (const key of ['year', 'area', 'genre']) {
-            const values = key === 'area' && state.tab === 'short' ? shortAreas() : filterValues(key);
+            const values = filterValues(key);
             if (state.filters[key] !== 'all' && !values.includes(state.filters[key])) state.filters[key] = 'all';
           }
         }
       }
 
       function quickFilterRows() {
-        const rows = [
+        const rows = [];
+        if (state.tab === 'series') {
+          const categories = seriesCategoryOptions();
+          if (categories.length) {
+            rows.push({ label: '劇集分類', key: 'seriesCategory', values: [['all', '全部'], ...categories.map((category) => [category, category])] });
+          }
+        }
+        rows.push(
           {
             label: '排序',
             key: 'sort',
@@ -5127,7 +5252,7 @@
               ['latest', '新上線'],
             ],
           },
-        ];
+        );
         const years = filterValues('year').slice(0, 24);
         const areas = filterValues('area').slice(0, 28);
         const genres = filterValues('genre').slice(0, 36);
@@ -5140,6 +5265,7 @@
       function renderQuickFilterRow(label, key, values) {
         return `
           <div class="quick-filter-block" aria-label="${displayHtml(label)}">
+            <span class="quick-filter-label">${displayHtml(label)}</span>
             <div class="quick-filter-row">
               ${values
                 .map(
@@ -5160,46 +5286,14 @@
       function bindQuickFilters() {
         document.querySelectorAll('[data-quick-filter-key]').forEach((button) => {
           button.addEventListener('click', () => {
-            state.filters[button.dataset.quickFilterKey] = button.dataset.quickFilterValue || 'all';
-            clearViewCache();
-            resetVisibleLimit();
-            resetPageViewport();
-            render();
-          });
-        });
-      }
-
-      function shortAreas() {
-        const areas = [
-          ...new Set(
-            state.catalog.items
-              .filter((item) => item.kind === 'short')
-              .flatMap((item) => item._filterAreas || [])
-              .filter(Boolean),
-          ),
-        ];
-        return areas.sort((a, b) => {
-          return areaWeight(a) - areaWeight(b) || a.localeCompare(b, 'zh-Hant');
-        });
-      }
-
-      function renderShortAreaRail() {
-        const areas = shortAreas();
-        if (!areas.length) return '';
-        return `
-          <div class="area-rail">
-            <button class="chip ${state.filters.area === 'all' ? 'is-active' : ''}" type="button" data-short-area="all">全部地區</button>
-            ${areas
-              .map((area) => `<button class="chip ${state.filters.area === area ? 'is-active' : ''}" type="button" data-short-area="${escapeHtml(area)}">${displayHtml(area)}</button>`)
-              .join('')}
-          </div>
-        `;
-      }
-
-      function bindShortAreaRail() {
-        document.querySelectorAll('[data-short-area]').forEach((button) => {
-          button.addEventListener('click', () => {
-            state.filters.area = button.dataset.shortArea || 'all';
+            const key = button.dataset.quickFilterKey;
+            state.filters[key] = button.dataset.quickFilterValue || 'all';
+            if (key === 'seriesCategory') {
+              state.filters.area = 'all';
+              state.filters.genre = 'all';
+              cancelActiveSearch('cancelled');
+              state.searchProgress = { query: '', completed: 0, total: 0, failed: 0, status: 'idle' };
+            }
             clearViewCache();
             resetVisibleLimit();
             resetPageViewport();
@@ -5691,6 +5785,7 @@
         const years = filterValues('year').slice(0, 36);
         const areas = filterValues('area').slice(0, 36);
         const genres = filterValues('genre').slice(0, 48);
+        const seriesCategories = state.tab === 'series' ? seriesCategoryOptions() : [];
         const sorts = [
           ['hot', '熱門'],
           ['views', '觀看人數'],
@@ -5699,6 +5794,7 @@
           ['name', '名稱'],
         ];
         filterSheetBody.innerHTML = `
+          ${seriesCategories.length ? filter('劇集分類', 'seriesCategory', [['all', '全部'], ...seriesCategories.map((category) => [category, category])]) : ''}
           ${years.length ? filter('年份', 'year', [['all', '全部年份'], ...years.map((year) => [year, year])]) : ''}
           ${areas.length ? filter('地區', 'area', [['all', '全部地區'], ...areas.map((area) => [area, area])]) : ''}
           ${genres.length ? filter('類型', 'genre', [['all', '全部類型'], ...genres.map((genre) => [genre, genre])]) : ''}
@@ -5707,7 +5803,14 @@
         `;
         filterSheetBody.querySelectorAll('[data-filter-key]').forEach((button) => {
           button.addEventListener('click', () => {
-            state.filters[button.dataset.filterKey] = button.dataset.filterValue || 'all';
+            const key = button.dataset.filterKey;
+            state.filters[key] = button.dataset.filterValue || 'all';
+            if (key === 'seriesCategory') {
+              state.filters.area = 'all';
+              state.filters.genre = 'all';
+              cancelActiveSearch('cancelled');
+              state.searchProgress = { query: '', completed: 0, total: 0, failed: 0, status: 'idle' };
+            }
             clearViewCache();
             resetVisibleLimit();
             resetPageViewport();
@@ -5716,7 +5819,7 @@
           });
         });
         filterSheetBody.querySelector('[data-reset-filter]')?.addEventListener('click', () => {
-          state.filters = { year: 'all', area: 'all', genre: 'all', sort: 'hot' };
+          state.filters = { year: 'all', area: 'all', genre: 'all', seriesCategory: 'all', sort: 'hot' };
           clearViewCache();
           resetVisibleLimit();
           resetPageViewport();
