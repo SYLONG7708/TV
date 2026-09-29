@@ -89,10 +89,26 @@ export function buildSeedPayload(source, index, limitPerCategory = DEFAULT_LIMIT
   };
 }
 
+async function preservedSeedReport(output) {
+  try {
+    const previous = JSON.parse(await fs.readFile(output, 'utf8'));
+    if (previous.itemCount >= 12 && Object.keys(previous.categories || {}).some((category) => KOREAN_CATEGORY_RE.test(category))) {
+      return { output, source: previous.sourceName, items: previous.itemCount, categories: previous.categories, preservedPrevious: true };
+    }
+  } catch {
+    // No previous seed is available.
+  }
+  return null;
+}
+
 export async function buildIphoneSeriesSeeds({ catalogPath, dataRoot, output, rawBase = '', limitPerCategory = DEFAULT_LIMIT_PER_CATEGORY }) {
   const catalog = JSON.parse(await fs.readFile(catalogPath, 'utf8'));
   const source = selectSeedSource(catalog);
-  if (!source) throw new Error('No indexed, non-adult source with Korean drama is available');
+  if (!source) {
+    const previous = await preservedSeedReport(output);
+    if (previous) return previous;
+    throw new Error('No indexed, non-adult source with Korean drama is available');
+  }
   const resolvedRoot = path.resolve(dataRoot);
   const localPath = path.resolve(resolvedRoot, source.indexPath);
   if (!localPath.startsWith(resolvedRoot + path.sep)) throw new Error('Source index path escapes data root');
@@ -101,14 +117,8 @@ export async function buildIphoneSeriesSeeds({ catalogPath, dataRoot, output, ra
     compressed = await fs.readFile(localPath);
   } catch (error) {
     if (error?.code === 'ENOENT' && !rawBase) {
-      try {
-        const previous = JSON.parse(await fs.readFile(output, 'utf8'));
-        if (previous.itemCount >= 12 && Object.keys(previous.categories || {}).some((category) => KOREAN_CATEGORY_RE.test(category))) {
-          return { output, source: previous.sourceName, items: previous.itemCount, categories: previous.categories, preservedPrevious: true };
-        }
-      } catch {
-        // A missing or unusable previous seed cannot cover a missing source index.
-      }
+      const previous = await preservedSeedReport(output);
+      if (previous) return previous;
     }
     if (!rawBase || error?.code !== 'ENOENT') throw error;
     const url = new URL(source.indexPath, `${rawBase.replace(/\/$/, '')}/`);
@@ -118,7 +128,15 @@ export async function buildIphoneSeriesSeeds({ catalogPath, dataRoot, output, ra
     compressed = Buffer.from(await response.arrayBuffer());
   }
   const index = JSON.parse(zlib.gunzipSync(compressed).toString('utf8'));
-  const payload = buildSeedPayload(source, index, limitPerCategory);
+  let payload;
+  try {
+    payload = buildSeedPayload(source, index, limitPerCategory);
+  } catch (error) {
+    if (error?.message !== 'Selected source index has no Korean series seed items') throw error;
+    const previous = await preservedSeedReport(output);
+    if (previous) return previous;
+    throw error;
+  }
   await fs.mkdir(path.dirname(output), { recursive: true });
   await fs.writeFile(output, `${JSON.stringify(payload)}\n`, 'utf8');
   return { output, source: source.name, items: payload.itemCount, categories: payload.categories };

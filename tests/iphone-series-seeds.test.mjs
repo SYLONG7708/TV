@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import zlib from 'node:zlib';
 import test from 'node:test';
 import { buildIphoneSeriesSeeds, buildSeedPayload, selectSeedSource } from '../tools/build-iphone-series-seeds.mjs';
 
@@ -44,4 +45,14 @@ test('daily refresh preserves published category seeds when an index is temporar
   const report = await buildIphoneSeriesSeeds({ catalogPath, dataRoot: root, output });
   assert.equal(report.preservedPrevious, true);
   assert.equal(report.items, 67);
+
+  await fs.writeFile(catalogPath, JSON.stringify({ sources: [{ ...source, itemCount: 1000 }] }));
+  const partialReport = await buildIphoneSeriesSeeds({ catalogPath, dataRoot: root, output });
+  assert.equal(partialReport.preservedPrevious, true);
+
+  await fs.mkdir(path.join(root, 'vod-index'));
+  await fs.writeFile(path.join(root, source.indexPath), zlib.gzipSync(JSON.stringify({ items: [] })));
+  await fs.writeFile(catalogPath, JSON.stringify({ sources: [source] }));
+  const emptyIndexReport = await buildIphoneSeriesSeeds({ catalogPath, dataRoot: root, output });
+  assert.equal(emptyIndexReport.preservedPrevious, true);
 });
