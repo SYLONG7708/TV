@@ -212,6 +212,12 @@ jobs:
             --catalog .\docs\data\iphone-vod-catalog.json `
             --output .\docs\iphone\category-seeds.json `
             --limitPerCategory 80
+          node .\tools\build-iphone-korean-short-seeds.mjs `
+            --tvRoot . `
+            --catalog .\docs\data\iphone-vod-catalog.json `
+            --output .\docs\iphone\korean-short-seeds.json `
+            --pages 3
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           node .\tools\compact-iphone-catalog.mjs `
             --tvRoot . `
             --catalog .\docs\data\iphone-vod-catalog.json `
@@ -306,6 +312,7 @@ jobs:
             "docs/data/iphone-health-check-latest.json",
             "docs/data/iphone-health-check-latest.csv",
             "docs/iphone/category-seeds.json",
+            "docs/iphone/korean-short-seeds.json",
             "docs/iphone/index.html"
           )
           $existingPaths = @($paths | Where-Object { Test-Path -LiteralPath $_ })

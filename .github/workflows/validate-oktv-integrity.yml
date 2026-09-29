@@ -58,6 +58,7 @@ jobs:
           node --check tools/guard-vod-catalog-coverage.mjs
           node --check tools/build-pages-public-catalog.mjs
           node --check tools/build-iphone-vod-latest.mjs
+          node --check tools/build-iphone-korean-short-seeds.mjs
           node --check tools/check-public-freshness.mjs
           node --check tools/check-oktv-system-health.mjs
           node --check tools/recover-oktv.mjs

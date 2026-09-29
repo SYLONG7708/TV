@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-TDeVfqO9QiuIi1KO4wp0MxkO48CFGNc7HorJbazoECQ=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-yZOt7dJ1ZYDq72aWTxiD+M80Boa4NIU4ceIPul+tO5s='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-OtGmpqcp/Nm0oTPj8Ve8mVGg2g91s9BfpnSVrPwu1UQ=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-yZOt7dJ1ZYDq72aWTxiD+M80Boa4NIU4ceIPul+tO5s='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1125,6 +1125,7 @@
         catalog: { totals: {}, sources: [], items: [], filters: { years: [], areas: [], genres: [] } },
         latest: { items: [] },
         seriesSeeds: { items: [] },
+        koreanShortSeeds: { items: [] },
         quantum: {
           manifest: null,
           loadedKinds: new Set(),
@@ -1454,7 +1455,7 @@
       }
 
       const PRIMARY_AREA_ORDER = ['大陸', '日本', '台灣', '韓國'];
-      const FEATURED_AREA_ORDER = [...PRIMARY_AREA_ORDER, '香港', '歐美', '美國', '英國', '泰國', '印度', '其他'];
+      const FEATURED_AREA_ORDER = [...PRIMARY_AREA_ORDER, '其他'];
 
       function areaGroup(value) {
         const text = normalizedText(value).replace(/\s+/g, '');
@@ -1462,12 +1463,6 @@
         if (/^(大陸|中國大陸|中國|內地|國產)$/.test(text)) return '大陸';
         if (/^(日本|日)$/.test(text)) return '日本';
         if (/^(台灣|臺灣|台)$/.test(text)) return '台灣';
-        if (/^(香港|港)$/.test(text)) return '香港';
-        if (/^(歐美|歐洲|北美|美歐)$/.test(text)) return '歐美';
-        if (/^(美國|美)$/.test(text)) return '美國';
-        if (/^(英國|英)$/.test(text)) return '英國';
-        if (/^(泰國|泰)$/.test(text)) return '泰國';
-        if (/^(印度|印)$/.test(text)) return '印度';
         return '其他';
       }
 
@@ -1481,6 +1476,7 @@
         for (const row of rows) {
           for (const token of splitFilterValues(row)) {
             if (token.length < 2 || token.length > 10) continue;
+            if (/^&(?:amp|quot|apos|lt|gt);?$/i.test(token) || /^&#(?:x[0-9a-f]+|\d+);?$/i.test(token)) continue;
             if (/^\[db:/i.test(token) || /^_?m$/i.test(token)) continue;
             if (/^\d+$/.test(token)) continue;
             if (!/[\p{Script=Han}A-Za-z0-9]/u.test(token)) continue;
@@ -4533,11 +4529,6 @@
           state.viewCache.set(cacheKey, rows);
           return rows;
         }
-        if (!rows.length && state.tab === 'short' && state.filters.area !== 'all') {
-          const fallbackRows = state.catalog.items.filter((item) => itemMatches(item, 'normal', true, skipFilter));
-          state.viewCache.set(cacheKey, fallbackRows);
-          return fallbackRows;
-        }
         state.viewCache.set(cacheKey, rows);
         return rows;
       }
@@ -5187,7 +5178,7 @@
           .filter(Boolean);
         const unique = [...new Set(values)];
         const result = key === 'area'
-          ? sortAreaGroups([...PRIMARY_AREA_ORDER, ...unique, '其他'])
+          ? sortAreaGroups(unique)
           : unique.sort((a, b) => (key === 'year' ? b.localeCompare(a) : a.localeCompare(b, 'zh-Hant')));
         state.viewCache.set(cacheKey, result);
         return result;
@@ -5198,13 +5189,6 @@
         if (state.viewCache.has(cacheKey)) return state.viewCache.get(cacheKey);
         const combined = ['all', 'normal', 'adult18'].includes(state.selectedSource);
         const values = new Set();
-        for (const source of state.catalog.sources) {
-          if (source.adult || !source.indexed || !source.indexPath || (!combined && source.id !== state.selectedSource)) continue;
-          for (const entry of source.categories || []) {
-            const category = canonicalSeriesCategory(entry?.name || entry?.kind || entry);
-            if (category) values.add(category);
-          }
-        }
         for (const item of state.catalog.items) {
           if (item.kind !== 'series' || itemIsAdult(item)) continue;
           if (!combined && item.sourceId !== state.selectedSource) continue;
@@ -5955,10 +5939,11 @@
       document.querySelector('#detailSheet [data-close-detail].icon-btn').innerHTML = icon('close');
       document.querySelector('#playerSheet [data-close-player].icon-btn').innerHTML = icon('close');
 
-      [state.catalog, state.latest, state.seriesSeeds, state.live, state.queryIndex.manifest] = await Promise.all([
+      [state.catalog, state.latest, state.seriesSeeds, state.koreanShortSeeds, state.live, state.queryIndex.manifest] = await Promise.all([
         getJson('../data/iphone-vod-catalog.json', state.catalog),
         getJson('../data/iphone-vod-latest.json', { items: [] }),
         getJson('./category-seeds.json', { items: [] }),
+        getJson('./korean-short-seeds.json', { items: [] }),
         getJson('../data/live-channels.json', []),
         getJson(QUERY_MANIFEST_URL, null),
       ]);
@@ -5968,6 +5953,7 @@
       const initialCatalogItems = Array.isArray(state.catalog.items) ? state.catalog.items : [];
       const latestCatalogItems = Array.isArray(state.latest.items) ? state.latest.items : [];
       const seriesSeedItems = Array.isArray(state.seriesSeeds.items) ? state.seriesSeeds.items : [];
+      const koreanShortSeedItems = Array.isArray(state.koreanShortSeeds.items) ? state.koreanShortSeeds.items : [];
       const fallbackQueryItems = Array.isArray(state.queryIndex.manifest?.fallbackItems)
         ? state.queryIndex.manifest.fallbackItems
         : [];
@@ -5976,6 +5962,7 @@
       registerCatalogItems(initialCatalogItems);
       registerCatalogItems(latestCatalogItems);
       registerCatalogItems(seriesSeedItems);
+      registerCatalogItems(koreanShortSeedItems);
       registerCatalogItems(fallbackQueryItems);
       const seededCategories = new Map();
       for (const item of seriesSeedItems) {
