@@ -83,7 +83,12 @@ export async function buildKoreanShortSeeds({ catalogPath, output, pages = 3, qu
     if (!source.indexed || source.adult || !source.api) return false;
     try { return SOURCE_HOSTS.has(new URL(source.api).hostname); } catch { return false; }
   });
-  if (!sources.length) throw new Error('No indexed Korean short drama source is configured');
+  if (!sources.length) {
+    if ((previous.items || []).some((item) => item.kind === 'short' && item.area === '韓國' && item.episodes?.length)) {
+      return { output, itemCount: previous.items.length, preservedPrevious: true, status: [] };
+    }
+    throw new Error('No indexed Korean short drama source is configured');
+  }
 
   const items = [];
   const status = [];

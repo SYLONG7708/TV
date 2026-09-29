@@ -28,6 +28,10 @@ test('daily Korean short seeds keep playable episodes and survive a temporary so
     const second = await buildKoreanShortSeeds({ catalogPath, output, pages: 1, query: async () => { throw new Error('temporary outage'); } });
     assert.equal(second.preservedPrevious, true);
     assert.deepEqual(JSON.parse(await fs.readFile(output, 'utf8')), saved);
+
+    await fs.writeFile(catalogPath, JSON.stringify({ sources: [] }));
+    const missingSource = await buildKoreanShortSeeds({ catalogPath, output, pages: 1 });
+    assert.equal(missingSource.preservedPrevious, true);
   } finally {
     const tempRoot = path.resolve(os.tmpdir()) + path.sep;
     if (!path.resolve(root).startsWith(tempRoot)) throw new Error('Temporary path escaped its root');
