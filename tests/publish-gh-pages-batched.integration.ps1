@@ -141,9 +141,13 @@ try {
   [IO.File]::WriteAllText((Join-Path $pages 'docs\data\manifest.json'), '{"version":3}')
   $global:OktvSimulatedPushErrorPending = $true
   $global:OktvSimulatedPushErrorTriggered = $false
+  $global:OktvTestGitExecutable = (Get-Command git -CommandType Application | Select-Object -First 1).Source
+  if (-not $global:OktvTestGitExecutable) {
+    throw 'Unable to locate the Git executable for the response-loss test.'
+  }
   function git {
     $gitArguments = @($args)
-    & git.exe @gitArguments
+    & $global:OktvTestGitExecutable @gitArguments
     $nativeExit = $LASTEXITCODE
     if ($global:OktvSimulatedPushErrorPending -and
         $gitArguments -contains 'push' -and
@@ -177,7 +181,7 @@ catch {
 }
 finally {
   Remove-Item -LiteralPath Function:\git -ErrorAction SilentlyContinue
-  Remove-Variable -Name OktvSimulatedPushErrorPending,OktvSimulatedPushErrorTriggered -Scope Global -ErrorAction SilentlyContinue
+  Remove-Variable -Name OktvSimulatedPushErrorPending,OktvSimulatedPushErrorTriggered,OktvTestGitExecutable -Scope Global -ErrorAction SilentlyContinue
   if (Test-Path -LiteralPath $testRoot) {
     $resolvedTestRoot = (Resolve-Path -LiteralPath $testRoot).Path
     $resolvedTemp = (Resolve-Path -LiteralPath ([IO.Path]::GetTempPath())).Path
