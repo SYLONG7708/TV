@@ -13,8 +13,8 @@ param(
 
   [string]$RemoteName = 'origin',
   [string]$PagesBranch = 'gh-pages',
-  [long]$MaxBatchBytes = 134217728,
-  [int]$PushAttempts = 4,
+  [long]$MaxBatchBytes = 67108864,
+  [int]$PushAttempts = 8,
   [bool]$CompactPublishedHistory = $true,
   [bool]$PreferGitHubApiCompaction = $true
 )
@@ -100,14 +100,27 @@ function Invoke-GitHubApiJson {
 }
 
 function Push-UploadHead {
+  $targetHead = Get-GitValue -Arguments @('rev-parse', 'HEAD')
   for ($attempt = 1; $attempt -le $PushAttempts; $attempt++) {
+    Write-Host "Uploading Pages checkpoint $targetHead (attempt $attempt/$PushAttempts)."
     & git -C $repo push $RemoteName "HEAD:$uploadRef"
     if ($LASTEXITCODE -eq 0) {
       return
     }
+    # The server can accept a push and still return an HTTP error to the client.
+    # Check the actual ref before retrying or declaring the checkpoint lost.
+    $remoteLine = @(& git -C $repo ls-remote --heads $RemoteName $uploadBranch)
+    if ($LASTEXITCODE -eq 0 -and $remoteLine.Count -gt 0) {
+      $remoteHead = ($remoteLine[-1] -split '\s+')[0]
+      if ($remoteHead -eq $targetHead) {
+        Write-Warning "Push returned an error, but the remote checkpoint is complete: $targetHead"
+        return
+      }
+    }
     if ($attempt -lt $PushAttempts) {
-      Write-Warning "Temporary Pages upload failed on attempt $attempt; retrying the same checkpoint."
-      Start-Sleep -Seconds (15 * $attempt)
+      $delaySeconds = [Math]::Min(120, 15 * [Math]::Pow(2, $attempt - 1))
+      Write-Warning "Temporary Pages upload failed on attempt $attempt; retrying the same checkpoint in $delaySeconds seconds."
+      Start-Sleep -Seconds $delaySeconds
     }
   }
   throw "Temporary Pages upload failed after $PushAttempts attempts."
@@ -208,6 +221,7 @@ function Publish-PathBatches {
 
     if ($batch.Count -gt 0 -and ($batchBytes + $fileBytes) -gt $MaxBatchBytes) {
       $batchNumber++
+      Write-Host "Publishing $Label batch $batchNumber`: $($batch.Count) paths, $batchBytes bytes."
       Add-PathsChecked -Paths $batch.ToArray()
       $null = Commit-And-UploadStaged -Message "Publish $Label batch $batchNumber for run $RunId"
       $batch.Clear()
@@ -220,6 +234,7 @@ function Publish-PathBatches {
 
   if ($batch.Count -gt 0) {
     $batchNumber++
+    Write-Host "Publishing $Label batch $batchNumber`: $($batch.Count) paths, $batchBytes bytes."
     Add-PathsChecked -Paths $batch.ToArray()
     $null = Commit-And-UploadStaged -Message "Publish $Label batch $batchNumber for run $RunId"
   }
@@ -331,6 +346,19 @@ for ($attempt = 1; $attempt -le $PushAttempts; $attempt++) {
     }
     catch {
       Write-Warning "Atomic GitHub API update failed on attempt $attempt`: $($_.Exception.Message)"
+      try {
+        $confirmed = Invoke-GitHubApiJson `
+          -Method 'GET' `
+          -Endpoint "repos/$githubRepository/git/ref/heads/$PagesBranch" `
+          -Jq '.object.sha'
+        if ($confirmed -eq $publishCommit) {
+          Write-Warning "GitHub reported an API error, but the published ref is complete: $publishCommit"
+          $published = $true
+        }
+      }
+      catch {
+        Write-Warning "Unable to verify the Pages ref after the API error: $($_.Exception.Message)"
+      }
     }
   } elseif ($CompactPublishedHistory) {
     & git -C $repo push $RemoteName "--force-with-lease=$pagesRef`:$pagesBase" "$publishCommit`:$pagesRef"
@@ -344,9 +372,18 @@ for ($attempt = 1; $attempt -le $PushAttempts; $attempt++) {
     $published = $true
     break
   }
+  if (-not $publishViaGitHubApi -and $LASTEXITCODE -ne 0) {
+    $remoteLine = @(& git -C $repo ls-remote --heads $RemoteName $PagesBranch)
+    if ($LASTEXITCODE -eq 0 -and $remoteLine.Count -gt 0 -and ($remoteLine[-1] -split '\s+')[0] -eq $publishCommit) {
+      Write-Warning "Git push reported an error, but the published ref is complete: $publishCommit"
+      $published = $true
+      break
+    }
+  }
   if ($attempt -lt $PushAttempts) {
-    Write-Warning "Atomic $PagesBranch update failed on attempt $attempt; retrying."
-    Start-Sleep -Seconds (15 * $attempt)
+    $delaySeconds = [Math]::Min(120, 15 * [Math]::Pow(2, $attempt - 1))
+    Write-Warning "Atomic $PagesBranch update failed on attempt $attempt; retrying in $delaySeconds seconds."
+    Start-Sleep -Seconds $delaySeconds
   }
 }
 if (-not $published) {

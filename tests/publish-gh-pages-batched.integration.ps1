@@ -135,12 +135,49 @@ try {
     throw 'A no-op publish unexpectedly changed gh-pages.'
   }
 
+  # Simulate GitHub accepting a checkpoint while the client receives an error.
+  # The publisher must verify the remote SHA and continue without duplicating it.
+  Invoke-TestGit -Repository $pages -Arguments @('reset', '--hard', 'origin/gh-pages')
+  [IO.File]::WriteAllText((Join-Path $pages 'docs\data\manifest.json'), '{"version":3}')
+  $global:OktvSimulatedPushErrorPending = $true
+  $global:OktvSimulatedPushErrorTriggered = $false
+  function git {
+    $gitArguments = @($args)
+    & git.exe @gitArguments
+    $nativeExit = $LASTEXITCODE
+    if ($global:OktvSimulatedPushErrorPending -and
+        $gitArguments -contains 'push' -and
+        ($gitArguments | Where-Object { $_ -like 'HEAD:refs/heads/oktv-pages-upload-1000-1' })) {
+      $global:OktvSimulatedPushErrorPending = $false
+      $global:OktvSimulatedPushErrorTriggered = $true
+      $global:LASTEXITCODE = 1
+    } else {
+      $global:LASTEXITCODE = $nativeExit
+    }
+  }
+  & $publisher `
+    -RepositoryRoot $pages `
+    -RunId '1000' `
+    -RunAttempt '1' `
+    -MaxBatchBytes 2097152 `
+    -PushAttempts 1
+  if ($LASTEXITCODE -ne 0 -or -not $global:OktvSimulatedPushErrorTriggered) {
+    throw 'The accepted-push response-loss case was not recovered.'
+  }
+  Invoke-TestGit -Repository $pages -Arguments @('fetch', 'origin', 'gh-pages')
+  $recoveredManifest = (& git -C $pages show 'origin/gh-pages:docs/data/manifest.json').Trim()
+  if ($recoveredManifest -ne '{"version":3}') {
+    throw 'The recovered upload did not publish the expected metadata.'
+  }
+
   Write-Host 'PASS publish-gh-pages-batched integration test'
 }
 catch {
   $testFailure = $_
 }
 finally {
+  Remove-Item -LiteralPath Function:\git -ErrorAction SilentlyContinue
+  Remove-Variable -Name OktvSimulatedPushErrorPending,OktvSimulatedPushErrorTriggered -Scope Global -ErrorAction SilentlyContinue
   if (Test-Path -LiteralPath $testRoot) {
     $resolvedTestRoot = (Resolve-Path -LiteralPath $testRoot).Path
     $resolvedTemp = (Resolve-Path -LiteralPath ([IO.Path]::GetTempPath())).Path

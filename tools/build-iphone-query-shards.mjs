@@ -315,8 +315,20 @@ fs.writeFileSync(path.join(outputRoot, 'manifest.json'), `${JSON.stringify(manif
 console.log(
   JSON.stringify({
     inputs: manifest.inputs,
-    normal: manifest.scopes.normal,
-    adult: manifest.scopes.adult,
+    normal: {
+      buckets: manifest.scopes.normal.buckets.length,
+      groups: manifest.scopes.normal.groups,
+      signals: manifest.scopes.normal.signals,
+      gzipBytes: manifest.scopes.normal.gzipBytes,
+      maxGzipBytes: manifest.scopes.normal.maxGzipBytes,
+    },
+    adult: {
+      buckets: manifest.scopes.adult.buckets.length,
+      groups: manifest.scopes.adult.groups,
+      signals: manifest.scopes.adult.signals,
+      gzipBytes: manifest.scopes.adult.gzipBytes,
+      maxGzipBytes: manifest.scopes.adult.maxGzipBytes,
+    },
     failedSources: failedInputs.length,
   }),
 );
