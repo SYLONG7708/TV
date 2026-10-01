@@ -49,6 +49,8 @@ test('builds compact query shards, separates adult results, and groups title spa
       sourceName: sourceId.toUpperCase(),
       vodId: id,
       title,
+      year: '2026',
+      kind: 'movie',
       episodeCount: 3,
       playable,
       adult,
@@ -80,7 +82,7 @@ test('builds compact query shards, separates adult results, and groups title spa
     ]);
 
     const manifest = JSON.parse(await fs.readFile(path.join(dataRoot, 'vod-query', 'manifest.json'), 'utf8'));
-    assert.equal(manifest.version, 2);
+    assert.equal(manifest.version, 3);
     assert.equal(manifest.maxSignalsPerTitle, DEFAULT_MAX_SIGNALS_PER_TITLE);
     assert.deepEqual(manifest.titleAliases[0].aliases, ['痴迷', '癡迷']);
     assert.equal(manifest.scopes.normal.signals, 2);
@@ -122,6 +124,8 @@ test('retains every source signal without a silent title cap', () => {
     sourceName: `Source ${index}`,
     vodId: String(index),
     title: '痴迷',
+    year: '2026',
+    kind: 'movie',
     episodeCount: 1,
     playable: true,
     detailPath: `vod-detail/source-${index}/page-0001.json.gz`,

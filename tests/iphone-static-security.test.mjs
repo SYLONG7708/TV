@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
@@ -11,7 +12,8 @@ const html = await fs.readFile(file, 'utf8');
 test('inline module parses and its CSP hash is current', () => {
   const moduleSource = html.match(/<script\s+type="module"\s+data-csp-hash>([\s\S]*?)<\/script>/)?.[1];
   assert.ok(moduleSource, 'hashed module script is present');
-  assert.doesNotThrow(() => new Function(`return async () => {${moduleSource}\n}`));
+  const parsed = spawnSync(process.execPath, ['--input-type=module', '--check'], { input: moduleSource, encoding: 'utf8' });
+  assert.equal(parsed.status, 0, parsed.stderr);
   assert.equal(updatePolicy(html).html, html);
   const policy = html.match(/data-oktv-csp\s+content="([^"]+)"/)?.[1] || '';
   assert.ok(policy.includes("object-src 'none'"));

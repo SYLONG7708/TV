@@ -1,8 +1,9 @@
 import fs from 'node:fs';
+import { cleanTitle, titleQuality, workIdentity } from '../docs/iphone/title-quality.mjs';
 import path from 'node:path';
 import zlib from 'node:zlib';
 
-export const QUERY_SHARD_VERSION = 2;
+export const QUERY_SHARD_VERSION = 3;
 export const DEFAULT_BUCKET_COUNT = 2048;
 export const DEFAULT_MIN_QUERY_LENGTH = 2;
 // Zero means unlimited. Search completeness is more important than silently
@@ -96,7 +97,7 @@ export function queryPrefixesForItem(item, normalizer, minQueryLength = DEFAULT_
 }
 
 export function normalizedTitleKey(item, normalizer) {
-  return normalizer.compact(item?.title) || normalizer.compact(item?.originalName) || String(item?.id || '');
+  return workIdentity(item, normalizer.compact);
 }
 
 export function leanQueryItem(item, source = {}) {
@@ -105,7 +106,7 @@ export function leanQueryItem(item, source = {}) {
     sourceId: String(item?.sourceId || source?.id || ''),
     sourceName: String(item?.sourceName || source?.name || ''),
     vodId: String(item?.vodId || ''),
-    title: String(item?.title || ''),
+    title: cleanTitle(item?.title),
     originalName: String(item?.originalName || ''),
     kind: String(item?.kind || ''),
     categoryName: String(item?.categoryName || ''),
@@ -168,6 +169,16 @@ function groupBase(item, key) {
 
 function signalFromItem(item) {
   return {
+    // Keep each source's own identity; a group's preferred cover/name must not
+    // rewrite another source's film or remake when expanded for display.
+    title: item.title || '',
+    originalName: item.originalName || '',
+    year: item.year || '',
+    kind: item.kind || '',
+    categoryName: item.categoryName || '',
+    area: item.area || '',
+    poster: item.poster || '',
+    genre: Array.isArray(item.genre) ? item.genre : [],
     id: item.id || '',
     sourceId: item.sourceId || '',
     sourceName: item.sourceName || '',
@@ -210,13 +221,17 @@ export function mergeItemsIntoGroups(
   },
 ) {
   const groups = new Map();
+  const updatedSignals = new Set((items || []).filter(Boolean).map(signalKey));
   for (const existing of existingGroups || []) {
     if (!existing?.k) continue;
-    groups.set(existing.k, normalizeExistingGroup(existing));
+    const retained = (existing.signals || []).filter((signal) => !updatedSignals.has(signalKey(signal)));
+    if (!retained.length) continue;
+    groups.set(existing.k, normalizeExistingGroup({ ...existing, signals: retained }));
   }
 
   for (const item of items || []) {
     if (!item?.id || !item?.title || !item?.detailPath || item.playable === false) continue;
+    if (!titleQuality(item.title).valid) continue;
     if (Number(item.episodeCount || item.episodes?.length || 0) < 1) continue;
     const key = normalizedTitleKey(item, normalizer);
     if (!key) continue;
@@ -244,7 +259,7 @@ export function mergeItemsIntoGroups(
 
   const output = [...groups.values()];
   for (const group of output) {
-    group.signals.sort((left, right) => itemQuality(right) - itemQuality(left));
+    group.signals.sort((left, right) => itemQuality(right) - itemQuality(left) || signalKey(left).localeCompare(signalKey(right)));
     if (maxSignalsPerTitle > 0 && group.signals.length > maxSignalsPerTitle) {
       group.signals = group.signals.slice(0, maxSignalsPerTitle);
     }

@@ -1,4 +1,6 @@
-# 影視 5.1.6 內置點播 / 直播源版
+# 影視 OKTV
+
+最新行動版是 **2.1.4 片名修正・雲端同步版**，安裝入口見下方「行動雲端版 APK」。原生 5.1.6 為另一個套件。
 
 這個 repo 保存目前內置來源設定、可重新打包的 PowerShell 腳本，以及零基礎網頁教學。已修改好的 APK 與圖示保存在唯讀安全封存倉庫，正式來源 URL 仍指向本 repo，因此更新來源不需要重新安裝 APK。
 
@@ -17,11 +19,12 @@
 
 ## 行動雲端版 APK（最新點播介面）
 
-- [下載影視 OKTV 2.1.3 雲端同步版 APK](https://github.com/SYLONG7708/TV/releases/download/oktv-cloud-2.1.3-20260929/OKTV_2.1.3_cloud_20260929.apk)
-- [下載可重新建置的 Android 專案](https://github.com/SYLONG7708/TV/releases/download/oktv-cloud-2.1.3-20260929/OKTV_2.1.3_cloud_source_20260929.zip)
-- 套件：`com.yingshi.player`；版本代碼：`7`。
+- [下載影視 OKTV 2.1.4 片名修正・雲端同步版 APK](https://github.com/SYLONG7708/TV/releases/download/oktv-cloud-2.1.4-20261002/OKTV_2.1.4_cloud_fixed_20261002.apk)
+- [下載可重新建置的 Android 專案](https://github.com/SYLONG7708/TV/releases/download/oktv-cloud-2.1.4-20261002/OKTV_2.1.4_cloud_source_20261002.zip)
+- 套件：`com.yingshi.player`；版本代碼：`8`；Android 7.0 以上。
+- [Android 原始碼與建置方式](mobile/oktv-cloud/README.zh-TW.md)、[全量片名檢查與修正報告](docs/TITLE_AUDIT_20261002.md)。
 
-這個版本直接開啟[正式點播網頁](https://sylong7708.github.io/TV/docs/iphone/)，介面、分類、片單與搜尋資料皆由雲端載入，APK 不含點播來源或搜尋索引。雲端發布更新後，重新開啟 App 即會讀取新版。可覆蓋安裝同套件的 2.1.2 行動版；上方的影視 5.1.6 使用不同套件，不會被取代。
+這個版本直接開啟[正式點播網頁](https://sylong7708.github.io/TV/docs/iphone/)，介面、分類、片單與搜尋資料皆由雲端載入，APK 不含點播來源或搜尋索引。完整結束 App 後再開啟即可取得目前雲端頁面，離線頁提供重新連線按鈕。可覆蓋安裝同簽章的 2.1.2／2.1.3。已修正單字搜尋備援資料混入瀏覽、同名作品誤合併及訊號 metadata 混用；無法核實的破損名稱暫停展示並保留原始資料。
 
 ## 目前內置來源
 

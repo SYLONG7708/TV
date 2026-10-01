@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>影視 OKTV｜連線中斷</title>
+<style>
+  :root { color-scheme: dark; font-family: system-ui, sans-serif; }
+  * { box-sizing: border-box; }
+  body { margin: 0; min-height: 100svh; display: grid; place-items: center; background: #080b12; color: #f5f7ff; padding: 28px; }
+  main { width: 100%; max-width: 440px; padding: 32px; border: 1px solid #26324a; border-radius: 24px; background: #111827; }
+  .brand { color: #87c9ff; letter-spacing: .18em; font-size: 13px; font-weight: 700; }
+  h1 { margin: 24px 0 12px; font-size: 28px; }
+  p { color: #bac6dc; line-height: 1.8; }
+  a { display: block; text-align: center; text-decoration: none; padding: 15px; margin-top: 24px; border-radius: 12px; background: #86c8ff; color: #071426; font-weight: 700; }
+  a:focus-visible { outline: 3px solid white; outline-offset: 4px; }
+  small { display: block; margin-top: 20px; color: #93a4bf; line-height: 1.7; }
+</style>
+</head>
+<body>
+  <main>
+    <div class="brand">影視 OKTV · 雲端同步</div>
+    <h1>暫時無法連線</h1>
+    <p id="status" role="status">請確認 Wi-Fi 或行動網路已連線，再點選下方按鈕載入最新內容。</p>
+    <a id="retry" href="https://sylong7708.github.io/TV/docs/iphone/">重新連線</a>
+    <small>版本 2.1.4<br>介面與影片目錄由雲端提供，恢復連線後即可繼續使用。</small>
+  </main>
+  <script>
+    document.getElementById('retry').addEventListener('click', function () {
+      this.href = 'https://sylong7708.github.io/TV/docs/iphone/?retry=' + Date.now();
+      document.getElementById('status').textContent = '正在重新連線，取得最新雲端內容…';
+    });
+    window.addEventListener('online', function () {
+      document.getElementById('status').textContent = '網路已恢復，請點選「重新連線」繼續使用。';
+    });
+  </script>
+</body>
+</html>
