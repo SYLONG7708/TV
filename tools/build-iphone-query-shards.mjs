@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { Worker } from 'node:worker_threads';
+import { titleQuality } from '../docs/iphone/title-quality.mjs';
 
 import {
   DEFAULT_BUCKET_COUNT,
@@ -130,6 +131,7 @@ for (const source of sources) {
     searchableItems: 0,
     embeddedFallbackItems: 0,
     skippedItems: 0,
+    quarantinedTitles: 0,
     indexedRows: 0,
     error: '',
   };
@@ -148,8 +150,12 @@ for (const source of sources) {
     for (const rawItem of items) {
       const itemSource = sourceById.get(rawItem?.sourceId) || source;
       const item = leanQueryItem(rawItem, itemSource);
-      if (!item.id || !item.title || !item.detailPath || !item.playable || item.episodeCount < 1) {
+      if (!item.id || !item.detailPath || !item.playable || item.episodeCount < 1) {
         row.skippedItems += 1;
+        continue;
+      }
+      if (!titleQuality(item.title).valid) {
+        row.quarantinedTitles += 1;
         continue;
       }
       const prefixes = queryPrefixesForItem(item, normalizer, minQueryLength);
@@ -186,8 +192,9 @@ if (failedInputs.length) {
 }
 const totalSearchableItems = inputReport.reduce((sum, row) => sum + Number(row.searchableItems || 0), 0);
 const totalSkippedItems = inputReport.reduce((sum, row) => sum + Number(row.skippedItems || 0), 0);
+const quarantinedTitles = inputReport.reduce((sum, row) => sum + row.quarantinedTitles, 0);
 const declaredPlayableItems = Number(catalog?.totals?.playableItems || 0);
-if (declaredPlayableItems > 0 && totalSearchableItems !== declaredPlayableItems) {
+if (declaredPlayableItems > 0 && totalSearchableItems + quarantinedTitles !== declaredPlayableItems) {
   throw new Error(
     `Refusing to publish query shards: catalog declares ${declaredPlayableItems} playable items, but ${totalSearchableItems} are searchable.`,
   );
@@ -235,6 +242,8 @@ const manifest = {
     items: totalInputItems,
     searchableItems: totalSearchableItems,
     skippedItems: totalSkippedItems,
+    quarantinedTitles,
+    accountedPlayableItems: totalSearchableItems + quarantinedTitles,
     playableCoverage: declaredPlayableItems > 0 ? totalSearchableItems / declaredPlayableItems : 1,
     indexedRows: totalIndexedRows,
   },
@@ -299,11 +308,13 @@ for (const result of workerResults) {
     groups: result.groups,
     signals: result.signals,
     gzipBytes: result.gzipBytes,
+    maxGzipBytes: result.maxGzipBytes,
+    pages: result.pages,
   };
   scopeManifest.groups += result.groups;
   scopeManifest.signals += result.signals;
   scopeManifest.gzipBytes += result.gzipBytes;
-  scopeManifest.maxGzipBytes = Math.max(scopeManifest.maxGzipBytes, result.gzipBytes);
+  scopeManifest.maxGzipBytes = Math.max(scopeManifest.maxGzipBytes, result.maxGzipBytes);
 }
 for (const scope of ['normal', 'adult']) {
   manifest.scopes[scope].buckets.sort((left, right) => left - right);

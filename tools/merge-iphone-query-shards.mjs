@@ -4,6 +4,7 @@ import path from 'node:path';
 
 import {
   DEFAULT_MAX_SIGNALS_PER_TITLE,
+  QUERY_SHARD_VERSION,
   bucketForPrefix,
   bucketName,
   createQueryNormalizer,
@@ -11,7 +12,8 @@ import {
   mergeItemsIntoGroups,
   queryPrefixesForItem,
   readGzipJson,
-  writeGzipJson,
+  queryPageFile,
+  writeQueryBucket,
 } from './iphone-query-shards.mjs';
 
 function argValue(name, fallback = '') {
@@ -32,6 +34,7 @@ if (!fs.existsSync(manifestPath)) {
 }
 
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+if (manifest.version !== QUERY_SHARD_VERSION) throw new Error('Rebuild query shards before merging a different schema version.');
 const catalog = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
 const latest = JSON.parse(fs.readFileSync(latestPath, 'utf8'));
 const sourceById = new Map((catalog.sources || []).map((source) => [source.id, source]));
@@ -74,26 +77,34 @@ for (const [key, items] of byTarget) {
   const [scope, bucketText] = key.split('\u001f');
   const bucket = Number(bucketText);
   const file = path.join(outputRoot, scope, bucketName(bucket, bucketCount));
-  const current = fs.existsSync(file) ? readGzipJson(file) : { groups: [] };
+  const scopeManifest = manifest.scopes[scope];
+  const previousStats = scopeManifest.bucketStats[String(bucket)];
+  const previousPages = previousStats?.pages || [{ part: 0 }];
+  const current = { groups: previousPages.flatMap((page) => {
+    const pageFile = queryPageFile(file, page.part || 0);
+    if (!fs.existsSync(pageFile)) {
+      if (previousStats) throw new Error(`Missing query page: ${pageFile}`);
+      return [];
+    }
+    return readGzipJson(pageFile).groups || [];
+  }) };
   const groups = mergeItemsIntoGroups(current.groups || [], items, {
     normalizer,
     maxSignalsPerTitle,
   });
-  const signals = groups.reduce((sum, group) => sum + group.signals.length, 0);
   const changed = JSON.stringify(current.groups || []) !== JSON.stringify(groups);
-  const gzipBytes = changed
-    ? writeGzipJson(file, {
+  const stats = changed || !previousStats?.pages
+    ? writeQueryBucket(file, {
         version: manifest.version,
         generatedAt: new Date().toISOString(),
         scope,
         bucket,
         groups,
       })
-    : fs.statSync(file).size;
+    : previousStats;
   if (changed) changedBuckets += 1;
-  const scopeManifest = manifest.scopes[scope];
   if (!scopeManifest.buckets.includes(bucket)) scopeManifest.buckets.push(bucket);
-  scopeManifest.bucketStats[String(bucket)] = { groups: groups.length, signals, gzipBytes };
+  scopeManifest.bucketStats[String(bucket)] = stats;
 }
 
 for (const scope of ['normal', 'adult']) {
@@ -104,7 +115,7 @@ for (const scope of ['normal', 'adult']) {
   scopeManifest.signals = stats.reduce((sum, row) => sum + Number(row.signals || 0), 0);
   scopeManifest.gzipBytes = stats.reduce((sum, row) => sum + Number(row.gzipBytes || 0), 0);
   scopeManifest.maxGzipBytes = stats.reduce(
-    (max, row) => Math.max(max, Number(row.gzipBytes || 0)),
+    (max, row) => Math.max(max, Number(row.maxGzipBytes ?? row.gzipBytes ?? 0)),
     0,
   );
 }

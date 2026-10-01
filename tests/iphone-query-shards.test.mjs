@@ -15,10 +15,45 @@ import {
   expandQueryGroups,
   limitQueryGroups,
   mergeItemsIntoGroups,
+  writeQueryBucket,
+  queryPageFile,
+  readGzipJson,
 } from '../tools/iphone-query-shards.mjs';
 
 const run = promisify(execFile);
 const repoRoot = path.resolve(import.meta.dirname, '..');
+
+test('crowded query buckets are paginated within both byte limits without losing signals', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'iphone-query-pages-'));
+  try {
+    const file = path.join(root, 'b-0001.json.gz');
+    const groups = Array.from({ length: 20 }, (_, i) => ({ k: `work-${i}`, title: `Work ${i}`, signals: [{ id: `a-${i}`, title: `Work ${i}`, poster: 'p'.repeat(200) }] }));
+    const stats = writeQueryBucket(file, { version: 3, scope: 'normal', bucket: 1, groups }, { maxJsonBytes: 1000, maxGzipBytes: 1000 });
+    assert.ok(stats.pages.length > 1);
+    const recovered = stats.pages.flatMap((page) => {
+      assert.ok(page.jsonBytes <= 1000);
+      assert.ok(page.gzipBytes <= 1000);
+      const payload = readGzipJson(queryPageFile(file, page.part));
+      assert.equal(payload.part, page.part);
+      return payload.groups;
+    });
+    assert.deepEqual(recovered, groups);
+    assert.equal(stats.signals, 20);
+  } finally { await fs.rm(root, { recursive: true, force: true }); }
+});
+
+test('a single large work group can span pages while retaining every source', async () => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'iphone-work-pages-'));
+  try {
+    const file = path.join(root, 'b-0002.json.gz');
+    const signals = Array.from({ length: 20 }, (_, i) => ({ id: String(i), title: 'Example', poster: 'p'.repeat(150) }));
+    const stats = writeQueryBucket(file, { version: 3, scope: 'normal', bucket: 2, groups: [{ k: 'example', title: 'Example', signals }] }, { maxJsonBytes: 1000, maxGzipBytes: 1000 });
+    const recovered = stats.pages.flatMap((page) => readGzipJson(queryPageFile(file, page.part)).groups.flatMap((group) => group.signals));
+    assert.deepEqual(recovered, signals);
+    assert.equal(stats.signals, signals.length);
+    assert.ok(stats.pages.every((page) => page.jsonBytes <= 1000 && page.gzipBytes <= 1000));
+  } finally { await fs.rm(root, { recursive: true, force: true }); }
+});
 
 test('builds compact query shards, separates adult results, and groups title spacing variants', async () => {
   const root = await fs.mkdtemp(path.join(os.tmpdir(), 'iphone-query-shards-'));
@@ -49,6 +84,8 @@ test('builds compact query shards, separates adult results, and groups title spa
       sourceName: sourceId.toUpperCase(),
       vodId: id,
       title,
+      year: '2026',
+      kind: 'movie',
       episodeCount: 3,
       playable,
       adult,
@@ -80,7 +117,7 @@ test('builds compact query shards, separates adult results, and groups title spa
     ]);
 
     const manifest = JSON.parse(await fs.readFile(path.join(dataRoot, 'vod-query', 'manifest.json'), 'utf8'));
-    assert.equal(manifest.version, 2);
+    assert.equal(manifest.version, 3);
     assert.equal(manifest.maxSignalsPerTitle, DEFAULT_MAX_SIGNALS_PER_TITLE);
     assert.deepEqual(manifest.titleAliases[0].aliases, ['痴迷', '癡迷']);
     assert.equal(manifest.scopes.normal.signals, 2);
@@ -122,6 +159,8 @@ test('retains every source signal without a silent title cap', () => {
     sourceName: `Source ${index}`,
     vodId: String(index),
     title: '痴迷',
+    year: '2026',
+    kind: 'movie',
     episodeCount: 1,
     playable: true,
     detailPath: `vod-detail/source-${index}/page-0001.json.gz`,

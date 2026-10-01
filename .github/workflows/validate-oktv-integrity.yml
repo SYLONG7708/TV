@@ -42,6 +42,7 @@ jobs:
             .gitattributes
             .github/workflows/*.yml
             docs/iphone/index.html
+            docs/iphone/*.mjs
             docs/data/iphone-vod-catalog.json
             /sources/title-aliases.json
             tests/*
@@ -66,6 +67,7 @@ jobs:
           node --check tools/verify-pages-deployment.mjs
           node --check tools/stable-gzip-json.mjs
           node --check tools/update-iphone-csp.mjs
+          node --check docs/iphone/title-quality.mjs
           node tools/update-iphone-csp.mjs --check
 
       - name: Run PowerShell integration tests
