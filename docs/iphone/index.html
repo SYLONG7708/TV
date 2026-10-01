@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-98Zl2kehN7tJ4rJPaBCs/9oKJN4Cz6HAPhJZu6OVF/k=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-yZOt7dJ1ZYDq72aWTxiD+M80Boa4NIU4ceIPul+tO5s='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-2s/UzYPTHJzrsAwv/5NTGmGsXVIqsDViClVyuXHOA5E=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-yZOt7dJ1ZYDq72aWTxiD+M80Boa4NIU4ceIPul+tO5s='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -4567,11 +4567,12 @@
         return [sourceById(state.selectedSource)?.adult ? 'adult' : 'normal'];
       }
 
-      function queryShardFile(scope, bucket, manifest) {
+      function queryShardFile(scope, bucket, manifest, part = 0) {
         const width = Math.max(4, String(Math.max(0, Number(manifest.bucketCount || 1) - 1)).length);
         const bucketName = String(bucket).padStart(width, '0');
         const path = manifest.scopes?.[scope]?.path?.replace('{bucket}', bucketName);
-        return path ? `../data/${path}` : '';
+        const pagePath = part ? path?.replace(/\.json\.gz$/, `-p-${String(part).padStart(4, '0')}.json.gz`) : path;
+        return pagePath ? `../data/${pagePath}` : '';
       }
 
       function expandQueryShard(payload) {
@@ -4638,15 +4639,15 @@
         };
       }
 
-      async function loadQueryShard(scope, bucket, signal) {
+      async function loadQueryShard(scope, bucket, signal, part = 0) {
         const manifest = state.queryIndex.manifest;
-        const key = `${scope}\u001f${bucket}`;
+        const key = `${scope}\u001f${bucket}\u001f${part}`;
         if (state.queryIndex.cache.has(key)) {
           const cached = state.queryIndex.cache.get(key);
           setBoundedCache(state.queryIndex.cache, key, cached, QUERY_SHARD_CACHE_LIMIT);
           return cached;
         }
-        const file = queryShardFile(scope, bucket, manifest);
+        const file = queryShardFile(scope, bucket, manifest, part);
         if (!file) return { groups: [] };
         const health = queryShardHealth(key);
         if (health.cooldownUntil > Date.now()) {
@@ -4761,7 +4762,8 @@
             const key = `${scope}\u001f${bucket}`;
             if (!available.has(bucket) || targetKeys.has(key)) continue;
             targetKeys.add(key);
-            targets.push({ scope, bucket });
+            const pages = scopeManifest.bucketStats?.[String(bucket)]?.pages || [{ part: 0 }];
+            for (const page of pages) targets.push({ scope, bucket, part: page.part || 0 });
           }
         }
         if (!targets.length) {
@@ -4825,7 +4827,7 @@
               const target = targets[targetIndex];
               if (controller.signal.aborted || state.searchLoadInFlight !== loadToken) return;
               try {
-                const payload = await loadQueryShard(target.scope, target.bucket, controller.signal);
+                const payload = await loadQueryShard(target.scope, target.bucket, controller.signal, target.part);
                 if (controller.signal.aborted || state.searchLoadInFlight !== loadToken) return;
                 const selectedRows = await matchingSearchIndexRows(expandQueryShard(payload), needle, controller.signal);
                 if (controller.signal.aborted || state.searchLoadInFlight !== loadToken) return;

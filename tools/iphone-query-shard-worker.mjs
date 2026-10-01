@@ -5,7 +5,7 @@ import {
   createQueryNormalizer,
   limitQueryGroups,
   mergeItemsIntoGroups,
-  writeGzipJson,
+  writeQueryBucket,
 } from './iphone-query-shards.mjs';
 
 const normalizer = createQueryNormalizer(workerData.iphoneHtmlPath);
@@ -29,8 +29,7 @@ try {
       });
       groups.push(...limitQueryGroups(prefixGroups, workerData.maxGroupsPerPrefix));
     }
-    const signals = groups.reduce((sum, group) => sum + group.signals.length, 0);
-    const gzipBytes = writeGzipJson(job.outputFile, {
+    const stats = writeQueryBucket(job.outputFile, {
       version: workerData.version,
       scope: job.scope,
       bucket: job.bucket,
@@ -39,9 +38,7 @@ try {
     results.push({
       scope: job.scope,
       bucket: job.bucket,
-      groups: groups.length,
-      signals,
-      gzipBytes,
+      ...stats,
     });
   }
   parentPort.postMessage({ ok: true, results });

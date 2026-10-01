@@ -53,6 +53,64 @@ export function writeGzipJson(file, value) {
   return gzip.length;
 }
 
+export const MAX_QUERY_PAGE_JSON_BYTES = 8 * 1024 * 1024;
+export const MAX_QUERY_PAGE_GZIP_BYTES = 4 * 1024 * 1024;
+
+export function queryPageFile(file, part = 0) {
+  return part ? file.replace(/\.json\.gz$/, `-p-${String(part).padStart(4, '0')}.json.gz`) : file;
+}
+
+// Bound both download and decoded sizes. A crowded prefix must retain all its
+// signals without producing a payload the mobile browser refuses to read.
+export function writeQueryBucket(file, payload, {
+  maxJsonBytes = MAX_QUERY_PAGE_JSON_BYTES,
+  maxGzipBytes = MAX_QUERY_PAGE_GZIP_BYTES,
+} = {}) {
+  const pages = [];
+  let pending = [];
+  let pendingBytes = 256;
+  const encode = (groups, part) => Buffer.from(JSON.stringify({ ...payload, groups, part }));
+  function publish(groups) {
+    const raw = encode(groups, pages.length);
+    const gzip = zlib.gzipSync(raw, { level: 9 });
+    if (raw.length > maxJsonBytes || gzip.length > maxGzipBytes) {
+      if (groups.length > 1) {
+        const middle = Math.ceil(groups.length / 2);
+        publish(groups.slice(0, middle));
+        publish(groups.slice(middle));
+        return;
+      }
+      const group = groups[0];
+      if (group?.signals?.length > 1) {
+        const middle = Math.ceil(group.signals.length / 2);
+        publish([{ ...group, signals: group.signals.slice(0, middle) }]);
+        publish([{ ...group, signals: group.signals.slice(middle) }]);
+        return;
+      }
+      throw new Error(`A single query signal exceeds the page budget: ${file}`);
+    }
+    const part = pages.length;
+    fs.mkdirSync(path.dirname(file), { recursive: true });
+    fs.writeFileSync(queryPageFile(file, part), gzip);
+    pages.push({ part, groups: groups.length, signals: groups.reduce((n, group) => n + group.signals.length, 0), gzipBytes: gzip.length, jsonBytes: raw.length });
+  }
+  for (const group of payload.groups || []) {
+    const bytes = Buffer.byteLength(JSON.stringify(group)) + 1;
+    if (pending.length && pendingBytes + bytes > maxJsonBytes) {
+      publish(pending); pending = []; pendingBytes = 256;
+    }
+    pending.push(group); pendingBytes += bytes;
+  }
+  if (pending.length || !pages.length) publish(pending);
+  return {
+    groups: pages.reduce((n, page) => n + page.groups, 0),
+    signals: pages.reduce((n, page) => n + page.signals, 0),
+    gzipBytes: pages.reduce((n, page) => n + page.gzipBytes, 0),
+    maxGzipBytes: Math.max(...pages.map((page) => page.gzipBytes)),
+    pages,
+  };
+}
+
 export function loadSimplifiedCharMap(iphoneHtmlPath) {
   try {
     const html = fs.readFileSync(iphoneHtmlPath, 'utf8');
@@ -226,7 +284,14 @@ export function mergeItemsIntoGroups(
     if (!existing?.k) continue;
     const retained = (existing.signals || []).filter((signal) => !updatedSignals.has(signalKey(signal)));
     if (!retained.length) continue;
-    groups.set(existing.k, normalizeExistingGroup({ ...existing, signals: retained }));
+    const current = groups.get(existing.k);
+    const next = normalizeExistingGroup({ ...existing, signals: retained });
+    if (current) {
+      const signals = new Map([...current.signals, ...retained].map((signal) => [signalKey(signal), signal]));
+      groups.set(existing.k, { ...(next._quality > current._quality ? next : current), signals: [...signals.values()] });
+    } else {
+      groups.set(existing.k, next);
+    }
   }
 
   for (const item of items || []) {

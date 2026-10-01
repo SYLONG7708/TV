@@ -45,3 +45,15 @@ test('incremental year corrections move a signal out of its previous work group'
   assert.equal(updated.length, 1);
   assert.equal(expandQueryGroups({ groups: updated })[0].year, '2023');
 });
+
+test('incremental updates retain a work split across multiple query pages', () => {
+  const normalizer = { compact };
+  const base = { title: 'Example', kind: 'movie', year: '2023', episodeCount: 1, detailPath: 'vod-detail/a.json.gz' };
+  const rows = ['a', 'b', 'c'].map((id) => ({ ...base, id, sourceId: id, vodId: '1' }));
+  const [group] = mergeItemsIntoGroups([], rows, { normalizer });
+  const fragments = group.signals.map((signal) => ({ ...group, signals: [signal] }));
+  const updated = mergeItemsIntoGroups(fragments, [{ ...rows[0], poster: 'updated.jpg' }], { normalizer });
+  assert.equal(updated.length, 1);
+  assert.deepEqual(updated[0].signals.map((signal) => signal.sourceId).sort(), ['a', 'b', 'c']);
+  assert.equal(updated[0].signals.find((signal) => signal.sourceId === 'a').poster, 'updated.jpg');
+});

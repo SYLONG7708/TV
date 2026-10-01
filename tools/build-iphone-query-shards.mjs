@@ -308,11 +308,13 @@ for (const result of workerResults) {
     groups: result.groups,
     signals: result.signals,
     gzipBytes: result.gzipBytes,
+    maxGzipBytes: result.maxGzipBytes,
+    pages: result.pages,
   };
   scopeManifest.groups += result.groups;
   scopeManifest.signals += result.signals;
   scopeManifest.gzipBytes += result.gzipBytes;
-  scopeManifest.maxGzipBytes = Math.max(scopeManifest.maxGzipBytes, result.gzipBytes);
+  scopeManifest.maxGzipBytes = Math.max(scopeManifest.maxGzipBytes, result.maxGzipBytes);
 }
 for (const scope of ['normal', 'adult']) {
   manifest.scopes[scope].buckets.sort((left, right) => left - right);
