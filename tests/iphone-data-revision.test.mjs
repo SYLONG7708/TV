@@ -58,13 +58,47 @@ test('old cached shell falls back to its exact raw revision when Pages metadata 
 });
 
 test('a stalled default request aborts and returns usable fallback instead of blocking boot forever', async () => {
-  let configuredTimeout;
+  const configuredTimeouts = [];
   const getJson = client((_url, { signal }) => new Promise((resolve, reject) => {
     signal.addEventListener('abort', () => reject(signal.reason), { once: true });
-  }), { timer: (fn, ms) => { configuredTimeout = ms; return setTimeout(fn, 5); } });
+  }), { timer: (fn, ms) => { configuredTimeouts.push(ms); return setTimeout(fn, 5); } });
   const fallback = { items: [] };
   assert.equal(await getJson('../data/iphone-vod-catalog.json', fallback), fallback);
-  assert.equal(configuredTimeout, 20000);
+  assert.ok(configuredTimeouts.includes(20000));
+});
+
+test('stalled Pages boot metadata uses the identical raw revision and cancels its loser', async () => {
+  const requests = [];
+  let primaryAborted = false;
+  const getJson = client((url, { signal }) => {
+    requests.push(url);
+    if (url.includes('/pinned/')) return new Promise((_resolve, reject) => {
+      signal.addEventListener('abort', () => { primaryAborted = true; reject(signal.reason); }, { once: true });
+    });
+    return Promise.resolve(json({ revision, available: true }));
+  }, { timer: (fn, ms) => setTimeout(fn, ms === 1500 ? 2 : 1000) });
+  const result = await getJson('../data/vod-query/manifest.json', null);
+  assert.equal(result.revision, revision);
+  assert.equal(primaryAborted, true);
+  assert.equal(requests.length, 2);
+  assert.ok(requests.every(url => url.includes(`/${revision}/`)));
+});
+
+test('caller cancellation stops both boot transports and is not replaced by fallback data', async () => {
+  const outer = new AbortController();
+  const pending = new Set();
+  let bothStarted;
+  const ready = new Promise(resolve => { bothStarted = resolve; });
+  const getJson = client((url, { signal }) => new Promise((_resolve, reject) => {
+    pending.add(url);
+    if (pending.size === 2) bothStarted();
+    signal.addEventListener('abort', () => { pending.delete(url); reject(signal.reason); }, { once: true });
+  }), { timer: (fn, ms) => setTimeout(fn, ms === 1500 ? 2 : 1000) });
+  const request = getJson('../data/live-channels.json', [], { signal: outer.signal });
+  await ready;
+  outer.abort();
+  await assert.rejects(request, { name: 'AbortError' });
+  assert.equal(pending.size, 0);
 });
 
 test('historical detail fallback remains available without mixing catalog revisions', async () => {

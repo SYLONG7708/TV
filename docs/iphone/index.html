@@ -1353,7 +1353,39 @@
               requestController.abort(new DOMException('Request timed out', 'TimeoutError'));
             }, timeoutMs);
         try {
-          for (const target of urls) {
+          if (revisionPinned && bootMetadata && urls.length > 1) {
+            // Newly deployed Pages edges can stall even for small metadata.
+            // Race the identical raw revision after a short head start, within
+            // the same overall deadline, and cancel the losing request.
+            try {
+              return await Promise.any(urls.map(async (target, index) => {
+                if (index > 0) {
+                  await new Promise((resolve, reject) => {
+                    const signal = requestController.signal;
+                    if (signal.aborted) { reject(signal.reason); return; }
+                    const onAbort = () => {
+                      window.clearTimeout(timer);
+                      reject(signal.reason);
+                    };
+                    const timer = window.setTimeout(() => {
+                      signal.removeEventListener('abort', onAbort);
+                      resolve();
+                    }, 1500);
+                    signal.addEventListener('abort', onAbort, { once: true });
+                  });
+                }
+                if (requestController.signal.aborted) throw requestController.signal.reason;
+                const res = await fetch(target, { cache: 'default', signal: requestController.signal });
+                if (!res.ok) throw new Error(`HTTP ${res.status} for ${new URL(target, location.href).pathname}`);
+                return await responseJson(res, target);
+              }));
+            } catch (error) {
+              if (options.signal?.aborted) throw new DOMException('Search aborted', 'AbortError');
+              lastError = timedOut ? new DOMException('Request timed out', 'TimeoutError') : error.errors?.at(-1) || error;
+            } finally {
+              requestController.abort(new DOMException('Metadata request finished', 'AbortError'));
+            }
+          } else for (const target of urls) {
             try {
               if (options.signal?.aborted) throw new DOMException('Search aborted', 'AbortError');
               const res = await fetch(target, {
