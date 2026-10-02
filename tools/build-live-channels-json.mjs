@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { normalizePublicSources, mergePublicLive } from '../docs/iphone/public-sources.mjs';
 
 const args = new Map();
 for (let i = 2; i < process.argv.length; i += 1) {
@@ -196,7 +197,14 @@ function countBy(items, key) {
 }
 
 const sourceText = await fs.readFile(input, 'utf8');
-const channels = await addWebYouTubeFallbacks(parseLive(sourceText));
+let channels = await addWebYouTubeFallbacks(parseLive(sourceText));
+try {
+  const publicPayload = JSON.parse(await fs.readFile(path.join(tvRoot, 'docs/iphone/public-sources.json'), 'utf8'));
+  if (publicPayload.schemaVersion !== 1) throw new Error('Unsupported public source schema');
+  channels = mergePublicLive(channels, normalizePublicSources(publicPayload).live);
+} catch (error) {
+  if (error.code !== 'ENOENT') throw error;
+}
 const groups = [...new Set(channels.map((channel) => channel.group))];
 const kinds = countBy(channels, 'kind');
 
