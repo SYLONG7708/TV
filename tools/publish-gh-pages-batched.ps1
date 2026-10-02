@@ -102,6 +102,7 @@ function Invoke-GitHubApiJson {
 function Push-UploadHead {
   $targetHead = Get-GitValue -Arguments @('rev-parse', 'HEAD')
   for ($attempt = 1; $attempt -le $PushAttempts; $attempt++) {
+    Assert-PagesBaseCurrent
     Write-Host "Uploading Pages checkpoint $targetHead (attempt $attempt/$PushAttempts)."
     & git -C $repo push $RemoteName "HEAD:$uploadRef"
     if ($LASTEXITCODE -eq 0) {
@@ -124,6 +125,15 @@ function Push-UploadHead {
     }
   }
   throw "Temporary Pages upload failed after $PushAttempts attempts."
+}
+
+function Assert-PagesBaseCurrent {
+  $remoteLine = Get-GitValue -Arguments @('ls-remote', '--heads', $RemoteName, $PagesBranch)
+  $remoteHead = ($remoteLine -split '\s+')[0]
+  if ($remoteHead -notmatch '^[0-9a-f]{40,64}$') { throw 'Unable to verify the public data revision before uploading.' }
+  if ($remoteHead -ne $pagesBase) {
+    throw "The remote $PagesBranch changed while preparing data; refusing to upload a stale snapshot. Retry from the current public revision."
+  }
 }
 
 function Commit-And-UploadStaged {
@@ -255,6 +265,7 @@ Invoke-GitChecked -Arguments @('config', 'pack.window', '0')
 Invoke-GitChecked -Arguments @('config', 'pack.depth', '1')
 
 $pagesBase = Get-GitValue -Arguments @('rev-parse', 'HEAD')
+Assert-PagesBaseCurrent
 
 $allDataChanges = @(Get-ChangedPaths -Root 'docs/data')
 $metadataPaths = @(
