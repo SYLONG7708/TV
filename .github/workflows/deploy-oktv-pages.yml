@@ -106,7 +106,7 @@ jobs:
           CODE_REVISION: ${{ steps.revision.outputs.code }}
         run: |
           node app/tools/verify-pages-deployment.mjs --dataRevision "$DATA_REVISION" --codeRevision "$CODE_REVISION"
-          node app/tools/check-oktv-system-health.mjs --probeApis false --failOnDegraded false --output public-health.json
+          node app/tools/check-oktv-system-health.mjs --timeoutMs 25000 --concurrency 4 --probeApis false --failOnDegraded false --output public-health.json
           node -e "const r=require('./public-health.json'); for (const k of ['coreFiles','pageShell','catalogStructure','latestFeed','sourceIndexes','liveUsable']) if (!r.checks[k]) throw Error(k+' failed');"
           cat public-health.json >> "$GITHUB_STEP_SUMMARY"
 

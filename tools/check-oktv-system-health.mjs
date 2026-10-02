@@ -73,12 +73,16 @@ async function mapLimit(items, limit, mapper) {
 async function probeStaticIndex(source) {
   if (!source?.indexPath) return { id: source?.id || '', name: source?.name || '', ok: false, error: 'missing indexPath' };
   const url = new URL(source.indexPath.replace(/^\/+/, ''), `${bulkDataBase}/`).href;
+  // A full commit SHA is immutable. Keep that URL cacheable instead of forcing
+  // a cold Raw CDN fetch for every HEAD probe of a large, unchanged index.
+  const probeUrl = /^https:\/\/raw\.githubusercontent\.com\/[^/]+\/[^/]+\/[a-f0-9]{40}\//i.test(url)
+    ? url : `${url}?health=${Date.now()}`;
   let lastError = '';
   for (let attempt = 1; attempt <= 2; attempt += 1) {
     try {
-      let response = await fetchWithTimeout(`${url}?health=${Date.now()}`, { method: 'HEAD' });
+      let response = await fetchWithTimeout(probeUrl, { method: 'HEAD' });
       if (response.status === 405) {
-        response = await fetchWithTimeout(`${url}?health=${Date.now()}`, {
+        response = await fetchWithTimeout(probeUrl, {
           headers: { range: 'bytes=0-1' },
         });
       }
