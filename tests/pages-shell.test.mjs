@@ -23,6 +23,7 @@ async function fixture(t) {
   await fs.writeFile(path.join(codeRoot,'docs/data/iphone-vod-catalog.json'), JSON.stringify({ sources: [], totals: { items: 0 } }));
   await fs.writeFile(path.join(dataRoot,'docs/data/live-channels.json'), JSON.stringify(Array.from({ length: 12 }, () => ({ playable: true }))));
   await fs.writeFile(path.join(dataRoot,'docs/data/vod-query/must-preserve.json.gz'), 'bulk-data');
+  await fs.writeFile(path.join(dataRoot,'docs/data/vod-query/manifest.json'), JSON.stringify({ version: 'fixture', shards: ['large.json.gz'] }));
   await fs.copyFile(path.resolve(import.meta.dirname,'../docs/iphone/index.html'), path.join(codeRoot,'docs/iphone/index.html'));
   await fs.writeFile(path.join(codeRoot,'docs/iphone/category-seeds.json'), JSON.stringify({ items: [{ id: 'korean-series' }] }));
   return { root, dataRoot, codeRoot, output, dataRevision: 'a'.repeat(40), codeRevision: 'b'.repeat(40) };
@@ -37,6 +38,10 @@ test('artifact preserves full catalog, pins data commit, updates CSP, and leaves
   const html = await fs.readFile(path.join(input.output,'docs/iphone/index.html'), 'utf8');
   assert.ok(html.includes(`const DATA_REVISION = '${input.dataRevision}';`));
   assert.equal(updatePolicy(html).html, html);
+  assert.ok(report.pinnedMetadataFiles.includes('vod-query/manifest.json'));
+  for (const name of report.pinnedMetadataFiles) {
+    assert.deepEqual(await fs.readFile(path.join(input.output, 'docs/data/pinned', input.dataRevision, name)), await fs.readFile(path.join(input.dataRoot, 'docs/data', name)));
+  }
   assert.deepEqual(JSON.parse(await fs.readFile(path.join(input.output,'docs/iphone/category-seeds.json'), 'utf8')).items, [{ id: 'korean-series' }]);
   await assert.rejects(fs.stat(path.join(input.output,'docs/data/vod-query/must-preserve.json.gz')));
   assert.equal(await fs.readFile(path.join(input.dataRoot,'docs/data/vod-query/must-preserve.json.gz'), 'utf8'), 'bulk-data');

@@ -4,6 +4,7 @@ import { pathToFileURL } from 'node:url';
 import { updatePolicy } from './update-iphone-csp.mjs';
 
 export const BULK_PATH = /^docs\/data\/(?:vod-index|vod-detail|vod-search|vod-query|quantum-lzi)\//;
+export const BOOT_METADATA = ['iphone-vod-catalog.json', 'iphone-vod-latest.json', 'live-channels.json', 'iphone-health-check-latest.json', 'vod-query/manifest.json', 'quantum-lzi/manifest.json'];
 export function includeInPages(relative) {
   return !BULK_PATH.test(relative) && (
     /^docs\/(?:iphone|assets)\//.test(relative) ||
@@ -47,6 +48,21 @@ export async function buildPagesShell({ dataRoot, codeRoot, output, dataRevision
     }
     await overlay(name);
   }
+  // Small immutable startup metadata travels with the Pages shell. Large
+  // indexes remain in GitHub storage; cached HTML still falls back to its
+  // exact raw commit if its earlier Pages metadata directory no longer exists.
+  const pinnedMetadataFiles = [];
+  for (const name of BOOT_METADATA) {
+    const source = path.join(dataRoot, 'docs/data', name);
+    try {
+      const stat = await fs.lstat(source);
+      if (!stat.isFile() || stat.isSymbolicLink()) throw new Error(`Invalid startup metadata: ${name}`);
+      selected.set(`docs/data/pinned/${dataRevision}/${name}`, source);
+      pinnedMetadataFiles.push(name);
+    } catch (error) {
+      if (error.code !== 'ENOENT') throw error;
+    }
+  }
   let bytes = 0;
   for (const [relative, source] of selected) {
     bytes += (await fs.stat(source)).size;
@@ -70,7 +86,7 @@ export async function buildPagesShell({ dataRoot, codeRoot, output, dataRevision
   const report = {
     schemaVersion: 1, builtAt: new Date().toISOString(), dataCommit: dataRevision, codeCommit: codeRevision,
     dataBaseUrl: `https://raw.githubusercontent.com/SYLONG7708/TV/${dataRevision}/docs/data/`,
-    bulkDataExternal: true, maxPayloadBytes: maxBytes, catalogSources: catalog.sources.length, catalogItems: sum,
+    bulkDataExternal: true, pinnedMetadataFiles, maxPayloadBytes: maxBytes, catalogSources: catalog.sources.length, catalogItems: sum,
     liveChannels: live.length,
   };
   const statePath = path.join(output, 'docs/data/deployment-state.json');

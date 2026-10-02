@@ -6,7 +6,7 @@ import test from 'node:test';
 const html = await fs.readFile(new URL('../docs/iphone/index.html', import.meta.url), 'utf8');
 const loaders = html.slice(html.indexOf('      function onlineDataUrl('), html.indexOf('      function clearViewCache('));
 const revision = 'a'.repeat(40);
-function client(fetch, { hostname = 'sylong7708.github.io', dataRevision = revision } = {}) {
+function client(fetch, { hostname = 'sylong7708.github.io', dataRevision = revision, timer = setTimeout } = {}) {
   return vm.runInNewContext(`${loaders}\ngetJson;`, {
     DATA_REVISION: dataRevision,
     ONLINE_DATA_BASE: 'https://sylong7708.github.io/TV/docs/data/',
@@ -14,7 +14,7 @@ function client(fetch, { hostname = 'sylong7708.github.io', dataRevision = revis
     ARCHIVE_DATA_BASE: 'https://archive.invalid/docs/data/',
     ARCHIVE_RAW_DATA_BASE: 'https://raw.githubusercontent.com/SYLONG7708/TV-archive-20260904/main/docs/data/',
     location: { hostname, href: `https://${hostname}/TV/docs/iphone/index.html` },
-    window: { setTimeout, clearTimeout },
+    window: { setTimeout: timer, clearTimeout },
     fetch, URL, AbortController, DOMException, TextDecoder, Uint8Array,
   });
 }
@@ -31,7 +31,7 @@ test('cached HTML keeps catalog and search metadata on its original data revisio
   assert.equal(catalog.revision, revision);
   assert.equal(manifest.revision, revision);
   assert.equal(requests.length, 2);
-  assert.ok(requests.every(request => request.url.startsWith(`https://raw.githubusercontent.com/SYLONG7708/TV/${revision}/docs/data/`)));
+  assert.ok(requests.every(request => request.url.startsWith(`https://sylong7708.github.io/TV/docs/data/pinned/${revision}/`)));
   assert.ok(requests.every(request => request.cache === 'default'));
 });
 
@@ -42,7 +42,29 @@ test('missing pinned metadata cannot silently use a different deployment or arch
     return url.includes(`/${revision}/`) ? json(null, 404) : json({ revision: 'wrong-data' });
   });
   assert.equal(await getJson('../data/iphone-vod-catalog.json', null), null);
-  assert.equal(requests.length, 1);
+  assert.equal(requests.length, 2);
+  assert.ok(requests.every(url => url.includes(`/${revision}/`)));
+});
+
+test('old cached shell falls back to its exact raw revision when Pages metadata is gone', async () => {
+  const requests = [];
+  const getJson = client(async url => {
+    requests.push(url);
+    return url.includes('/pinned/') ? json(null, 404) : json({ revision });
+  });
+  assert.equal((await getJson('../data/vod-query/manifest.json', null)).revision, revision);
+  assert.equal(requests.length, 2);
+  assert.ok(requests[1].startsWith(`https://raw.githubusercontent.com/SYLONG7708/TV/${revision}/`));
+});
+
+test('a stalled default request aborts and returns usable fallback instead of blocking boot forever', async () => {
+  let configuredTimeout;
+  const getJson = client((_url, { signal }) => new Promise((resolve, reject) => {
+    signal.addEventListener('abort', () => reject(signal.reason), { once: true });
+  }), { timer: (fn, ms) => { configuredTimeout = ms; return setTimeout(fn, 5); } });
+  const fallback = { items: [] };
+  assert.equal(await getJson('../data/iphone-vod-catalog.json', fallback), fallback);
+  assert.equal(configuredTimeout, 20000);
 });
 
 test('historical detail fallback remains available without mixing catalog revisions', async () => {

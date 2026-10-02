@@ -63,6 +63,8 @@ jobs:
             /docs/data/*.json
             /docs/data/*.csv
             !/docs/data/*/
+            /docs/data/vod-query/manifest.json
+            /docs/data/quantum-lzi/manifest.json
             /sources/*
 
       - name: Build bounded Pages artifact and pin bulk data URLs
