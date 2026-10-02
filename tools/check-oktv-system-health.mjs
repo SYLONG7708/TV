@@ -199,7 +199,7 @@ const indexProbes = await mapLimit(sources, concurrency, probeStaticIndex);
 const apiProbes = probeApis ? await mapLimit(sources, concurrency, probeVodApi) : [];
 const checkedApis = apiProbes.filter((entry) => !entry.skipped);
 const vodAge = Math.max(ageHours(state.lastSuccessAt), ageHours(catalogReport.generatedAt));
-const liveReference = summary.live?.lastSuccessfulAt || summary.live?.lastAttemptAt || summary.lastLiveAttemptAt || summary.generatedAt;
+const liveReference = summary.live?.webCatalogBuiltAt || summary.live?.lastSuccessfulAt || summary.live?.lastAttemptAt || summary.lastLiveAttemptAt || summary.generatedAt;
 const liveAge = ageHours(liveReference);
 const declaredItems = Number(catalog.totals?.items || 0);
 const summedItems = sources.reduce((sum, source) => sum + Number(source.itemCount || 0), 0);
