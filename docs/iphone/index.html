@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-Yw1SEK/+Qq79E858UXNMvM+75zVYlY1CiKSqeKxeeBg=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-65OErXj2lgMa36GyodLpci52jDpc8KPVtbVnVloIR44='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-n7HHztOkOtawZONTb/GLggLb9Lz8bwo5yR6PWfE30S4=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-65OErXj2lgMa36GyodLpci52jDpc8KPVtbVnVloIR44='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -4422,6 +4422,8 @@
 
       function itemIsAdult(item, source = sourceById(item?.sourceId)) {
         if (item?.adult || item?.kind === 'adult' || source?.adult) return true;
+        // The curated official feed verifies its non-NSFW flag; credits such as AV Services are not a rating.
+        if (item?.sourceId === 'public-blender-open-movies' && source?.id === item.sourceId && source?.host === 'video.blender.org' && source?.adult === false && item?.adult === false) return false;
         const text = [
           item?.title,
           item?.categoryName,

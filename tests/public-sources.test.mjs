@@ -3,11 +3,29 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import vm from 'node:vm';
 import { normalizePublicSources, mergePublicLive } from '../docs/iphone/public-sources.mjs';
 import { movieItem, preserveLastGood, httpsUrl, allowsBrowserOrigin } from '../tools/refresh-public-sources.mjs';
 import { mergePublicCatalog, mergeData } from '../tools/merge-public-sources-into-data.mjs';
 import { readGzipJson } from '../tools/stable-gzip-json.mjs';
 const payload = JSON.parse(await fs.readFile(new URL('../docs/iphone/public-sources.json', import.meta.url), 'utf8'));
+
+test('official movie ratings do not mistake AV production credits for adult content', async () => {
+  const html = await fs.readFile(new URL('../docs/iphone/index.html', import.meta.url), 'utf8');
+  const rules = html.slice(html.indexOf('const ADULT_ITEM_TEXT_RE ='), html.indexOf('const CLIENT_KIND_RULES ='));
+  const fn = html.slice(html.indexOf('function itemIsAdult('), html.indexOf('function signalSourceEntry('));
+  const classify = vm.runInNewContext(`${rules}\n${fn}\nitemIsAdult;`);
+  const movie = payload.items.find(i => i.title === 'Tears of Steel');
+  const source = payload.sources.find(s => s.id === movie.sourceId);
+  assert.ok(movie.content.includes('AV Services'));
+  assert.equal(classify(movie, source), false);
+  for (const item of payload.items) assert.equal(classify(item, source), false);
+  assert.equal(classify({ ...movie, adult: true }, source), true);
+  assert.equal(classify({ ...movie, kind: 'adult' }, source), true);
+  assert.equal(classify(movie, { ...source, adult: true }), true);
+  assert.equal(classify(movie, { ...source, host: 'unverified.example' }), true);
+  assert.equal(classify({ ...movie, sourceId: 'legacy' }, { id: 'legacy', adult: false }), true);
+});
 test('HLS availability requires a usable browser CORS response', () => {
   assert.equal(allowsBrowserOrigin('*'), true);
   assert.equal(allowsBrowserOrigin('https://sylong7708.github.io'), true);
