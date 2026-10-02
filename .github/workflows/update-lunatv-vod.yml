@@ -231,6 +231,8 @@ jobs:
             --report .\docs\data\iphone-vod-catalog-report.json `
             --detailRoot .\docs\data\iphone-detail `
             --pageSize 240
+          node .\tools\merge-public-sources-into-data.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $mainBaseline = Join-Path $env:RUNNER_TEMP "main-iphone-vod-catalog-baseline.json"
           $publicBaseline = Join-Path $env:RUNNER_TEMP "public-iphone-vod-catalog-baseline.json"
           $baselines = @($publicBaseline, $mainBaseline) | Where-Object { Test-Path -LiteralPath $_ }

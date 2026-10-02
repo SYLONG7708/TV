@@ -1,0 +1,90 @@
+name: Refresh verified public media
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: oktv-public-source-refresh
+  cancel-in-progress: false
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      changed: ${{ steps.publish.outputs.changed }}
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: main
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            docs/iphone/public-sources.json
+            docs/iphone/public-sources.mjs
+            tools/public-source-config.mjs
+            tools/refresh-public-sources.mjs
+            tools/merge-public-sources-into-data.mjs
+            tools/stable-gzip-json.mjs
+      - name: Probe official media and retain recent last-good records
+        run: node tools/refresh-public-sources.mjs | tee public-source-refresh.json
+      - name: Publish metadata only
+        id: publish
+        run: |
+          if git diff --quiet -- docs/iphone/public-sources.json; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/iphone/public-sources.json
+          git commit -m 'Refresh verified public media metadata'
+          for attempt in 1 2 3; do
+            if git push origin HEAD:main; then
+              echo 'changed=true' >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            git pull --rebase origin main
+          done
+          exit 1
+      - name: Checkout current shared cloud metadata
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          ref: gh-pages
+          path: shared-cloud
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            docs/data/iphone-vod-catalog.json
+            docs/data/live-channels.json
+            docs/data/vod-index/public-blender-open-movies.json.gz
+      - name: Update shared catalog for existing car and web clients
+        run: |
+          git -C shared-cloud config user.name 'github-actions[bot]'
+          git -C shared-cloud config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          for attempt in 1 2 3; do
+            node tools/merge-public-sources-into-data.mjs --dataRoot shared-cloud/docs/data
+            if git -C shared-cloud diff --quiet && [ -z "$(git -C shared-cloud ls-files --others --exclude-standard)" ]; then exit 0; fi
+            git -C shared-cloud add docs/data/iphone-vod-catalog.json docs/data/live-channels.json docs/data/vod-index/public-blender-open-movies.json.gz
+            git -C shared-cloud commit -m 'Refresh official public media in shared cloud catalog'
+            if git -C shared-cloud push origin HEAD:gh-pages; then exit 0; fi
+            # Only this disposable checkout is reset; regenerate against the latest data
+            # to avoid overwriting a concurrent full-catalog or live refresh.
+            git -C shared-cloud fetch origin gh-pages
+            git -C shared-cloud reset --hard origin/gh-pages
+          done
+          exit 1
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: public-source-health-${{ github.run_id }}
+          path: |
+            public-source-refresh.json
+            docs/iphone/public-sources.json
+          retention-days: 14
+  deploy:
+    needs: refresh
+    if: needs.refresh.outputs.changed == 'true'
+    uses: ./.github/workflows/deploy-oktv-pages.yml

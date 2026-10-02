@@ -47,6 +47,8 @@ jobs:
             tools/update-youtube-live-local.ps1
             tools/build-live-channels-json.mjs
             tools/build-live-signal-index.mjs
+            tools/merge-public-sources-into-data.mjs
+            tools/stable-gzip-json.mjs
             tools/push-commit-with-recovery.ps1
             tools/publish-gh-pages-batched.ps1
             tools/update-iphone-csp.mjs
@@ -62,6 +64,8 @@ jobs:
             docs/data/live-channels.json
             docs/data/source-summary.json
             docs/iphone/index.html
+            docs/iphone/public-sources.json
+            docs/iphone/public-sources.mjs
 
       - name: Validate iPhone security policy
         shell: pwsh
@@ -138,6 +142,8 @@ jobs:
             --output .\docs\data\live-channels.json `
             --summary .\docs\data\source-summary.json `
             --minValidSeconds 600
+          node .\tools\merge-public-sources-into-data.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
       - name: Build live signal source index
         shell: pwsh

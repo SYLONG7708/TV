@@ -85,8 +85,10 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   function syncTracks() {
     if (!isDirect()) return;
     const levels = hls?.levels || [];
-    fill($('playerQuality'), levels.length ? [[-1, '自動（依網路調整）'], ...levels.map((level, i) => [i, `${level.height ? level.height + 'p' : '畫質 ' + (i + 1)}${level.bitrate ? ` · ${(level.bitrate / 1e6).toFixed(1)} Mbps` : ''}`])] : [[-1, '由片源／裝置決定']], hls?.autoLevelEnabled !== false ? -1 : hls.currentLevel);
-    $('playerQuality').disabled = levels.length < 2;
+    const variants = !hls ? entry.variants || [] : [];
+    const qualityRows = levels.length ? [[-1, '自動（依網路調整）'], ...levels.map((level, i) => [i, `${level.height ? level.height + 'p' : '畫質 ' + (i + 1)}${level.bitrate ? ` · ${(level.bitrate / 1e6).toFixed(1)} Mbps` : ''}`])] : variants.length ? variants.map((v, i) => [`mp4:${i}`, v.label || `${v.height}p`]) : [[-1, '由片源／裝置決定']];
+    fill($('playerQuality'), qualityRows, variants.length ? `mp4:${Math.max(0, variants.findIndex(v => v.url === entry.url))}` : hls?.autoLevelEnabled !== false ? -1 : hls.currentLevel);
+    $('playerQuality').disabled = Math.max(levels.length, variants.length) < 2;
     const audio = hls?.audioTracks || Array.from(video.audioTracks || []);
     fill($('playerAudio'), audio.length ? audio.map((track, i) => [i, track.name || track.label || track.lang || track.language || `音軌 ${i + 1}`]) : [[-1, '片源預設音軌']], hls ? hls.audioTrack : Math.max(0, audio.findIndex(track => track.enabled)));
     $('playerAudio').disabled = audio.length < 2;
@@ -138,7 +140,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     clearTimeout(readyTimer); clearTimeout(recoveryTimer);
     hls?.stopLoad();
   }
-  function open(next, resumeTime = 0) {
+  function open(next, resumeTime = 0, autoplay = true) {
     stop(); entry = { ...next }; const token = generation; fatal = false; recoveries = mediaRecoveries = 0;
     subtitleChoice = 'off'; pendingSeek = resumeTime || 0; dragging = false;
     document.getElementById('playerResolution').textContent = '';
@@ -182,7 +184,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     } else video.src = entry.url;
     if (!fatal) readyTimer = setTimeout(() => { if (isCurrent(token) && video.readyState < 2) fail('片源回應逾時。可重新連線或切換訊號源。'); }, 30000);
     syncTracks(); syncTransport();
-    if (!fatal) void play();
+    if (!fatal && autoplay) void play();
   }
   const retry = () => { if (isDirect()) open(entry, video.currentTime); };
   function chooseSubtitle(value) {
@@ -208,7 +210,11 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   $('playerRetry').addEventListener('click', retry);
   $('playerPrevious').addEventListener('click', () => { if (entry?.index > 0) onEpisode(entry.index - 1); });
   $('playerNext').addEventListener('click', () => { if (entry?.index < (entry.episodes?.length || 0) - 1) onEpisode(entry.index + 1); });
-  $('playerQuality').addEventListener('change', event => { if (hls) { hls.currentLevel = Number(event.target.value); syncTracks(); } });
+  $('playerQuality').addEventListener('change', event => {
+    if (hls) { hls.currentLevel = Number(event.target.value); syncTracks(); return; }
+    const match = /^mp4:(\d+)$/.exec(event.target.value), variant = match && entry?.variants?.[Number(match[1])];
+    if (variant && variant.url !== entry.url) open({ ...entry, url: variant.url }, video.currentTime, !video.paused);
+  });
   $('playerAudio').addEventListener('change', event => {
     if (hls) hls.audioTrack = Number(event.target.value);
     else Array.from(video.audioTracks || []).forEach((track, i) => { track.enabled = i === Number(event.target.value); });
@@ -255,7 +261,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   }
   video.addEventListener('loadedmetadata', resumeWhenReady);
   video.addEventListener('durationchange', resumeWhenReady);
-  video.addEventListener('canplay', () => { if (isDirect()) { clearTimeout(readyTimer); syncTracks(); } });
+  video.addEventListener('canplay', () => { if (isDirect()) { clearTimeout(readyTimer); syncTracks(); if (video.paused && !fatal) say('已暫停'); } });
   video.addEventListener('playing', () => { if (isDirect()) { fatal = false; $('playerRetry').hidden = true; say('播放中'); clearTimeout(readyTimer); } });
   video.addEventListener('pause', () => { if (isDirect() && !fatal && !video.ended) say('已暫停'); saveProgress(); });
   video.addEventListener('waiting', () => { if (isDirect() && !fatal) say('緩衝中…'); });
