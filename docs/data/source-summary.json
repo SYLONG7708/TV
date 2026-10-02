@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-10-02T04:37:15.753Z",
+  "generatedAt": "2026-10-02T06:00:09.031Z",
   "input": {
-    "live": "E:\\CODEX\\Automation\\OKTVLiveUpdate\\sources\\live-stable.txt",
+    "live": "D:\\a\\TV\\TV\\sources\\live-stable.txt",
     "vodUrl": "https://raw.githubusercontent.com/FGBLH/GHK/a1c46cb76810cd6d53b73e1c6f0a0789586151c5/%E6%B5%B7%E8%B1%9A%E5%BD%B1%E8%A7%86.json",
     "includeLegacySources": false
   },
@@ -42,13 +42,20 @@
       "YouTube韓綜娛樂",
       "YouTube互動娛樂",
       "YouTube動漫台"
-    ]
+    ],
+    "catalogRefreshProvider": "github-actions",
+    "lastAttemptAt": "2026-10-02T06:00:10.8084149+00:00",
+    "refreshStatus": "official-embeds-refreshed",
+    "webCatalogBuiltAt": "2026-10-02T06:00:10.8084149+00:00",
+    "hlsRefreshStatus": "not-refreshed",
+    "outputsPreserved": true,
+    "playlistEntries": 0
   },
   "notes": [
     "VOD source is loaded from sources/current-sources.json vod.url.",
     "Legacy All on-demand and LunaTV VOD data is excluded unless --includeLegacySources true is set.",
     "Live data continues to use docs/data/live-channels.json.",
-    "直播 TXT 只收錄可直接播放的來源；手機網頁另外保留 YouTube 官方嵌入入口，短效 HLS 由店內排程更新。"
+    "直播 TXT 只收錄直接串流；手機與 APK 的 GitHub 網頁持續提供 YouTube 官方嵌入入口。GitHub 排程會移除過期短效網址並重建清單，無須重新安裝 App。"
   ],
   "adult18": {
     "count": 34,
@@ -56,5 +63,6 @@
     "duplicateCount": 0,
     "failedCount": 0
   },
-  "lastLiveAttemptAt": "2026-09-28T16:39:17.5523790+00:00"
+  "lastLiveAttemptAt": "2026-10-02T06:00:10.8084149+00:00"
 }
+
