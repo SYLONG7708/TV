@@ -102,6 +102,7 @@ function Invoke-GitHubApiJson {
 function Push-UploadHead {
   $targetHead = Get-GitValue -Arguments @('rev-parse', 'HEAD')
   for ($attempt = 1; $attempt -le $PushAttempts; $attempt++) {
+    Assert-PagesBaseCurrent
     Write-Host "Uploading Pages checkpoint $targetHead (attempt $attempt/$PushAttempts)."
     & git -C $repo push $RemoteName "HEAD:$uploadRef"
     if ($LASTEXITCODE -eq 0) {
@@ -124,6 +125,15 @@ function Push-UploadHead {
     }
   }
   throw "Temporary Pages upload failed after $PushAttempts attempts."
+}
+
+function Assert-PagesBaseCurrent {
+  $remoteLine = Get-GitValue -Arguments @('ls-remote', '--heads', $RemoteName, $PagesBranch)
+  $remoteHead = ($remoteLine -split '\s+')[0]
+  if ($remoteHead -notmatch '^[0-9a-f]{40,64}$') { throw 'Unable to verify the public data revision before uploading.' }
+  if ($remoteHead -ne $pagesBase) {
+    throw "The remote $PagesBranch changed while preparing data; refusing to upload a stale snapshot. Retry from the current public revision."
+  }
 }
 
 function Commit-And-UploadStaged {
@@ -255,6 +265,7 @@ Invoke-GitChecked -Arguments @('config', 'pack.window', '0')
 Invoke-GitChecked -Arguments @('config', 'pack.depth', '1')
 
 $pagesBase = Get-GitValue -Arguments @('rev-parse', 'HEAD')
+Assert-PagesBaseCurrent
 
 $allDataChanges = @(Get-ChangedPaths -Root 'docs/data')
 $metadataPaths = @(
@@ -389,6 +400,15 @@ for ($attempt = 1; $attempt -le $PushAttempts; $attempt++) {
 if (-not $published) {
   throw "Atomic $PagesBranch update failed after $PushAttempts attempts."
 }
+
+# Bounded-history publication creates a different commit with the same final
+# tree. Align this worktree's HEAD without changing its index or working files,
+# so a second invocation starts from the revision it actually published.
+Invoke-GitChecked -Arguments @('fetch', $RemoteName, $PagesBranch)
+$confirmedHead = Get-GitValue -Arguments @('rev-parse', "$RemoteName/$PagesBranch")
+if ($confirmedHead -ne $publishCommit) { throw 'Public data changed immediately after publication; preserve local files and retry from the latest revision.' }
+$localHead = Get-GitValue -Arguments @('rev-parse', 'HEAD')
+Invoke-GitChecked -Arguments @('update-ref', 'HEAD', $publishCommit, $localHead)
 
 & git -C $repo push $RemoteName --delete $uploadBranch
 if ($LASTEXITCODE -ne 0) {
