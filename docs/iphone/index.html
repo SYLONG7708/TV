@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-sNqmqYsb/pN+wGHANTYv8Y1NhaWZmagMcvQRTwBUgtk=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-yZOt7dJ1ZYDq72aWTxiD+M80Boa4NIU4ceIPul+tO5s='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-7ABW/znWiBOsXU0i75et6/8gDY/WrzcyhGQczIpMGD0=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-65OErXj2lgMa36GyodLpci52jDpc8KPVtbVnVloIR44='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1013,12 +1013,17 @@
         width: 100%;
         margin-top: 10px;
       }
+      .boot-loading { padding: 36px 20px; line-height: 1.8; }
+      .boot-loading a { color: var(--amber); }
+      .boot-notice { padding: 16px; color: var(--amber); }
+      .boot-notice a { color: inherit; }
     </style>
   </head>
   <body>
     <div class="app">
       <nav class="top-nav" aria-label="OKTV 分頁" id="topNav"></nav>
-      <main id="screen"></main>
+      <aside id="bootNotice" class="boot-notice" hidden role="status">部分雲端資料暫時無法載入，目前顯示已取得的內容。<a href="./">重新載入</a></aside>
+      <main id="screen"><div class="boot-loading" role="status"><h1>OKTV 雲端片庫</h1><p>正在讀取最新片單與直播，請稍候。</p><a href="./">重新載入</a></div></main>
     </div>
 
     <div class="sheet" id="sourceSheet" aria-hidden="true">
@@ -1301,8 +1306,11 @@
         // A cached HTML shell must not combine a newer Pages catalog with its
         // older pinned search shards. Keep all deployed data on one revision.
         const revisionPinned = !localHost && Boolean(dataPath) && /^[a-f0-9]{40}$/.test(DATA_REVISION);
+        const bootMetadata = /^(?:iphone-vod-catalog\.json|iphone-vod-latest\.json|live-channels\.json|iphone-health-check-latest\.json|vod-query\/manifest\.json|quantum-lzi\/manifest\.json)$/.test(dataPath);
+        const pinnedLocal = revisionPinned && bootMetadata
+          ? `${ONLINE_DATA_BASE}pinned/${DATA_REVISION}/${dataPath}` : '';
         const candidates = revisionPinned || (bulkData && !localHost)
-          ? [currentRaw]
+          ? [pinnedLocal, currentRaw]
           : online
           ? preferLocal
             ? [localUrl, online]
@@ -1339,12 +1347,11 @@
         const forwardAbort = () => requestController.abort(options.signal?.reason);
         if (options.signal?.aborted) forwardAbort();
         else options.signal?.addEventListener('abort', forwardAbort, { once: true });
-        const timeoutId = options.timeoutMs
-          ? window.setTimeout(() => {
+        const timeoutMs = Number.isFinite(options.timeoutMs) && options.timeoutMs > 0 ? options.timeoutMs : 20000;
+        const timeoutId = window.setTimeout(() => {
               timedOut = true;
               requestController.abort(new DOMException('Request timed out', 'TimeoutError'));
-            }, options.timeoutMs)
-          : null;
+            }, timeoutMs);
         try {
           for (const target of urls) {
             try {
@@ -4257,9 +4264,9 @@
         return Boolean(source && QUANTUM_API_RE.test(source.api || ''));
       }
 
-      async function loadQuantumManifest() {
+      async function loadQuantumManifest(prefetched = undefined) {
         if (state.quantum.manifest) return state.quantum.manifest;
-        const manifest = await getJson(QUANTUM_MANIFEST_URL, null);
+        const manifest = prefetched !== undefined ? prefetched : await getJson(QUANTUM_MANIFEST_URL, null);
         if (!manifest) return null;
         state.quantum.manifest = manifest;
         const source = quantumSource();
@@ -5952,6 +5959,7 @@
       document.querySelector('#detailSheet [data-close-detail].icon-btn').innerHTML = icon('close');
       document.querySelector('#playerSheet [data-close-player].icon-btn').innerHTML = icon('close');
 
+      const bootQuantum = getJson(QUANTUM_MANIFEST_URL, null);
       [state.catalog, state.latest, state.seriesSeeds, state.koreanShortSeeds, state.live, state.queryIndex.manifest] = await Promise.all([
         getJson('../data/iphone-vod-catalog.json', state.catalog),
         getJson('../data/iphone-vod-latest.json', { items: [] }),
@@ -5962,7 +5970,8 @@
       ]);
       state.catalog.sources = Array.isArray(state.catalog.sources) ? state.catalog.sources : [];
       state.sourceMap = new Map(state.catalog.sources.map((source) => [source.id, source]));
-      await loadQuantumManifest();
+      await loadQuantumManifest(await bootQuantum);
+      document.querySelector('#bootNotice').hidden = Boolean(state.catalog.sources.length && state.queryIndex.manifest && state.live.length);
       const initialCatalogItems = Array.isArray(state.catalog.items) ? state.catalog.items : [];
       const latestCatalogItems = Array.isArray(state.latest.items) ? state.latest.items : [];
       const seriesSeedItems = Array.isArray(state.seriesSeeds.items) ? state.seriesSeeds.items : [];
@@ -6011,8 +6020,10 @@
       const combinedSourceAtBoot = ['all', 'normal', 'adult18'].includes(selectedSourceAtBoot);
       state.sourceLoading = !combinedSourceAtBoot;
       if (!combinedSourceAtBoot) {
-        await ensureSelectedSourceItems(selectedSourceAtBoot);
-        state.sourceLoading = false;
+        ensureSelectedSourceItems(selectedSourceAtBoot).catch(() => undefined).finally(() => {
+          state.sourceLoading = false;
+          render();
+        });
       }
       window.addEventListener('scroll', maybeLoadMore, { passive: true });
       resetVisibleLimit();
