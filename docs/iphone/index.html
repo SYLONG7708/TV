@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-aqxyoEjt823JmJXCxr9XVO080K2Xi1u/V4P3A6cXNrs=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-65OErXj2lgMa36GyodLpci52jDpc8KPVtbVnVloIR44='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-hTQO6J6OrA3tMQEkFrOkSR82pc4VPamQLYPmam22PXM=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-65OErXj2lgMa36GyodLpci52jDpc8KPVtbVnVloIR44='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -11,6 +11,10 @@
     <link rel="icon" href="../assets/icon.png" />
     <link rel="apple-touch-icon" href="../assets/icon.png" />
     <link rel="stylesheet" href="./player-controls.css" />
+    <link rel="modulepreload" href="./title-quality.mjs" />
+    <link rel="modulepreload" href="./player-controls.mjs" />
+    <link rel="modulepreload" href="./sheet-navigation.mjs" />
+    <link rel="modulepreload" href="./safe-storage.mjs" />
     <title>影視 OKTV iPhone</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js" integrity="sha384-iZBI1/lW9u8FcBjxuQ8nPTsU7TXhZNtzkV8H3gQHSTgz+VYQoKWqGlBHqhO84alJ" crossorigin="anonymous" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js" integrity="sha384-rNlaE5fs9dGIjmxWDALQh/RBAaGRYT5ChrzHo6tRfgrZ36iRFAiquP5g41Jsv+0j" crossorigin="anonymous" defer></script>
@@ -5984,11 +5988,14 @@
       document.querySelector('#playerSheet [data-close-player].icon-btn').innerHTML = icon('close');
 
       const bootQuantum = getJson(QUANTUM_MANIFEST_URL, null);
-      [state.catalog, state.latest, state.seriesSeeds, state.koreanShortSeeds, state.live, state.queryIndex.manifest] = await Promise.all([
-        getJson('../data/iphone-vod-catalog.json', state.catalog),
-        getJson('../data/iphone-vod-latest.json', { items: [] }),
+      // Supplementary category seeds must not delay the working cloud catalog.
+      const bootSeeds = Promise.all([
         getJson('./category-seeds.json', { items: [] }),
         getJson('./korean-short-seeds.json', { items: [] }),
+      ]);
+      [state.catalog, state.latest, state.live, state.queryIndex.manifest] = await Promise.all([
+        getJson('../data/iphone-vod-catalog.json', state.catalog),
+        getJson('../data/iphone-vod-latest.json', { items: [] }),
         getJson('../data/live-channels.json', []),
         getJson(QUERY_MANIFEST_URL, null),
       ]);
@@ -5998,8 +6005,6 @@
       document.querySelector('#bootNotice').hidden = Boolean(state.catalog.sources.length && state.queryIndex.manifest && state.live.length);
       const initialCatalogItems = Array.isArray(state.catalog.items) ? state.catalog.items : [];
       const latestCatalogItems = Array.isArray(state.latest.items) ? state.latest.items : [];
-      const seriesSeedItems = Array.isArray(state.seriesSeeds.items) ? state.seriesSeeds.items : [];
-      const koreanShortSeedItems = Array.isArray(state.koreanShortSeeds.items) ? state.koreanShortSeeds.items : [];
       const fallbackQueryItems = Array.isArray(state.queryIndex.manifest?.fallbackItems)
         ? state.queryIndex.manifest.fallbackItems
         : [];
@@ -6007,23 +6012,9 @@
       state.itemById.clear();
       registerCatalogItems(initialCatalogItems);
       registerCatalogItems(latestCatalogItems);
-      registerCatalogItems(seriesSeedItems);
-      registerCatalogItems(koreanShortSeedItems);
       // Keep legitimate one-character titles searchable without flooding browse
       // categories with the manifest's special search fallback collection.
       registerCatalogItems(fallbackQueryItems.filter((item) => !state.itemById.has(item.id)).map((item) => ({ ...item, _searchFallback: true })));
-      const seededCategories = new Map();
-      for (const item of seriesSeedItems) {
-        for (const category of state.itemById.get(item.id)?._seriesCategories || []) {
-          seededCategories.set(category, (seededCategories.get(category) || 0) + 1);
-        }
-      }
-      for (const [category, count] of seededCategories) {
-        if (count < 12) continue;
-        for (const sourceId of ['normal', 'all', state.seriesSeeds.sourceId].filter(Boolean)) {
-          state.categoryIndexAttempted.add(`${sourceId}\u001f${category}`);
-        }
-      }
       state.seedItemIds = new Set(state.itemById.keys());
       markLatestPagesLoaded(latestCatalogItems);
       applyHealthIndex({ failed: [] });
@@ -6052,6 +6043,23 @@
       window.addEventListener('scroll', maybeLoadMore, { passive: true });
       resetVisibleLimit();
       render();
+      bootSeeds.then(([seriesSeeds, koreanShortSeeds]) => {
+        state.seriesSeeds = seriesSeeds; state.koreanShortSeeds = koreanShortSeeds;
+        const seriesSeedItems = Array.isArray(state.seriesSeeds.items) ? state.seriesSeeds.items : [];
+        const koreanShortSeedItems = Array.isArray(state.koreanShortSeeds.items) ? state.koreanShortSeeds.items : [];
+        registerCatalogItems(seriesSeedItems);
+        registerCatalogItems(koreanShortSeedItems);
+        for (const item of [...seriesSeedItems, ...koreanShortSeedItems]) state.seedItemIds.add(item.id);
+        const seededCategories = new Map();
+        for (const item of seriesSeedItems) {
+          for (const category of state.itemById.get(item.id)?._seriesCategories || []) seededCategories.set(category, (seededCategories.get(category) || 0) + 1);
+        }
+        for (const [category, count] of seededCategories) {
+          if (count < 12) continue;
+          for (const sourceId of ['normal', 'all', state.seriesSeeds.sourceId].filter(Boolean)) state.categoryIndexAttempted.add(`${sourceId}\u001f${category}`);
+        }
+        clearViewCache(); render();
+      });
       getJson('../data/iphone-health-check-latest.json', { failed: [] }).then((health) => {
         applyHealthIndex(health);
         render();

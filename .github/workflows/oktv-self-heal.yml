@@ -44,7 +44,7 @@ jobs:
 
       - name: Inspect public page, catalog, every index, APIs, and live data
         continue-on-error: true
-        run: node tools/check-oktv-system-health.mjs --output oktv-system-health.json --probeApis true --failOnDegraded false
+        run: node tools/check-oktv-system-health.mjs --timeoutMs 25000 --concurrency 4 --output oktv-system-health.json --probeApis true --failOnDegraded false
 
       - name: Repair failed workflows or stale data without duplicate runs
         env:
