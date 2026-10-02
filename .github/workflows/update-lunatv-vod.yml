@@ -21,6 +21,7 @@ permissions:
 
 concurrency:
   group: oktv-data-publish-${{ github.ref }}
+  queue: max
   cancel-in-progress: false
 
 jobs:
