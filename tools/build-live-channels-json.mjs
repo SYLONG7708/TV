@@ -17,7 +17,7 @@ const output = path.resolve(args.get('output') || path.join(tvRoot, 'docs', 'dat
 const summaryOutput = path.resolve(args.get('summary') || path.join(tvRoot, 'docs', 'data', 'source-summary.json'));
 const minValidSeconds = Number(args.get('minValidSeconds') || 600);
 const nowEpoch = Math.floor(Date.now() / 1000);
-const liveNote = '直播 TXT 只收錄可直接播放的來源；手機網頁另外保留 YouTube 官方嵌入入口，短效 HLS 由店內排程更新。';
+const liveNote = '直播 TXT 只收錄直接串流；手機與 APK 的 GitHub 網頁持續提供 YouTube 官方嵌入入口。GitHub 排程會移除過期短效網址並重建清單，無須重新安裝 App。';
 
 function normalizeText(value) {
   return String(value || '').replace(/^\uFEFF/, '').trim();
@@ -210,6 +210,9 @@ summary.input = {
   live: input,
 };
 summary.live = {
+  ...(summary.live || {}),
+  webCatalogBuiltAt: new Date().toISOString(),
+  catalogRefreshProvider: 'github-actions',
   count: channels.length,
   playableCount: channels.filter((channel) => channel.playable).length,
   directStreamCount: channels.filter((channel) => !/youtu\.be\/|youtube\.com\/(?:watch|live|embed)/i.test(channel.url)).length,
@@ -220,7 +223,7 @@ summary.live = {
   groups,
 };
 summary.notes = Array.isArray(summary.notes) ? summary.notes : [];
-summary.notes = summary.notes.filter((note) => note !== liveNote && !/^直播來源由 sources\/live-stable\.txt/.test(note) && !/YouTube.*external|直播.*external/i.test(note));
+summary.notes = summary.notes.filter((note) => !/短效 HLS 由店內排程更新/.test(note) && note !== liveNote && !/^直播來源由 sources\/live-stable\.txt/.test(note) && !/YouTube.*external|直播.*external/i.test(note));
 summary.notes.push(liveNote);
 
 await fs.mkdir(path.dirname(summaryOutput), { recursive: true });

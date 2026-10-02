@@ -30,7 +30,7 @@ concurrency:
 jobs:
   update:
     outputs:
-      publish_data: ${{ steps.cookies.outputs.available == 'true' && steps.live_report.outputs.outputs_preserved == 'False' }}
+      publish_data: ${{ steps.web_catalog.outcome == 'success' }}
     runs-on: windows-latest
     timeout-minutes: 65
     steps:
@@ -80,8 +80,8 @@ jobs:
             Write-Host "YouTube cookies restored from repository secret."
           } else {
             "available=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-            "YouTube cookies are unavailable on the GitHub runner. Existing live sources were preserved; use the local scheduled HLS updater for a fresh extract." | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
-            Write-Host "No YouTube cookies on this runner; preserving existing sources without publishing watch-page URLs."
+            "YouTube cookies are unavailable on the GitHub runner. The GitHub workflow will rebuild the web catalog with official YouTube embeds and remove expired temporary URLs. HLS extraction remains unavailable without authorized cookies." | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Encoding utf8 -Append
+            Write-Host "No YouTube cookies: refreshing official web embeds; direct-stream TXT remains unchanged."
           }
 
       - name: Refresh YouTube live URLs
@@ -108,14 +108,13 @@ jobs:
           powershell @args
 
       - name: Read live refresh report
-        if: steps.cookies.outputs.available == 'true'
         id: live_report
         shell: pwsh
         run: |
-          $preserved = "False"
+          $preserved = "True"
           $entries = "0"
           $reportPath = ".\sources\live-youtube-report.json"
-          if (Test-Path -LiteralPath $reportPath) {
+          if ('${{ steps.cookies.outputs.available }}' -eq 'true' -and (Test-Path -LiteralPath $reportPath)) {
             $report = Get-Content -LiteralPath $reportPath -Raw -Encoding UTF8 | ConvertFrom-Json
             $preserved = [string][bool]$report.outputsPreserved
             $entries = [string][int]$report.playlistEntries
@@ -129,7 +128,7 @@ jobs:
           "playlist_entries=$entries" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
       - name: Rebuild public live JSON
-        if: steps.cookies.outputs.available == 'true' && steps.live_report.outputs.outputs_preserved == 'False'
+        id: web_catalog
         shell: pwsh
         run: |
           node .\tools\build-live-channels-json.mjs `
@@ -140,7 +139,6 @@ jobs:
             --minValidSeconds 600
 
       - name: Build live signal source index
-        if: steps.cookies.outputs.available == 'true' && steps.live_report.outputs.outputs_preserved == 'False'
         shell: pwsh
         run: |
           node .\tools\build-live-signal-index.mjs `
@@ -149,7 +147,6 @@ jobs:
             --csv .\sources\live-signal-sources.csv
 
       - name: Record live refresh attempt
-        if: steps.cookies.outputs.available == 'true' && steps.live_report.outputs.outputs_preserved == 'False'
         shell: pwsh
         run: |
           $summaryPath = ".\docs\data\source-summary.json"
@@ -165,13 +162,14 @@ jobs:
           $preserved = [bool]::Parse("$env:LIVE_OUTPUTS_PRESERVED")
           $summary | Add-Member -NotePropertyName lastLiveAttemptAt -NotePropertyValue $attemptAt -Force
           $summary.live | Add-Member -NotePropertyName lastAttemptAt -NotePropertyValue $attemptAt -Force
-          $summary.live | Add-Member -NotePropertyName refreshStatus -NotePropertyValue $(if ($preserved) { "preserved" } else { "updated" }) -Force
+          $summary.live | Add-Member -NotePropertyName refreshStatus -NotePropertyValue $(if ($preserved) { "official-embeds-refreshed" } else { "hls-and-embeds-refreshed" }) -Force
+          $summary.live | Add-Member -NotePropertyName webCatalogBuiltAt -NotePropertyValue $attemptAt -Force
+          $summary.live | Add-Member -NotePropertyName hlsRefreshStatus -NotePropertyValue $(if ($preserved) { "not-refreshed" } else { "validated" }) -Force
           $summary.live | Add-Member -NotePropertyName outputsPreserved -NotePropertyValue $preserved -Force
           $summary.live | Add-Member -NotePropertyName playlistEntries -NotePropertyValue ([int]$env:LIVE_PLAYLIST_ENTRIES) -Force
           Set-Content -LiteralPath $summaryPath -Value (($summary | ConvertTo-Json -Depth 12) + "`n") -Encoding UTF8
 
       - name: Commit changes
-        if: steps.cookies.outputs.available == 'true' && steps.live_report.outputs.outputs_preserved == 'False'
         shell: pwsh
         run: |
           git config user.name "github-actions[bot]"
@@ -203,7 +201,6 @@ jobs:
           }
 
       - name: Publish GitHub Pages live page data
-        if: steps.cookies.outputs.available == 'true' && steps.live_report.outputs.outputs_preserved == 'False'
         env:
           GH_TOKEN: ${{ github.token }}
         shell: pwsh
