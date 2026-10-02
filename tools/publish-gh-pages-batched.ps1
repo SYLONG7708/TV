@@ -401,6 +401,15 @@ if (-not $published) {
   throw "Atomic $PagesBranch update failed after $PushAttempts attempts."
 }
 
+# Bounded-history publication creates a different commit with the same final
+# tree. Align this worktree's HEAD without changing its index or working files,
+# so a second invocation starts from the revision it actually published.
+Invoke-GitChecked -Arguments @('fetch', $RemoteName, $PagesBranch)
+$confirmedHead = Get-GitValue -Arguments @('rev-parse', "$RemoteName/$PagesBranch")
+if ($confirmedHead -ne $publishCommit) { throw 'Public data changed immediately after publication; preserve local files and retry from the latest revision.' }
+$localHead = Get-GitValue -Arguments @('rev-parse', 'HEAD')
+Invoke-GitChecked -Arguments @('update-ref', 'HEAD', $publishCommit, $localHead)
+
 & git -C $repo push $RemoteName --delete $uploadBranch
 if ($LASTEXITCODE -ne 0) {
   Write-Warning "Published successfully, but temporary branch $uploadBranch could not be removed."
