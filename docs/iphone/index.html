@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-hTQO6J6OrA3tMQEkFrOkSR82pc4VPamQLYPmam22PXM=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-65OErXj2lgMa36GyodLpci52jDpc8KPVtbVnVloIR44='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-YRSciPtOYsX7BHVcqzc0mpnw9cilzRctUg0eJv4pw9A=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-65OErXj2lgMa36GyodLpci52jDpc8KPVtbVnVloIR44='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1099,6 +1099,7 @@
       import { createPlayerController } from './player-controls.mjs';
       import { createSheetNavigation } from './sheet-navigation.mjs';
       import { createSafeStorage } from './safe-storage.mjs';
+      import { PUBLIC_SOURCE_PREFIX, normalizePublicSources, mergePublicLive, publicHttpsUrl } from './public-sources.mjs';
       const appStorage = createSafeStorage();
       const tabs = [
         ['home', '主頁'],
@@ -4811,6 +4812,12 @@
           return;
         }
         const scopeKey = [state.tab, state.selectedSource, needle.query].join('\u001f');
+        if (state.selectedSource.startsWith(PUBLIC_SOURCE_PREFIX) && state.loadedSourceIds.has(state.selectedSource)) {
+          cancelActiveSearch('cancelled');
+          state.searchLoading = false;
+          state.searchProgress = { query: needle.query, scopeKey, completed: 0, total: 0, failed: 0, status: 'complete' };
+          return;
+        }
         if (state.searchLoadInFlight?.scopeKey === scopeKey) return;
         if (
           state.searchProgress.scopeKey === scopeKey &&
@@ -5196,7 +5203,7 @@
           : '目前沒有符合篩選的影片';
         const countLabel = state.query
           ? `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部搜尋結果`
-          : `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部已載入，完整索引 ${formatCount(state.catalog.totals.playableItems)} 部可播放`;
+          : `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部已載入，完整索引 ${formatCount(activeSource()?.playableCount ?? state.catalog.totals.playableItems)} 部可播放`;
         const layoutKey = `vod:${state.tab}`;
         if (state.renderLayoutKey !== layoutKey || !document.querySelector('#vodGrid')) {
           screen.innerHTML = `
@@ -5538,6 +5545,7 @@
             <div class="row-main">
               <strong>${displayHtml(item.name)}</strong>
               <span>${displayHtml(item.group)} / ${displayHtml(kindLabel(item.kind))}</span>
+              ${item.rights && publicHttpsUrl(item.pageUrl) ? `<a href="${escapeHtml(publicHttpsUrl(item.pageUrl))}" target="_blank" rel="noopener noreferrer">原頻道</a>` : ''}
             </div>
             <button class="play-btn" type="button" data-live-play="${escapeHtml(item.id)}" ${playable ? '' : 'disabled'}>${icon(item.kind === 'external' && !item.embedUrl ? 'signal' : 'play')}${item.kind === 'external' && !item.embedUrl ? '外部' : '播放'}</button>
           </article>
@@ -5734,6 +5742,7 @@
               <p>${displayHtml(plainTextFromMarkup(item.content || item.actor || item.director) || '此內容已建立 OKTV 手機索引。')}</p>
             </div>
           </div>
+          ${item.rights ? `<p class="item-meta">${displayHtml(item.rights.attribution)} · ${displayHtml(item.rights.changes)} <a href="${escapeHtml(publicHttpsUrl(item.rights.originalPage))}" target="_blank" rel="noopener noreferrer">官方原片</a> · <a href="${escapeHtml(publicHttpsUrl(item.rights.licenseUrl))}" target="_blank" rel="noopener noreferrer">${displayHtml(item.rights.licenseLabel)}</a></p>` : ''}
           ${renderSignalSourceControls(item)}
           <section class="section-head"><h2>播放</h2><span>${total} 集</span></section>
           ${renderEpisodePager(item, safePage)}
@@ -5759,7 +5768,8 @@
         const episode = item.episodes?.[index];
         if (!episode) return;
         activeEpisodeContext = item;
-        openPlayer(item.title, episode.name, episode.url, '', { key: `${item.id}:${index}`, episodes: item.episodes, index });
+        const variants = (episode.variants || []).filter(v => publicHttpsUrl(v.url));
+        openPlayer(item.title, episode.name, episode.url, '', { key: `${item.id}:${index}`, episodes: item.episodes, index, variants });
       }
 
       function openPlayer(title, meta, url, embedUrl = '', options = {}) {
@@ -5988,6 +5998,7 @@
       document.querySelector('#playerSheet [data-close-player].icon-btn').innerHTML = icon('close');
 
       const bootQuantum = getJson(QUANTUM_MANIFEST_URL, null);
+      const bootPublic = getJson('./public-sources.json', null);
       // Supplementary category seeds must not delay the working cloud catalog.
       const bootSeeds = Promise.all([
         getJson('./category-seeds.json', { items: [] }),
@@ -6026,6 +6037,7 @@
       }
       if (
         !['all', 'normal', 'adult18'].includes(state.selectedSource) &&
+        !state.selectedSource.startsWith(PUBLIC_SOURCE_PREFIX) &&
         !state.catalog.sources.some((source) => source.id === state.selectedSource && source.indexed)
       ) {
         state.selectedSource = 'normal';
@@ -6043,6 +6055,25 @@
       window.addEventListener('scroll', maybeLoadMore, { passive: true });
       resetVisibleLimit();
       render();
+      bootPublic.then((payload) => {
+        const added = normalizePublicSources(payload);
+        const addedIds = new Set(added.sources.map(source => source.id));
+        state.catalog.sources = [...added.sources, ...state.catalog.sources.filter(source => !addedIds.has(source.id))];
+        state.sourceMap = new Map(state.catalog.sources.map(source => [source.id, source]));
+        registerCatalogItems(added.items);
+        for (const item of added.items) state.seedItemIds.add(item.id);
+        for (const source of added.sources) state.loadedSourceIds.add(source.id);
+        state.live = mergePublicLive(state.live, added.live);
+        if (state.selectedSource.startsWith(PUBLIC_SOURCE_PREFIX)) {
+          if (!addedIds.has(state.selectedSource)) {
+            state.selectedSource = 'normal';
+            appStorage.setItem(SOURCE_STORAGE_KEY, state.selectedSource);
+          }
+          state.sourceLoading = false;
+        }
+        clearViewCache(); render();
+        if (sourceSheet.getAttribute('aria-hidden') === 'false') renderSourceSheetBody();
+      });
       bootSeeds.then(([seriesSeeds, koreanShortSeeds]) => {
         state.seriesSeeds = seriesSeeds; state.koreanShortSeeds = koreanShortSeeds;
         const seriesSeedItems = Array.isArray(state.seriesSeeds.items) ? state.seriesSeeds.items : [];
