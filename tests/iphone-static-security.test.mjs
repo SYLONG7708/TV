@@ -46,6 +46,9 @@ test('player iframe is sandboxed and media URLs pass through allowlist helpers',
   assert.doesNotMatch(html, /<iframe[^>]+sandbox="[^"]*(?:allow-top-navigation|allow-forms)[^"]*"/);
   assert.match(html, /function safeHttpUrl\(/);
   assert.match(html, /function safeEmbedUrl\(/);
-  assert.match(html, /playerFrame\.src = verifiedEmbedUrl/);
-  assert.match(html, /player\.src = verifiedMediaUrl/);
+  assert.match(html, /const verifiedEmbedUrl = embedUrl \? safeEmbedUrl\(embedUrl\)/);
+  assert.match(html, /const verifiedMediaUrl = embedUrl \? '' : safeHttpUrl\(url\)/);
+  assert.match(html, /if \(!state\.playerUrl\) \{[\s\S]*?return;/);
+  assert.match(html, /playback\.open\(\{ \.\.\.options, title, meta, url: verifiedMediaUrl, embedUrl: verifiedEmbedUrl \}\)/);
+  assert.doesNotMatch(html, /player(?:Frame)?\.src\s*=/);
 });
