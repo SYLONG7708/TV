@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-NdsDPwj4HoWe4MfB5PA/64/+u81CHesNq3vD1koYTUU=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-65OErXj2lgMa36GyodLpci52jDpc8KPVtbVnVloIR44='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-YRSciPtOYsX7BHVcqzc0mpnw9cilzRctUg0eJv4pw9A=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-65OErXj2lgMa36GyodLpci52jDpc8KPVtbVnVloIR44='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -10,6 +10,11 @@
     <meta name="theme-color" content="#050507" />
     <link rel="icon" href="../assets/icon.png" />
     <link rel="apple-touch-icon" href="../assets/icon.png" />
+    <link rel="stylesheet" href="./player-controls.css" />
+    <link rel="modulepreload" href="./title-quality.mjs" />
+    <link rel="modulepreload" href="./player-controls.mjs" />
+    <link rel="modulepreload" href="./sheet-navigation.mjs" />
+    <link rel="modulepreload" href="./safe-storage.mjs" />
     <title>影視 OKTV iPhone</title>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.15/dist/hls.min.js" integrity="sha384-iZBI1/lW9u8FcBjxuQ8nPTsU7TXhZNtzkV8H3gQHSTgz+VYQoKWqGlBHqhO84alJ" crossorigin="anonymous" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/pako@2.1.0/dist/pako.min.js" integrity="sha384-rNlaE5fs9dGIjmxWDALQh/RBAaGRYT5ChrzHo6tRfgrZ36iRFAiquP5g41Jsv+0j" crossorigin="anonymous" defer></script>
@@ -1068,11 +1073,34 @@
         </div>
         <video id="player" controls playsinline preload="metadata" poster="../assets/hero-cinema.png"></video>
         <iframe id="playerFrame" class="player-frame hidden" title="直播播放器" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" sandbox="allow-scripts allow-same-origin allow-popups" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <div class="player-status"><span id="playerStatus" role="status">等待播放</span><span class="player-resolution" id="playerResolution"></span></div>
+        <p class="player-embed-hint" id="playerEmbedHint" hidden>聲音、字幕與畫質請使用官方播放器內的控制，實際選項依頻道與裝置提供。</p>
+        <div class="player-controls" id="playerControls" hidden>
+          <div class="player-seek-row"><input id="playerSeek" aria-label="播放進度" type="range" min="0" max="0" step="0.1" value="0" disabled><span class="player-time" id="playerTime">00:00 / --:--</span></div>
+          <div class="player-transport">
+            <button id="playerPrevious" type="button" disabled>上一集</button><button id="playerBack" type="button">退後 10 秒</button><button id="playerToggle" type="button">播放</button><button id="playerForward" type="button">前進 10 秒</button><button id="playerNext" type="button" disabled>下一集</button>
+            <button id="playerMute" type="button" aria-pressed="false">靜音</button><label class="player-volume">音量<input id="playerVolume" aria-label="音量" type="range" min="0" max="100" value="100"></label>
+            <button id="playerLive" type="button" hidden>回到直播</button><button id="playerFullscreen" type="button">全螢幕</button><button id="playerPip" type="button">子母畫面</button><button id="playerRetry" type="button" hidden>重新連線</button>
+          </div>
+          <div class="player-settings">
+            <label>畫質<select id="playerQuality" aria-label="畫質"><option value="-1">由片源／裝置決定</option></select></label>
+            <label>音軌<select id="playerAudio" aria-label="音軌"><option value="-1">片源預設音軌</option></select></label>
+            <label>字幕<select id="playerSubtitles" aria-label="字幕"><option value="off">片源未提供可切換字幕</option></select></label>
+            <label>速度<select id="playerSpeed" aria-label="播放速度"><option value="0.5">0.5 倍</option><option value="0.75">0.75 倍</option><option value="1" selected>正常速度</option><option value="1.25">1.25 倍</option><option value="1.5">1.5 倍</option><option value="2">2 倍</option></select></label>
+          </div>
+          <div class="player-secondary"><label class="player-file">載入本機字幕 <input id="playerSubtitleFile" aria-label="載入本機字幕" type="file" accept=".srt,.vtt,text/vtt"></label><label class="player-remember"><input id="playerRemember" type="checkbox">記住這台裝置的播放進度</label></div>
+          <p class="player-note">字幕檔僅在本機讀取。畫質、音軌及可關閉字幕須由片源提供；已燒錄在影片內的字幕無法關閉。橫向螢幕可向下滑動開啟設定。</p>
+        </div>
       </section>
     </div>
 
     <script type="module" data-csp-hash>
       import { cleanTitle, titleQuality, workIdentity, sameDetailIdentity } from './title-quality.mjs';
+      import { createPlayerController } from './player-controls.mjs';
+      import { createSheetNavigation } from './sheet-navigation.mjs';
+      import { createSafeStorage } from './safe-storage.mjs';
+      import { PUBLIC_SOURCE_PREFIX, normalizePublicSources, mergePublicLive, publicHttpsUrl } from './public-sources.mjs';
+      const appStorage = createSafeStorage();
       const tabs = [
         ['home', '主頁'],
         ['movie', '電影'],
@@ -1115,7 +1143,7 @@
       const state = {
         tab: 'home',
         query: '',
-        selectedSource: localStorage.getItem(SOURCE_STORAGE_KEY) || 'default',
+        selectedSource: appStorage.getItem(SOURCE_STORAGE_KEY) || 'default',
         visibleLimit: 36,
         filters: {
           year: 'all',
@@ -1196,7 +1224,12 @@
       const SEARCH_PROGRESS_RENDER_MS = 120;
       const DETAIL_CACHE_LIMIT = 12;
       const AUTO_SIGNAL_FALLBACK_LIMIT = 8;
-      let hls = null;
+      let activeEpisodeContext = null;
+      const playback = createPlayerController({
+        video: player, frame: playerFrame, panel: playerSheet.querySelector('.sheet-panel'),
+        controls: document.querySelector('#playerControls'), status: document.querySelector('#playerStatus'), hint: document.querySelector('#playerEmbedHint'),
+        onEpisode: index => { if (activeEpisodeContext?.episodes?.[index]) openEpisode(activeEpisodeContext, index); },
+      });
       let searchRenderTimer = null;
       let loadMoreInFlight = null;
 
@@ -4779,6 +4812,12 @@
           return;
         }
         const scopeKey = [state.tab, state.selectedSource, needle.query].join('\u001f');
+        if (state.selectedSource.startsWith(PUBLIC_SOURCE_PREFIX) && state.loadedSourceIds.has(state.selectedSource)) {
+          cancelActiveSearch('cancelled');
+          state.searchLoading = false;
+          state.searchProgress = { query: needle.query, scopeKey, completed: 0, total: 0, failed: 0, status: 'complete' };
+          return;
+        }
         if (state.searchLoadInFlight?.scopeKey === scopeKey) return;
         if (
           state.searchProgress.scopeKey === scopeKey &&
@@ -5164,7 +5203,7 @@
           : '目前沒有符合篩選的影片';
         const countLabel = state.query
           ? `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部搜尋結果`
-          : `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部已載入，完整索引 ${formatCount(state.catalog.totals.playableItems)} 部可播放`;
+          : `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部已載入，完整索引 ${formatCount(activeSource()?.playableCount ?? state.catalog.totals.playableItems)} 部可播放`;
         const layoutKey = `vod:${state.tab}`;
         if (state.renderLayoutKey !== layoutKey || !document.querySelector('#vodGrid')) {
           screen.innerHTML = `
@@ -5506,6 +5545,7 @@
             <div class="row-main">
               <strong>${displayHtml(item.name)}</strong>
               <span>${displayHtml(item.group)} / ${displayHtml(kindLabel(item.kind))}</span>
+              ${item.rights && publicHttpsUrl(item.pageUrl) ? `<a href="${escapeHtml(publicHttpsUrl(item.pageUrl))}" target="_blank" rel="noopener noreferrer">原頻道</a>` : ''}
             </div>
             <button class="play-btn" type="button" data-live-play="${escapeHtml(item.id)}" ${playable ? '' : 'disabled'}>${icon(item.kind === 'external' && !item.embedUrl ? 'signal' : 'play')}${item.kind === 'external' && !item.embedUrl ? '外部' : '播放'}</button>
           </article>
@@ -5666,7 +5706,7 @@
         detailBody.querySelectorAll('[data-episode]').forEach((button) => {
           button.addEventListener('click', () => {
             const episode = item.episodes[Number(button.dataset.episode || 0)];
-            if (episode) openPlayer(item.title, episode.name, episode.url);
+            if (episode) openEpisode(item, Number(button.dataset.episode || 0));
           });
         });
       }
@@ -5702,6 +5742,7 @@
               <p>${displayHtml(plainTextFromMarkup(item.content || item.actor || item.director) || '此內容已建立 OKTV 手機索引。')}</p>
             </div>
           </div>
+          ${item.rights ? `<p class="item-meta">${displayHtml(item.rights.attribution)} · ${displayHtml(item.rights.changes)} <a href="${escapeHtml(publicHttpsUrl(item.rights.originalPage))}" target="_blank" rel="noopener noreferrer">官方原片</a> · <a href="${escapeHtml(publicHttpsUrl(item.rights.licenseUrl))}" target="_blank" rel="noopener noreferrer">${displayHtml(item.rights.licenseLabel)}</a></p>` : ''}
           ${renderSignalSourceControls(item)}
           <section class="section-head"><h2>播放</h2><span>${total} 集</span></section>
           ${renderEpisodePager(item, safePage)}
@@ -5723,18 +5764,19 @@
         bindDetailEpisodeControls(item);
       }
 
-      function openPlayer(title, meta, url, embedUrl = '') {
+      function openEpisode(item, index) {
+        const episode = item.episodes?.[index];
+        if (!episode) return;
+        activeEpisodeContext = item;
+        const variants = (episode.variants || []).filter(v => publicHttpsUrl(v.url));
+        openPlayer(item.title, episode.name, episode.url, '', { key: `${item.id}:${index}`, episodes: item.episodes, index, variants });
+      }
+
+      function openPlayer(title, meta, url, embedUrl = '', options = {}) {
         const verifiedEmbedUrl = embedUrl ? safeEmbedUrl(embedUrl) : '';
         const verifiedMediaUrl = embedUrl ? '' : safeHttpUrl(url);
         closeDetail(false);
-        hls?.destroy?.();
-        hls = null;
-        player.pause();
-        player.removeAttribute('src');
-        player.load();
-        playerFrame.removeAttribute('src');
-        playerFrame.classList.add('hidden');
-        player.classList.remove('hidden');
+        playback.close();
         playerTitle.textContent = displayText(title);
         playerMeta.textContent =
           (embedUrl && !verifiedEmbedUrl) || (!embedUrl && !verifiedMediaUrl)
@@ -5743,51 +5785,18 @@
         state.playerUrl = verifiedEmbedUrl || verifiedMediaUrl;
         openSheet(playerSheet);
 
-        if (!state.playerUrl) return;
-
-        if (verifiedEmbedUrl) {
-          player.classList.add('hidden');
-          playerFrame.classList.remove('hidden');
-          playerFrame.src = verifiedEmbedUrl;
+        if (!state.playerUrl) {
+          document.querySelector('#playerStatus').textContent = '已阻擋不安全或不支援的播放網址';
+          document.querySelector('#playerControls').hidden = true;
+          document.querySelector('#playerEmbedHint').hidden = true;
           return;
         }
-
-        if (/\.m3u8(?:$|\?)/i.test(verifiedMediaUrl) && window.Hls?.isSupported?.()) {
-          hls = new window.Hls({
-            lowLatencyMode: false,
-            enableWorker: true,
-            backBufferLength: 30,
-            maxBufferLength: 30,
-            manifestLoadingTimeOut: 15000,
-            fragLoadingTimeOut: 20000,
-          });
-          hls.loadSource(verifiedMediaUrl);
-          hls.attachMedia(player);
-          hls.on(window.Hls.Events.ERROR, (_event, data) => {
-            if (!data?.fatal) return;
-            playerMeta.textContent = '此訊號目前無法播放，請返回並切換其他訊號源。';
-            hls?.destroy?.();
-            hls = null;
-          });
-        } else {
-          player.src = verifiedMediaUrl;
-        }
-        player.onerror = () => {
-          playerMeta.textContent = '此訊號目前無法播放，請返回並切換其他訊號源。';
-        };
-        player.play().catch(() => undefined);
+        if (verifiedEmbedUrl) activeEpisodeContext = null;
+        playback.open({ ...options, title, meta, url: verifiedMediaUrl, embedUrl: verifiedEmbedUrl });
       }
 
       function closePlayer() {
-        hls?.destroy?.();
-        hls = null;
-        playerFrame.removeAttribute('src');
-        playerFrame.classList.add('hidden');
-        player.classList.remove('hidden');
-        player.pause();
-        player.onerror = null;
-        player.removeAttribute('src');
-        player.load();
+        playback.close();
         state.playerUrl = '';
         closeSheet(playerSheet);
       }
@@ -5922,7 +5931,7 @@
         state.searchProgress = { query: '', completed: 0, total: 0, failed: 0, status: 'idle' };
         clearTransientSearchItems();
         state.selectedSource = sourceId;
-        localStorage.setItem(SOURCE_STORAGE_KEY, sourceId);
+        appStorage.setItem(SOURCE_STORAGE_KEY, sourceId);
         state.tab = state.tab === 'sources' ? 'movie' : state.tab;
         clearViewCache();
         resetVisibleLimit();
@@ -5953,15 +5962,12 @@
         return `<p class="notice">${displayHtml(text)}</p>`;
       }
 
-      function openSheet(sheet) {
-        sheet.classList.add('is-open');
-        sheet.setAttribute('aria-hidden', 'false');
-      }
-
-      function closeSheet(sheet) {
-        sheet.classList.remove('is-open');
-        sheet.setAttribute('aria-hidden', 'true');
-      }
+      const sheetNavigation = createSheetNavigation({
+        sheets: [...document.querySelectorAll('.sheet')], background: document.querySelector('.app'),
+        onDismiss: sheet => sheet === playerSheet ? closePlayer() : closeSheet(sheet),
+      });
+      function openSheet(sheet) { sheetNavigation.open(sheet); }
+      function closeSheet(sheet) { sheetNavigation.close(sheet); }
 
       function closeDetail(close = true) {
         if (close) closeSheet(detailSheet);
@@ -5992,11 +5998,15 @@
       document.querySelector('#playerSheet [data-close-player].icon-btn').innerHTML = icon('close');
 
       const bootQuantum = getJson(QUANTUM_MANIFEST_URL, null);
-      [state.catalog, state.latest, state.seriesSeeds, state.koreanShortSeeds, state.live, state.queryIndex.manifest] = await Promise.all([
-        getJson('../data/iphone-vod-catalog.json', state.catalog),
-        getJson('../data/iphone-vod-latest.json', { items: [] }),
+      const bootPublic = getJson('./public-sources.json', null);
+      // Supplementary category seeds must not delay the working cloud catalog.
+      const bootSeeds = Promise.all([
         getJson('./category-seeds.json', { items: [] }),
         getJson('./korean-short-seeds.json', { items: [] }),
+      ]);
+      [state.catalog, state.latest, state.live, state.queryIndex.manifest] = await Promise.all([
+        getJson('../data/iphone-vod-catalog.json', state.catalog),
+        getJson('../data/iphone-vod-latest.json', { items: [] }),
         getJson('../data/live-channels.json', []),
         getJson(QUERY_MANIFEST_URL, null),
       ]);
@@ -6006,8 +6016,6 @@
       document.querySelector('#bootNotice').hidden = Boolean(state.catalog.sources.length && state.queryIndex.manifest && state.live.length);
       const initialCatalogItems = Array.isArray(state.catalog.items) ? state.catalog.items : [];
       const latestCatalogItems = Array.isArray(state.latest.items) ? state.latest.items : [];
-      const seriesSeedItems = Array.isArray(state.seriesSeeds.items) ? state.seriesSeeds.items : [];
-      const koreanShortSeedItems = Array.isArray(state.koreanShortSeeds.items) ? state.koreanShortSeeds.items : [];
       const fallbackQueryItems = Array.isArray(state.queryIndex.manifest?.fallbackItems)
         ? state.queryIndex.manifest.fallbackItems
         : [];
@@ -6015,38 +6023,25 @@
       state.itemById.clear();
       registerCatalogItems(initialCatalogItems);
       registerCatalogItems(latestCatalogItems);
-      registerCatalogItems(seriesSeedItems);
-      registerCatalogItems(koreanShortSeedItems);
       // Keep legitimate one-character titles searchable without flooding browse
       // categories with the manifest's special search fallback collection.
       registerCatalogItems(fallbackQueryItems.filter((item) => !state.itemById.has(item.id)).map((item) => ({ ...item, _searchFallback: true })));
-      const seededCategories = new Map();
-      for (const item of seriesSeedItems) {
-        for (const category of state.itemById.get(item.id)?._seriesCategories || []) {
-          seededCategories.set(category, (seededCategories.get(category) || 0) + 1);
-        }
-      }
-      for (const [category, count] of seededCategories) {
-        if (count < 12) continue;
-        for (const sourceId of ['normal', 'all', state.seriesSeeds.sourceId].filter(Boolean)) {
-          state.categoryIndexAttempted.add(`${sourceId}\u001f${category}`);
-        }
-      }
       state.seedItemIds = new Set(state.itemById.keys());
       markLatestPagesLoaded(latestCatalogItems);
       applyHealthIndex({ failed: [] });
-      localStorage.removeItem('oktv:iphone:selectedSource');
-      const storedSource = localStorage.getItem(SOURCE_STORAGE_KEY);
+      appStorage.removeItem('oktv:iphone:selectedSource');
+      const storedSource = appStorage.getItem(SOURCE_STORAGE_KEY);
       if (!storedSource || storedSource === 'all' || state.selectedSource === 'default') {
         state.selectedSource = 'normal';
-        localStorage.setItem(SOURCE_STORAGE_KEY, state.selectedSource);
+        appStorage.setItem(SOURCE_STORAGE_KEY, state.selectedSource);
       }
       if (
         !['all', 'normal', 'adult18'].includes(state.selectedSource) &&
+        !state.selectedSource.startsWith(PUBLIC_SOURCE_PREFIX) &&
         !state.catalog.sources.some((source) => source.id === state.selectedSource && source.indexed)
       ) {
         state.selectedSource = 'normal';
-        localStorage.setItem(SOURCE_STORAGE_KEY, state.selectedSource);
+        appStorage.setItem(SOURCE_STORAGE_KEY, state.selectedSource);
       }
       const selectedSourceAtBoot = state.selectedSource;
       const combinedSourceAtBoot = ['all', 'normal', 'adult18'].includes(selectedSourceAtBoot);
@@ -6060,6 +6055,42 @@
       window.addEventListener('scroll', maybeLoadMore, { passive: true });
       resetVisibleLimit();
       render();
+      bootPublic.then((payload) => {
+        const added = normalizePublicSources(payload);
+        const addedIds = new Set(added.sources.map(source => source.id));
+        state.catalog.sources = [...added.sources, ...state.catalog.sources.filter(source => !addedIds.has(source.id))];
+        state.sourceMap = new Map(state.catalog.sources.map(source => [source.id, source]));
+        registerCatalogItems(added.items);
+        for (const item of added.items) state.seedItemIds.add(item.id);
+        for (const source of added.sources) state.loadedSourceIds.add(source.id);
+        state.live = mergePublicLive(state.live, added.live);
+        if (state.selectedSource.startsWith(PUBLIC_SOURCE_PREFIX)) {
+          if (!addedIds.has(state.selectedSource)) {
+            state.selectedSource = 'normal';
+            appStorage.setItem(SOURCE_STORAGE_KEY, state.selectedSource);
+          }
+          state.sourceLoading = false;
+        }
+        clearViewCache(); render();
+        if (sourceSheet.getAttribute('aria-hidden') === 'false') renderSourceSheetBody();
+      });
+      bootSeeds.then(([seriesSeeds, koreanShortSeeds]) => {
+        state.seriesSeeds = seriesSeeds; state.koreanShortSeeds = koreanShortSeeds;
+        const seriesSeedItems = Array.isArray(state.seriesSeeds.items) ? state.seriesSeeds.items : [];
+        const koreanShortSeedItems = Array.isArray(state.koreanShortSeeds.items) ? state.koreanShortSeeds.items : [];
+        registerCatalogItems(seriesSeedItems);
+        registerCatalogItems(koreanShortSeedItems);
+        for (const item of [...seriesSeedItems, ...koreanShortSeedItems]) state.seedItemIds.add(item.id);
+        const seededCategories = new Map();
+        for (const item of seriesSeedItems) {
+          for (const category of state.itemById.get(item.id)?._seriesCategories || []) seededCategories.set(category, (seededCategories.get(category) || 0) + 1);
+        }
+        for (const [category, count] of seededCategories) {
+          if (count < 12) continue;
+          for (const sourceId of ['normal', 'all', state.seriesSeeds.sourceId].filter(Boolean)) state.categoryIndexAttempted.add(`${sourceId}\u001f${category}`);
+        }
+        clearViewCache(); render();
+      });
       getJson('../data/iphone-health-check-latest.json', { failed: [] }).then((health) => {
         applyHealthIndex(health);
         render();
