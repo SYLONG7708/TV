@@ -10,6 +10,7 @@ on:
       - "sources/title-aliases.json"
       - "tests/**"
       - "tools/*.mjs"
+      - "tools/*.ps1"
   push:
     branches:
       - main
@@ -20,6 +21,7 @@ on:
       - "sources/title-aliases.json"
       - "tests/**"
       - "tools/*.mjs"
+      - "tools/*.ps1"
 
 permissions:
   contents: read

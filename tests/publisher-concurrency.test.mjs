@@ -18,7 +18,7 @@ test('publisher rejects an externally replaced data snapshot before uploading or
   const newer=git(other,'rev-parse','HEAD');await fs.writeFile(path.join(writer,'docs/data/a.json'),'pending local data');
   const psQuote=v=>"'"+v.replaceAll("'","''")+"'";
   const script=path.resolve(import.meta.dirname,'../tools/publish-gh-pages-batched.ps1');
-  const command=`& ${psQuote(script)} -RepositoryRoot ${psQuote(writer)} -RunId '123' -RunAttempt '1' -PushAttempts 1`;
+  const command=`try { & ${psQuote(script)} -RepositoryRoot ${psQuote(writer)} -RunId '123' -RunAttempt '1' -PushAttempts 1 } catch { [Console]::Error.WriteLine($_.Exception.Message); exit 1 }`;
   const result=spawnSync(shell,['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-Command',command],{encoding:'utf8',windowsHide:true,timeout:30000});
   assert.notEqual(result.status,0);assert.match(result.stdout+result.stderr,/refusing to upload a stale snapshot/);
   assert.equal(git(remote,'rev-parse','refs/heads/gh-pages'),newer);
