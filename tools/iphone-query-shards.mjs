@@ -158,6 +158,11 @@ export function normalizedTitleKey(item, normalizer) {
   return workIdentity(item, normalizer.compact);
 }
 
+export function hasQueryPlaybackLocation(item) {
+  return Boolean(item?.detailPath || (Array.isArray(item?.episodes) &&
+    item.episodes.some((episode) => /^https?:\/\//i.test(String(episode?.url || '')))));
+}
+
 export function leanQueryItem(item, source = {}) {
   return {
     id: String(item?.id || ''),
@@ -180,6 +185,9 @@ export function leanQueryItem(item, source = {}) {
     score: Number(item?.score || 0),
     hot: Number(item?.hot || 0),
     updatedAt: String(item?.updatedAt || ''),
+    ...(item?.rights && typeof item.rights === 'object'
+      ? { rights: Object.fromEntries(Object.entries(item.rights).filter(([, value]) => typeof value === 'string')) }
+      : {}),
     ...(Array.isArray(item?.episodes) && item.episodes.length
       ? {
           episodes: item.episodes
@@ -187,6 +195,9 @@ export function leanQueryItem(item, source = {}) {
             .map((episode) => ({
               name: String(episode?.name || ''),
               url: String(episode?.url || ''),
+              ...(Array.isArray(episode?.variants) ? { variants: episode.variants
+                .filter((variant) => /^https?:\/\//i.test(String(variant?.url || '')))
+                .map((variant) => ({ ...variant, url: String(variant.url) })) } : {}),
             }))
             .filter((episode) => /^https?:\/\//i.test(episode.url)),
         }
@@ -249,6 +260,7 @@ function signalFromItem(item) {
     score: Number(item.score || 0),
     hot: Number(item.hot || 0),
     updatedAt: item.updatedAt || '',
+    ...(item.rights ? { rights: item.rights } : {}),
     ...(Array.isArray(item.episodes) && item.episodes.length ? { episodes: item.episodes } : {}),
   };
 }
@@ -295,7 +307,7 @@ export function mergeItemsIntoGroups(
   }
 
   for (const item of items || []) {
-    if (!item?.id || !item?.title || !item?.detailPath || item.playable === false) continue;
+    if (!item?.id || !item?.title || !hasQueryPlaybackLocation(item) || item.playable === false) continue;
     if (!titleQuality(item.title).valid) continue;
     if (Number(item.episodeCount || item.episodes?.length || 0) < 1) continue;
     const key = normalizedTitleKey(item, normalizer);
