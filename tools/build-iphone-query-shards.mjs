@@ -14,6 +14,7 @@ import {
   bucketForPrefix,
   bucketName,
   createQueryNormalizer,
+  hasQueryPlaybackLocation,
   leanQueryItem,
   queryPrefixesForItem,
   readGzipJson,
@@ -150,7 +151,7 @@ for (const source of sources) {
     for (const rawItem of items) {
       const itemSource = sourceById.get(rawItem?.sourceId) || source;
       const item = leanQueryItem(rawItem, itemSource);
-      if (!item.id || !item.detailPath || !item.playable || item.episodeCount < 1) {
+      if (!item.id || !hasQueryPlaybackLocation(item) || !item.playable || item.episodeCount < 1) {
         row.skippedItems += 1;
         continue;
       }
@@ -180,7 +181,7 @@ for (const source of sources) {
   }
   inputReport.push(row);
   console.log(
-    `${row.ok ? 'OK' : 'FAIL'} ${row.name || row.id}: ${row.items} items, ${row.searchableItems} searchable, ${row.skippedItems} skipped, ${row.indexedRows} shard rows${row.error ? ` (${row.error})` : ''}`,
+    `${row.ok ? 'OK' : 'FAIL'} ${row.name || row.id}: ${row.items} items, ${row.searchableItems} searchable, ${row.skippedItems} skipped, ${row.quarantinedTitles} quarantined, ${row.indexedRows} shard rows${row.error ? ` (${row.error})` : ''}`,
   );
 }
 
@@ -196,7 +197,9 @@ const quarantinedTitles = inputReport.reduce((sum, row) => sum + row.quarantined
 const declaredPlayableItems = Number(catalog?.totals?.playableItems || 0);
 if (declaredPlayableItems > 0 && totalSearchableItems + quarantinedTitles !== declaredPlayableItems) {
   throw new Error(
-    `Refusing to publish query shards: catalog declares ${declaredPlayableItems} playable items, but ${totalSearchableItems} are searchable.`,
+    `Refusing to publish query shards: catalog declares ${declaredPlayableItems} playable items, ` +
+      `but ${totalSearchableItems} are searchable and ${quarantinedTitles} titles are quarantined ` +
+      `(${declaredPlayableItems - totalSearchableItems - quarantinedTitles} unaccounted).`,
   );
 }
 

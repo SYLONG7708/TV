@@ -8,6 +8,7 @@ import {
   bucketForPrefix,
   bucketName,
   createQueryNormalizer,
+  hasQueryPlaybackLocation,
   leanQueryItem,
   mergeItemsIntoGroups,
   queryPrefixesForItem,
@@ -59,7 +60,7 @@ manifest.maxSignalsPerTitle = maxSignalsPerTitle;
 for (const rawItem of latest.items || []) {
   const source = sourceById.get(rawItem?.sourceId) || {};
   const item = leanQueryItem(rawItem, source);
-  if (!item.id || !item.title || !item.detailPath || !item.playable || item.episodeCount < 1) continue;
+  if (!item.id || !item.title || !hasQueryPlaybackLocation(item) || !item.playable || item.episodeCount < 1) continue;
   const scope = item.adult ? 'adult' : 'normal';
   const buckets = new Set(
     queryPrefixesForItem(item, normalizer, minQueryLength).map((prefix) =>
