@@ -1,5 +1,5 @@
 {
-    "generatedAt":  "2026-10-07 00:16:21 +00:00",
+    "generatedAt":  "2026-10-07 06:16:14 +00:00",
     "sourceName":  "jin18",
     "sourceUrl":  "https://raw.githubusercontent.com/hafrey1/LunaTV-config/refs/heads/main/jin18.json",
     "compareVodUrl":  "https://raw.githubusercontent.com/SYLONG7708/TV/refs/heads/main/sources/TVBOX",
@@ -11,12 +11,12 @@
     "output":  "D:/a/TV/TV/sources/vod-lunatv-jin18-oktv.json",
     "analysisOutput":  "D:/a/TV/TV/sources/vod-lunatv-jin18-analysis.csv",
     "totalSources":  28,
-    "includedSources":  1,
-    "failedSources":  27,
+    "includedSources":  2,
+    "failedSources":  26,
     "duplicateSources":  24,
-    "invalidSources":  6,
+    "invalidSources":  5,
     "searchOkSources":  22,
-    "searchPlayableSources":  20,
+    "searchPlayableSources":  19,
     "validationSkipped":  false,
     "duplicateCheckSkipped":  false,
     "redactedSampleNames":  true,
@@ -30,30 +30,30 @@
                        "duplicateReason":  "",
                        "listOk":  true,
                        "detailOk":  true,
-                       "searchOk":  true,
-                       "searchHasPlayUrl":  true,
+                       "searchOk":  false,
+                       "searchHasPlayUrl":  false,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "86196",
-                       "searchSampleVodId":  "86196",
-                       "error":  ""
+                       "sampleVodId":  "85501",
+                       "searchSampleVodId":  "",
+                       "error":  "Search probe failed: Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (503) Server Unavailable.\""
                    },
                    {
                        "key":  "lunatv_002_dbzy_tv",
                        "name":  "Luna 02 豆瓣资源",
                        "api":  "https://caiji.dbzy5.com/api.php/provide/vod",
-                       "included":  false,
+                       "included":  true,
                        "duplicate":  false,
                        "duplicateReason":  "",
-                       "listOk":  false,
-                       "detailOk":  false,
-                       "searchOk":  false,
+                       "listOk":  true,
+                       "detailOk":  true,
+                       "searchOk":  true,
                        "searchHasPlayUrl":  false,
-                       "hasPlayUrl":  false,
-                       "sampleVodName":  "",
-                       "sampleVodId":  "",
+                       "hasPlayUrl":  true,
+                       "sampleVodName":  "[redacted]",
+                       "sampleVodId":  "152321",
                        "searchSampleVodId":  "",
-                       "error":  "Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (502) Bad Gateway.\""
+                       "error":  ""
                    },
                    {
                        "key":  "lunatv_003_mtzy_me",
@@ -68,7 +68,7 @@
                        "searchHasPlayUrl":  false,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "150093",
+                       "sampleVodId":  "152860",
                        "searchSampleVodId":  "",
                        "error":  "duplicate_api"
                    },
@@ -102,7 +102,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "70474",
+                       "sampleVodId":  "69424",
                        "searchSampleVodId":  "51581",
                        "error":  "duplicate_api"
                    },
@@ -119,8 +119,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "84642",
-                       "searchSampleVodId":  "84642",
+                       "sampleVodId":  "12259",
+                       "searchSampleVodId":  "12259",
                        "error":  "duplicate_api"
                    },
                    {
@@ -136,7 +136,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "158114",
+                       "sampleVodId":  "158120",
                        "searchSampleVodId":  "154230",
                        "error":  "duplicate_api"
                    },
@@ -153,7 +153,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "159720",
+                       "sampleVodId":  "119740",
                        "searchSampleVodId":  "103976",
                        "error":  "duplicate_api"
                    },
@@ -170,8 +170,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "107096",
-                       "searchSampleVodId":  "107096",
+                       "sampleVodId":  "107059",
+                       "searchSampleVodId":  "107059",
                        "error":  "duplicate_api"
                    },
                    {
@@ -187,8 +187,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "152836",
-                       "searchSampleVodId":  "152836",
+                       "sampleVodId":  "152264",
+                       "searchSampleVodId":  "152264",
                        "error":  "duplicate_api"
                    },
                    {
@@ -204,8 +204,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "90810",
-                       "searchSampleVodId":  "90810",
+                       "sampleVodId":  "89355",
+                       "searchSampleVodId":  "89355",
                        "error":  "duplicate_api"
                    },
                    {
@@ -221,8 +221,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "87738",
-                       "searchSampleVodId":  "87738",
+                       "sampleVodId":  "7467",
+                       "searchSampleVodId":  "7467",
                        "error":  "duplicate_api"
                    },
                    {
@@ -238,7 +238,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "89004",
+                       "sampleVodId":  "164097",
                        "searchSampleVodId":  "89269",
                        "error":  "duplicate_api"
                    },
@@ -255,8 +255,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "131366",
-                       "searchSampleVodId":  "131366",
+                       "sampleVodId":  "101740",
+                       "searchSampleVodId":  "101740",
                        "error":  "duplicate_api"
                    },
                    {
@@ -272,8 +272,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "172355",
-                       "searchSampleVodId":  "172355",
+                       "sampleVodId":  "172392",
+                       "searchSampleVodId":  "172392",
                        "error":  "duplicate_api"
                    },
                    {
@@ -289,8 +289,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "236169",
-                       "searchSampleVodId":  "236169",
+                       "sampleVodId":  "235200",
+                       "searchSampleVodId":  "235200",
                        "error":  "duplicate_api"
                    },
                    {
@@ -323,8 +323,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "160839",
-                       "searchSampleVodId":  "160839",
+                       "sampleVodId":  "159785",
+                       "searchSampleVodId":  "159785",
                        "error":  "duplicate_api"
                    },
                    {
@@ -340,8 +340,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "158988",
-                       "searchSampleVodId":  "158988",
+                       "sampleVodId":  "159249",
+                       "searchSampleVodId":  "159249",
                        "error":  "duplicate_host"
                    },
                    {
@@ -374,8 +374,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "73772",
-                       "searchSampleVodId":  "73772",
+                       "sampleVodId":  "64969",
+                       "searchSampleVodId":  "64969",
                        "error":  "duplicate_api"
                    },
                    {
@@ -391,8 +391,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "219032",
-                       "searchSampleVodId":  "219032",
+                       "sampleVodId":  "172137",
+                       "searchSampleVodId":  "172137",
                        "error":  "duplicate_api"
                    },
                    {
@@ -408,8 +408,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "196225",
-                       "searchSampleVodId":  "196225",
+                       "sampleVodId":  "196251",
+                       "searchSampleVodId":  "196252",
                        "error":  "duplicate_api"
                    },
                    {
@@ -425,8 +425,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "90810",
-                       "searchSampleVodId":  "90810",
+                       "sampleVodId":  "89355",
+                       "searchSampleVodId":  "89355",
                        "error":  "duplicate_api"
                    },
                    {
@@ -442,7 +442,7 @@
                        "searchHasPlayUrl":  false,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "87624",
+                       "sampleVodId":  "87811",
                        "searchSampleVodId":  "",
                        "error":  "duplicate_api"
                    },
@@ -459,8 +459,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "180264",
-                       "searchSampleVodId":  "180264",
+                       "sampleVodId":  "179207",
+                       "searchSampleVodId":  "179207",
                        "error":  "duplicate_api"
                    },
                    {
