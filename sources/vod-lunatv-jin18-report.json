@@ -1,5 +1,5 @@
 {
-    "generatedAt":  "2026-10-06 18:52:22 +00:00",
+    "generatedAt":  "2026-10-07 00:16:21 +00:00",
     "sourceName":  "jin18",
     "sourceUrl":  "https://raw.githubusercontent.com/hafrey1/LunaTV-config/refs/heads/main/jin18.json",
     "compareVodUrl":  "https://raw.githubusercontent.com/SYLONG7708/TV/refs/heads/main/sources/TVBOX",
@@ -11,11 +11,11 @@
     "output":  "D:/a/TV/TV/sources/vod-lunatv-jin18-oktv.json",
     "analysisOutput":  "D:/a/TV/TV/sources/vod-lunatv-jin18-analysis.csv",
     "totalSources":  28,
-    "includedSources":  2,
-    "failedSources":  26,
+    "includedSources":  1,
+    "failedSources":  27,
     "duplicateSources":  24,
-    "invalidSources":  5,
-    "searchOkSources":  23,
+    "invalidSources":  6,
+    "searchOkSources":  22,
     "searchPlayableSources":  20,
     "validationSkipped":  false,
     "duplicateCheckSkipped":  false,
@@ -42,18 +42,18 @@
                        "key":  "lunatv_002_dbzy_tv",
                        "name":  "Luna 02 豆瓣资源",
                        "api":  "https://caiji.dbzy5.com/api.php/provide/vod",
-                       "included":  true,
+                       "included":  false,
                        "duplicate":  false,
                        "duplicateReason":  "",
-                       "listOk":  true,
-                       "detailOk":  true,
-                       "searchOk":  true,
+                       "listOk":  false,
+                       "detailOk":  false,
+                       "searchOk":  false,
                        "searchHasPlayUrl":  false,
-                       "hasPlayUrl":  true,
-                       "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "152291",
+                       "hasPlayUrl":  false,
+                       "sampleVodName":  "",
+                       "sampleVodId":  "",
                        "searchSampleVodId":  "",
-                       "error":  ""
+                       "error":  "Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (502) Bad Gateway.\""
                    },
                    {
                        "key":  "lunatv_003_mtzy_me",
@@ -119,8 +119,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "83782",
-                       "searchSampleVodId":  "83782",
+                       "sampleVodId":  "84642",
+                       "searchSampleVodId":  "84642",
                        "error":  "duplicate_api"
                    },
                    {
@@ -153,7 +153,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "151532",
+                       "sampleVodId":  "159720",
                        "searchSampleVodId":  "103976",
                        "error":  "duplicate_api"
                    },
@@ -238,7 +238,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "166055",
+                       "sampleVodId":  "89004",
                        "searchSampleVodId":  "89269",
                        "error":  "duplicate_api"
                    },
@@ -255,8 +255,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "80084",
-                       "searchSampleVodId":  "80084",
+                       "sampleVodId":  "131366",
+                       "searchSampleVodId":  "131366",
                        "error":  "duplicate_api"
                    },
                    {
@@ -272,8 +272,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "172336",
-                       "searchSampleVodId":  "172336",
+                       "sampleVodId":  "172355",
+                       "searchSampleVodId":  "172355",
                        "error":  "duplicate_api"
                    },
                    {
@@ -442,7 +442,7 @@
                        "searchHasPlayUrl":  false,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "87789",
+                       "sampleVodId":  "87624",
                        "searchSampleVodId":  "",
                        "error":  "duplicate_api"
                    },
