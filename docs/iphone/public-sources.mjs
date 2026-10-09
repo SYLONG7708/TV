@@ -1,4 +1,16 @@
 export const PUBLIC_SOURCE_PREFIX = 'public-';
+export function liveChannelIdentity(channel) {
+  const name = String(channel?.name || '').normalize('NFKC').toLowerCase()
+    .replace(/^\d+[\s._-]*/, '').replace(/[|｜]官方串流$/, '').replace(/\s+/g, '');
+  // Only explicitly identified simulcasts are interchangeable; languages and editions stay distinct.
+  const aliases = {
+    'france24english': 'france24-en', 'france24英語': 'france24-en',
+    'france24français': 'france24-fr', 'france24法語': 'france24-fr',
+    'france24español': 'france24-es', 'france24西班牙語': 'france24-es',
+    'france24阿拉伯語': 'france24-ar', 'arirangtv': 'arirang-world', 'arirangun': 'arirang-un',
+  };
+  return aliases[name] || `name:${name}`;
+}
 export function publicHttpsUrl(value) {
   try { const u = new URL(value); return u.protocol === 'https:' && !u.username && !u.password ? u.href : ''; } catch { return ''; }
 }
@@ -21,5 +33,14 @@ export function normalizePublicSources(payload) {
 }
 export function mergePublicLive(existing, added) {
   const ids = new Set(existing.map(i => i.id)), urls = new Set(existing.map(i => i.url));
-  return [...existing, ...added.filter(i => { if (ids.has(i.id) || urls.has(i.url)) return false; ids.add(i.id); urls.add(i.url); return true; })];
+  return withLiveAlternates([...existing, ...added.filter(i => { if (ids.has(i.id) || urls.has(i.url)) return false; ids.add(i.id); urls.add(i.url); return true; })]);
+}
+export function withLiveAlternates(channels) {
+  return channels.map(channel => {
+    const others = channels.filter(row => row.id !== channel.id && liveChannelIdentity(row) === liveChannelIdentity(channel));
+    const seen = new Set([channel.embedUrl || channel.url]);
+    const alternates = [...(channel.alternates || []), ...others.map(row => ({ url: row.url, ...(row.embedUrl ? { embedUrl: row.embedUrl } : {}), sourceName: row.group || row.name }))]
+      .filter(row => { const url = typeof row === 'string' ? row : row.embedUrl || row.url; if (!publicHttpsUrl(url) || seen.has(url)) return false; seen.add(url); return true; }).slice(0, 4);
+    return alternates.length ? { ...channel, alternates } : channel;
+  });
 }

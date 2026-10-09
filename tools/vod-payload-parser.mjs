@@ -134,5 +134,18 @@ function parseXmlPayload(text) {
 export function parseVodPayload(text) {
   const cleaned = String(text || '').replace(/^\uFEFF/, '');
   if (looksLikeXml(cleaned)) return parseXmlPayload(cleaned);
-  return JSON.parse(cleaned);
+  const payload = JSON.parse(cleaned);
+  // Feifei puts categories in `list` and actual videos in `data`. Normalize
+  // the declared fields so health checks/indexers never invent missing titles
+  // or silently lose all episodes from an otherwise working provider.
+  if (Array.isArray(payload?.data) && payload.data.some(row => row?.vod_id !== undefined)
+      && Array.isArray(payload?.list) && payload.list.some(row => row?.list_id !== undefined)) {
+    return { ...payload,
+      class: payload.list.map(row => ({ type_id: row.list_id, type_name: row.list_name })),
+      list: payload.data.map(row => ({ ...row, type_id: row.type_id ?? row.vod_cid, type_name: row.type_name ?? row.list_name, vod_play_url: row.vod_play_url ?? row.vod_play })),
+      total: Number(payload.page?.recordcount || 0), pagecount: Number(payload.page?.pagecount || 1),
+      limit: Number(payload.page?.pagesize || 0), page: Number(payload.page?.pageindex || 1),
+    };
+  }
+  return payload;
 }

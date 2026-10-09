@@ -1,5 +1,8 @@
 // One browser-history guard lets Back dismiss sheets without leaving the app.
 export function createSheetNavigation({ sheets, background, onDismiss }) {
+  // A modal guard is not page navigation. Automatic history restoration can
+  // undo the explicit scroll-to-top after HOME and hide inputs under the nav.
+  history.scrollRestoration = 'manual';
   const order = [], focusBefore = new Map();
   let armed = false, pendingPop = false;
   if (history.state?.oktvSheetGuard) {
@@ -67,5 +70,5 @@ export function createSheetNavigation({ sheets, background, onDismiss }) {
     else if (!event.shiftKey && (document.activeElement === last || !sheet.contains(document.activeElement))) { event.preventDefault(); first.focus(); }
   });
   sync();
-  return { open, close };
+  return { open, close, dismissTop() { if (!top()) return false; onDismiss(top()); return true; } };
 }

@@ -27,7 +27,7 @@ export function subtitleToVtt(text) {
 function readStored(storage, key, fallback) {
   try { return JSON.parse(storage?.getItem(key) || 'null') || fallback; } catch { return fallback; }
 }
-export function createPlayerController({ video, frame, panel, controls, status, hint, getHls = () => window.Hls, onEpisode = () => {}, storage }) {
+export function createPlayerController({ video, frame, panel, controls, status, hint, getHls = () => window.Hls, onEpisode = () => {}, onFailure = () => {}, onEvidence = () => {}, onRetry, onIntent = () => {}, storage }) {
   try { storage ??= window.localStorage; } catch { storage = null; }
   const $ = id => panel.querySelector(`#${id}`);
   const settings = { volume: 1, muted: false, rate: 1, remember: false, ...readStored(storage, PLAYER_SETTINGS_KEY, {}) };
@@ -36,6 +36,8 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   let hls = null, entry = null, generation = 0, readyTimer = null, recoveryTimer = null;
   let recoveries = 0, mediaRecoveries = 0, localTrack = null, localUrl = '', subtitleChoice = 'off';
   let pendingSeek = 0, lastSave = 0, dragging = false, fatal = false;
+  let startedAt = 0, hasStarted = false, userPaused = false, stallTimer = null, youtube = null;
+  let lastMediaTime = -1, lastProgressAt = 0, stableProgress = 0, evidenceSent = false, lastGoodPosition = 0;
   const retiredHlsTracks = new WeakSet();
   const store = (key, data) => { try { storage?.setItem(key, JSON.stringify(data)); } catch { /* Private browsing / full storage remain usable. */ } };
   const say = text => { status.textContent = text; };
@@ -56,6 +58,10 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   }
   function stop() {
     saveProgress(); generation++;
+    clearTimeout(stallTimer); stallTimer = null;
+    if (youtube) { try { youtube.destroy(); } catch {} youtube = null; }
+    // The iframe API may replace/remove its element when destroyed.
+    if (!frame.isConnected) { frame = document.createElement('iframe'); frame.id = 'playerFrame'; frame.className = 'player-frame hidden'; frame.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture'; frame.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-presentation'); frame.setAttribute('allowfullscreen', ''); video.after(frame); }
     clearTimeout(readyTimer); clearTimeout(recoveryTimer); readyTimer = recoveryTimer = null;
     if (hls) for (const track of Array.from(video.textTracks || [])) {
       if (track === localTrack?.track) continue;
@@ -122,44 +128,104 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     $('playerNext').disabled = !entry.episodes?.length || entry.index >= entry.episodes.length - 1;
   }
   function seek(time) {
-    if (!isDirect()) return;
+    if (!isDirect()) return false;
     const target = seekTarget(time, video.seekable, video.duration);
-    if (target !== null) { try { video.currentTime = target; } catch { say('此片源暫時無法跳轉，請稍後再試。'); } }
+    let applied = false;
+    if (target !== null) { try { video.currentTime = target; lastGoodPosition = target; applied = true; } catch { say('此片源暫時無法跳轉，請稍後再試。'); } }
     syncTransport();
+    return applied;
   }
   async function play() {
+    userPaused = false; lastProgressAt = performance.now(); onIntent('play');
+    if (youtube) { userPaused = false; youtube.playVideo(); return; }
     if (!isDirect()) return;
     const token = generation;
     try { await video.play(); } catch (error) {
       if (!isCurrent(token) || error.name === 'AbortError' || fatal) return;
+      if (error.name === 'NotAllowedError') { userPaused = true; onIntent('pause'); clearTimeout(readyTimer); }
       say(error.name === 'NotAllowedError' ? '裝置需要你點一下「播放」後才能開始。' : '尚未開始播放，可按「重新連線」或切換片源。');
     }
   }
   function fail(message) {
+    if (!entry || fatal || userPaused) return;
     fatal = true; say(message); $('playerRetry').hidden = false;
     clearTimeout(readyTimer); clearTimeout(recoveryTimer);
+    clearTimeout(stallTimer);
     hls?.stopLoad();
+    const failed = { ...entry }, token = generation;
+    const position = isDirect() ? Math.max(lastGoodPosition, pendingSeek, Number(video.currentTime) || 0) : 0;
+    if (isDirect()) video.pause();
+    onEvidence(failed, 'failure', { reason: message });
+    Promise.resolve().then(() => { if (isCurrent(token)) onFailure(failed, { position, message }); });
+  }
+  function observedPlaying(height = video.videoHeight) {
+    if (!entry) return;
+    clearTimeout(readyTimer); clearTimeout(stallTimer); userPaused = false; onIntent('play');
+    hasStarted = true;
+    fatal = false; $('playerRetry').hidden = true; say('播放中');
+  }
+  function ensureYouTube() {
+    if (window.YT?.Player) return Promise.resolve(window.YT);
+    if (!window.__oktvYouTubeReady) window.__oktvYouTubeReady = new Promise((resolve, reject) => {
+      const previous = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => { previous?.(); resolve(window.YT); };
+      const script = document.createElement('script'); script.src = 'https://www.youtube.com/iframe_api';
+      script.onerror = () => { window.__oktvYouTubeReady = null; reject(new Error('YouTube API unavailable')); };
+      document.head.append(script);
+    });
+    return window.__oktvYouTubeReady;
   }
   function open(next, resumeTime = 0, autoplay = true) {
     stop(); entry = { ...next }; const token = generation; fatal = false; recoveries = mediaRecoveries = 0;
+    startedAt = performance.now(); hasStarted = false; userPaused = !autoplay;
+    lastProgressAt = startedAt; lastMediaTime = -1; stableProgress = 0; evidenceSent = false; lastGoodPosition = resumeTime || 0;
     subtitleChoice = 'off'; pendingSeek = resumeTime || 0; dragging = false;
     document.getElementById('playerResolution').textContent = '';
     if (!pendingSeek && settings.remember && entry.key) pendingSeek = Number(readStored(storage, PLAYER_PROGRESS_KEY, {})[entry.key]?.time) || 0;
     controls.hidden = Boolean(entry.embedUrl); hint.hidden = !entry.embedUrl;
     video.classList.toggle('hidden', Boolean(entry.embedUrl));
     if (entry.embedUrl) {
-      frame.classList.remove('hidden'); frame.src = entry.embedUrl;
-      say('請在官方播放器內操作聲音、字幕及畫質。'); return;
+      frame.classList.remove('hidden');
+      const embed = new URL(entry.embedUrl);
+      embed.searchParams.set('enablejsapi', '1'); embed.searchParams.set('origin', location.origin);
+      // A single app-owned fullscreen control keeps exit/restore available even
+      // when the embedded mobile player's own fullscreen action is ineffective.
+      embed.searchParams.set('fs', '0');
+      if (window.CarBridge) embed.searchParams.set('mute', settings.muted ? '1' : '0');
+      frame.src = embed.href;
+      say('正在連線至官方播放器…');
+      readyTimer = setTimeout(() => {
+        if (!isCurrent(token) || hasStarted || userPaused) return;
+        if (entry.canFallback) fail('官方直播尚未回報啟播，正在檢查其他訊號。');
+        else {
+          say('官方播放器尚未回報啟播，正在等候回應。');
+          readyTimer = setTimeout(() => { if (isCurrent(token) && !hasStarted && !userPaused) fail('官方播放器連線逾時，正在重新檢查同一頻道。'); }, 15000);
+        }
+      }, 15000);
+      ensureYouTube().then(YT => {
+        if (!isCurrent(token)) return;
+        youtube = new YT.Player(frame, { events: {
+          onReady: event => { if (isCurrent(token) && autoplay) event.target.playVideo(); },
+          onStateChange: event => {
+            if (!isCurrent(token)) return;
+            if (event.data === 1) observedPlaying(0);
+            if (event.data === 2 && !fatal) { userPaused = true; onIntent('pause'); clearTimeout(readyTimer); clearTimeout(stallTimer); say('已暫停'); }
+            if (event.data === 3 && hasStarted && !userPaused) { say('直播緩衝中…'); clearTimeout(stallTimer); stallTimer = setTimeout(() => { if (isCurrent(token)) fail('直播持續緩衝，正在檢查其他訊號。'); }, 10000); }
+          },
+          onError: event => { if (isCurrent(token)) fail(`官方播放器回報錯誤 ${event.data}，正在檢查其他訊號。`); },
+        } });
+      }).catch(() => { if (isCurrent(token)) fail('官方播放器無法連線，正在重新檢查同一頻道。'); });
+      return;
     }
     $('playerRetry').hidden = true; $('playerRemember').checked = Boolean(settings.remember);
     video.volume = settings.volume; video.muted = Boolean(settings.muted); video.playbackRate = settings.rate;
     video.preservesPitch = true;
     $('playerPip').disabled = !(document.pictureInPictureEnabled && video.requestPictureInPicture);
-    $('playerFullscreen').disabled = !(panel.requestFullscreen || video.webkitEnterFullscreen);
+    $('playerFullscreen').disabled = false;
     say('正在連線至片源…');
     const Hls = getHls();
     if (/\.m3u8(?:$|\?)/i.test(entry.url) && Hls?.isSupported?.()) {
-      hls = new Hls({ lowLatencyMode: false, liveDurationInfinity: true, enableWorker: true, backBufferLength: 15, maxBufferLength: 30, maxMaxBufferLength: 60, maxBufferSize: 40 * 1024 * 1024, manifestLoadingTimeOut: 15000, fragLoadingTimeOut: 20000 });
+      hls = new Hls({ lowLatencyMode: false, liveDurationInfinity: true, enableWorker: true, backBufferLength: 15, maxBufferLength: 20, maxMaxBufferLength: 40, maxBufferSize: 32 * 1024 * 1024, manifestLoadingTimeOut: 6000, manifestLoadingMaxRetry: 1, fragLoadingTimeOut: 8000, fragLoadingMaxRetry: 1, abrEwmaDefaultEstimate: 1500000, capLevelToPlayerSize: true });
       const engine = hls;
       for (const event of ['MANIFEST_PARSED', 'LEVEL_SWITCHED', 'AUDIO_TRACKS_UPDATED', 'AUDIO_TRACK_SWITCHED', 'SUBTITLE_TRACKS_UPDATED']) {
         if (Hls.Events[event]) engine.on(Hls.Events[event], () => { if (isCurrent(token)) { syncTracks(); syncTransport(); } });
@@ -169,8 +235,9 @@ export function createPlayerController({ video, frame, panel, controls, status, 
         if (!isCurrent(token) || !data.fatal) return;
         if (data.type === Hls.ErrorTypes.MEDIA_ERROR && mediaRecoveries++ < 1) {
           say('正在恢復影音解碼…'); engine.recoverMediaError();
-        } else if (data.type === Hls.ErrorTypes.NETWORK_ERROR && recoveries < 2) {
-          const wait = ++recoveries * 1000; say(`連線中斷，正在重試（${recoveries}/2）…`);
+        } else if (data.type === Hls.ErrorTypes.NETWORK_ERROR && recoveries < 1
+            && ![401, 403, 404, 410].includes(Number(data.response?.code))) {
+          const wait = ++recoveries * 700; say('連線中斷，正在重新取得串流…');
           clearTimeout(recoveryTimer); recoveryTimer = setTimeout(() => {
             if (!isCurrent(token)) return;
             if (!engine.levels.length) engine.loadSource(entry.url);
@@ -182,11 +249,38 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     } else if (/\.m3u8(?:$|\?)/i.test(entry.url) && !video.canPlayType('application/vnd.apple.mpegurl')) {
       fail('此裝置尚未載入 HLS 播放支援，請重新連線或重新整理。');
     } else video.src = entry.url;
-    if (!fatal) readyTimer = setTimeout(() => { if (isCurrent(token) && video.readyState < 2) fail('片源回應逾時。可重新連線或切換訊號源。'); }, 30000);
+    if (!fatal && autoplay) readyTimer = setTimeout(() => {
+      if (!isCurrent(token) || hasStarted || userPaused) return;
+      if (entry.canFallback) fail('片源啟播逾時，正在檢查其他訊號。');
+      else {
+        // Do not abort the only viable connection just because it needs more
+        // than nine seconds on a tethered network. It still has a hard limit.
+        say('此來源連線較慢，仍在嘗試連線…');
+        readyTimer = setTimeout(() => { if (isCurrent(token) && !hasStarted && !userPaused) fail('此來源連線逾時，請稍後重新連線。'); }, 17000);
+      }
+    }, 9000);
     syncTracks(); syncTransport();
     if (!fatal && autoplay) void play();
   }
-  const retry = () => { if (isDirect()) open(entry, video.currentTime); };
+  const retry = () => {
+    if (!entry) return;
+    const position = isDirect() ? Math.max(lastGoodPosition, pendingSeek, Number(video.currentTime) || 0) : 0;
+    if (onRetry) onRetry(position); else open(entry, position);
+  };
+  function pause() {
+    userPaused = true; onIntent('pause'); clearTimeout(readyTimer); clearTimeout(stallTimer);
+    if (youtube) youtube.pauseVideo(); else video.pause();
+  }
+  function stalled(message) {
+    if (!entry || fatal || userPaused) return;
+    if (navigator.onLine === false) { fail('網路已中斷，等待連線恢復。'); return; }
+    if (isDirect() && !entry.rebuilt) {
+      const position = Math.max(lastGoodPosition, pendingSeek, Number(video.currentTime) || 0);
+      onEvidence(entry, 'stall', { reason: 'rebuild-buffer' });
+      open({ ...entry, rebuilt: true }, position);
+      say('正在重建播放緩衝並接續原進度…');
+    } else fail(message);
+  }
   function chooseSubtitle(value) {
     subtitleChoice = value;
     for (const { track } of nativeSubtitles()) track.mode = 'disabled';
@@ -194,7 +288,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     if (value.startsWith('text:')) { const track = video.textTracks[Number(value.split(':')[1])]; if (track) track.mode = 'showing'; }
     syncTracks();
   }
-  $('playerToggle').addEventListener('click', () => video.paused ? void play() : video.pause());
+  $('playerToggle').addEventListener('click', () => video.paused ? void play() : pause());
   $('playerMute').addEventListener('click', () => { video.muted = !video.muted; if (!video.muted && video.volume === 0) video.volume = 0.7; });
   $('playerVolume').addEventListener('input', event => {
     const desired = clamp(event.target.value, 0, 100) / 100; video.volume = desired; video.muted = desired === 0;
@@ -239,14 +333,6 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     if (!settings.remember) { try { storage?.removeItem(PLAYER_PROGRESS_KEY); } catch {} }
     else saveProgress();
   });
-  async function fullscreen() {
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else if (panel.requestFullscreen) await panel.requestFullscreen();
-      else video.webkitEnterFullscreen?.();
-    } catch { say('此裝置未允許全螢幕，可使用影片自帶的全螢幕按鈕。'); }
-  }
-  $('playerFullscreen').addEventListener('click', fullscreen);
   $('playerPip').addEventListener('click', async () => {
     try { if (document.pictureInPictureElement) await document.exitPictureInPicture(); else await video.requestPictureInPicture(); }
     catch { say('目前裝置或瀏覽器無法啟用子母畫面。'); }
@@ -256,15 +342,22 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   video.addEventListener('ratechange', () => { if (isDirect()) { settings.rate = video.playbackRate; rememberSettings(); syncTransport(); } });
   function resumeWhenReady() {
     if (!isDirect()) return;
-    if (pendingSeek > 0 && Number.isFinite(video.duration)) { seek(Math.min(pendingSeek, Math.max(0, video.duration - 8))); pendingSeek = 0; }
+    if (pendingSeek > 0 && Number.isFinite(video.duration) && seek(Math.min(pendingSeek, Math.max(0, video.duration - 8)))) pendingSeek = 0;
     syncTracks();
   }
   video.addEventListener('loadedmetadata', resumeWhenReady);
   video.addEventListener('durationchange', resumeWhenReady);
-  video.addEventListener('canplay', () => { if (isDirect()) { clearTimeout(readyTimer); syncTracks(); if (video.paused && !fatal) say('已暫停'); } });
-  video.addEventListener('playing', () => { if (isDirect()) { fatal = false; $('playerRetry').hidden = true; say('播放中'); clearTimeout(readyTimer); } });
-  video.addEventListener('pause', () => { if (isDirect() && !fatal && !video.ended) say('已暫停'); saveProgress(); });
-  video.addEventListener('waiting', () => { if (isDirect() && !fatal) say('緩衝中…'); });
+  video.addEventListener('canplay', () => { if (isDirect()) { resumeWhenReady(); syncTracks(); if (video.paused && !fatal) say('已暫停'); } });
+  video.addEventListener('playing', () => { if (isDirect()) observedPlaying(); });
+  video.addEventListener('pause', () => { if (isDirect() && !fatal && !video.ended && !video.error && video.readyState >= 2) { userPaused = hasStarted; if (userPaused) onIntent('pause'); clearTimeout(stallTimer); say('已暫停'); } saveProgress(); });
+  video.addEventListener('waiting', () => {
+    if (!isDirect() || fatal || userPaused) return;
+    say('緩衝中…');
+    if (hasStarted && !stallTimer) {
+      const token = generation; onEvidence(entry, 'stall');
+      stallTimer = setTimeout(() => { stallTimer = null; if (isCurrent(token) && !userPaused && video.readyState < 3) stalled('片源持續緩衝，正在檢查其他訊號。'); }, 6000);
+    }
+  });
   video.addEventListener('ended', () => { if (isDirect()) { say(entry.index < (entry.episodes?.length || 0) - 1 ? '本集播放完畢，可點選下一集。' : '播放完畢'); saveProgress(); } });
   video.addEventListener('error', () => { if (isDirect()) fail('片源或影音格式暫時無法播放。請重新連線或切換訊號源。'); });
   video.addEventListener('resize', syncTracks);
@@ -274,9 +367,31 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   document.addEventListener('keydown', event => {
     if (!isDirect() || controls.hidden || event.ctrlKey || event.metaKey || event.altKey || /INPUT|SELECT|TEXTAREA|BUTTON/.test(event.target.tagName) || event.target.isContentEditable) return;
     const key = event.key.toLowerCase();
-    const actions = { ' ': () => video.paused ? void play() : video.pause(), arrowleft: () => seek(video.currentTime - 10), arrowright: () => seek(video.currentTime + 10), arrowup: () => { video.volume = clamp(video.volume + 0.1, 0, 1); }, arrowdown: () => { video.volume = clamp(video.volume - 0.1, 0, 1); }, m: () => { video.muted = !video.muted; }, f: fullscreen };
+    const actions = { ' ': () => video.paused ? void play() : pause(), arrowleft: () => seek(video.currentTime - 10), arrowright: () => seek(video.currentTime + 10), arrowup: () => { video.volume = clamp(video.volume + 0.1, 0, 1); }, arrowdown: () => { video.volume = clamp(video.volume - 0.1, 0, 1); }, m: () => { video.muted = !video.muted; } };
     if (actions[key]) { event.preventDefault(); actions[key](); }
   });
   window.addEventListener('pagehide', saveProgress);
-  return { open, close: stop, retry, seek, saveProgress };
+  // Progress is measured independently of waiting/error events, which some WebViews omit.
+  const checkProgress = () => {
+    if (!entry || fatal || userPaused) return;
+    const time = youtube ? Number(youtube.getCurrentTime?.() || 0) : video.currentTime;
+    const now = performance.now(), delta = time - lastMediaTime;
+    if (lastMediaTime >= 0 && delta > 0.05 && delta < 5) {
+      lastProgressAt = now; stableProgress += delta;
+      if (isDirect()) lastGoodPosition = time;
+      if (!evidenceSent && stableProgress >= 1 && (youtube || video.videoHeight > 0)) {
+        evidenceSent = true; onEvidence(entry, 'playing', { startupMs: Math.round(now - startedAt), height: video.videoHeight || 0 });
+      }
+      if (stableProgress >= 90) entry.rebuilt = false;
+    } else if (delta >= 5 || delta < 0 || video.seeking) lastProgressAt = now;
+    lastMediaTime = time;
+    if (navigator.onLine === false) { fail('網路已中斷，等待連線恢復。'); return; }
+    const ended = youtube ? youtube.getPlayerState?.() === 0 : video.ended;
+    if (hasStarted && !ended && !video.seeking && now - lastProgressAt >= 8000)
+      stalled('播放進度停滯，正在檢查其他訊號。');
+  };
+  let watchdog = setInterval(checkProgress, 1000);
+  window.addEventListener('pagehide', () => clearInterval(watchdog));
+  window.addEventListener('pageshow', event => { if (event.persisted) { lastProgressAt = performance.now(); clearInterval(watchdog); watchdog = setInterval(checkProgress, 1000); } });
+  return { open, close: stop, retry, seek, saveProgress, play, pause };
 }

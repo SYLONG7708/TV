@@ -1,0 +1,91 @@
+name: Daily Yingshi playback and interface audit
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 19 * * *' # 03:30 Asia/Taipei
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: yingshi-daily-media-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: main
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            .github/workflows/*
+            docs/iphone/*
+            docs/data/iphone-vod-catalog.json
+            sources/title-aliases.json
+            tools/**
+            tests/*
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - name: Verify application behavior before network diagnosis
+        run: node --test tests/*.test.mjs
+      - name: Inspect every source, declared category and configured live signal
+        run: node tools/audit-cloud-media.mjs --output audit --concurrency 6 --timeoutMs 8000
+      - name: Install browser diagnostics
+        working-directory: tools/browser-audit
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Verify all live entries by actual decoded browser frames
+        run: node tools/browser-audit/run.mjs --output browser-audit --concurrency 3 --timeoutMs 22000
+      - name: Verify search, playback, controls, subtitles and offline recovery
+        id: functions
+        continue-on-error: true
+        run: node tools/browser-audit/acceptance.mjs --output functional-audit
+      - name: Verify poster alignment and actual fullscreen exit interactions
+        id: interactions
+        continue-on-error: true
+        run: node tools/browser-audit/interactions.mjs --output interaction-audit
+      - name: Produce measured source-priority feed
+        run: node tools/merge-signal-health.mjs audit/signal-health.json browser-audit/browser-audit.json docs/iphone/signal-health.json
+      - name: Rebuild exact-episode backups for existing APKs
+        run: node tools/build-legacy-playback-repairs.mjs
+      - name: Publish measured health and compatible playback metadata
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/iphone/signal-health.json docs/iphone/playback-repairs.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Update measured Yingshi signal health'
+            for attempt in 1 2 3; do
+              git pull --rebase origin main && git push origin HEAD:main && exit 0
+              sleep 5
+            done
+            exit 1
+          fi
+      - name: Preserve results, failures and exact coverage
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: yingshi-daily-audit-${{ github.run_id }}
+          path: |
+            audit/
+            browser-audit/
+            functional-audit/
+            interaction-audit/
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Fail the run when interface regressions are found
+        if: always() && (steps.functions.outcome == 'failure' || steps.interactions.outcome == 'failure')
+        run: exit 1
+
+  deploy:
+    needs: audit
+    if: always() && needs.audit.result != 'cancelled'
+    uses: ./.github/workflows/deploy-oktv-pages.yml

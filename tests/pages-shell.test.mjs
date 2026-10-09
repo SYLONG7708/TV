@@ -51,6 +51,17 @@ test('oversized output and missing data revision fail before deployment', async 
   await assert.rejects(buildPagesShell({ ...input, dataRevision: 'gh-pages' }), /Exact/);
   await assert.rejects(buildPagesShell({ ...input, maxBytes: 100 }), /exceeds/);
 });
+
+test('published seeds carry legacy episode backups and source files stay unchanged', async (t) => {
+  const input = await fixture(t), now = Date.now();
+  const item = { id: 'legacy', sourceId: 'source', title: 'same episode', year: '2026', kind: 'series',
+    episodes: [{ name: '第1集', url: 'https://a.test/1.m3u8', variants: [{ url: 'https://b.test/1.m3u8' }] }] };
+  await fs.writeFile(path.join(input.codeRoot, 'docs/iphone/playback-repairs.json'), JSON.stringify({ schemaVersion: 1, checkedAt: new Date(now).toISOString(), expiresAt: new Date(now+3600000).toISOString(), items: [item] }));
+  await buildPagesShell(input);
+  const seeds = JSON.parse(await fs.readFile(path.join(input.output, 'docs/iphone/category-seeds.json'), 'utf8'));
+  assert.equal(seeds.items.find(row => row.id === 'legacy').episodes[0].variants[0].url, 'https://b.test/1.m3u8');
+  assert.equal(JSON.parse(await fs.readFile(path.join(input.codeRoot, 'docs/iphone/category-seeds.json'), 'utf8')).items.length, 1);
+});
 test('live schema regression cannot silently publish an empty list', async (t) => {
   const input = await fixture(t);
   await fs.writeFile(path.join(input.dataRoot,'docs/data/live-channels.json'), JSON.stringify({ channels: [] }));

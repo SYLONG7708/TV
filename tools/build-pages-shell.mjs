@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { mergeLegacySeeds } from './legacy-playback-repairs.mjs';
 import { pathToFileURL } from 'node:url';
 import { updatePolicy } from './update-iphone-csp.mjs';
 
@@ -71,10 +72,26 @@ export async function buildPagesShell({ dataRoot, codeRoot, output, dataRevision
     await fs.mkdir(path.dirname(target), { recursive: true });
     await fs.copyFile(source, target);
   }
+  // Existing 1.4.28 APKs already download these metadata seeds. Add compatible
+  // exact-episode variants without changing their bundled JavaScript or APK.
+  let legacyRepairItems = 0;
+  try {
+    const seedPath = path.join(output, 'docs/iphone/category-seeds.json');
+    const seeds = JSON.parse(await fs.readFile(seedPath, 'utf8'));
+    const repairs = JSON.parse(await fs.readFile(path.join(output, 'docs/iphone/playback-repairs.json'), 'utf8'));
+    const patched = mergeLegacySeeds(seeds, repairs);
+    legacyRepairItems = patched === seeds ? 0 : patched.items.filter(row => row.cloudPlaybackRepairAt === repairs.checkedAt).length;
+    const merged = JSON.stringify(patched);
+    if (Buffer.byteLength(merged) > 7 * 1024 * 1024) throw new Error('Legacy repair metadata exceeds device budget');
+    await fs.writeFile(seedPath, merged + '\n');
+  } catch (error) { if (error.code !== 'ENOENT') throw error; }
   const htmlPath = path.join(output, 'docs/iphone/index.html');
   let html = await fs.readFile(htmlPath, 'utf8');
   if (!html.includes("const DATA_REVISION = 'gh-pages';")) throw new Error('Data revision marker missing');
   html = html.replace("const DATA_REVISION = 'gh-pages';", `const DATA_REVISION = '${dataRevision}';`);
+  html = html.replace("const CODE_REVISION = 'local';", `const CODE_REVISION = '${codeRevision}';`);
+  // A cached module from an earlier deployment must not mix with a newly loaded player.
+  html = html.replace(/(['"])\.\/([a-z0-9-]+\.(?:mjs|css))\1/g, (_all, quote, file) => `${quote}./${file}?v=${codeRevision}${quote}`);
   await fs.writeFile(htmlPath, updatePolicy(html).html, 'utf8');
   const catalog = JSON.parse((await fs.readFile(path.join(output, 'docs/data/iphone-vod-catalog.json'), 'utf8')).replace(/^\uFEFF/, ''));
   const sum = (catalog.sources || []).reduce((total, source) => total + Number(source.itemCount || 0), 0);
@@ -87,7 +104,7 @@ export async function buildPagesShell({ dataRoot, codeRoot, output, dataRevision
     schemaVersion: 1, builtAt: new Date().toISOString(), dataCommit: dataRevision, codeCommit: codeRevision,
     dataBaseUrl: `https://raw.githubusercontent.com/SYLONG7708/TV/${dataRevision}/docs/data/`,
     bulkDataExternal: true, pinnedMetadataFiles, maxPayloadBytes: maxBytes, catalogSources: catalog.sources.length, catalogItems: sum,
-    liveChannels: live.length,
+    liveChannels: live.length, legacyRepairItems,
   };
   const statePath = path.join(output, 'docs/data/deployment-state.json');
   await fs.writeFile(statePath, JSON.stringify(report, null, 2) + '\n');

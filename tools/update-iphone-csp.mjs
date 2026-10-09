@@ -34,7 +34,7 @@ export function buildPolicy(html) {
   );
   return [
     "default-src 'self'",
-    `script-src 'self' '${sha256(script)}' https://cdn.jsdelivr.net`,
+    `script-src 'self' '${sha256(script)}' https://cdn.jsdelivr.net https://www.youtube.com`,
     `style-src 'self' '${sha256(style)}'`,
     "img-src 'self' data: https:",
     "media-src 'self' blob: https:",

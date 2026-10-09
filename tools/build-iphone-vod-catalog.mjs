@@ -483,13 +483,15 @@ function normalizeVodItem(item, source, category = null) {
   const title = normalizeText(item.vod_name ?? item.name ?? item.title);
   if (!title) return null;
   const typeName = normalizeText(item.type_name || item.list_name || category?.name || '');
-  const year = parseYear(item.vod_year || item.year || item.vod_time || item.update_time || item.vod_pubdate || item.vod_addtime);
+  // An update timestamp is not a film's release year. Missing metadata stays
+  // missing so remakes cannot be merged under a fabricated current year.
+  const year = parseYear(item.vod_year || item.year);
   const area = normalizeArea(item.vod_area || item.area || item.region || item.vod_area_name || '');
   const genre = splitClasses(item.vod_class || item.class || item.tag, typeName);
   const score = parseScore(item.vod_score || item.score || item.douban_score);
   const views = parseNumber(item.vod_hits || item.hits || item.views || item.play_count || item.vod_up);
   const updatedAt = normalizeText(item.vod_time || item.update_time || item.vod_pubdate || item.created_at || item.vod_addtime || '');
-  const episodes = parseEpisodes(item.vod_play_url || item.vod_url || item.vod_play_url_with_player || item.play_url || item.url);
+  const episodes = parseEpisodes(item.vod_play_url || item.vod_play || item.vod_url || item.vod_play_url_with_player || item.play_url || item.url);
   const adult = isAdultVodItem(item, source, typeName || category?.name || '', genre, title);
   const kind = classifyVodKind({ categoryName: typeName || category?.name || '', genre, title, sourceAdult: adult, adult });
   const id = `${source.id}::${normalizeText(item.vod_id ?? item.id ?? title)}`;
@@ -502,7 +504,7 @@ function normalizeVodItem(item, source, category = null) {
     title,
     originalName: normalizeText(item.vod_en || item.original_name || ''),
     kind,
-    categoryId: category?.id || String(item.type_id || ''),
+    categoryId: category?.id || String(item.type_id || item.vod_cid || ''),
     categoryName: typeName || category?.name || '',
     year,
     area,

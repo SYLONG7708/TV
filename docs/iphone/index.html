@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-n7HHztOkOtawZONTb/GLggLb9Lz8bwo5yR6PWfE30S4=' https://cdn.jsdelivr.net; style-src 'self' 'sha256-65OErXj2lgMa36GyodLpci52jDpc8KPVtbVnVloIR44='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-bxmTPqZB8WB/ZhOnM704MsXycj1XkXvRBoNE3gKFbRg=' https://cdn.jsdelivr.net https://www.youtube.com; style-src 'self' 'sha256-espkF4pVwtnSOb5hvDumVNHfVQ/83x3JfrOf/xLJ5yY='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -263,6 +263,11 @@
       }
 
       .poster-card {
+        scroll-margin-top: 84px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
         min-width: 0;
         border: 0;
         background: transparent;
@@ -270,12 +275,13 @@
         padding: 0;
         text-align: left;
         cursor: pointer;
-        content-visibility: auto;
-        contain-intrinsic-size: 260px 150px;
+        font: inherit;
       }
 
       .poster-art {
         position: relative;
+        width: 100%;
+        flex: none;
         aspect-ratio: 0.72;
         overflow: hidden;
         border-radius: 8px;
@@ -285,6 +291,8 @@
       }
 
       .poster-art img {
+        position: absolute;
+        inset: 0;
         width: 100%;
         height: 100%;
         display: block;
@@ -367,27 +375,48 @@
 
       .poster-title {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         gap: 6px;
         margin-top: 8px;
         color: #fff;
         font-size: 1rem;
         line-height: 1.25;
+        height: 2.5em;
+        flex: none;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
+        white-space: normal;
       }
 
+      .poster-title > span {
+        min-width: 0;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        overflow: hidden;
+        overflow-wrap: anywhere;
+      }
+
+      .poster-title .adult-source-icon { flex: none; }
+
       .poster-sub {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 7px;
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        grid-template-rows: 1.35em 1.35em;
+        gap: 3px 7px;
+        height: calc(2.7em + 3px);
+        line-height: 1.35;
+        flex: none;
         margin-top: 4px;
         color: var(--muted);
         font-size: 0.78rem;
         overflow: hidden;
         white-space: nowrap;
       }
+
+      .poster-sub > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+      .poster-sub > span:nth-child(3) { grid-column: 1 / -1; }
+      .search { scroll-margin-top: 84px; }
 
       .chip-row,
       .source-rail,
@@ -1069,12 +1098,18 @@
       <section class="sheet-panel">
         <div class="sheet-head">
           <div><strong id="playerTitle">影視</strong><span id="playerMeta">Ready</span></div>
-          <button class="icon-btn" type="button" data-close-player aria-label="關閉"></button>
+          <div class="player-window-actions">
+            <button class="player-window-button" type="button" id="playerExpand" aria-label="放大全螢幕" aria-pressed="false">放大</button>
+            <button class="player-window-button" type="button" data-close-player aria-label="關閉播放器">關閉</button>
+          </div>
         </div>
-        <video id="player" controls playsinline preload="metadata" poster="../assets/hero-cinema.png"></video>
-        <iframe id="playerFrame" class="player-frame hidden" title="直播播放器" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" sandbox="allow-scripts allow-same-origin allow-popups" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <div class="player-media-surface">
+          <video id="player" controls playsinline preload="metadata" poster="../assets/hero-cinema.png"></video>
+          <iframe id="playerFrame" class="player-frame hidden" title="直播播放器" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" sandbox="allow-scripts allow-same-origin allow-popups" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          <button class="player-chrome-reveal" type="button" aria-label="顯示播放器控制"></button>
+        </div>
         <div class="player-status"><span id="playerStatus" role="status">等待播放</span><span class="player-resolution" id="playerResolution"></span></div>
-        <p class="player-embed-hint" id="playerEmbedHint" hidden>聲音、字幕與畫質請使用官方播放器內的控制，實際選項依頻道與裝置提供。</p>
+        <p class="player-embed-hint" id="playerEmbedHint" hidden>放大後控制列會自動隱藏，點一下畫面即可顯示縮回及關閉按鈕。聲音、字幕與畫質請使用官方播放器內的控制，實際選項依頻道與裝置提供。</p>
         <div class="player-controls" id="playerControls" hidden>
           <div class="player-seek-row"><input id="playerSeek" aria-label="播放進度" type="range" min="0" max="0" step="0.1" value="0" disabled><span class="player-time" id="playerTime">00:00 / --:--</span></div>
           <div class="player-transport">
@@ -1097,10 +1132,19 @@
     <script type="module" data-csp-hash>
       import { cleanTitle, titleQuality, workIdentity, sameDetailIdentity } from './title-quality.mjs';
       import { createPlayerController } from './player-controls.mjs';
+      import { createPlayerPresentation } from './player-presentation.mjs';
       import { createSheetNavigation } from './sheet-navigation.mjs';
       import { createSafeStorage } from './safe-storage.mjs';
-      import { PUBLIC_SOURCE_PREFIX, normalizePublicSources, mergePublicLive, publicHttpsUrl } from './public-sources.mjs';
+      import { PUBLIC_SOURCE_PREFIX, normalizePublicSources, mergePublicLive, publicHttpsUrl, liveChannelIdentity } from './public-sources.mjs';
+      import { createSignalPriority, matchingEpisodes, startupVariants, playbackTitle, samePlaybackWork, signalKey } from './signal-priority.mjs';
+      import { createAutomaticPlayback } from './automatic-playback.mjs';
+      import { installCarIntegration } from './car-integration.mjs';
+      import { createDownloadedCache } from './downloaded-cache.mjs';
       const appStorage = createSafeStorage();
+      const signalPriority = createSignalPriority({ storage: appStorage });
+      const CAR_APP = Boolean(window.CarBridge) || new URLSearchParams(location.search).get('car_apk') === '1';
+      function notifyCarBridge(method, detail) { try { window.CarBridge?.[method]?.(String(detail || '')); } catch {} }
+      notifyCarBridge('onBootStarted', 'cloud-data-only');
       const tabs = [
         ['home', '主頁'],
         ['movie', '電影'],
@@ -1115,6 +1159,11 @@
       const ADULT_ICON = '../assets/adult-18-badge.svg';
       const ONLINE_DATA_BASE = 'https://sylong7708.github.io/TV/docs/data/';
       const DATA_REVISION = 'gh-pages';
+      const CODE_REVISION = 'local';
+      const PLAYER_REVISION = '20261009.1';
+      let runtimeDataRevision = DATA_REVISION;
+      const downloadedCache = createDownloadedCache();
+      let downloadedFallbackAt = 0;
       const CURRENT_RAW_DATA_BASE = `https://raw.githubusercontent.com/SYLONG7708/TV/${DATA_REVISION}/docs/data/`;
       const ARCHIVE_DATA_BASE = location.pathname.startsWith('/TV-recovery-20260904/')
         ? 'https://sylong7708.github.io/TV/docs/data/'
@@ -1225,11 +1274,53 @@
       const DETAIL_CACHE_LIMIT = 12;
       const AUTO_SIGNAL_FALLBACK_LIMIT = 8;
       let activeEpisodeContext = null;
+      let activeEpisodeIndex = 0;
+      let activeLiveId = '';
       const playback = createPlayerController({
         video: player, frame: playerFrame, panel: playerSheet.querySelector('.sheet-panel'),
         controls: document.querySelector('#playerControls'), status: document.querySelector('#playerStatus'), hint: document.querySelector('#playerEmbedHint'),
         onEpisode: index => { if (activeEpisodeContext?.episodes?.[index]) openEpisode(activeEpisodeContext, index); },
+        onFailure: (entry, detail) => automaticPlayback.failed(entry, detail.position),
+        onRetry: position => automaticPlayback.retry(position),
+        onIntent: action => automaticPlayback.intent(action),
+        onEvidence: (entry, event, detail) => {
+          signalPriority.record(entry, event, detail);
+          if (event === 'playing') automaticPlayback.succeeded(entry);
+          const evidence = { event, title: entry.title, source: entry.sourceName || '', ...detail };
+          notifyCarBridge('onPlaybackStatus', JSON.stringify(evidence));
+          console.info('yingshi-playback', JSON.stringify(evidence));
+        },
       });
+      const automaticPlayback = createAutomaticPlayback({
+        rank: rows => signalPriority.rank(rows),
+        discover: (options, signal) => discoverPlaybackCandidates(options, signal),
+        waiting: detail => {
+          document.querySelector('#playerStatus').textContent = detail.reason === 'offline'
+            ? '網路已中斷，恢復連線後會自動續播。'
+            : `來源暫時無法連線，${Math.round(detail.retryMs / 1000)} 秒後自動重新檢查。`;
+        },
+        resolve: async (candidate, signal) => {
+          if (candidate.resolved || !candidate.item) return [candidate];
+          const hydrated = await hydrateItemDetail(candidate.item, signal);
+          if (!samePlaybackWork(hydrated, candidate.original, candidate.episode, compactSearchText, itemDuplicateKey)) return [];
+          return matchingEpisodes(hydrated, candidate.episode, candidate.original, candidate.index)
+            .flatMap(episode => startupVariants(episode).map(variant => ({ ...candidate, item: null, resolved: true, url: safeHttpUrl(variant.url || episode.url),
+              sourceId: hydrated.sourceId, sourceName: hydrated.sourceName,
+              variants: (episode.variants || []).filter(v => publicHttpsUrl(v.url)) })));
+        },
+        start: (entry, info) => {
+          state.playerUrl = entry.embedUrl || entry.url;
+          playerTitle.textContent = displayText(info.title);
+          playerMeta.textContent = displayText([info.meta, entry.sourceName, info.attempt > 1 ? `已自動切換第 ${info.attempt} 個訊號` : '自動優選訊號'].filter(Boolean).join(' / '));
+          playback.open({ ...info, ...entry, title: info.title, key: info.key, canFallback: automaticPlayback.snapshot()?.remaining > 0 }, info.position || 0);
+        },
+        exhausted: detail => {
+          document.querySelector('#playerStatus').textContent = navigator.onLine === false
+            ? '網路已中斷，連線恢復後可按重新連線。'
+            : `已檢查 ${detail.attempts} 個播放訊號，目前無可用來源。沒有播放其他影片。`;
+        },
+      });
+      window.addEventListener('online', () => automaticPlayback.reconnect());
       let searchRenderTimer = null;
       let loadMoreInFlight = null;
 
@@ -1335,13 +1426,14 @@
         const localHost = !capacitorNative && /^(?:localhost|127\.0\.0\.1|::1)$/i.test(location.hostname);
         const preferLocal = localHost || (!preferOnline && location.hostname === 'sylong7708.github.io');
         const bulkData = /^(?:vod-index|vod-detail|vod-search|vod-query|quantum-lzi)\//i.test(dataPath);
-        const currentRaw = dataPath ? `${CURRENT_RAW_DATA_BASE}${dataPath}` : '';
+        const dataRevision = typeof runtimeDataRevision === 'undefined' ? DATA_REVISION : runtimeDataRevision;
+        const currentRaw = dataPath ? `${CURRENT_RAW_DATA_BASE.replace(`/${DATA_REVISION}/`, `/${dataRevision}/`)}${dataPath}` : '';
         // A cached HTML shell must not combine a newer Pages catalog with its
         // older pinned search shards. Keep all deployed data on one revision.
-        const revisionPinned = !localHost && Boolean(dataPath) && /^[a-f0-9]{40}$/.test(DATA_REVISION);
+        const revisionPinned = !localHost && Boolean(dataPath) && /^[a-f0-9]{40}$/.test(dataRevision);
         const bootMetadata = /^(?:iphone-vod-catalog\.json|iphone-vod-latest\.json|live-channels\.json|iphone-health-check-latest\.json|vod-query\/manifest\.json|quantum-lzi\/manifest\.json)$/.test(dataPath);
         const pinnedLocal = revisionPinned && bootMetadata
-          ? `${ONLINE_DATA_BASE}pinned/${DATA_REVISION}/${dataPath}` : '';
+          ? `${ONLINE_DATA_BASE}pinned/${dataRevision}/${dataPath}` : '';
         const candidates = revisionPinned || (bulkData && !localHost)
           ? [pinnedLocal, currentRaw]
           : online
@@ -1446,6 +1538,15 @@
 
       function clearViewCache() {
         state.viewCache.clear();
+      }
+
+      async function getStartupJson(url, fallback) {
+        const key = `${runtimeDataRevision}/${url}`;
+        const value = navigator.onLine === false ? null : await getJson(url, null, { timeoutMs: 10000 });
+        if (value !== null) { void downloadedCache.remember(key, value); return value; }
+        const saved = await downloadedCache.read(key);
+        if (saved) { downloadedFallbackAt = Math.max(downloadedFallbackAt, saved.downloadedAt); return saved.value; }
+        return fallback;
       }
 
       function setBoundedCache(cache, key, value, limit) {
@@ -1732,11 +1833,11 @@
         return sameDetailIdentity(entry, item, (value) => compactNormalizedText(toSimplifiedSearchText(value)).toLowerCase());
       }
 
-      async function detailItemAtPath(item, detailPath) {
+      async function detailItemAtPath(item, detailPath, signal) {
         if (!detailPath) return null;
         let detail = state.detailCache.get(detailPath);
         if (!detail) {
-          detail = await getJson(`../data/${detailPath}`, null);
+          detail = await getJson(`../data/${detailPath}`, null, { timeoutMs: 6500, signal });
           if (!detail) return null;
           setBoundedCache(state.detailCache, detailPath, detail, DETAIL_CACHE_LIMIT);
         }
@@ -1753,11 +1854,11 @@
         return item?.detailPath || '';
       }
 
-      async function hydrateItemDetail(item) {
+      async function hydrateItemDetail(item, signal) {
         if (Array.isArray(item?.episodes) && item.episodes.length) return item;
         if (!item?.detailPath) return item;
         const indexedDetailPath = await indexedDetailPathFor(item);
-        const found = await detailItemAtPath(item, indexedDetailPath);
+        const found = await detailItemAtPath(item, indexedDetailPath, signal);
         if (!found) throw new Error('detail-item-not-found');
         Object.assign(item, found, { title: cleanTitle(found.title), lazyEpisodes: false });
         prepareCatalogItem(item);
@@ -4454,7 +4555,8 @@
       }
 
       function signalSourcesFor(item) {
-        return Array.isArray(item?.signalSources) && item.signalSources.length ? item.signalSources : [signalSourceEntry(item)];
+        const entries = Array.isArray(item?.signalSources) && item.signalSources.length ? item.signalSources : [signalSourceEntry(item)];
+        return signalPriority.rank(entries.map(entry => ({ ...entry, url: state.itemById.get(entry.itemId)?.episodes?.[0]?.url || '' })));
       }
 
       function signalSourceLabel(item) {
@@ -4494,6 +4596,7 @@
         }
         const rows = [];
         for (const group of groups.values()) {
+          group.sort((a, b) => signalPriority.score({ sourceId: b.sourceId, url: b.episodes?.[0]?.url }) - signalPriority.score({ sourceId: a.sourceId, url: a.episodes?.[0]?.url }));
           const primary =
             group.find((item) => Array.isArray(item.episodes) && item.episodes.length) ||
             group.find((item) => item.playable && item.detailPath) ||
@@ -5141,7 +5244,15 @@
           if (state.searchComposing || event.isComposing) return;
           scheduleSearchRender(event.target.value);
         });
-        input?.addEventListener('search', (event) => scheduleSearchRender(event.target.value, 0));
+        input?.addEventListener('search', (event) => {
+          if (state.searchComposing) return;
+          scheduleSearchRender(event.target.value, 0);
+          if (event.target.value) window.YingshiDismissInput?.();
+        });
+        input?.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' || state.searchComposing || event.isComposing) return;
+          event.preventDefault(); scheduleSearchRender(event.target.value, 0); window.YingshiDismissInput?.();
+        });
         input?.addEventListener('change', (event) => scheduleSearchRender(event.target.value, 0));
         input?.addEventListener('keyup', (event) => {
           if (state.searchComposing || event.isComposing) return;
@@ -5205,7 +5316,7 @@
           : '目前沒有符合篩選的影片';
         const countLabel = state.query
           ? `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部搜尋結果`
-          : `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部已載入，完整索引 ${formatCount(activeSource()?.playableCount ?? state.catalog.totals.playableItems)} 部可播放`;
+          : `${formatCount(rows.length)} / ${formatCount(allRows.length)} 部已載入，完整索引 ${formatCount(activeSource()?.playableCount ?? state.catalog.totals.playableItems)} 筆播放入口（未逐片驗證）`;
         const layoutKey = `vod:${state.tab}`;
         if (state.renderLayoutKey !== layoutKey || !document.querySelector('#vodGrid')) {
           screen.innerHTML = `
@@ -5218,6 +5329,8 @@
           state.renderLayoutKey = layoutKey;
           bindToolbar();
         }
+        const searchInput = document.querySelector('#searchBox');
+        if (searchInput && !state.searchComposing && searchInput.value !== state.query) searchInput.value = state.query;
         document.querySelector('#vodQuickFilters').innerHTML = renderQuickFilters();
         document.querySelector('#vodSectionHead').innerHTML = `
           <div><h1>${displayHtml(title)}</h1><span>${countLabel}</span></div>
@@ -5461,7 +5574,7 @@
             <button class="icon-btn" type="button" data-open-filter aria-label="篩選器">${icon('filter')}</button>
           </div>
           <section class="section-head">
-            <div><h1>直播</h1><span>${rows.length} 條頻道，${state.live.filter((item) => item.playable && !state.healthIndex.live.has(item.id)).length} 條可播放</span></div>
+            <div><h1>直播</h1><span>${rows.length} 個直播入口 · 自動優選來源，播放狀態以實際連線為準</span></div>
           </section>
           <section class="live-list">
             ${rows.map(renderLiveRow).join('') || emptyState('目前沒有符合搜尋的直播')}
@@ -5563,7 +5676,7 @@
             <div class="avatar">${source.adult ? adultIcon() : generatedSourceIcon()}</div>
             <div class="row-main">
               <strong>${sourceNameMarkup(source)}</strong>
-              <span>${displayHtml(source.origin)} / ${displayHtml(source.host || source.key)} / ${formatCount(source.itemCount)} 部 / 健康 ${healthScore}</span>
+              <span>${displayHtml(source.origin)} / ${displayHtml(source.host || source.key)} / ${formatCount(source.itemCount)} 筆索引 / ${source.error ? '來源待修復' : '播放時自動檢測'}</span>
             </div>
             ${
               canSelect
@@ -5590,6 +5703,8 @@
           }
         }
         candidates.sort((left, right) => {
+          const priority = signalPriority.score({ sourceId: right.sourceId, url: right.episodes?.[0]?.url }) - signalPriority.score({ sourceId: left.sourceId, url: left.episodes?.[0]?.url });
+          if (priority) return priority;
           const leftEmbedded = Array.isArray(left.episodes) ? left.episodes.length : 0;
           const rightEmbedded = Array.isArray(right.episodes) ? right.episodes.length : 0;
           return rightEmbedded - leftEmbedded || Number(Boolean(right.detailPath)) - Number(Boolean(left.detailPath));
@@ -5766,18 +5881,64 @@
         bindDetailEpisodeControls(item);
       }
 
+      async function discoverPlaybackCandidates(options, signal) {
+        const item = options.originalItem, episode = options.requestedEpisode, index = options.index;
+        if (!item || !episode || signal.aborted) return [];
+        const matches = row => samePlaybackWork(row, item, episode, compactSearchText, itemDuplicateKey)
+          && itemIsAdult(row) === itemIsAdult(item);
+        const manifest = state.queryIndex.manifest;
+        const query = playbackTitle(item, episode, compactSearchText);
+        const controller = new AbortController();
+        const abort = () => controller.abort(); signal.addEventListener('abort', abort, { once: true });
+        const timer = setTimeout(abort, 6500);
+        try {
+          if (manifest && query) {
+            const scope = itemIsAdult(item) ? 'adult' : 'normal';
+            const scopeManifest = manifest.scopes?.[scope], available = new Set(scopeManifest?.buckets || []);
+            const targets = new Map();
+            for (const prefix of queryShardPrefixes({ query }, Number(manifest.minQueryLength || 2))) {
+              const bucket = fnv1aQueryShard(prefix) % Number(manifest.bucketCount || 1);
+              if (!available.has(bucket)) continue;
+              for (const page of scopeManifest.bucketStats?.[String(bucket)]?.pages || [{ part: 0 }])
+                targets.set(`${bucket}:${page.part || 0}`, { bucket, part: page.part || 0 });
+            }
+            const rows = [...targets.values()].slice(0, 12); let cursor = 0;
+            await Promise.all(Array.from({ length: Math.min(3, rows.length) }, async () => {
+              while (cursor < rows.length && !controller.signal.aborted) {
+                const { bucket, part } = rows[cursor++];
+                try {
+                  const payload = await loadQueryShard(scope, bucket, controller.signal, part);
+                  if (!signal.aborted) registerCatalogItems(expandQueryShard(payload).filter(matches), { searchResult: true });
+                } catch { /* Existing candidates remain usable if one index edge is unavailable. */ }
+              }
+            }));
+          }
+        } finally { clearTimeout(timer); signal.removeEventListener('abort', abort); }
+        if (signal.aborted) return [];
+        return [...state.itemById.values()].filter(matches).map(peer => ({ item: peer, original: item,
+          episode, index, itemId: peer.id, sourceId: peer.sourceId, sourceName: peer.sourceName }));
+      }
+
       function openEpisode(item, index) {
         const episode = item.episodes?.[index];
         if (!episode) return;
         activeEpisodeContext = item;
+        activeEpisodeIndex = index;
+        activeLiveId = '';
         const variants = (episode.variants || []).filter(v => publicHttpsUrl(v.url));
-        openPlayer(item.title, episode.name, episode.url, '', { key: `${item.id}:${index}`, episodes: item.episodes, index, variants });
+        const peers = [item, ...signalSourcesFor(item).map(signal => state.itemById.get(signal.itemId)).filter(peer => peer && peer.id !== item.id)];
+        const candidates = peers.filter(peer => samePlaybackWork(peer, item, episode, compactSearchText, itemDuplicateKey)).map(peer => ({
+          item: peer, original: item, episode, index, itemId: peer.id, sourceId: peer.sourceId, sourceName: peer.sourceName,
+        }));
+        openPlayer(item.title, episode.name, episode.url, '', { key: `${item.id}:${index}`, episodes: item.episodes, index, variants, candidates,
+          originalItem: item, requestedEpisode: episode });
       }
 
       function openPlayer(title, meta, url, embedUrl = '', options = {}) {
         const verifiedEmbedUrl = embedUrl ? safeEmbedUrl(embedUrl) : '';
         const verifiedMediaUrl = embedUrl ? '' : safeHttpUrl(url);
         closeDetail(false);
+        automaticPlayback.close();
         playback.close();
         playerTitle.textContent = displayText(title);
         playerMeta.textContent =
@@ -5785,6 +5946,7 @@
             ? '已阻擋不安全或不支援的播放網址'
             : displayText(meta);
         state.playerUrl = verifiedEmbedUrl || verifiedMediaUrl;
+        playerSheet.querySelector('.sheet-panel').scrollTop = 0;
         openSheet(playerSheet);
 
         if (!state.playerUrl) {
@@ -5794,10 +5956,23 @@
           return;
         }
         if (verifiedEmbedUrl) activeEpisodeContext = null;
-        playback.open({ ...options, title, meta, url: verifiedMediaUrl, embedUrl: verifiedEmbedUrl });
+        let candidates = options.candidates;
+        if (!candidates) {
+          const channel = state.live.find(row => row.url === url || (embedUrl && row.embedUrl === embedUrl));
+          activeLiveId = channel?.id || '';
+          // Channel aliases must be explicit or the exact normalized name; do
+          // not substitute another station just because both broadcast news.
+          const alternatives = channel ? state.live.filter(row => row.id !== channel.id && liveChannelIdentity(row) === liveChannelIdentity(channel)) : [];
+          candidates = [channel || { url: verifiedMediaUrl, embedUrl: verifiedEmbedUrl }, ...alternatives]
+            .flatMap(row => [{ ...row, sourceName: row.sourceName || row.group || '', url: safeHttpUrl(row.url), embedUrl: row.embedUrl ? safeEmbedUrl(row.embedUrl) : '' },
+              ...(row.alternates || []).map(next => typeof next === 'string' ? { url: safeHttpUrl(next) } : { ...next, url: safeHttpUrl(next.url), embedUrl: next.embedUrl ? safeEmbedUrl(next.embedUrl) : '' })]);
+        }
+        void automaticPlayback.open(candidates, { ...options, title, meta });
       }
 
       function closePlayer() {
+        void playerPresentation.exit();
+        automaticPlayback.close();
         playback.close();
         state.playerUrl = '';
         closeSheet(playerSheet);
@@ -5858,7 +6033,7 @@
             <div class="avatar">${source.adult ? adultIcon() : generatedSourceIcon()}</div>
             <div class="row-main">
               <strong>${sourceNameMarkup(source)}</strong>
-              <span>${displayHtml(source.origin)} / ${formatCount(source.itemCount)} 部 / ${formatCount(source.playableCount)} 可播放 / 健康 ${healthScore}</span>
+              <span>${displayHtml(source.origin)} / ${formatCount(source.itemCount)} 筆索引 / ${formatCount(source.playableCount)} 筆播放入口 / ${source.error ? '來源待修復' : '播放時自動檢測'}</span>
             </div>
             ${
               canSelect
@@ -5964,10 +6139,13 @@
         return `<p class="notice">${displayHtml(text)}</p>`;
       }
 
+      const playerPresentation = createPlayerPresentation({ sheet: playerSheet, onClose: closePlayer });
+      window.YingshiPlayerPresentation = playerPresentation;
       const sheetNavigation = createSheetNavigation({
         sheets: [...document.querySelectorAll('.sheet')], background: document.querySelector('.app'),
-        onDismiss: sheet => sheet === playerSheet ? closePlayer() : closeSheet(sheet),
+        onDismiss: sheet => sheet === playerSheet ? (playerPresentation.active() ? void playerPresentation.exit() : closePlayer()) : closeSheet(sheet),
       });
+      window.YingshiHandleBack = () => sheetNavigation.dismissTop();
       function openSheet(sheet) { sheetNavigation.open(sheet); }
       function closeSheet(sheet) { sheetNavigation.close(sheet); }
 
@@ -5997,20 +6175,40 @@
       document.querySelector('#sourceSheet [data-close-sheet].icon-btn').innerHTML = icon('close');
       document.querySelector('#filterSheet [data-close-filter].icon-btn').innerHTML = icon('close');
       document.querySelector('#detailSheet [data-close-detail].icon-btn').innerHTML = icon('close');
-      document.querySelector('#playerSheet [data-close-player].icon-btn').innerHTML = icon('close');
 
-      const bootQuantum = getJson(QUANTUM_MANIFEST_URL, null);
-      const bootPublic = getJson('./public-sources.json', null);
+      const carIntegration = installCarIntegration({ state, compact: compactSearchText, playback, codeRevision: CODE_REVISION, playerRevision: PLAYER_REVISION,
+        currentSignal: () => ({ key: signalKey(state.playerUrl), kind: /youtube(?:-nocookie)?\.com\/embed\//.test(state.playerUrl || '') ? 'embed' : 'direct' }),
+        resetViewport: resetPageViewport,
+        closePlayer, clearViewCache, resetVisibleLimit, render, openDetail, openEpisode, openPlayer,
+        closeOverlays: () => document.querySelectorAll('.sheet.is-open').forEach(closeSheet),
+        search: scheduleSearchRender, searchLoad: triggerSearchIndexLoad, visibleItems,
+        rank: rows => signalPriority.rank(rows), session: () => automaticPlayback.snapshot(), currentEpisode: () => activeEpisodeIndex, currentLive: () => activeLiveId });
+      if (CAR_APP) document.querySelector('.player-file').firstChild.textContent = '載入／貼上字幕 ';
+      getJson('https://raw.githubusercontent.com/SYLONG7708/TV/main/docs/iphone/signal-health.json', null, { timeoutMs: 4000 }).then(report => { signalPriority.setCloud(report); clearViewCache(); });
+
+      if (DATA_REVISION === 'gh-pages') {
+        const rememberedRevision = appStorage.getItem('oktv:last-cloud-revision');
+        if (/^[a-f0-9]{40}$/.test(rememberedRevision || '')) runtimeDataRevision = rememberedRevision;
+        try {
+          const response = await fetch(`${ONLINE_DATA_BASE}deployment-state.json?boot=${Date.now()}`, { cache: 'no-store', signal: AbortSignal.timeout(3500) });
+          const deployment = response.ok ? await response.json() : null;
+          if (/^[a-f0-9]{40}$/.test(deployment?.dataCommit || '')) {
+            runtimeDataRevision = deployment.dataCommit; appStorage.setItem('oktv:last-cloud-revision', runtimeDataRevision);
+          }
+        } catch {}
+      }
+      const bootQuantum = getStartupJson(QUANTUM_MANIFEST_URL, null);
+      const bootPublic = getStartupJson('./public-sources.json', null);
       // Supplementary category seeds must not delay the working cloud catalog.
       const bootSeeds = Promise.all([
-        getJson('./category-seeds.json', { items: [] }),
-        getJson('./korean-short-seeds.json', { items: [] }),
+        getStartupJson('./category-seeds.json', { items: [] }),
+        getStartupJson('./korean-short-seeds.json', { items: [] }),
       ]);
       [state.catalog, state.latest, state.live, state.queryIndex.manifest] = await Promise.all([
-        getJson('../data/iphone-vod-catalog.json', state.catalog),
-        getJson('../data/iphone-vod-latest.json', { items: [] }),
-        getJson('../data/live-channels.json', []),
-        getJson(QUERY_MANIFEST_URL, null),
+        getStartupJson('../data/iphone-vod-catalog.json', state.catalog),
+        getStartupJson('../data/iphone-vod-latest.json', { items: [] }),
+        getStartupJson('../data/live-channels.json', []),
+        getStartupJson(QUERY_MANIFEST_URL, null),
       ]);
       state.catalog.sources = Array.isArray(state.catalog.sources) ? state.catalog.sources : [];
       state.sourceMap = new Map(state.catalog.sources.map((source) => [source.id, source]));
@@ -6097,6 +6295,12 @@
         applyHealthIndex(health);
         render();
       });
+      carIntegration.ready();
+      if (downloadedFallbackAt) {
+        const notice = document.querySelector('#bootNotice');
+        notice.hidden = false;
+        notice.textContent = `目前使用 ${new Date(downloadedFallbackAt).toLocaleString('zh-TW')} 下載的目錄；播放仍需要網路。連線恢復後會自動更新。`;
+      }
     </script>
   </body>
 </html>

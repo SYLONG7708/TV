@@ -1,0 +1,46 @@
+name: Refresh playback backups for existing APKs
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '15 0,6,12,18 * * *'
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+concurrency:
+  group: yingshi-legacy-repairs
+  cancel-in-progress: false
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          ref: main
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            docs/iphone/*
+            tools/*.mjs
+            tests/legacy-playback-repairs.test.mjs
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: node --test tests/legacy-playback-repairs.test.mjs
+      - run: node tools/build-legacy-playback-repairs.mjs
+      - name: Publish compatible metadata
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/iphone/playback-repairs.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Refresh exact-episode backups for installed Yingshi APKs'
+            for attempt in 1 2 3; do
+              git pull --rebase origin main && git push origin HEAD:main && exit 0
+              sleep 5
+            done
+            exit 1
+          fi
+  deploy:
+    needs: repair
+    uses: ./.github/workflows/deploy-oktv-pages.yml
