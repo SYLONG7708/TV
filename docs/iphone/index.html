@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-bxmTPqZB8WB/ZhOnM704MsXycj1XkXvRBoNE3gKFbRg=' https://cdn.jsdelivr.net https://www.youtube.com; style-src 'self' 'sha256-espkF4pVwtnSOb5hvDumVNHfVQ/83x3JfrOf/xLJ5yY='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-8I1/JvcuHJibtZvygCO0lQyD/HuJ3W/RjqMrKusLu14=' https://cdn.jsdelivr.net https://www.youtube.com; style-src 'self' 'sha256-espkF4pVwtnSOb5hvDumVNHfVQ/83x3JfrOf/xLJ5yY='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1160,7 +1160,7 @@
       const ONLINE_DATA_BASE = 'https://sylong7708.github.io/TV/docs/data/';
       const DATA_REVISION = 'gh-pages';
       const CODE_REVISION = 'local';
-      const PLAYER_REVISION = '20261009.1';
+      const PLAYER_REVISION = '20261009.2';
       let runtimeDataRevision = DATA_REVISION;
       const downloadedCache = createDownloadedCache();
       let downloadedFallbackAt = 0;
@@ -1286,7 +1286,9 @@
         onEvidence: (entry, event, detail) => {
           signalPriority.record(entry, event, detail);
           if (event === 'playing') automaticPlayback.succeeded(entry);
-          const evidence = { event, title: entry.title, source: entry.sourceName || '', ...detail };
+          const reason = String(detail?.reason || '');
+          const evidence = { event, ...detail, category: /網路|斷線/.test(reason) ? 'offline' : /緩衝|rebuild-buffer/.test(reason) ? 'buffer' : /格式|影音/.test(reason) ? 'media' : 'source' };
+          delete evidence.reason;
           notifyCarBridge('onPlaybackStatus', JSON.stringify(evidence));
           console.info('yingshi-playback', JSON.stringify(evidence));
         },

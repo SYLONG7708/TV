@@ -1,0 +1,17 @@
+{
+  "name": "yingshi-car-compat-builder",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:compat": "node tools/build-cloud-shell.mjs",
+    "verify:bundle": "node tools/verify-bundled-page.mjs",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  },
+  "dependencies": {
+    "hls.js": "1.6.15",
+    "pako": "2.1.0"
+  }
+}

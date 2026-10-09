@@ -393,5 +393,12 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   let watchdog = setInterval(checkProgress, 1000);
   window.addEventListener('pagehide', () => clearInterval(watchdog));
   window.addEventListener('pageshow', event => { if (event.persisted) { lastProgressAt = performance.now(); clearInterval(watchdog); watchdog = setInterval(checkProgress, 1000); } });
-  return { open, close: stop, retry, seek, saveProgress, play, pause };
+  function snapshot() {
+    if (!entry) return { active: false };
+    const finite = value => Number.isFinite(Number(value)) ? Number(value) : 0;
+    if (youtube) return { active: true, time: finite(youtube.getCurrentTime?.()), paused: youtube.getPlayerState?.() !== 1, youtubeState: youtube.getPlayerState?.() ?? -1 };
+    return { active: true, time: finite(video.currentTime), paused: video.paused,
+      width: video.videoWidth, height: video.videoHeight, frames: finite(video.getVideoPlaybackQuality?.().totalVideoFrames ?? video.webkitDecodedFrameCount), ready: video.readyState, error: video.error?.code || 0 };
+  }
+  return { open, close: stop, retry, seek, saveProgress, play, pause, snapshot };
 }

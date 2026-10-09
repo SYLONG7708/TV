@@ -7,6 +7,7 @@ export function exactVoiceMatch(items, query, compact) {
 }
 export function installCarIntegration(api) {
   const { state, compact, playback } = api;
+  const updateStatus = { lastCheckedAt: 0, pending: false, failures: 0 };
   let voiceEpisode = 0, liveId = '', ready = false;
   function dismissInput() {
     state.refocusSearch = false;
@@ -94,12 +95,14 @@ export function installCarIntegration(api) {
     snapshot: () => ({ schemaVersion: 1, cloudDataOnly: true, ready, playerRevision: api.playerRevision || '', codeRevision: api.codeRevision || '', sources: state.catalog.sources.length,
       indexedRecords: state.catalog.totals.items || 0, loadedItems: state.itemById.size, liveChannels: state.live.length,
       catalogGeneratedAt: state.catalog.generatedAt || '', tab: state.tab, search: { ...state.searchProgress },
-      session: api.session(), activeSignal: api.currentSignal?.() || null, dataRefresh: 'cloud', voice: window.YingshiVoice.status() }),
+      session: api.session(), media: playback?.snapshot?.() || { active: false }, update: { ...updateStatus },
+      activeSignal: api.currentSignal?.() || null, dataRefresh: 'cloud', voice: window.YingshiVoice.status() }),
   };
   let refreshPending = false;
   const refresh = () => {
-    if (document.hidden || document.querySelector('.sheet.is-open') || state.query || /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName || '')) { refreshPending = true; return; }
+    if (document.hidden || document.querySelector('.sheet.is-open') || state.query || /INPUT|SELECT|TEXTAREA/.test(document.activeElement?.tagName || '')) { refreshPending = true; updateStatus.pending = true; return; }
     if (navigator.onLine !== false) {
+      refreshPending = false; updateStatus.pending = false;
       if (api.codeRevision === 'local' && window.CarBridge?.requestCloudPlayerUpdate?.()) return;
       location.reload();
     }
@@ -116,10 +119,12 @@ export function installCarIntegration(api) {
     checkingUpdate = true;
     try {
       const response = await fetch('../data/deployment-state.json?player-check=' + Date.now(), { cache: 'no-store', signal: AbortSignal.timeout(5000) });
-      if (!response.ok) return;
+      updateStatus.lastCheckedAt = Date.now();
+      if (!response.ok) { updateStatus.failures++; return; }
       const latest = await response.json();
+      updateStatus.failures = 0;
       if (/^[a-f0-9]{40}$/.test(latest.codeCommit || '') && latest.codeCommit !== api.codeRevision) refresh();
-    } catch { /* Keep the working player if the update endpoint is unavailable. */ }
+    } catch { updateStatus.failures++; /* Keep the working player if the update endpoint is unavailable. */ }
     finally { checkingUpdate = false; }
   };
   setInterval(checkUpdate, 5 * 60000);

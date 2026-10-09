@@ -26,7 +26,7 @@ function updateFixture(revision) {
   };
   vm.runInNewContext(fs.readFileSync(new URL('../docs/iphone/car-integration.mjs', import.meta.url), 'utf8').replaceAll('export function', 'function'), context);
   context.installCarIntegration({ state, codeRevision: revision });
-  return { calls, document, state, events, check: timers.find(row => row.ms === 300000).fn };
+  return { calls, document, state, events, context, timers, check: timers.find(row => row.ms === 300000).fn };
 }
 
 test('a new cloud player revision reloads only after the playing or paused sheet is closed', async () => {
@@ -41,4 +41,32 @@ test('bundled fallback asks Android to retry the cloud after reconnect without i
   await f.check(); f.events.online(); assert.equal(f.calls.native, 0);
   f.document.sheet = false; await f.check(); assert.equal(f.calls.native, 1); assert.equal(f.calls.fetch, 0);
   f.events.online(); assert.equal(f.calls.native, 2); assert.equal(f.calls.reload, 0);
+});
+
+test('a movie opened while version fetch is pending prevents reload until the sheet closes', async () => {
+  const f = updateFixture('a'.repeat(40));
+  let resolve;
+  f.context.fetch = () => new Promise(done => { resolve = done; });
+  const pending = f.check();
+  f.document.sheet = true;
+  resolve({ ok: true, json: async () => ({ codeCommit: 'b'.repeat(40) }) });
+  await pending;
+  assert.equal(f.calls.reload, 0);
+  f.document.sheet = false;
+  f.timers.find(row => row.ms === 15000).fn();
+  assert.equal(f.calls.reload, 1);
+  f.timers.find(row => row.ms === 15000).fn();
+  assert.equal(f.calls.reload, 1, 'consumed reload request must not loop');
+});
+
+test('an unreachable or malformed update keeps the current player and permits later checks', async () => {
+  const f = updateFixture('a'.repeat(40));
+  f.context.fetch = async () => { throw new Error('offline'); };
+  await f.check();
+  f.context.fetch = async () => ({ ok: false });
+  await f.check();
+  f.context.fetch = async () => ({ ok: true, json: async () => ({ codeCommit: 'bad-revision' }) });
+  await f.check(); assert.equal(f.calls.reload, 0);
+  f.context.fetch = async () => ({ ok: true, json: async () => ({ codeCommit: 'b'.repeat(40) }) });
+  await f.check(); assert.equal(f.calls.reload, 1);
 });
