@@ -633,7 +633,13 @@
     "playable": true,
     "origin": "youtube-live-channels.csv",
     "pageUrl": "https://www.youtube.com/watch?v=HvZt-nh9sGg",
-    "embedUrl": "https://www.youtube.com/embed/HvZt-nh9sGg?autoplay=1&mute=1&playsinline=1&rel=0"
+    "embedUrl": "https://www.youtube.com/embed/HvZt-nh9sGg?autoplay=1&mute=1&playsinline=1&rel=0",
+    "alternates": [
+      {
+        "url": "https://live.france24.com/hls/live/2037218-b/F24_EN_HI_HLS/master_5000.m3u8",
+        "sourceName": "全球官方串流"
+      }
+    ]
   },
   {
     "id": "youtube國際新聞-055-nbc-news-web",
@@ -837,7 +843,13 @@
     "playable": true,
     "origin": "youtube-live-channels.csv",
     "pageUrl": "https://www.youtube.com/watch?v=CJVBX7KI5nU",
-    "embedUrl": "https://www.youtube.com/embed/CJVBX7KI5nU?autoplay=1&mute=1&playsinline=1&rel=0"
+    "embedUrl": "https://www.youtube.com/embed/CJVBX7KI5nU?autoplay=1&mute=1&playsinline=1&rel=0",
+    "alternates": [
+      {
+        "url": "https://amdlive-ch02-ctnd-com.akamaized.net/arirang_1ch/smil:arirang_1ch.smil/playlist.m3u8",
+        "sourceName": "全球官方串流"
+      }
+    ]
   },
   {
     "id": "youtube亞洲新聞-072-htb北海道ニュース-web",
@@ -1426,7 +1438,7 @@
   },
   {
     "id": "public-france24-en",
-    "name": "France 24 英語｜官方串流",
+    "name": "FRANCE 24 English",
     "url": "https://live.france24.com/hls/live/2037218-b/F24_EN_HI_HLS/master_5000.m3u8",
     "pageUrl": "https://www.france24.com/en/live",
     "group": "全球官方串流",
@@ -1443,7 +1455,14 @@
       "api": "https://iptv-org.github.io/api/streams.json"
     },
     "verifiedAt": "2026-10-08T23:24:46.410Z",
-    "verification": "media-probe"
+    "verification": "media-probe",
+    "alternates": [
+      {
+        "url": "https://www.youtube.com/watch?v=HvZt-nh9sGg",
+        "embedUrl": "https://www.youtube.com/embed/HvZt-nh9sGg?autoplay=1&mute=1&playsinline=1&rel=0",
+        "sourceName": "YouTube國際新聞"
+      }
+    ]
   },
   {
     "id": "public-france24-fr",
@@ -1531,7 +1550,7 @@
   },
   {
     "id": "public-arirang-world",
-    "name": "Arirang TV｜官方串流",
+    "name": "Arirang TV",
     "url": "https://amdlive-ch02-ctnd-com.akamaized.net/arirang_1ch/smil:arirang_1ch.smil/playlist.m3u8",
     "pageUrl": "https://www.arirang.com/",
     "group": "全球官方串流",
@@ -1548,7 +1567,14 @@
       "api": "https://iptv-org.github.io/api/streams.json"
     },
     "verifiedAt": "2026-10-08T23:24:46.410Z",
-    "verification": "media-probe"
+    "verification": "media-probe",
+    "alternates": [
+      {
+        "url": "https://www.youtube.com/watch?v=CJVBX7KI5nU",
+        "embedUrl": "https://www.youtube.com/embed/CJVBX7KI5nU?autoplay=1&mute=1&playsinline=1&rel=0",
+        "sourceName": "YouTube亞洲新聞"
+      }
+    ]
   },
   {
     "id": "public-arirang-un",
