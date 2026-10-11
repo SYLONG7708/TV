@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-11T06:26:14.118Z",
+  "checkedAt": "2026-10-11T12:23:26.221Z",
   "inputs": {
     "catalogPath": "D:\\a\\TV\\TV\\docs\\data\\iphone-vod-catalog.json",
     "livePath": "D:\\a\\TV\\TV\\docs\\data\\live-channels.json"
@@ -7,16 +7,16 @@
   "summary": {
     "sources": {
       "total": 83,
-      "ok": 72,
-      "failed": 11
+      "ok": 70,
+      "failed": 13
     },
     "posters": {
-      "total": 11,
-      "ok": 11,
-      "titleOk": 11,
-      "posterOk": 11,
-      "playOk": 11,
-      "qualityOk": 11,
+      "total": 81,
+      "ok": 81,
+      "titleOk": 81,
+      "posterOk": 81,
+      "playOk": 81,
+      "qualityOk": 81,
       "failed": 0
     },
     "live": {
@@ -31,6 +31,45 @@
   "failed": [
     {
       "kind": "source",
+      "id": "all-on-demand-sources-滴滴资源-https-api-ddapi-cc-api-php-provide-vod-56",
+      "name": "滴滴资源｜追劇",
+      "type": 1,
+      "url": "https://api.ddapi.cc/api.php/provide/vod/",
+      "indexed": true,
+      "adult": true,
+      "ok": false,
+      "status": 0,
+      "elapsedMs": 129,
+      "error": "fetch failed"
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70",
+      "name": "奥斯卡｜追劇",
+      "type": 1,
+      "url": "https://aosikazy.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": true,
+      "ok": false,
+      "status": 418,
+      "elapsedMs": 49,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-鲨鱼资源-https-shayuapi-com-api-php-provide-vod-54",
+      "name": "鲨鱼资源｜追劇",
+      "type": 1,
+      "url": "https://shayuapi.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": true,
+      "ok": false,
+      "status": 0,
+      "elapsedMs": 8002,
+      "error": "The operation was aborted due to timeout"
+    },
+    {
+      "kind": "source",
       "id": "all-on-demand-sources-玉兔资源-https-apiyutu-com-api-php-provide-vod-43",
       "name": "玉兔资源｜追劇",
       "type": 1,
@@ -39,7 +78,7 @@
       "adult": true,
       "ok": false,
       "status": 500,
-      "elapsedMs": 172,
+      "elapsedMs": 307,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -52,20 +91,7 @@
       "adult": true,
       "ok": false,
       "status": 500,
-      "elapsedMs": 163,
-      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70",
-      "name": "奥斯卡｜追劇",
-      "type": 1,
-      "url": "https://aosikazy.com/api.php/provide/vod/",
-      "indexed": true,
-      "adult": true,
-      "ok": false,
-      "status": 418,
-      "elapsedMs": 144,
+      "elapsedMs": 318,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -78,7 +104,7 @@
       "adult": true,
       "ok": false,
       "status": 200,
-      "elapsedMs": 99,
+      "elapsedMs": 248,
       "error": "XML source did not return an XML list"
     },
     {
@@ -91,7 +117,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 169,
+      "elapsedMs": 95,
       "error": "fetch failed"
     },
     {
@@ -104,7 +130,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 8012,
+      "elapsedMs": 8009,
       "error": "The operation was aborted due to timeout"
     },
     {
@@ -117,7 +143,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 156,
+      "elapsedMs": 44,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -130,7 +156,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 39,
+      "elapsedMs": 20,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -143,7 +169,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 54,
+      "elapsedMs": 19,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -156,7 +182,7 @@
       "adult": true,
       "ok": false,
       "status": 502,
-      "elapsedMs": 420,
+      "elapsedMs": 342,
       "error": "Unexpected token '<', \"<html>\r\n<h\"... is not valid JSON"
     },
     {
@@ -169,7 +195,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 2132,
+      "elapsedMs": 2096,
       "error": "fetch failed"
     }
   ],
@@ -197,7 +223,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 709,
+      "elapsedMs": 618,
       "error": ""
     },
     {
@@ -210,7 +236,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 228,
+      "elapsedMs": 152,
       "error": ""
     },
     {
@@ -223,7 +249,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1528,
+      "elapsedMs": 672,
       "error": ""
     },
     {
@@ -236,7 +262,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1081,
+      "elapsedMs": 1075,
       "error": ""
     },
     {
@@ -249,7 +275,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 310,
+      "elapsedMs": 192,
       "error": ""
     },
     {
@@ -262,7 +288,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1351,
+      "elapsedMs": 1126,
       "error": ""
     },
     {
@@ -275,7 +301,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 418,
+      "elapsedMs": 304,
       "error": ""
     },
     {
@@ -288,7 +314,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 352,
+      "elapsedMs": 259,
       "error": ""
     },
     {
@@ -301,7 +327,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 700,
+      "elapsedMs": 646,
       "error": ""
     },
     {
@@ -314,7 +340,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 338,
+      "elapsedMs": 183,
       "error": ""
     },
     {
@@ -327,7 +353,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 303,
+      "elapsedMs": 263,
       "error": ""
     },
     {
@@ -340,7 +366,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 271,
+      "elapsedMs": 193,
       "error": ""
     },
     {
@@ -353,7 +379,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 408,
+      "elapsedMs": 203,
       "error": ""
     },
     {
@@ -366,7 +392,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 73,
+      "elapsedMs": 75,
       "error": ""
     },
     {
@@ -379,7 +405,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 424,
+      "elapsedMs": 73,
       "error": ""
     },
     {
@@ -392,7 +418,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 88,
+      "elapsedMs": 76,
       "error": ""
     },
     {
@@ -405,7 +431,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 88,
+      "elapsedMs": 39,
       "error": ""
     },
     {
@@ -418,7 +444,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 562,
+      "elapsedMs": 257,
       "error": ""
     },
     {
@@ -431,7 +457,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 405,
+      "elapsedMs": 379,
       "error": ""
     },
     {
@@ -444,7 +470,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 115,
+      "elapsedMs": 90,
       "error": ""
     },
     {
@@ -457,7 +483,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 90,
+      "elapsedMs": 85,
       "error": ""
     },
     {
@@ -470,7 +496,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 264,
+      "elapsedMs": 40,
       "error": ""
     },
     {
@@ -483,7 +509,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 332,
+      "elapsedMs": 434,
       "error": ""
     },
     {
@@ -496,7 +522,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1210,
+      "elapsedMs": 1245,
       "error": ""
     },
     {
@@ -509,7 +535,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 90,
+      "elapsedMs": 60,
       "error": ""
     },
     {
@@ -535,7 +561,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 131,
+      "elapsedMs": 48,
       "error": ""
     },
     {
@@ -548,7 +574,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 269,
+      "elapsedMs": 427,
       "error": ""
     },
     {
@@ -561,7 +587,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 102,
+      "elapsedMs": 78,
       "error": ""
     },
     {
@@ -574,7 +600,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 194,
+      "elapsedMs": 169,
       "error": ""
     },
     {
@@ -587,7 +613,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 131,
+      "elapsedMs": 94,
       "error": ""
     },
     {
@@ -600,7 +626,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 235,
+      "elapsedMs": 158,
       "error": ""
     },
     {
@@ -613,7 +639,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 197,
+      "elapsedMs": 150,
       "error": ""
     },
     {
@@ -626,7 +652,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 437,
+      "elapsedMs": 253,
       "error": ""
     },
     {
@@ -639,7 +665,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 791,
+      "elapsedMs": 1503,
       "error": ""
     },
     {
@@ -665,7 +691,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 157,
+      "elapsedMs": 175,
       "error": ""
     },
     {
@@ -678,7 +704,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 143,
+      "elapsedMs": 213,
       "error": ""
     },
     {
@@ -691,7 +717,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 339,
+      "elapsedMs": 282,
       "error": ""
     },
     {
@@ -704,7 +730,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 135,
+      "elapsedMs": 51,
       "error": ""
     },
     {
@@ -717,7 +743,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 319,
+      "elapsedMs": 262,
       "error": ""
     },
     {
@@ -730,7 +756,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 115,
+      "elapsedMs": 72,
       "error": ""
     },
     {
@@ -743,7 +769,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 248,
+      "elapsedMs": 216,
       "error": ""
     },
     {
@@ -756,7 +782,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 209,
+      "elapsedMs": 253,
       "error": ""
     },
     {
@@ -767,10 +793,10 @@
       "url": "https://api.ddapi.cc/api.php/provide/vod/",
       "indexed": true,
       "adult": true,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 216,
-      "error": ""
+      "ok": false,
+      "status": 0,
+      "elapsedMs": 129,
+      "error": "fetch failed"
     },
     {
       "kind": "source",
@@ -782,7 +808,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 990,
+      "elapsedMs": 1088,
       "error": ""
     },
     {
@@ -795,7 +821,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 118,
+      "elapsedMs": 117,
       "error": ""
     },
     {
@@ -808,7 +834,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 127,
+      "elapsedMs": 135,
       "error": ""
     },
     {
@@ -821,8 +847,21 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 509,
+      "elapsedMs": 248,
       "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70",
+      "name": "奥斯卡｜追劇",
+      "type": 1,
+      "url": "https://aosikazy.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": true,
+      "ok": false,
+      "status": 418,
+      "elapsedMs": 49,
+      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
       "kind": "source",
@@ -834,7 +873,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 99,
+      "elapsedMs": 192,
       "error": ""
     },
     {
@@ -845,10 +884,10 @@
       "url": "https://shayuapi.com/api.php/provide/vod/",
       "indexed": true,
       "adult": true,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 5569,
-      "error": ""
+      "ok": false,
+      "status": 0,
+      "elapsedMs": 8002,
+      "error": "The operation was aborted due to timeout"
     },
     {
       "kind": "source",
@@ -860,7 +899,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 146,
+      "elapsedMs": 118,
       "error": ""
     },
     {
@@ -873,7 +912,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 147,
+      "elapsedMs": 126,
       "error": ""
     },
     {
@@ -886,7 +925,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 31,
+      "elapsedMs": 43,
       "error": ""
     },
     {
@@ -899,7 +938,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 255,
+      "elapsedMs": 216,
       "error": ""
     },
     {
@@ -912,20 +951,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1023,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "current-vod-url-七星短剧-https-mpimg-cn-down-php-48e9d346cdf6da376c53136693bec95a-py-71",
-      "name": "七星丨短剧｜追劇",
-      "type": 3,
-      "url": "https://mpimg.cn/down.php/48e9d346cdf6da376c53136693bec95a.py",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 206,
-      "elapsedMs": 363,
+      "elapsedMs": 978,
       "error": ""
     },
     {
@@ -938,7 +964,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1432,
+      "elapsedMs": 1133,
       "error": ""
     },
     {
@@ -951,7 +977,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 928,
+      "elapsedMs": 778,
       "error": ""
     },
     {
@@ -964,7 +990,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 390,
+      "elapsedMs": 303,
       "error": ""
     },
     {
@@ -977,7 +1003,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1134,
+      "elapsedMs": 1114,
       "error": ""
     },
     {
@@ -990,7 +1016,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 218,
+      "elapsedMs": 137,
       "error": ""
     },
     {
@@ -1003,7 +1029,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 945,
+      "elapsedMs": 1004,
       "error": ""
     },
     {
@@ -1016,7 +1042,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 220,
+      "elapsedMs": 187,
       "error": ""
     },
     {
@@ -1029,7 +1055,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 252,
+      "elapsedMs": 161,
       "error": ""
     },
     {
@@ -1042,7 +1068,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 211,
+      "elapsedMs": 163,
       "error": ""
     },
     {
@@ -1055,7 +1081,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 210,
+      "elapsedMs": 179,
       "error": ""
     },
     {
@@ -1068,7 +1094,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 86,
+      "elapsedMs": 132,
       "error": ""
     },
     {
@@ -1081,7 +1107,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 318,
+      "elapsedMs": 210,
       "error": ""
     },
     {
@@ -1094,7 +1120,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 479,
+      "elapsedMs": 144,
       "error": ""
     },
     {
@@ -1107,7 +1133,20 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1382,
+      "elapsedMs": 1271,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "current-vod-url-七星短剧-https-mpimg-cn-down-php-48e9d346cdf6da376c53136693bec95a-py-71",
+      "name": "七星丨短剧｜追劇",
+      "type": 3,
+      "url": "https://mpimg.cn/down.php/48e9d346cdf6da376c53136693bec95a.py",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 206,
+      "elapsedMs": 533,
       "error": ""
     },
     {
@@ -1120,7 +1159,7 @@
       "adult": true,
       "ok": false,
       "status": 500,
-      "elapsedMs": 172,
+      "elapsedMs": 307,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -1133,20 +1172,7 @@
       "adult": true,
       "ok": false,
       "status": 500,
-      "elapsedMs": 163,
-      "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70",
-      "name": "奥斯卡｜追劇",
-      "type": 1,
-      "url": "https://aosikazy.com/api.php/provide/vod/",
-      "indexed": true,
-      "adult": true,
-      "ok": false,
-      "status": 418,
-      "elapsedMs": 144,
+      "elapsedMs": 318,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -1159,7 +1185,7 @@
       "adult": true,
       "ok": false,
       "status": 200,
-      "elapsedMs": 99,
+      "elapsedMs": 248,
       "error": "XML source did not return an XML list"
     },
     {
@@ -1172,7 +1198,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 169,
+      "elapsedMs": 95,
       "error": "fetch failed"
     },
     {
@@ -1185,7 +1211,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 8012,
+      "elapsedMs": 8009,
       "error": "The operation was aborted due to timeout"
     },
     {
@@ -1198,7 +1224,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 156,
+      "elapsedMs": 44,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -1211,7 +1237,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 39,
+      "elapsedMs": 20,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -1224,7 +1250,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 54,
+      "elapsedMs": 19,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -1237,7 +1263,7 @@
       "adult": true,
       "ok": false,
       "status": 502,
-      "elapsedMs": 420,
+      "elapsedMs": 342,
       "error": "Unexpected token '<', \"<html>\r\n<h\"... is not valid JSON"
     },
     {
@@ -1250,7 +1276,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 2132,
+      "elapsedMs": 2096,
       "error": "fetch failed"
     },
     {
@@ -1271,7 +1297,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 200,
-      "elapsedMs": 499,
+      "elapsedMs": 558,
       "error": ""
     },
     {
@@ -1292,7 +1318,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 200,
-      "elapsedMs": 486,
+      "elapsedMs": 524,
       "error": ""
     },
     {
@@ -1313,7 +1339,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 509,
+      "elapsedMs": 531,
       "error": ""
     },
     {
@@ -1334,7 +1360,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 493,
+      "elapsedMs": 537,
       "error": ""
     },
     {
@@ -1355,7 +1381,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 488,
+      "elapsedMs": 524,
       "error": ""
     },
     {
@@ -1376,7 +1402,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 515,
+      "elapsedMs": 547,
       "error": ""
     },
     {
@@ -1397,7 +1423,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 521,
+      "elapsedMs": 540,
       "error": ""
     },
     {
@@ -1418,7 +1444,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 532,
+      "elapsedMs": 557,
       "error": ""
     },
     {
@@ -1439,7 +1465,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 526,
+      "elapsedMs": 529,
       "error": ""
     },
     {
@@ -1460,7 +1486,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 501,
+      "elapsedMs": 560,
       "error": ""
     },
     {
@@ -1481,7 +1507,1477 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 534,
+      "elapsedMs": 546,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449819-1",
+      "name": "重磅推荐学生妹系列乖巧听话甜美高中生小母狗让干嘛就干嘛",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/nQjDeFuR/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2278p",
+      "maxHeight": 2278,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 220,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449818-1",
+      "name": "重磅推荐美艳淫妻李宛儿老板娘和出轨大哥野战车震吞精",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/gcqI2wlB/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2252p",
+      "maxHeight": 2252,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 221,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449817-1",
+      "name": "重磅核弹美艳绿帽淫妻李婉儿老板娘出轨大哥野战车震口爆吞精",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/qywuGUEn/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 221,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449816-1",
+      "name": "重磅乱伦绿奴淫妻绿帽男让亲表弟操大奶老婆全程骚话",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/Odp6cXPr/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 219,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449815-1",
+      "name": "制度诱惑喷奶水复古汉服哺乳期反差人妻",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/ySvXbd4G/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2274p",
+      "maxHeight": 2274,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 221,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449814-1",
+      "name": "主播精选冰儿直播插逼逼自慰加特技",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/q8MSc0JY/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2274p",
+      "maxHeight": 2274,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 218,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449813-1",
+      "name": "主播大秀婊妹給小哥舔菊花激情上位暴力抽插",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/19y15GIp/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 217,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449812-1",
+      "name": "主播精选白丝马尾骚学妹跟小哥哥站立后入",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/iDWxZyKN/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2274p",
+      "maxHeight": 2274,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 17,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449811-1",
+      "name": "主播精选新人下海鸭舌帽妹妹喜欢黄瓜茄子自慰",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/oaFS62RU/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2274p",
+      "maxHeight": 2274,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 17,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449810-1",
+      "name": "重磅泄密半糖人妻-极品喷水美少妇性感短发全裸大秀很有味道",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/JNZA25db/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2274p",
+      "maxHeight": 2274,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 17,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449809-1",
+      "name": "娜娜超爆新作_淫乱女教师_高潮爆射极品骚穴",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/dXnmzfCl/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 15,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449808-1",
+      "name": "重磅推荐探花19岁制服学生妹性感又清纯关键口活一级棒",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/MesRPHlW/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "722p",
+      "maxHeight": 722,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 16,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449807-1",
+      "name": "主播泄密最美女主播张曼源母狗视频流出极品馒头逼",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/CWMX0RKl/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 15,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449806-1",
+      "name": "中年小老板和少妇会计那点事干着活就扛不住在电脑前开于浮乱私生活全集",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/2P0r6Blf/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 15,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449805-1",
+      "name": "职业装OL高跟黑丝御姐大秀玩弄美腿",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/Nq0rz9Uo/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 5,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449804-1",
+      "name": "中非友谊黑白情侣女工宿舍换妻4P边操边哭老黑太动作粗暴把眼镜妹弄疼男友生气",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/npgqwVdh/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2274p",
+      "maxHeight": 2274,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 3,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449803-1",
+      "name": "中非友谊黑白情侣女工宿舍换妻4Pheart乱交老黑太动作粗暴把可爱眼镜妹弄疼了男友生气一边草一边和他干架",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/6keckgze/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2274p",
+      "maxHeight": 2274,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 3,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449802-1",
+      "name": "主播精选网红主播御姐极品直播挤奶自慰",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/2Y1lw1yS/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 3,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449801-1",
+      "name": "中非友谊黑白情侣女工宿舍换妻4P乱交老黑太动作粗暴把可爱眼镜妹弄疼了男友生气一边草一边和他干架",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/1dyVBKOn/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 3,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449800-1",
+      "name": "娜娜痴女太太欲求不满_勾引自家司机_开档黑丝蜜桃白虎穴_紧致榨精爆射玉足",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/NshDUpw4/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 3,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449799-1",
+      "name": "主播大秀02年超嫩小姐姐情趣jk制服诱惑",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/TfhtvD2o/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "722p",
+      "maxHeight": 722,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 7,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449798-1",
+      "name": "主播大秀暗黑御姐穿上情趣网衣跟小哥啪啪",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/leSSFg6z/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 8,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449797-1",
+      "name": "娜娜被上门收债的痴女姐姐强行玩弄",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/NYZFQLu4/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 7,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449796-1",
+      "name": "娜娜超淫调教捆绑束缚",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/ezxuodpg/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 9,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449795-1",
+      "name": "娜娜痴女性玩物_乳粒敏感挑逗_油亮丝袜蜜鲍榨精",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/HhMT2BNV/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 9,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449794-1",
+      "name": "主播大秀卡哇伊白皙皮肤蜜桃臀萌妹纸自慰",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/wnkQpAPg/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "722p",
+      "maxHeight": 722,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 10,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449793-1",
+      "name": "主播大秀20岁良家嫩妹奶子又大又圆身材不错",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/CtRSTMuf/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 8,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449792-1",
+      "name": "DSOD-073 お嬢さん。わしの綺麗なザー汁、なんぼでもナカに出させてくれや！ローションぬるぬるオイルどばどヴ",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/1R7oUmNG/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449791-1",
+      "name": "被变态老师征服的风俗娘STARS-922",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/l8zApDta/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 5,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449790-1",
+      "name": "DSOD-071 売れてるアイドルは濃厚まくら皆やってるょ。精子まみれ。闇堕ち底辺アイドルの強●ナマナカ無制限営",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/AyHSXF51/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 2,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449789-1",
+      "name": "被大伯调教成肉便器HMN-439",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/wzjA4YU9/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 2,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449788-1",
+      "name": "被辣妹推倒是一种什么体验MKMP-530",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/vy1lL3dv/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449787-1",
+      "name": "报复女上司SSIS-644",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/NtaelX5S/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 3,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449786-1",
+      "name": "被处男肉棒征服STARS-892",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/47IwRkVm/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449785-1",
+      "name": "[换脸]孙俪 写真合集..",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/zkLF58Na/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449784-1",
+      "name": "DSOD-076 根暗巨乳メガネ姉に「イキそうなのこらえてるの？すごく尊い」と囁かれ、理性をぶっ壊されて何度も中",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/Jkt0g30T/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449783-1",
+      "name": "[换脸]孙慧舟手淫达到高潮..",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/z7wZAvjl/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 5,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449782-1",
+      "name": "眼镜美少妇私下约前男友",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/fivlEvap/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2272p",
+      "maxHeight": 2272,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449781-1",
+      "name": "眼镜老公无套爆操肥穴，露脸长发御姐，销魂式玩穴，死去活来的操逼特写蝴蝶粉鲍鱼",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/cWas5WCT/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2278p",
+      "maxHeight": 2278,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 3,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449780-1",
+      "name": "[换脸]孙慧舟 空姐制服爆操高潮..",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/fMliehUo/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449779-1",
+      "name": "颜值女神连体网袜女上位骑乘自己动，抱着屁股快速打桩！",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/px6O83Xl/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2340p",
+      "maxHeight": 2340,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449778-1",
+      "name": "DSOD-070 「ニューハーフだから男の子の気持ちイイところ全部分かっちゃうんだからね！」 彼女持ちのボクらを",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/wOzp1FiK/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449777-1",
+      "name": "颜值不错身材很是丰满的美女主播收费直播大秀_小穴也很粉嫩_自慰插穴_",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/5SKPQvzY/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2256p",
+      "maxHeight": 2256,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 3,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449776-1",
+      "name": "颜值很高的良家御姐人妻诱惑",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/4EZSXtbH/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "1670p",
+      "maxHeight": 1670,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 3,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449775-1",
+      "name": "颜值超赞妹子床上超主动！",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/unznpsPE/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 5,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449774-1",
+      "name": "颜值不错_美少妇双人啪啪_后入抽插猛操内射毛毛比较浓密",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/DZ1LJr8u/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2262p",
+      "maxHeight": 2262,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 5,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449773-1",
+      "name": "DSOD-062 母性溢れる甘トロ淫語で射精するたび脳みそトロける究極バブみオナサポ 彩月七緒",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/S3EibXV9/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 7,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449772-1",
+      "name": "学校楼道内 #学生妹 口交狂吐白沫",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/YvqYPET4/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2278p",
+      "maxHeight": 2278,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 7,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449771-1",
+      "name": "学生装制服空姐酒店出台，嗷嗷大叫表情销魂，旁边炮友朋友在看。",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/Lhl6MHbP/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "738p",
+      "maxHeight": 738,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 7,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449770-1",
+      "name": "DSOD-055 酔っぱらって手っ取り早くSEXがしたい。おじさんだ～い好き。唾液を垂らして汚チ●ポねぶり尽くす",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261010/75zWKVoY/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 7,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449719-1",
+      "name": "正宗高中学妹①操了那么多女人还是萝莉操着最爽",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261009/HcACumE9/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2274p",
+      "maxHeight": 2274,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 6,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449709-1",
+      "name": "真实约炮真实记录兰州反差性奴母狗露出性爱私拍",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261009/keiVMoJ2/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2278p",
+      "maxHeight": 2278,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449707-1",
+      "name": "甄选合集反差婊骚货眼镜妹十个眼镜九个骚性爱视频流出",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261009/YMaaXdmQ/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "718p",
+      "maxHeight": 718,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 3,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449705-1",
+      "name": "真香警告-尤物御姐超高颜值极品御姐美美的脸纤细的腰",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261009/zMrPWe5z/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 2,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449704-1",
+      "name": "真实约炮性瘾巨大离异人妻",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261009/3PNfSnZ7/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "724p",
+      "maxHeight": 724,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 2,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449703-1",
+      "name": "直白东北探花-黑长直御姐骑乘上位被后入猛烈撞击精彩不断",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261009/qXeopUYy/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 5,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449621-1",
+      "name": "真实学生萝莉00后下海白嫩母狗自慰喷水_LLD",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261008/5A1yXhgw/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 5,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449612-1",
+      "name": "真实人妻少妇出轨自拍合集大鸡巴潮喷少妇精湛手艺射到脸上",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261008/QyTefskl/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 8,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449607-1",
+      "name": "真实情侣身材很棒的清纯学妹被帅气学长推倒插入",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261008/FdZh7lVv/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 8,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449606-1",
+      "name": "真实探花高清新人墨镜小伙2000约漂亮小姐姐",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261008/XXxEeXat/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 7,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449603-1",
+      "name": "真实人妻居家自拍流出喂奶后跟炮友啪啪",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261008/wMxMAT4k/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "718p",
+      "maxHeight": 718,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 10,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449509-1",
+      "name": "真实女子SPA真实偷拍高端SPA按摩28岁小姐姐身材棒_LLD",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261007/o3mgwXPT/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2282p",
+      "maxHeight": 2282,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 8,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449506-1",
+      "name": "真实勾搭人妻-浴室忍不住后入连干两炮直接虚脱了",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261007/yC7H9BZi/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 7,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449501-1",
+      "name": "真实勾搭气质人妻少妇户外车震口爆吞精",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261007/YtZoM6ff/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2278p",
+      "maxHeight": 2278,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 6,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449500-1",
+      "name": "真实勾搭离婚少妇反差人妻白丝主动上位骑乘非常配合",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261007/BBxVSnbk/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2278p",
+      "maxHeight": 2278,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 5,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449498-1",
+      "name": "真实拍摄学校附近勾引高中生小弟弟帮姐姐摸摸奶子你是处男吗这么快就软了",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261007/UV24MhEx/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 6,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449412-1",
+      "name": "约炮偷情-极品宝妈人妻少妇你的大鸡巴干得我好爽",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261006/PgRR2vYD/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 5,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449411-1",
+      "name": "约炮探花约操极品细腰美臀小护士玲儿后入顶操不停浪叫完美露脸高",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261006/vBvbhzjw/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449410-1",
+      "name": "约炮探花射区猛牛探花酒店约炮个叫床呻吟很好听的妹子肉感Q弹翘臀美腿淫声不止",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261006/3J6cEkJj/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-奥斯卡-https-aosikazy-com-api-php-provide-vod-70-449408-1",
+      "name": "约炮探花社会纹身一姐被无情凌辱",
+      "type": "adult",
+      "url": "https://abfrkjesk.com/20261006/ArnzeDeN/1.jpg",
+      "sourceName": "奥斯卡｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 206,
+      "playStatus": 200,
+      "elapsedMs": 4,
       "error": ""
     },
     {
@@ -1498,7 +2994,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 261,
+      "elapsedMs": 206,
       "error": ""
     },
     {
@@ -1515,7 +3011,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 276,
+      "elapsedMs": 217,
       "error": ""
     },
     {
@@ -1532,7 +3028,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 247,
+      "elapsedMs": 235,
       "error": ""
     },
     {
@@ -1549,7 +3045,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 240,
+      "elapsedMs": 235,
       "error": ""
     },
     {
@@ -1566,7 +3062,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 316,
+      "elapsedMs": 227,
       "error": ""
     },
     {
@@ -1583,7 +3079,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 291,
+      "elapsedMs": 238,
       "error": ""
     },
     {
@@ -1600,7 +3096,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 293,
+      "elapsedMs": 223,
       "error": ""
     },
     {
@@ -1617,7 +3113,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 295,
+      "elapsedMs": 199,
       "error": ""
     },
     {
@@ -1634,7 +3130,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 296,
+      "elapsedMs": 226,
       "error": ""
     },
     {
@@ -1651,7 +3147,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 293,
+      "elapsedMs": 223,
       "error": ""
     },
     {
@@ -1668,7 +3164,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 248,
+      "elapsedMs": 238,
       "error": ""
     },
     {
@@ -1685,7 +3181,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 227,
+      "elapsedMs": 245,
       "error": ""
     },
     {
@@ -1702,7 +3198,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 178,
+      "elapsedMs": 207,
       "error": ""
     },
     {
@@ -1719,7 +3215,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 218,
+      "elapsedMs": 196,
       "error": ""
     },
     {
@@ -1736,7 +3232,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 236,
+      "elapsedMs": 101,
       "error": ""
     },
     {
@@ -1753,7 +3249,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 226,
+      "elapsedMs": 147,
       "error": ""
     },
     {
@@ -1770,7 +3266,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 196,
+      "elapsedMs": 136,
       "error": ""
     },
     {
@@ -1787,7 +3283,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 246,
+      "elapsedMs": 106,
       "error": ""
     },
     {
@@ -1804,7 +3300,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 160,
+      "elapsedMs": 187,
       "error": ""
     },
     {
@@ -1821,7 +3317,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 230,
+      "elapsedMs": 144,
       "error": ""
     },
     {
@@ -1838,7 +3334,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 235,
+      "elapsedMs": 152,
       "error": ""
     },
     {
@@ -1855,7 +3351,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 179,
+      "elapsedMs": 104,
       "error": ""
     },
     {
@@ -1872,7 +3368,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 229,
+      "elapsedMs": 142,
       "error": ""
     },
     {
@@ -1889,7 +3385,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 225,
+      "elapsedMs": 137,
       "error": ""
     },
     {
@@ -1906,7 +3402,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 236,
+      "elapsedMs": 145,
       "error": ""
     },
     {
@@ -1923,7 +3419,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 215,
+      "elapsedMs": 131,
       "error": ""
     },
     {
@@ -1940,7 +3436,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 197,
+      "elapsedMs": 163,
       "error": ""
     },
     {
@@ -1957,7 +3453,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 224,
+      "elapsedMs": 146,
       "error": ""
     },
     {
@@ -1974,7 +3470,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 235,
+      "elapsedMs": 102,
       "error": ""
     },
     {
@@ -1991,7 +3487,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 160,
+      "elapsedMs": 231,
       "error": ""
     },
     {
@@ -2008,7 +3504,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 182,
+      "elapsedMs": 159,
       "error": ""
     },
     {
@@ -2025,7 +3521,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 148,
+      "elapsedMs": 147,
       "error": ""
     },
     {
@@ -2042,7 +3538,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 222,
+      "elapsedMs": 100,
       "error": ""
     },
     {
@@ -2059,7 +3555,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 250,
+      "elapsedMs": 202,
       "error": ""
     },
     {
@@ -2076,7 +3572,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 181,
+      "elapsedMs": 147,
       "error": ""
     },
     {
@@ -2093,7 +3589,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 234,
+      "elapsedMs": 109,
       "error": ""
     },
     {
@@ -2110,7 +3606,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 238,
+      "elapsedMs": 160,
       "error": ""
     },
     {
@@ -2127,7 +3623,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 184,
+      "elapsedMs": 97,
       "error": ""
     },
     {
@@ -2144,7 +3640,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 233,
+      "elapsedMs": 144,
       "error": ""
     },
     {
@@ -2161,7 +3657,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 236,
+      "elapsedMs": 246,
       "error": ""
     },
     {
@@ -2178,7 +3674,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 190,
+      "elapsedMs": 152,
       "error": ""
     },
     {
@@ -2195,7 +3691,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 247,
+      "elapsedMs": 148,
       "error": ""
     },
     {
@@ -2212,7 +3708,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 220,
+      "elapsedMs": 145,
       "error": ""
     },
     {
@@ -2229,7 +3725,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 153,
+      "elapsedMs": 112,
       "error": ""
     },
     {
@@ -2246,7 +3742,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 150,
+      "elapsedMs": 206,
       "error": ""
     },
     {
@@ -2263,7 +3759,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 289,
+      "elapsedMs": 208,
       "error": ""
     },
     {
@@ -2280,7 +3776,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 191,
+      "elapsedMs": 216,
       "error": ""
     },
     {
@@ -2297,7 +3793,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 230,
+      "elapsedMs": 110,
       "error": ""
     },
     {
@@ -2314,7 +3810,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 154,
+      "elapsedMs": 183,
       "error": ""
     },
     {
@@ -2331,7 +3827,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 145,
+      "elapsedMs": 155,
       "error": ""
     },
     {
@@ -2348,7 +3844,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 175,
+      "elapsedMs": 183,
       "error": ""
     },
     {
@@ -2365,7 +3861,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 158,
+      "elapsedMs": 102,
       "error": ""
     },
     {
@@ -2382,7 +3878,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 189,
+      "elapsedMs": 220,
       "error": ""
     },
     {
@@ -2399,7 +3895,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 184,
+      "elapsedMs": 151,
       "error": ""
     },
     {
@@ -2416,7 +3912,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 185,
+      "elapsedMs": 217,
       "error": ""
     },
     {
@@ -2433,7 +3929,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 220,
+      "elapsedMs": 181,
       "error": ""
     },
     {
@@ -2450,7 +3946,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 216,
+      "elapsedMs": 103,
       "error": ""
     },
     {
@@ -2467,7 +3963,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 163,
+      "elapsedMs": 190,
       "error": ""
     },
     {
@@ -2484,7 +3980,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 223,
+      "elapsedMs": 97,
       "error": ""
     },
     {
@@ -2501,7 +3997,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 228,
+      "elapsedMs": 140,
       "error": ""
     },
     {
@@ -2518,7 +4014,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 204,
+      "elapsedMs": 101,
       "error": ""
     },
     {
@@ -2535,7 +4031,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 140,
+      "elapsedMs": 141,
       "error": ""
     },
     {
@@ -2552,7 +4048,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 231,
+      "elapsedMs": 178,
       "error": ""
     },
     {
@@ -2569,7 +4065,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 157,
+      "elapsedMs": 188,
       "error": ""
     },
     {
@@ -2586,7 +4082,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 216,
+      "elapsedMs": 97,
       "error": ""
     },
     {
@@ -2603,7 +4099,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 327,
+      "elapsedMs": 109,
       "error": ""
     },
     {
@@ -2620,7 +4116,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 249,
+      "elapsedMs": 238,
       "error": ""
     },
     {
@@ -2637,7 +4133,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 217,
+      "elapsedMs": 185,
       "error": ""
     },
     {
@@ -2654,7 +4150,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 222,
+      "elapsedMs": 155,
       "error": ""
     },
     {
@@ -2671,7 +4167,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 236,
+      "elapsedMs": 137,
       "error": ""
     },
     {
@@ -2688,7 +4184,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 150,
+      "elapsedMs": 224,
       "error": ""
     },
     {
@@ -2705,7 +4201,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 244,
+      "elapsedMs": 99,
       "error": ""
     },
     {
@@ -2722,7 +4218,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 203,
+      "elapsedMs": 147,
       "error": ""
     },
     {
@@ -2739,7 +4235,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 189,
+      "elapsedMs": 103,
       "error": ""
     },
     {
@@ -2756,7 +4252,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 234,
+      "elapsedMs": 197,
       "error": ""
     },
     {
@@ -2773,7 +4269,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 222,
+      "elapsedMs": 136,
       "error": ""
     },
     {
@@ -2790,7 +4286,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 186,
+      "elapsedMs": 196,
       "error": ""
     },
     {
@@ -2807,7 +4303,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 187,
+      "elapsedMs": 175,
       "error": ""
     },
     {
@@ -2824,7 +4320,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 162,
+      "elapsedMs": 193,
       "error": ""
     },
     {
@@ -2841,7 +4337,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 278,
+      "elapsedMs": 180,
       "error": ""
     },
     {
@@ -2858,7 +4354,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 147,
+      "elapsedMs": 170,
       "error": ""
     },
     {
@@ -2875,7 +4371,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 181,
+      "elapsedMs": 133,
       "error": ""
     },
     {
@@ -2892,7 +4388,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 192,
+      "elapsedMs": 224,
       "error": ""
     },
     {
@@ -2909,7 +4405,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 233,
+      "elapsedMs": 153,
       "error": ""
     },
     {
@@ -2926,7 +4422,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 169,
+      "elapsedMs": 135,
       "error": ""
     },
     {
@@ -2943,7 +4439,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 187,
+      "elapsedMs": 109,
       "error": ""
     },
     {
@@ -2960,7 +4456,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 208,
+      "elapsedMs": 153,
       "error": ""
     },
     {
@@ -2977,7 +4473,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 152,
+      "elapsedMs": 102,
       "error": ""
     },
     {
@@ -2994,7 +4490,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 251,
+      "elapsedMs": 184,
       "error": ""
     },
     {
@@ -3011,7 +4507,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 155,
+      "elapsedMs": 154,
       "error": ""
     },
     {
@@ -3028,7 +4524,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 240,
+      "elapsedMs": 131,
       "error": ""
     },
     {
@@ -3045,7 +4541,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 191,
+      "elapsedMs": 146,
       "error": ""
     },
     {
@@ -3062,7 +4558,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 198,
+      "elapsedMs": 168,
       "error": ""
     },
     {
@@ -3079,7 +4575,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 240,
+      "elapsedMs": 101,
       "error": ""
     },
     {
@@ -3096,7 +4592,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 164,
+      "elapsedMs": 150,
       "error": ""
     },
     {
@@ -3113,7 +4609,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 177,
+      "elapsedMs": 195,
       "error": ""
     },
     {
@@ -3130,7 +4626,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 223,
+      "elapsedMs": 108,
       "error": ""
     },
     {
@@ -3147,7 +4643,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 202,
+      "elapsedMs": 196,
       "error": ""
     },
     {
@@ -3164,7 +4660,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 197,
+      "elapsedMs": 150,
       "error": ""
     },
     {
@@ -3181,7 +4677,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 142,
+      "elapsedMs": 208,
       "error": ""
     },
     {
@@ -3198,7 +4694,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 191,
+      "elapsedMs": 183,
       "error": ""
     },
     {
@@ -3215,7 +4711,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 192,
+      "elapsedMs": 128,
       "error": ""
     },
     {
@@ -3232,7 +4728,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 162,
+      "elapsedMs": 110,
       "error": ""
     },
     {
@@ -3249,7 +4745,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 223,
+      "elapsedMs": 98,
       "error": ""
     },
     {
@@ -3266,7 +4762,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 167,
+      "elapsedMs": 179,
       "error": ""
     },
     {
@@ -3283,7 +4779,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 235,
+      "elapsedMs": 147,
       "error": ""
     },
     {
@@ -3300,7 +4796,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 147,
+      "elapsedMs": 187,
       "error": ""
     },
     {
@@ -3317,7 +4813,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 170,
+      "elapsedMs": 149,
       "error": ""
     },
     {
@@ -3334,7 +4830,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 155,
+      "elapsedMs": 172,
       "error": ""
     },
     {
@@ -3351,7 +4847,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 257,
+      "elapsedMs": 172,
       "error": ""
     },
     {
@@ -3368,7 +4864,7 @@
       "maxBandwidth": 6221313,
       "variants": 10,
       "status": 200,
-      "elapsedMs": 249,
+      "elapsedMs": 293,
       "error": ""
     },
     {
@@ -3385,7 +4881,7 @@
       "maxBandwidth": 6221313,
       "variants": 10,
       "status": 200,
-      "elapsedMs": 398,
+      "elapsedMs": 1055,
       "error": ""
     },
     {
@@ -3402,7 +4898,7 @@
       "maxBandwidth": 6221313,
       "variants": 10,
       "status": 200,
-      "elapsedMs": 720,
+      "elapsedMs": 42,
       "error": ""
     },
     {
@@ -3419,7 +4915,7 @@
       "maxBandwidth": 6221313,
       "variants": 10,
       "status": 200,
-      "elapsedMs": 980,
+      "elapsedMs": 342,
       "error": ""
     },
     {
@@ -3436,7 +4932,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 1163,
+      "elapsedMs": 1263,
       "error": ""
     },
     {
@@ -3453,7 +4949,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 156,
+      "elapsedMs": 317,
       "error": ""
     },
     {
@@ -3470,7 +4966,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 569,
+      "elapsedMs": 885,
       "error": ""
     },
     {
@@ -3487,7 +4983,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 145,
+      "elapsedMs": 1286,
       "error": ""
     },
     {
@@ -3504,7 +5000,7 @@
       "maxBandwidth": 4540800,
       "variants": 4,
       "status": 200,
-      "elapsedMs": 963,
+      "elapsedMs": 1083,
       "error": ""
     },
     {
@@ -3521,7 +5017,7 @@
       "maxBandwidth": 7003216,
       "variants": 3,
       "status": 200,
-      "elapsedMs": 269,
+      "elapsedMs": 934,
       "error": ""
     },
     {
@@ -3538,7 +5034,7 @@
       "maxBandwidth": 3256000,
       "variants": 4,
       "status": 200,
-      "elapsedMs": 1134,
+      "elapsedMs": 1052,
       "error": ""
     },
     {
@@ -3555,7 +5051,7 @@
       "maxBandwidth": 3256000,
       "variants": 4,
       "status": 200,
-      "elapsedMs": 986,
+      "elapsedMs": 991,
       "error": ""
     },
     {
@@ -3572,7 +5068,7 @@
       "maxBandwidth": 11545600,
       "variants": 5,
       "status": 200,
-      "elapsedMs": 176,
+      "elapsedMs": 556,
       "error": ""
     }
   ]
