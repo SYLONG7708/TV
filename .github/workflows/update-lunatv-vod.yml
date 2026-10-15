@@ -20,7 +20,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: oktv-data-publish-${{ github.ref }}
+  group: oktv-shared-data-publish
+  queue: max
   queue: max
   cancel-in-progress: false
 

@@ -24,6 +24,7 @@ jobs:
           ref: main
           sparse-checkout-cone-mode: false
           sparse-checkout: |
+            .gitattributes
             .github/workflows/*
             docs/iphone/*
             docs/data/iphone-vod-catalog.json

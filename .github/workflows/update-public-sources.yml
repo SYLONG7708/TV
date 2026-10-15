@@ -8,7 +8,9 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: oktv-public-source-refresh
+  # All writers of gh-pages share this lock, including long full-catalog builds.
+  group: oktv-shared-data-publish
+  queue: max
   cancel-in-progress: false
 jobs:
   refresh:
