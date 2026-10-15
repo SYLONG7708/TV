@@ -45,6 +45,35 @@ test('stale live data does not cause full VOD refresh', () => {
   const result = planRecovery({ health: { ...health, repair: { live: true } }, dataHead: sha, now });
   assert.deepEqual(result.map((x) => x.workflow), ['update-youtube-live.yml']);
 });
+test('public media publishers also block conflicting repairs and deployments', () => {
+  const result = planRecovery({ runs: { public: [run(10, '', 1, { status: 'in_progress' })] },
+    health: { ...health, repair: { live: true } }, dataHead: 'b'.repeat(40), now });
+  assert.ok(result.length > 0);
+  assert.ok(result.every(row => row.action === 'wait'));
+});
+test('daily audit and backup failures are monitored without blind retries of code errors', () => {
+  const failureStage = classifyFailure([{ name: 'audit', conclusion: 'failure', steps: [
+    { name: 'Verify application behavior before network diagnosis', conclusion: 'failure' },
+  ] }]);
+  assert.equal(failureStage, 'code');
+  const result = planRecovery({ runs: { audit: [run(11, 'failure', 2, { failureStage })],
+    backups: [run(12, 'failure', 2)] }, health, dataHead: sha, now });
+  assert.equal(result.find(row => row.key === 'audit').action, 'attention');
+  assert.equal(result.find(row => row.key === 'backups').workflow, 'refresh-playback-repairs.yml');
+});
+test('healthy media endpoints cannot hide an unresolved interface regression', async () => {
+  const api = async endpoint => {
+    if (endpoint.endsWith('git/ref/heads/gh-pages')) return { object: { sha } };
+    if (endpoint.includes('/jobs?')) return { jobs: [{ name: 'interface', conclusion: 'failure',
+      steps: [{ name: 'Fail the run when interface regressions are found', conclusion: 'failure' }] }] };
+    if (endpoint.includes('daily-media-audit.yml/runs?')) return { workflow_runs: [run(13, 'failure', 2)] };
+    return { workflow_runs: [] };
+  };
+  const report = await recover({ repository: 'SYLONG7708/TV', health, api, now });
+  assert.equal(report.status, 'needs-attention');
+  assert.equal(report.publicHealthy, true);
+  assert.deepEqual(report.dispatched, []);
+});
 test('dispatch race is checked again and pending recovery is not reported healthy', async () => {
   const posts = [];
   const api = async (endpoint, options) => {

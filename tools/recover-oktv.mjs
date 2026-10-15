@@ -2,13 +2,14 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-export const WORKFLOWS = { vod: 'update-lunatv-vod.yml', live: 'update-youtube-live.yml', pages: 'deploy-oktv-pages.yml', integrity: 'validate-oktv-integrity.yml' };
+export const WORKFLOWS = { vod: 'update-lunatv-vod.yml', live: 'update-youtube-live.yml', pages: 'deploy-oktv-pages.yml', integrity: 'validate-oktv-integrity.yml', public: 'update-public-sources.yml', backups: 'refresh-playback-repairs.yml', audit: 'daily-media-audit.yml' };
 const ACTIVE = new Set(['queued', 'in_progress', 'waiting', 'pending', 'requested']);
 const FAILED = new Set(['failure', 'timed_out', 'startup_failure', 'action_required']);
 
 export function classifyFailure(jobs = []) {
   const failed = jobs.filter((job) => FAILED.has(job.conclusion));
   const names = failed.flatMap((job) => [job.name, ...(job.steps || []).filter((s) => s.conclusion === 'failure').map((s) => s.name)]).join(' ');
+  if (/Verify application.*(?:behavior|diagnosis)|Run regression tests|Validate scripts and CSP|interface regressions|Verify search, playback|fullscreen exit interactions/i.test(names)) return 'code';
   return /deploy|Verify.*Pages|Verify complete public system/i.test(names) ? 'pages' : 'workflow';
 }
 
@@ -21,6 +22,11 @@ export function planRecovery({ runs = {}, health = {}, dataHead = '', now = Date
   for (const [key, history] of Object.entries(histories)) {
     const latest = history[0];
     if (latest && FAILED.has(latest.conclusion)) {
+      if (latest.failureStage === 'code') {
+        decisions.push({ key, action: 'attention', sourceRun: latest.id,
+          reason: 'Application or interface regression needs a reviewed fix; current working cloud content retained, no blind retry.' });
+        continue;
+      }
       const pagesSuccess = histories.pages.find((run) => run.conclusion === 'success');
       if (latest.failureStage === 'pages' && health.deployment?.dataCommit === dataHead &&
           pagesSuccess && Date.parse(pagesSuccess.updated_at) > Date.parse(latest.updated_at)) continue;
@@ -40,7 +46,7 @@ export function planRecovery({ runs = {}, health = {}, dataHead = '', now = Date
       decisions.push({ key, action: 'wait', reason: 'target workflow already active' });
       continue;
     }
-    if (['vod', 'live', 'pages'].includes(key) && ['vod', 'live'].some((writer) => histories[writer].some((r) => ACTIVE.has(r.status)))) {
+    if (['vod', 'live', 'public', 'pages'].includes(key) && ['vod', 'live', 'public'].some((writer) => histories[writer].some((r) => ACTIVE.has(r.status)))) {
       decisions.push({ key, action: 'wait', reason: 'data publisher already active' });
       continue;
     }
@@ -115,7 +121,8 @@ export async function recover({ repository, health, api = githubApi, now = Date.
     await api(`${prefix}/actions/workflows/${decision.workflow}/dispatches`, { method: 'POST', body: { ref: 'main' } });
     report.dispatched.push(decision.workflow);
   }
-  report.status = report.dispatched.length ? 'repair-dispatched' : decisions.length ? 'waiting-for-recovery' : health.ok ? 'healthy' : 'degraded';
+  report.status = decisions.some(decision => decision.action === 'attention') ? 'needs-attention'
+    : report.dispatched.length ? 'repair-dispatched' : decisions.length ? 'waiting-for-recovery' : health.ok ? 'healthy' : 'degraded';
   return report;
 }
 
