@@ -131,7 +131,9 @@ try{
   await check('expanded-close-stops-audio-and-reopen-restores-size',async()=>{
     await openMovie();await tap('#playerExpand');await waitExpanded(true);await screenshot('expanded-video');await tap('#playerSheet button[data-close-player]');
     await page.waitForFunction(()=>!document.querySelector('#playerSheet.is-open'));
-    assert.equal(await expanded(),false);assert.equal(await page.locator('#player').evaluate(v=>v.paused&&!v.getAttribute('src')),true);
+    // Browser fullscreen exit resolves asynchronously after the sheet closes.
+    // Wait for that actual completion; an immediate assertion races the browser.
+    await waitExpanded(false);assert.equal(await page.locator('#player').evaluate(v=>v.paused&&!v.getAttribute('src')),true);
     await tap('#detailBody [data-episode]');await playing();assert.equal(await expanded(),false);return headerVisible();
   });
   await check('reopen-starts-at-video-after-scrolling-settings',async()=>{
@@ -142,7 +144,7 @@ try{
   await check('voice-expand-restore-close',async()=>{
     await voice('FULLSCREEN_ON');await waitExpanded(true);await voice('FULLSCREEN_OFF');await waitExpanded(false);
     await voice('FULLSCREEN_ON');await waitExpanded(true);await voice('CLOSE_PLAYER');await page.waitForFunction(()=>!document.querySelector('#playerSheet.is-open'));
-    assert.equal(await expanded(),false);return {allVoiceExits:true};
+    await waitExpanded(false);return {allVoiceExits:true};
   });
   await check('rapid-open-close-does-not-resurrect-player',async()=>{
     for(let i=0;i<4;i++){await tap('#detailBody [data-episode]');await tap('#playerExpand');await tap('#playerSheet button[data-close-player]');}

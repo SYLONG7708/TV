@@ -35,7 +35,12 @@ const snap = async name => page.screenshot({ path: path.join(out, `${name}.png`)
 async function check(name, action) {
   const started = Date.now();
   try { const detail = await action(); report.checks.push({ name, passed: true, elapsedMs: Date.now() - started, detail }); console.log(`PASS ${name}`); }
-  catch (error) { report.checks.push({ name, passed: false, elapsedMs: Date.now() - started, error: error.message.slice(0, 800) }); console.log(`FAIL ${name}: ${error.message.slice(0, 200)}`); await snap(`failed-${name}`); }
+  catch (error) {
+    report.checks.push({ name, passed: false, elapsedMs: Date.now() - started, error: error.message.slice(0, 800),
+      ...(error.externalRestriction ? { externalRestriction: error.externalRestriction } : {}) });
+    console.log(`${error.externalRestriction ? '::warning::EXTERNAL RESTRICTION' : 'FAIL'} ${name}: ${error.message.slice(0, 200)}`);
+    await snap(`failed-${name}`);
+  }
   await fs.writeFile(path.join(out, 'report.json'), JSON.stringify(report, null, 2));
 }
 const videoInfo = () => page.locator('#player').evaluate(video => ({ time: video.currentTime, duration: video.duration, paused: video.paused, ready: video.readyState, width: video.videoWidth, height: video.videoHeight, decodedFrames: video.webkitDecodedFrameCount || 0, decodedAudioBytes: video.webkitAudioDecodedByteCount || 0, error: video.error?.code || 0 }));
@@ -153,7 +158,16 @@ try {
       if (skip && await skip.isVisible().catch(() => false)) { await skip.click({ timeout: 1500 }).then(() => officialSkipClicks++).catch(() => {}); }
       await page.waitForTimeout(500);
     }
-    assert.equal(await page.locator('#playerStatus').innerText(), '播放中', 'Official content did not report playing within the observation window');
+    const currentStatus = await page.locator('#playerStatus').innerText();
+    if (currentStatus !== '播放中') {
+      const frame = page.frames().find(frame => /^https:\/\/www\.youtube(?:-nocookie)?\.com\/embed\//.test(frame.url()));
+      const providerMessage = await frame?.locator('body').innerText({ timeout: 2000 }).catch(() => '') || '';
+      if (/sign in to confirm you[’']re not a bot|登入以確認你不是機器人|登录以确认您不是机器人/i.test(providerMessage)) {
+        throw Object.assign(new Error('YouTube explicitly requires sign-in/bot verification on this runner; playback is unavailable here, not counted as passed.'),
+          { externalRestriction: 'youtube-bot-verification' });
+      }
+    }
+    assert.equal(currentStatus, '播放中', 'Official content did not report playing within the observation window');
     await snap('youtube-live'); return { status: await page.locator('#playerStatus').innerText(), officialSkipClicks, evidence: report.playback.slice(-2) };
   });
   await closePlayer();
@@ -186,7 +200,9 @@ try {
   });
 } finally {
   await context.setOffline(false).catch(() => {});
-  report.summary = { passed: report.checks.filter(row => row.passed).length, failed: report.checks.filter(row => !row.passed).length, pageErrors: report.pageErrors.length };
+  report.summary = { passed: report.checks.filter(row => row.passed).length,
+    failed: report.checks.filter(row => !row.passed && !row.externalRestriction).length,
+    externalRestrictions: report.checks.filter(row => row.externalRestriction).length, pageErrors: report.pageErrors.length };
   await fs.writeFile(path.join(out, 'report.json'), JSON.stringify(report, null, 2)); console.log(JSON.stringify(report.summary));
   await browser.close();
   if (report.summary.failed || report.summary.pageErrors) process.exitCode = 1;
