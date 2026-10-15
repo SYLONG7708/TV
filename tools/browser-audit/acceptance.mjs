@@ -14,6 +14,20 @@ if (args.codeRoot) await context.route('https://sylong7708.github.io/TV/docs/iph
 });
 const page = device ? context.pages().find(page => page.url().includes('/TV/docs/iphone/')) : await context.newPage();
 page.setDefaultTimeout(15000);
+// Android supplies a bundled shell when navigation is offline. Plain Chromium
+// has no such native fallback and an HTTP-cache reload is nondeterministic.
+// Retain only the actual downloaded code for that shell; never serve catalog or
+// media responses from this test harness, so offline data must come from the app.
+const downloadedShell = new Map(), pendingShell = [];
+const shellKey = value => { const url = new URL(value); return url.origin + url.pathname; };
+page.on('response', response => {
+  const key = shellKey(response.url());
+  if (response.ok() && /^https:\/\/sylong7708\.github\.io\/TV\/docs\/iphone\/.*\.(?:html|mjs|css)$/.test(key)) {
+    pendingShell.push(response.body().then(body => downloadedShell.set(key, {
+      body, contentType: response.headers()['content-type'] || 'application/octet-stream',
+    })).catch(() => {}));
+  }
+});
 const report = { checkedAt: new Date().toISOString(), platform: device ? 'UIS7870 WebView' : 'Chrome desktop', checks: [], pageErrors: [], playback: [] };
 page.on('pageerror', error => report.pageErrors.push(error.message));
 page.on('console', message => { if (message.text().startsWith('yingshi-playback')) report.playback.push(message.text()); });
@@ -143,12 +157,32 @@ try {
     await snap('youtube-live'); return { status: await page.locator('#playerStatus').innerText(), officialSkipClicks, evidence: report.playback.slice(-2) };
   });
   await closePlayer();
-  await check('cloud-cache-offline-online-recovery', async () => {
-    await search(''); await context.setOffline(true); await page.reload({ waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(() => window.YingshiDiagnostics?.snapshot()?.ready, undefined, { timeout: 45000 });
-    const offline = await page.evaluate(() => window.YingshiDiagnostics.snapshot()); assert.ok(offline.sources > 0); assert.match(await page.locator('#bootNotice').innerText(), /下載的目錄/);
-    await snap('offline-downloaded-cache'); await context.setOffline(false);
-    await page.waitForTimeout(2500); await page.waitForFunction(() => window.YingshiDiagnostics?.snapshot()?.ready, undefined, { timeout: 60000 }); return { offline, restored: await page.evaluate(() => navigator.onLine) };
+  await check('offline-data-cache-with-native-shell-model-and-online-recovery', async () => {
+    await search(''); await Promise.all(pendingShell);
+    assert.ok(downloadedShell.has(shellKey(page.url())), 'no real downloaded shell captured');
+    let offlineDataFailures = 0;
+    const failed = request => { if (/\.json(?:[.?/]|$)/.test(request.url())) offlineDataFailures++; };
+    const shell = async route => {
+      const entry = downloadedShell.get(shellKey(route.request().url()));
+      return entry ? route.fulfill(entry) : route.continue();
+    };
+    await context.route('**/*', shell);
+    page.on('requestfailed', failed);
+    try {
+      await context.setOffline(true); await page.reload({ waitUntil: 'domcontentloaded' });
+      await page.waitForFunction(() => window.YingshiDiagnostics?.snapshot()?.ready, undefined, { timeout: 45000 });
+      const offline = await page.evaluate(() => window.YingshiDiagnostics.snapshot());
+      assert.ok(offline.sources > 0); assert.ok(offlineDataFailures > 0, 'cloud data requests were not actually blocked');
+      assert.match(await page.locator('#bootNotice').innerText(), /下載的目錄/);
+      await snap('offline-downloaded-cache'); await context.setOffline(false);
+      await context.unroute('**/*', shell);
+      await page.waitForTimeout(2500);
+      await page.waitForFunction(() => window.YingshiDiagnostics?.snapshot()?.ready, undefined, { timeout: 60000 });
+      return { offline, offlineDataFailures, shellMode: 'downloaded code models Android native fallback; no data responses mocked', restored: await page.evaluate(() => navigator.onLine) };
+    } finally {
+      await context.setOffline(false); await context.unroute('**/*', shell);
+      page.off('requestfailed', failed);
+    }
   });
 } finally {
   await context.setOffline(false).catch(() => {});
