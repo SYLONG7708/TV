@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-17T04:35:56.656Z",
+  "generatedAt": "2026-10-17T10:51:47.666Z",
   "policy": "Curated official HTTPS sources; media remains upstream; failed entries retain last-good data for at most seven days.",
   "sources": [
     {
@@ -22,15 +22,11 @@
       ],
       "checks": [
         {
-          "id": "public-blender-open-movies:3eb93cab-79a2-4fd5-a636-d42e5c59ddea",
-          "ok": true
-        },
-        {
-          "id": "public-blender-open-movies:3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
-          "ok": true
-        },
-        {
           "id": "public-blender-open-movies:1ba07bbb-1456-4293-99a6-833fa450eda0",
+          "ok": true
+        },
+        {
+          "id": "public-blender-open-movies:3eb93cab-79a2-4fd5-a636-d42e5c59ddea",
           "ok": true
         },
         {
@@ -46,10 +42,6 @@
           "ok": true
         },
         {
-          "id": "public-blender-open-movies:23f3ef79-15dc-44c5-aa45-cf92e78a4509",
-          "ok": true
-        },
-        {
           "id": "public-blender-open-movies:7b2eff2a-35f2-4403-9d88-d0dd6e4b5ba1",
           "ok": true
         },
@@ -62,11 +54,20 @@
           "ok": true
         },
         {
+          "id": "public-blender-open-movies:3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
+          "ok": false,
+          "error": "The operation was aborted due to timeout"
+        },
+        {
+          "id": "public-blender-open-movies:23f3ef79-15dc-44c5-aa45-cf92e78a4509",
+          "ok": true
+        },
+        {
           "id": "public-blender-open-movies:8533ea43-4271-4a57-9694-e9d0b35e1aa1",
           "ok": true
         }
       ],
-      "verifiedAt": "2026-10-17T04:35:56.656Z"
+      "verifiedAt": "2026-10-17T10:51:47.666Z"
     }
   ],
   "items": [
@@ -100,7 +101,7 @@
         "evidenceUrl": "https://video.blender.org/api/v1/videos/3eb93cab-79a2-4fd5-a636-d42e5c59ddea",
         "changes": "原片未修改；影片與音訊由官方站提供。"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe",
       "episodeCount": 1,
       "episodes": [
@@ -140,80 +141,13 @@
         "evidenceUrl": "https://video.blender.org/api/v1/videos/1ba07bbb-1456-4293-99a6-833fa450eda0",
         "changes": "原片未修改；影片與音訊由官方站提供。"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe",
       "episodeCount": 1,
       "episodes": [
         {
           "name": "正片",
           "url": "https://video.blender.org/object-storage/streaming_playlists/hls/1ba07bbb-1456-4293-99a6-833fa450eda0/ee4afc50-6050-4a78-8527-bd1d04084fc2-master.m3u8"
-        }
-      ]
-    },
-    {
-      "id": "public-blender-open-movies:3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
-      "vodId": "3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
-      "sourceId": "public-blender-open-movies",
-      "sourceName": "Blender 官方公開短片",
-      "title": "Spring",
-      "originalName": "Spring - Blender Open Movie",
-      "kind": "movie",
-      "categoryName": "電影",
-      "genre": [
-        "公開短片"
-      ],
-      "year": "2019",
-      "area": "荷蘭",
-      "adult": false,
-      "playable": true,
-      "poster": "https://video.blender.org/lazy-static/thumbnails/3d95fb3d-c866-42c8-9db1-fe82f48ccb95.jpg",
-      "duration": 464,
-      "remarks": "官方公開短片",
-      "updatedAt": "2019-06-26T14:54:03.643Z",
-      "content": "Spring is the latest short film produced by Blender Animation Studio. Made in Blender 2.8.\r\nGet the production files, assets and exclusive making-of videos by joining Blender Cloud at https://cloud.blender.org\r\n\r\n--\r\n\r\nSpring is the story of a shepherd girl and her dog, who face ancient spirits in order to continue the cycle of life. This poetic and visually stunning short film was written and directed by Andy Goralczyk, inspired by his childhood in the mountains of Germany.\r\n\r\nThe Spring team used the development version of Blender 2.80 for the entire production, before the software was in official Beta even. As for all of Blender’s Open Movies, the entire production process and all its source files are being shared on the production platform Blender Cloud.\r\n\r\nDirector: Andy Goralczyk\r\nProducer: Francesco Siddi\r\nExecutive producer: Ton Roosendaal\r\nMusic: Torin Borrowdale\r\nSound: Sander Houtman\r\nConcept art: David Revoy\r\nAnimation director: Hjalti Hjalmarsson\r\nModeling and shading: Julien Kaspar\r\nAnimation: Ignacio Conesa, Nathan Dillow, Pablo Fournier\r\nRigging: Juan Pablo Bouza\r\nLighting and effects: Pablo Vazquez, Sam Van Hulle\r\nSoftware and Pipeline: Brecht van Lommel, Jacques Lucke, Jeroen Bakker, Sergey Sharybin, Sybren Stüvel, Tobias Johansson\r\n\r\nRendering IT4INNOVATIONS VSB - Technical University of Ostrava\r\n\r\nFormat: 3D animated film, 7:44 minutes. 5.1 sound. No dialogs. Fit for an audience of 6 years and older (PG). Everything you see was made with Blender, GIMP, Krita and Inkscape.\n\n(CC) Blender Foundation | studio.blender.org · CC BY-SA（版本依原站）\n原片未修改；影片與音訊由官方站提供。",
-      "rights": {
-        "creator": "Blender Foundation / Blender Studio",
-        "attribution": "(CC) Blender Foundation | studio.blender.org",
-        "originalPage": "https://video.blender.org/videos/watch/3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
-        "licenseLabel": "CC BY-SA（版本依原站）",
-        "licenseUrl": "https://video.blender.org/videos/watch/3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
-        "evidenceUrl": "https://video.blender.org/api/v1/videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
-        "changes": "原片未修改；影片與音訊由官方站提供。"
-      },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
-      "verification": "media-probe",
-      "episodeCount": 1,
-      "episodes": [
-        {
-          "name": "正片",
-          "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-804.mp4",
-          "variants": [
-            {
-              "label": "1080p",
-              "height": 804,
-              "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-804.mp4"
-            },
-            {
-              "label": "720p",
-              "height": 720,
-              "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-720.mp4"
-            },
-            {
-              "label": "480p",
-              "height": 480,
-              "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-480.mp4"
-            },
-            {
-              "label": "360p",
-              "height": 360,
-              "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-360.mp4"
-            },
-            {
-              "label": "240p",
-              "height": 240,
-              "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-240.mp4"
-            }
-          ]
         }
       ]
     },
@@ -247,7 +181,7 @@
         "evidenceUrl": "https://video.blender.org/api/v1/videos/6402b77c-b61f-4a06-96ca-c8420a2becf4",
         "changes": "原片未修改；影片與音訊由官方站提供。"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe",
       "episodeCount": 1,
       "episodes": [
@@ -314,7 +248,7 @@
         "evidenceUrl": "https://video.blender.org/api/v1/videos/f507dfdc-e73e-45a4-9778-d758cbe1ce96",
         "changes": "原片未修改；影片與音訊由官方站提供。"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe",
       "episodeCount": 1,
       "episodes": [
@@ -381,7 +315,7 @@
         "evidenceUrl": "https://video.blender.org/api/v1/videos/64222c8a-c4c7-4b3b-9850-7fb2078edcf6",
         "changes": "原片未修改；影片與音訊由官方站提供。"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe",
       "episodeCount": 1,
       "episodes": [
@@ -448,7 +382,7 @@
         "evidenceUrl": "https://video.blender.org/api/v1/videos/23f3ef79-15dc-44c5-aa45-cf92e78a4509",
         "changes": "原片未修改；影片與音訊由官方站提供。"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe",
       "episodeCount": 1,
       "episodes": [
@@ -475,11 +409,6 @@
               "label": "360p",
               "height": 360,
               "url": "https://video.blender.org/object-storage/web_videos/23f3ef79-15dc-44c5-aa45-cf92e78a4509-360.mp4"
-            },
-            {
-              "label": "240p",
-              "height": 240,
-              "url": "https://video.blender.org/object-storage/web_videos/23f3ef79-15dc-44c5-aa45-cf92e78a4509-240.mp4"
             }
           ]
         }
@@ -515,7 +444,7 @@
         "evidenceUrl": "https://video.blender.org/api/v1/videos/7b2eff2a-35f2-4403-9d88-d0dd6e4b5ba1",
         "changes": "原片未修改；影片與音訊由官方站提供。"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe",
       "episodeCount": 1,
       "episodes": [
@@ -582,7 +511,7 @@
         "evidenceUrl": "https://studio.blender.org/projects/coffee-run/pages/licensing/",
         "changes": "原片未修改；影片與音訊由官方站提供。"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe",
       "episodeCount": 1,
       "episodes": [
@@ -649,7 +578,7 @@
         "evidenceUrl": "https://studio.blender.org/projects/sprite-fright/pages/about/",
         "changes": "原片未修改；影片與音訊由官方站提供。"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe",
       "episodeCount": 1,
       "episodes": [
@@ -701,7 +630,7 @@
         "evidenceUrl": "https://video.blender.org/videos/watch/8533ea43-4271-4a57-9694-e9d0b35e1aa1",
         "changes": "原片未修改；影片與音訊由官方站提供。"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe",
       "episodeCount": 1,
       "episodes": [
@@ -725,11 +654,6 @@
               "url": "https://video.blender.org/object-storage/web_videos/8533ea43-4271-4a57-9694-e9d0b35e1aa1-480.mp4"
             },
             {
-              "label": "360p",
-              "height": 360,
-              "url": "https://video.blender.org/object-storage/web_videos/8533ea43-4271-4a57-9694-e9d0b35e1aa1-360.mp4"
-            },
-            {
               "label": "240p",
               "height": 240,
               "url": "https://video.blender.org/object-storage/web_videos/8533ea43-4271-4a57-9694-e9d0b35e1aa1-240.mp4"
@@ -737,6 +661,74 @@
           ]
         }
       ]
+    },
+    {
+      "id": "public-blender-open-movies:3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
+      "vodId": "3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
+      "sourceId": "public-blender-open-movies",
+      "sourceName": "Blender 官方公開短片",
+      "title": "Spring",
+      "originalName": "Spring - Blender Open Movie",
+      "kind": "movie",
+      "categoryName": "電影",
+      "genre": [
+        "公開短片"
+      ],
+      "year": "2019",
+      "area": "荷蘭",
+      "adult": false,
+      "playable": true,
+      "poster": "https://video.blender.org/lazy-static/thumbnails/3d95fb3d-c866-42c8-9db1-fe82f48ccb95.jpg",
+      "duration": 464,
+      "remarks": "官方公開短片",
+      "updatedAt": "2019-06-26T14:54:03.643Z",
+      "content": "Spring is the latest short film produced by Blender Animation Studio. Made in Blender 2.8.\r\nGet the production files, assets and exclusive making-of videos by joining Blender Cloud at https://cloud.blender.org\r\n\r\n--\r\n\r\nSpring is the story of a shepherd girl and her dog, who face ancient spirits in order to continue the cycle of life. This poetic and visually stunning short film was written and directed by Andy Goralczyk, inspired by his childhood in the mountains of Germany.\r\n\r\nThe Spring team used the development version of Blender 2.80 for the entire production, before the software was in official Beta even. As for all of Blender’s Open Movies, the entire production process and all its source files are being shared on the production platform Blender Cloud.\r\n\r\nDirector: Andy Goralczyk\r\nProducer: Francesco Siddi\r\nExecutive producer: Ton Roosendaal\r\nMusic: Torin Borrowdale\r\nSound: Sander Houtman\r\nConcept art: David Revoy\r\nAnimation director: Hjalti Hjalmarsson\r\nModeling and shading: Julien Kaspar\r\nAnimation: Ignacio Conesa, Nathan Dillow, Pablo Fournier\r\nRigging: Juan Pablo Bouza\r\nLighting and effects: Pablo Vazquez, Sam Van Hulle\r\nSoftware and Pipeline: Brecht van Lommel, Jacques Lucke, Jeroen Bakker, Sergey Sharybin, Sybren Stüvel, Tobias Johansson\r\n\r\nRendering IT4INNOVATIONS VSB - Technical University of Ostrava\r\n\r\nFormat: 3D animated film, 7:44 minutes. 5.1 sound. No dialogs. Fit for an audience of 6 years and older (PG). Everything you see was made with Blender, GIMP, Krita and Inkscape.\n\n(CC) Blender Foundation | studio.blender.org · CC BY-SA（版本依原站）\n原片未修改；影片與音訊由官方站提供。",
+      "rights": {
+        "creator": "Blender Foundation / Blender Studio",
+        "attribution": "(CC) Blender Foundation | studio.blender.org",
+        "originalPage": "https://video.blender.org/videos/watch/3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
+        "licenseLabel": "CC BY-SA（版本依原站）",
+        "licenseUrl": "https://video.blender.org/videos/watch/3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
+        "evidenceUrl": "https://video.blender.org/api/v1/videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
+        "changes": "原片未修改；影片與音訊由官方站提供。"
+      },
+      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verification": "stale",
+      "episodeCount": 1,
+      "episodes": [
+        {
+          "name": "正片",
+          "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-804.mp4",
+          "variants": [
+            {
+              "label": "1080p",
+              "height": 804,
+              "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-804.mp4"
+            },
+            {
+              "label": "720p",
+              "height": 720,
+              "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-720.mp4"
+            },
+            {
+              "label": "480p",
+              "height": 480,
+              "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-480.mp4"
+            },
+            {
+              "label": "360p",
+              "height": 360,
+              "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-360.mp4"
+            },
+            {
+              "label": "240p",
+              "height": 240,
+              "url": "https://video.blender.org/object-storage/web_videos/3d95fb3d-c866-42c8-9db1-fe82f48ccb95-240.mp4"
+            }
+          ]
+        }
+      ],
+      "lastFailure": "The operation was aborted due to timeout"
     }
   ],
   "live": [
@@ -758,7 +750,7 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     },
     {
@@ -779,7 +771,7 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     },
     {
@@ -800,7 +792,7 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     },
     {
@@ -821,7 +813,7 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     },
     {
@@ -842,7 +834,7 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     },
     {
@@ -863,7 +855,7 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     },
     {
@@ -884,7 +876,7 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     },
     {
@@ -905,7 +897,7 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     },
     {
@@ -926,7 +918,7 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     },
     {
@@ -947,7 +939,7 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     },
     {
@@ -968,7 +960,7 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     },
     {
@@ -989,7 +981,7 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     },
     {
@@ -1011,21 +1003,17 @@
         "revision": "18150d85f81863651765665fcd80b7c0317f4fce",
         "api": "https://iptv-org.github.io/api/streams.json"
       },
-      "verifiedAt": "2026-10-17T04:35:56.656Z",
+      "verifiedAt": "2026-10-17T10:51:47.666Z",
       "verification": "media-probe"
     }
   ],
   "checks": [
     {
-      "id": "public-blender-open-movies:3eb93cab-79a2-4fd5-a636-d42e5c59ddea",
-      "ok": true
-    },
-    {
-      "id": "public-blender-open-movies:3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
-      "ok": true
-    },
-    {
       "id": "public-blender-open-movies:1ba07bbb-1456-4293-99a6-833fa450eda0",
+      "ok": true
+    },
+    {
+      "id": "public-blender-open-movies:3eb93cab-79a2-4fd5-a636-d42e5c59ddea",
       "ok": true
     },
     {
@@ -1041,10 +1029,6 @@
       "ok": true
     },
     {
-      "id": "public-blender-open-movies:23f3ef79-15dc-44c5-aa45-cf92e78a4509",
-      "ok": true
-    },
-    {
       "id": "public-blender-open-movies:7b2eff2a-35f2-4403-9d88-d0dd6e4b5ba1",
       "ok": true
     },
@@ -1057,11 +1041,20 @@
       "ok": true
     },
     {
+      "id": "public-blender-open-movies:3d95fb3d-c866-42c8-9db1-fe82f48ccb95",
+      "ok": false,
+      "error": "The operation was aborted due to timeout"
+    },
+    {
+      "id": "public-blender-open-movies:23f3ef79-15dc-44c5-aa45-cf92e78a4509",
+      "ok": true
+    },
+    {
       "id": "public-blender-open-movies:8533ea43-4271-4a57-9694-e9d0b35e1aa1",
       "ok": true
     },
     {
-      "id": "public-dw-103",
+      "id": "public-dw-102",
       "ok": true
     },
     {
@@ -1069,7 +1062,7 @@
       "ok": true
     },
     {
-      "id": "public-dw-102",
+      "id": "public-dw-103",
       "ok": true
     },
     {
@@ -1081,19 +1074,7 @@
       "ok": true
     },
     {
-      "id": "public-france24-fr",
-      "ok": true
-    },
-    {
       "id": "public-france24-es",
-      "ok": true
-    },
-    {
-      "id": "public-dw-110",
-      "ok": true
-    },
-    {
-      "id": "public-nhkworld-en",
       "ok": true
     },
     {
@@ -1101,11 +1082,23 @@
       "ok": true
     },
     {
-      "id": "public-trtworld",
+      "id": "public-dw-110",
+      "ok": true
+    },
+    {
+      "id": "public-france24-fr",
       "ok": true
     },
     {
       "id": "public-arirang-un",
+      "ok": true
+    },
+    {
+      "id": "public-nhkworld-en",
+      "ok": true
+    },
+    {
+      "id": "public-trtworld",
       "ok": true
     },
     {
@@ -1116,8 +1109,8 @@
   "totals": {
     "movies": 11,
     "live": 13,
-    "passed": 24,
-    "failed": 0,
-    "retained": 0
+    "passed": 23,
+    "failed": 1,
+    "retained": 1
   }
 }
