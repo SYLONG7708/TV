@@ -1,5 +1,5 @@
 {
-    "generatedAt":  "2026-10-17 18:07:17 +00:00",
+    "generatedAt":  "2026-10-17 19:01:04 +00:00",
     "sourceName":  "full",
     "sourceUrl":  "https://raw.githubusercontent.com/hafrey1/LunaTV-config/refs/heads/main/LunaTV-config.json",
     "compareVodUrl":  "https://raw.githubusercontent.com/SYLONG7708/TV/refs/heads/main/sources/TVBOX",
@@ -14,9 +14,9 @@
     "includedSources":  5,
     "failedSources":  64,
     "duplicateSources":  61,
-    "invalidSources":  10,
-    "searchOkSources":  54,
-    "searchPlayableSources":  50,
+    "invalidSources":  11,
+    "searchOkSources":  52,
+    "searchPlayableSources":  48,
     "validationSkipped":  false,
     "duplicateCheckSkipped":  false,
     "redactedSampleNames":  true,
@@ -30,13 +30,13 @@
                        "duplicateReason":  "",
                        "listOk":  true,
                        "detailOk":  true,
-                       "searchOk":  true,
-                       "searchHasPlayUrl":  true,
+                       "searchOk":  false,
+                       "searchHasPlayUrl":  false,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
                        "sampleVodId":  "84541",
-                       "searchSampleVodId":  "84541",
-                       "error":  ""
+                       "searchSampleVodId":  "",
+                       "error":  "Search probe failed: Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (503) Server Unavailable.\""
                    },
                    {
                        "key":  "lunatv_002_dbzy_tv",
@@ -238,7 +238,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "165402",
+                       "sampleVodId":  "165397",
                        "searchSampleVodId":  "89269",
                        "error":  "duplicate_api"
                    },
@@ -289,8 +289,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "235439",
-                       "searchSampleVodId":  "235439",
+                       "sampleVodId":  "236677",
+                       "searchSampleVodId":  "236677",
                        "error":  "duplicate_api"
                    },
                    {
@@ -323,8 +323,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "160023",
-                       "searchSampleVodId":  "160023",
+                       "sampleVodId":  "161260",
+                       "searchSampleVodId":  "161260",
                        "error":  "duplicate_api"
                    },
                    {
@@ -408,8 +408,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "196536",
-                       "searchSampleVodId":  "196536",
+                       "sampleVodId":  "193001",
+                       "searchSampleVodId":  "193001",
                        "error":  "duplicate_api"
                    },
                    {
@@ -459,8 +459,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "179926",
-                       "searchSampleVodId":  "179926",
+                       "sampleVodId":  "179447",
+                       "searchSampleVodId":  "179447",
                        "error":  "duplicate_api"
                    },
                    {
@@ -912,14 +912,14 @@
                        "included":  false,
                        "duplicate":  true,
                        "duplicateReason":  "duplicate_api",
-                       "listOk":  true,
-                       "detailOk":  true,
-                       "searchOk":  true,
-                       "searchHasPlayUrl":  true,
-                       "hasPlayUrl":  true,
-                       "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "288617",
-                       "searchSampleVodId":  "245319",
+                       "listOk":  false,
+                       "detailOk":  false,
+                       "searchOk":  false,
+                       "searchHasPlayUrl":  false,
+                       "hasPlayUrl":  false,
+                       "sampleVodName":  "",
+                       "sampleVodId":  "",
+                       "searchSampleVodId":  "",
                        "error":  "duplicate_api"
                    },
                    {
@@ -1088,7 +1088,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "257934",
+                       "sampleVodId":  "257936",
                        "searchSampleVodId":  "249197",
                        "error":  ""
                    },
@@ -1105,7 +1105,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "257114",
+                       "sampleVodId":  "257116",
                        "searchSampleVodId":  "256636",
                        "error":  ""
                    },
@@ -1122,7 +1122,7 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "256824",
+                       "sampleVodId":  "256826",
                        "searchSampleVodId":  "255434",
                        "error":  ""
                    },
