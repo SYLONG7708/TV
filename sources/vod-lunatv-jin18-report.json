@@ -1,5 +1,5 @@
 {
-    "generatedAt":  "2026-10-17 18:59:14 +00:00",
+    "generatedAt":  "2026-10-17 20:08:21 +00:00",
     "sourceName":  "jin18",
     "sourceUrl":  "https://raw.githubusercontent.com/hafrey1/LunaTV-config/refs/heads/main/jin18.json",
     "compareVodUrl":  "https://raw.githubusercontent.com/SYLONG7708/TV/refs/heads/main/sources/TVBOX",
@@ -11,10 +11,10 @@
     "output":  "D:/a/TV/TV/sources/vod-lunatv-jin18-oktv.json",
     "analysisOutput":  "D:/a/TV/TV/sources/vod-lunatv-jin18-analysis.csv",
     "totalSources":  28,
-    "includedSources":  2,
-    "failedSources":  26,
+    "includedSources":  1,
+    "failedSources":  27,
     "duplicateSources":  24,
-    "invalidSources":  5,
+    "invalidSources":  6,
     "searchOkSources":  22,
     "searchPlayableSources":  19,
     "validationSkipped":  false,
@@ -25,18 +25,18 @@
                        "key":  "lunatv_001_iqiyizyapi_com",
                        "name":  "Luna 01 爱奇艺-",
                        "api":  "https://iqiyizyapi.com/api.php/provide/vod",
-                       "included":  true,
+                       "included":  false,
                        "duplicate":  false,
                        "duplicateReason":  "",
-                       "listOk":  true,
-                       "detailOk":  true,
+                       "listOk":  false,
+                       "detailOk":  false,
                        "searchOk":  false,
                        "searchHasPlayUrl":  false,
-                       "hasPlayUrl":  true,
-                       "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "84541",
+                       "hasPlayUrl":  false,
+                       "sampleVodName":  "",
+                       "sampleVodId":  "",
                        "searchSampleVodId":  "",
-                       "error":  "Search probe failed: Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (503) Server Unavailable.\""
+                       "error":  "Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (503) Server Unavailable.\""
                    },
                    {
                        "key":  "lunatv_002_dbzy_tv",
@@ -187,8 +187,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "149921",
-                       "searchSampleVodId":  "149921",
+                       "sampleVodId":  "153815",
+                       "searchSampleVodId":  "153815",
                        "error":  "duplicate_api"
                    },
                    {
@@ -340,8 +340,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "159970",
-                       "searchSampleVodId":  "159970",
+                       "sampleVodId":  "159488",
+                       "searchSampleVodId":  "159488",
                        "error":  "duplicate_host"
                    },
                    {
@@ -391,8 +391,8 @@
                        "searchHasPlayUrl":  true,
                        "hasPlayUrl":  true,
                        "sampleVodName":  "[redacted]",
-                       "sampleVodId":  "220014",
-                       "searchSampleVodId":  "220014",
+                       "sampleVodId":  "219532",
+                       "searchSampleVodId":  "219532",
                        "error":  "duplicate_api"
                    },
                    {
