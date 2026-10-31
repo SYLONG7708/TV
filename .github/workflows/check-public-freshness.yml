@@ -1,0 +1,70 @@
+name: Check OKTV public freshness
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "37 */3 * * *"
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: oktv-public-freshness
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout freshness checker
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            tools/check-public-freshness.mjs
+
+      - name: Check public data age
+        id: freshness
+        shell: bash
+        run: |
+          set +e
+          node tools/check-public-freshness.mjs \
+            --baseUrl "https://sylong7708.github.io/TV" \
+            --maxVodAgeHours 30 \
+            --maxLiveAgeHours 8 > freshness-report.json
+          status=$?
+          cat freshness-report.json
+          if [ "$status" -eq 0 ]; then
+            echo "stale=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "stale=true" >> "$GITHUB_OUTPUT"
+          fi
+          node -e "const r=require('./freshness-report.json'); console.log('vod_stale=' + Boolean(r.vodStale)); console.log('live_stale=' + Boolean(r.liveStale));" >> "$GITHUB_OUTPUT"
+          exit 0
+
+      - name: Dispatch live refresh when stale
+        if: steps.freshness.outputs.live_stale == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run update-youtube-live.yml --repo "${{ github.repository }}" --ref main
+
+      - name: Dispatch VOD refresh when stale
+        if: steps.freshness.outputs.vod_stale == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run update-lunatv-vod.yml --repo "${{ github.repository }}" --ref main
+
+      - name: Report stale remediation
+        if: steps.freshness.outputs.stale == 'true'
+        run: |
+          echo "::warning::Public OKTV data was stale; only the affected refresh workflow was dispatched."
+          {
+            echo "## OKTV freshness remediation"
+            echo
+            echo "- VOD stale: ${{ steps.freshness.outputs.vod_stale }}"
+            echo "- Live stale: ${{ steps.freshness.outputs.live_stale }}"
+            echo "- The affected refresh workflow has been dispatched."
+          } >> "$GITHUB_STEP_SUMMARY"
