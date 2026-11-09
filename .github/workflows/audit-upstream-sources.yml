@@ -1,0 +1,42 @@
+name: Audit 265 upstream sources
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 03:43 Asia/Shanghai. GitHub may delay scheduled jobs.
+    - cron: '43 19 * * *'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: oktv-upstream-265-audit
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            tools/audit-upstream-sources.mjs
+            tools/vod-payload-parser.mjs
+            /sources/TVBOX
+            /sources/All on-demand sources
+      - name: Compare general APIs and probe metadata
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node tools/audit-upstream-sources.mjs --concurrency 8 --timeoutMs 12000
+      - name: Write audit summary
+        if: success()
+        run: cat reports/upstream-265-latest.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: upstream-265-audit-${{ github.run_id }}
+          path: reports/upstream-265-latest.*
+          if-no-files-found: warn
+          retention-days: 90
