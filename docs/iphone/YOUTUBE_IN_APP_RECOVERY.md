@@ -22,6 +22,9 @@
 - 中視新聞換台後保留正確頻道，使用相同 `blue-m` 播放後端。
 - 暫停停住進度、繼續播放恢復進度、關閉後不被舊回呼重新打開。
 - 播放時影視為前景 Activity，YouTube iframe 的 `src` 為空。
+- 關閉藍色 M 程序後，影視可背景冷啟動解析服務；模擬器實際斷網 45 秒後自動恢復同頻道 720p，解碼影音持續前進。
+
+與最新 main 整合後，164 項 Node 測試、4 項內建頁回歸、19 項 Java 影音邊界檢查通過；授權 release 與 QA APK 建置通過，Android lint 0 錯誤。配套 Morphe 的 [完整雲端未簽章建置](https://github.com/SYLONG7708/Morphe/actions/runs/42864631140) 通過。
 
 這是 Android 模擬器的影音解碼驗證；沒有連接使用者車機，模擬器關閉聲音輸出，因此沒有宣稱完成實機喇叭聽測。支援公開直播 AVC/AAC，最高 720p；尚未驗證私人、會員、付費、地區限制或全部頻道。串流供應與裝置環境改變仍可能影響可用性。
 
@@ -49,4 +52,4 @@ npm run verify:bundle
 ./gradlew.bat :app:assembleDirectDebug :app:assembleLicensedRelease :app:lintLicensedRelease
 ```
 
-新增 Morphe 服務與反射 API 相容性檢查位於 [配套 Morphe 分支](https://github.com/SYLONG7708/Morphe/tree/feat/yingshi-embedded-live-20261111)。未合併、未簽章及未發布的程式不會自動改變使用者裝置。
+新增 Morphe 服務與反射 API 相容性檢查已合併至 [Morphe PR #28](https://github.com/SYLONG7708/Morphe/pull/28)。正式可安裝版本仍以原簽章的發布產物為準；影視缺少原金鑰時不發布替代簽章更新。
