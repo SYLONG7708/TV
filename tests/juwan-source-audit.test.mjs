@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {parseSourceRows,publicHttp,decodeConfig,inspectConfig,classifySite,discoverIndex} from '../tools/audit-juwan-sources.mjs';
+import {sitemapUrls,pageResources} from '../tools/crawl-juwan-site.mjs';
 
 test('source inputs preserve names and escaped URLs without reading script content',()=>{
   const rows=parseSourceRows('<input value="https://example.com/a?x=1&amp;y=2"><a data-name="來源甲" data-status="0">複製</a><input value="https://example.com/b"><a data-name="來源乙">複製</a>','https://example.com/');
@@ -33,4 +34,9 @@ test('discovery follows load-more through the final page and reports incomplete 
   };
   const report=await discoverIndex({fetchImpl:mock});assert.equal(report.complete,true);assert.equal(report.listedCount,2);assert.equal(posts,2);
   const incomplete=await discoverIndex({fetchImpl:async()=>new Response('本页共 2 条线路'+row(1))});assert.equal(incomplete.complete,false);
+});
+test('site scan deduplicates the sitemap and extracts API and repository references',()=>{
+  assert.deepEqual(sitemapUrls('<loc>https://www.juwanhezi.com/</loc><loc>https://www.juwanhezi.com/</loc><loc>https://other.example/</loc>'),['https://www.juwanhezi.com/']);
+  const result=pageResources('<title>接口 &amp; 工具</title><code>https://example.com/vod.json</code><a href="https://github.com/org/repo">repo</a><a href="/item/1">next</a>','https://www.juwanhezi.com/item/1');
+  assert.equal(result.title,'接口 & 工具');assert.deepEqual(result.resourceUrls,['https://example.com/vod.json','https://github.com/org/repo']);
 });

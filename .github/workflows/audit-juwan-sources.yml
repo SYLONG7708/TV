@@ -2,6 +2,11 @@ name: Audit Juwan public sources
 
 on:
   workflow_dispatch:
+    inputs:
+      fullSite:
+        description: Inspect every page in the public sitemap (initial full audit)
+        type: boolean
+        default: false
   schedule:
     # 01:17 UTC+8; the established VOD job checks its window at 02:00.
     - cron: '17 17 * * *'
@@ -42,5 +47,27 @@ jobs:
         with:
           name: juwan-audit-${{ github.run_id }}
           path: reports/juwan-latest.*
+          if-no-files-found: warn
+          retention-days: 90
+  site:
+    if: github.event_name == 'workflow_dispatch' && inputs.fullSite
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            tools/crawl-juwan-site.mjs
+            tools/audit-juwan-sources.mjs
+            tools/audit-upstream-sources.mjs
+            tools/vod-payload-parser.mjs
+      - name: Inspect all sitemap pages with request pacing
+        run: node tools/crawl-juwan-site.mjs --delayMs 500
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: juwan-site-${{ github.run_id }}
+          path: reports/juwan-site.json
           if-no-files-found: warn
           retention-days: 90
