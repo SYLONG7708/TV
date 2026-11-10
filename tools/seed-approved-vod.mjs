@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 import {execFileSync} from 'node:child_process';
-import {loadApprovedSites} from './juwan-approved-sources.mjs';
+import {loadApprovedSites,ensureApprovedIndexes} from './juwan-approved-sources.mjs';
 import {normalizeApi} from './audit-upstream-sources.mjs';
 
 const args=new Map();for(let i=2;i<process.argv.length;i+=2)args.set(process.argv[i].replace(/^--/,''),process.argv[i+1]);
@@ -12,7 +12,11 @@ const original=JSON.parse(await fs.readFile(catalogPath,'utf8'));
 const approved=await loadApprovedSites(root),apis=new Set(approved.map(x=>normalizeApi(x.api)));
 const apiKey=value=>{try{return normalizeApi(value);}catch{return '';}};
 const existingApis=new Set(original.sources.map(x=>apiKey(x.api)));
-if(approved.every(x=>existingApis.has(normalizeApi(x.api)))){console.log('Approved sources already present; use the established daily updater for refreshing.');process.exit(0);}
+if(approved.every(x=>existingApis.has(normalizeApi(x.api)))){
+  const indexes=await ensureApprovedIndexes(path.dirname(catalogPath),original,approved);
+  if(indexes)await fs.writeFile(catalogPath,JSON.stringify(original)+'\n');
+  console.log(JSON.stringify({sourcesAlreadyPresent:true,indexesCreated:indexes}));process.exit(0);
+}
 let seed;
 if(args.has('seedInput'))seed=JSON.parse(await fs.readFile(args.get('seedInput'),'utf8'));
 else{
@@ -28,6 +32,7 @@ const totals={...original.totals,sources:sources.length,indexedSources:sources.f
 const kinds={movie:'movies',series:'series',anime:'anime',short:'short',variety:'variety',adult:'adult',other:'other'};
 for(const item of items){const k=kinds[item.kind]||'other';totals[k]=Number(totals[k]||0)+1;}
 const next={...original,generatedAt:new Date().toISOString(),sources,totals,items:[...(original.items||[]),...items]};
+await ensureApprovedIndexes(path.dirname(catalogPath),next,approved);
 await fs.writeFile(catalogPath,JSON.stringify(next)+'\n');
 const reportPath=path.join(path.dirname(catalogPath),'iphone-vod-catalog-report.json');
 const priorReport=JSON.parse(await fs.readFile(reportPath,'utf8'));
