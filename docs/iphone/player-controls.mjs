@@ -1,3 +1,4 @@
+import { createBlueMLiveResolver } from './blue-m-live.mjs';
 export const PLAYER_SETTINGS_KEY = 'oktv:player:settings:v1';
 export const PLAYER_PROGRESS_KEY = 'oktv:player:progress:v1';
 export const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || 0));
@@ -38,6 +39,8 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   let pendingSeek = 0, lastSave = 0, dragging = false, fatal = false;
   let startedAt = 0, hasStarted = false, userPaused = false, stallTimer = null, youtube = null;
   let lastMediaTime = -1, lastProgressAt = 0, stableProgress = 0, evidenceSent = false, lastGoodPosition = 0;
+  const blueM = createBlueMLiveResolver({ bridge: window.CarBridge, events: window });
+  let blueMOperation = null, blueMUrl = '';
   const retiredHlsTracks = new WeakSet();
   const store = (key, data) => { try { storage?.setItem(key, JSON.stringify(data)); } catch { /* Private browsing / full storage remain usable. */ } };
   const say = text => { status.textContent = text; };
@@ -56,8 +59,9 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     if (localUrl) URL.revokeObjectURL(localUrl);
     localUrl = '';
   }
-  function stop() {
+  function stop(preserveBlueM = false) {
     saveProgress(); generation++;
+    if (preserveBlueM !== true) { blueMOperation?.close(); blueMOperation = null; blueMUrl = ''; }
     clearTimeout(stallTimer); stallTimer = null;
     if (youtube) { try { youtube.destroy(); } catch {} youtube = null; }
     // The iframe API may replace/remove its element when destroyed.
@@ -146,8 +150,8 @@ export function createPlayerController({ video, frame, panel, controls, status, 
       say(error.name === 'NotAllowedError' ? '裝置需要你點一下「播放」後才能開始。' : '尚未開始播放，可按「重新連線」或切換片源。');
     }
   }
-  function fail(message) {
-    if (!entry || fatal || userPaused) return;
+  function fail(message, detail = {}) {
+    if (!entry || fatal || (userPaused && !detail.allowPaused)) return;
     fatal = true; say(message); $('playerRetry').hidden = false;
     clearTimeout(readyTimer); clearTimeout(recoveryTimer);
     clearTimeout(stallTimer);
@@ -156,13 +160,30 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     const position = isDirect() ? Math.max(lastGoodPosition, pendingSeek, Number(video.currentTime) || 0) : 0;
     if (isDirect()) video.pause();
     onEvidence(failed, 'failure', { reason: message });
-    Promise.resolve().then(() => { if (isCurrent(token)) onFailure(failed, { position, message }); });
+    Promise.resolve().then(() => { if (isCurrent(token)) onFailure(failed, { position, message, ...detail }); });
+  }
+  function youtubeFailure(code) {
+    const restricted = {
+      2: 'YouTube 直播網址無效，請更新頻道資料。',
+      100: 'YouTube 直播已移除、設為私人或目前無法觀看。',
+      101: '此頻道不允許嵌入播放，無法在影視內播放。',
+      150: '此頻道不允許嵌入播放，無法在影視內播放。',
+      153: 'YouTube 無法驗證此播放器來源，請更新影視播放器後再試。',
+    };
+    if (restricted[code]) { fail(restricted[code], { terminal: true }); return; }
+    if (userPaused || recoveryTimer) return;
+    const token = generation;
+    say('YouTube 連線暫時中斷，正在重新連接同一頻道…');
+    recoveryTimer = setTimeout(() => {
+      recoveryTimer = null;
+      if (isCurrent(token)) stalled('YouTube 直播仍無法連線，正在檢查同一頻道的其他訊號。');
+    }, 2000);
   }
   function observedPlaying(height = video.videoHeight) {
     if (!entry) return;
     clearTimeout(readyTimer); clearTimeout(stallTimer); userPaused = false; onIntent('play');
     hasStarted = true;
-    fatal = false; $('playerRetry').hidden = true; say('播放中');
+    fatal = false; $('playerRetry').hidden = true; say(entry.backend === 'blue-m' ? '藍色 M 內播・播放中' : '播放中');
   }
   function ensureYouTube() {
     if (window.YT?.Player) return Promise.resolve(window.YT);
@@ -176,14 +197,29 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     return window.__oktvYouTubeReady;
   }
   function open(next, resumeTime = 0, autoplay = true) {
-    stop(); entry = { ...next }; const token = generation; fatal = false; recoveries = mediaRecoveries = 0;
+    const keepBlueM = Boolean(next.backend === 'blue-m' && blueMOperation && next.url === blueMUrl);
+    stop(keepBlueM); entry = { ...next }; const token = generation; fatal = false; recoveries = mediaRecoveries = 0;
     startedAt = performance.now(); hasStarted = false; userPaused = !autoplay;
     lastProgressAt = startedAt; lastMediaTime = -1; stableProgress = 0; evidenceSent = false; lastGoodPosition = resumeTime || 0;
     subtitleChoice = 'off'; pendingSeek = resumeTime || 0; dragging = false;
     document.getElementById('playerResolution').textContent = '';
     if (!pendingSeek && settings.remember && entry.key) pendingSeek = Number(readStored(storage, PLAYER_PROGRESS_KEY, {})[entry.key]?.time) || 0;
     controls.hidden = Boolean(entry.embedUrl); hint.hidden = !entry.embedUrl;
+    $('playerRetry').hidden = true;
     video.classList.toggle('hidden', Boolean(entry.embedUrl));
+    if (entry.embedUrl && blueM.supported()) {
+      hint.hidden = true;
+      frame.classList.remove('hidden');
+      say('正在由藍色 M 解析直播頻道…');
+      blueMOperation = blueM.open(entry.embedUrl);
+      blueMOperation.promise.then(result => {
+        if (!isCurrent(token)) return;
+        blueMUrl = result.url;
+        open({ ...entry, blueMOriginalUrl: entry.url, blueMOriginalEmbed: entry.embedUrl,
+          url: result.url, embedUrl: '', backend: 'blue-m' }, 0, !userPaused);
+      }).catch(error => { if (isCurrent(token)) fail(error.message, { terminal: Boolean(error.terminal), allowPaused: true }); });
+      return;
+    }
     if (entry.embedUrl) {
       frame.classList.remove('hidden');
       const embed = new URL(entry.embedUrl);
@@ -196,10 +232,11 @@ export function createPlayerController({ video, frame, panel, controls, status, 
       say('正在連線至官方播放器…');
       readyTimer = setTimeout(() => {
         if (!isCurrent(token) || hasStarted || userPaused) return;
-        if (entry.canFallback) fail('官方直播尚未回報啟播，正在檢查其他訊號。');
+        if (youtube && lastMediaTime > 0 && performance.now() - lastProgressAt < 6000) return;
+        if (entry.canFallback) stalled('官方直播尚未回報啟播，正在檢查其他訊號。');
         else {
           say('官方播放器尚未回報啟播，正在等候回應。');
-          readyTimer = setTimeout(() => { if (isCurrent(token) && !hasStarted && !userPaused) fail('官方播放器連線逾時，正在重新檢查同一頻道。'); }, 15000);
+          readyTimer = setTimeout(() => { if (isCurrent(token) && !hasStarted && !userPaused && performance.now() - lastProgressAt >= 6000) stalled('官方播放器連線逾時，正在重新檢查同一頻道。'); }, 15000);
         }
       }, 15000);
       ensureYouTube().then(YT => {
@@ -210,11 +247,13 @@ export function createPlayerController({ video, frame, panel, controls, status, 
             if (!isCurrent(token)) return;
             if (event.data === 1) observedPlaying(0);
             if (event.data === 2 && !fatal) { userPaused = true; onIntent('pause'); clearTimeout(readyTimer); clearTimeout(stallTimer); say('已暫停'); }
-            if (event.data === 3 && hasStarted && !userPaused) { say('直播緩衝中…'); clearTimeout(stallTimer); stallTimer = setTimeout(() => { if (isCurrent(token)) fail('直播持續緩衝，正在檢查其他訊號。'); }, 10000); }
+            if (event.data === 0 && !fatal) { userPaused = true; onIntent('pause'); clearTimeout(readyTimer); clearTimeout(stallTimer); clearTimeout(recoveryTimer); recoveryTimer = null; say('此直播已結束。'); }
+            if (event.data === 3 && hasStarted && !userPaused) { say('直播緩衝中…'); clearTimeout(stallTimer); stallTimer = setTimeout(() => { if (isCurrent(token)) stalled('直播持續緩衝，正在檢查同一頻道的其他訊號。'); }, 6000); }
           },
-          onError: event => { if (isCurrent(token)) fail(`官方播放器回報錯誤 ${event.data}，正在檢查其他訊號。`); },
+          onError: event => { if (isCurrent(token)) youtubeFailure(Number(event.data)); },
+          onAutoplayBlocked: () => { if (isCurrent(token)) { pause(); say('請點選直播畫面中央的播放鍵。'); } },
         } });
-      }).catch(() => { if (isCurrent(token)) fail('官方播放器無法連線，正在重新檢查同一頻道。'); });
+      }).catch(() => { if (isCurrent(token)) stalled('官方播放器無法連線，正在重新檢查同一頻道。'); });
       return;
     }
     $('playerRetry').hidden = true; $('playerRemember').checked = Boolean(settings.remember);
@@ -222,7 +261,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     video.preservesPitch = true;
     $('playerPip').disabled = !(document.pictureInPictureEnabled && video.requestPictureInPicture);
     $('playerFullscreen').disabled = false;
-    say('正在連線至片源…');
+    say(entry.backend === 'blue-m' ? '正在連接藍色 M 內播串流…' : '正在連線至片源…');
     const Hls = getHls();
     if (/\.m3u8(?:$|\?)/i.test(entry.url) && Hls?.isSupported?.()) {
       hls = new Hls({ lowLatencyMode: false, liveDurationInfinity: true, enableWorker: true, backBufferLength: 15, maxBufferLength: 20, maxMaxBufferLength: 40, maxBufferSize: 32 * 1024 * 1024, manifestLoadingTimeOut: 6000, manifestLoadingMaxRetry: 1, fragLoadingTimeOut: 8000, fragLoadingMaxRetry: 1, abrEwmaDefaultEstimate: 1500000, capLevelToPlayerSize: true });
@@ -272,8 +311,16 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     if (youtube) youtube.pauseVideo(); else video.pause();
   }
   function stalled(message) {
-    if (!entry || fatal || userPaused) return;
+    if (!entry || fatal || userPaused || document.hidden) return;
     if (navigator.onLine === false) { fail('網路已中斷，等待連線恢復。'); return; }
+    if (entry.embedUrl && !entry.youtubeReloaded) {
+      // Recreate the official player for the SAME video. The fresh player
+      // obtains its own current stream; no short-lived URL or external app is used.
+      onEvidence(entry, 'stall', { reason: 'youtube-reconnect' });
+      open({ ...entry, youtubeReloaded: true }, 0);
+      say('正在影視內重新連接同一個 YouTube 直播頻道…');
+      return;
+    }
     if (isDirect() && !entry.rebuilt) {
       const position = Math.max(lastGoodPosition, pendingSeek, Number(video.currentTime) || 0);
       onEvidence(entry, 'stall', { reason: 'rebuild-buffer' });
@@ -373,23 +420,45 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   window.addEventListener('pagehide', saveProgress);
   // Progress is measured independently of waiting/error events, which some WebViews omit.
   const checkProgress = () => {
-    if (!entry || fatal || userPaused) return;
+    if (!entry || fatal || userPaused || document.hidden) return;
+    if (entry.embedUrl && blueMOperation) return;
     const time = youtube ? Number(youtube.getCurrentTime?.() || 0) : video.currentTime;
+    const youtubeState = youtube?.getPlayerState?.();
     const now = performance.now(), delta = time - lastMediaTime;
     if (lastMediaTime >= 0 && delta > 0.05 && delta < 5) {
-      lastProgressAt = now; stableProgress += delta;
+      lastProgressAt = now;
+      // A preroll may advance a clock while the iframe still reports -1.
+      // Do not interrupt that preparation or call it verified live playback.
+      if (!youtube || youtubeState === 1) stableProgress += delta;
+      else stableProgress = 0;
       if (isDirect()) lastGoodPosition = time;
       if (!evidenceSent && stableProgress >= 1 && (youtube || video.videoHeight > 0)) {
         evidenceSent = true; onEvidence(entry, 'playing', { startupMs: Math.round(now - startedAt), height: video.videoHeight || 0 });
       }
-      if (stableProgress >= 90) entry.rebuilt = false;
+      if (stableProgress >= 90) { entry.rebuilt = false; entry.youtubeReloaded = false; }
     } else if (delta >= 5 || delta < 0 || video.seeking) lastProgressAt = now;
     lastMediaTime = time;
     if (navigator.onLine === false) { fail('網路已中斷，等待連線恢復。'); return; }
-    const ended = youtube ? youtube.getPlayerState?.() === 0 : video.ended;
-    if (hasStarted && !ended && !video.seeking && now - lastProgressAt >= 8000)
+    const ended = youtube ? youtubeState === 0 : video.ended;
+    if (entry.embedUrl && !hasStarted && now - startedAt >= 30000 && now - lastProgressAt >= 6000)
+      stalled('官方播放器連線逾時，正在重新檢查同一頻道。');
+    else if (hasStarted && !ended && !video.seeking && now - lastProgressAt >= (youtube ? 6000 : 8000))
       stalled('播放進度停滯，正在檢查其他訊號。');
   };
+  document.addEventListener('visibilitychange', () => {
+    // Background WebViews may stop updating the iframe clock. Give the current
+    // player a fresh observation period when returning to the app.
+    lastProgressAt = performance.now(); lastMediaTime = -1;
+    clearTimeout(stallTimer); stallTimer = null;
+    if (entry?.embedUrl) {
+      clearTimeout(recoveryTimer); recoveryTimer = null;
+      if (!document.hidden && !hasStarted) {
+        startedAt = performance.now();
+        clearTimeout(readyTimer); readyTimer = null;
+        // The watchdog enforces a new startup timeout after returning.
+      }
+    }
+  });
   let watchdog = setInterval(checkProgress, 1000);
   window.addEventListener('pagehide', () => clearInterval(watchdog));
   window.addEventListener('pageshow', event => { if (event.persisted) { lastProgressAt = performance.now(); clearInterval(watchdog); watchdog = setInterval(checkProgress, 1000); } });
@@ -397,7 +466,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     if (!entry) return { active: false };
     const finite = value => Number.isFinite(Number(value)) ? Number(value) : 0;
     if (youtube) return { active: true, time: finite(youtube.getCurrentTime?.()), paused: youtube.getPlayerState?.() !== 1, youtubeState: youtube.getPlayerState?.() ?? -1 };
-    return { active: true, time: finite(video.currentTime), paused: video.paused,
+    return { active: true, backend: entry.backend || 'direct', time: finite(video.currentTime), paused: video.paused,
       width: video.videoWidth, height: video.videoHeight, frames: finite(video.getVideoPlaybackQuality?.().totalVideoFrames ?? video.webkitDecodedFrameCount), ready: video.readyState, error: video.error?.code || 0 };
   }
   return { open, close: stop, retry, seek, saveProgress, play, pause, snapshot };

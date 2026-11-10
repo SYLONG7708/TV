@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-8I1/JvcuHJibtZvygCO0lQyD/HuJ3W/RjqMrKusLu14=' https://cdn.jsdelivr.net https://www.youtube.com; style-src 'self' 'sha256-espkF4pVwtnSOb5hvDumVNHfVQ/83x3JfrOf/xLJ5yY='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-DAsVpTu4bKKSGkv+MDoWIK8n2jA4zUq+vCpCc/Fzjpw=' https://cdn.jsdelivr.net https://www.youtube.com; style-src 'self' 'sha256-espkF4pVwtnSOb5hvDumVNHfVQ/83x3JfrOf/xLJ5yY='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1108,14 +1108,14 @@
           <iframe id="playerFrame" class="player-frame hidden" title="直播播放器" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" sandbox="allow-scripts allow-same-origin allow-popups" referrerpolicy="strict-origin-when-cross-origin"></iframe>
           <button class="player-chrome-reveal" type="button" aria-label="顯示播放器控制"></button>
         </div>
-        <div class="player-status"><span id="playerStatus" role="status">等待播放</span><span class="player-resolution" id="playerResolution"></span></div>
+        <div class="player-status"><span id="playerStatus" role="status">等待播放</span><span class="player-resolution" id="playerResolution"></span><button class="player-window-button" id="playerRetry" type="button" hidden>重新連線</button></div>
         <p class="player-embed-hint" id="playerEmbedHint" hidden>放大後控制列會自動隱藏，點一下畫面即可顯示縮回及關閉按鈕。聲音、字幕與畫質請使用官方播放器內的控制，實際選項依頻道與裝置提供。</p>
         <div class="player-controls" id="playerControls" hidden>
           <div class="player-seek-row"><input id="playerSeek" aria-label="播放進度" type="range" min="0" max="0" step="0.1" value="0" disabled><span class="player-time" id="playerTime">00:00 / --:--</span></div>
           <div class="player-transport">
             <button id="playerPrevious" type="button" disabled>上一集</button><button id="playerBack" type="button">退後 10 秒</button><button id="playerToggle" type="button">播放</button><button id="playerForward" type="button">前進 10 秒</button><button id="playerNext" type="button" disabled>下一集</button>
             <button id="playerMute" type="button" aria-pressed="false">靜音</button><label class="player-volume">音量<input id="playerVolume" aria-label="音量" type="range" min="0" max="100" value="100"></label>
-            <button id="playerLive" type="button" hidden>回到直播</button><button id="playerFullscreen" type="button">全螢幕</button><button id="playerPip" type="button">子母畫面</button><button id="playerRetry" type="button" hidden>重新連線</button>
+            <button id="playerLive" type="button" hidden>回到直播</button><button id="playerFullscreen" type="button">全螢幕</button><button id="playerPip" type="button">子母畫面</button>
           </div>
           <div class="player-settings">
             <label>畫質<select id="playerQuality" aria-label="畫質"><option value="-1">由片源／裝置決定</option></select></label>
@@ -1280,11 +1280,11 @@
         video: player, frame: playerFrame, panel: playerSheet.querySelector('.sheet-panel'),
         controls: document.querySelector('#playerControls'), status: document.querySelector('#playerStatus'), hint: document.querySelector('#playerEmbedHint'),
         onEpisode: index => { if (activeEpisodeContext?.episodes?.[index]) openEpisode(activeEpisodeContext, index); },
-        onFailure: (entry, detail) => automaticPlayback.failed(entry, detail.position),
+        onFailure: (entry, detail) => automaticPlayback.failed(entry, detail.position, detail),
         onRetry: position => automaticPlayback.retry(position),
         onIntent: action => automaticPlayback.intent(action),
         onEvidence: (entry, event, detail) => {
-          signalPriority.record(entry, event, detail);
+          signalPriority.record(entry.blueMOriginalUrl ? { ...entry, url: entry.blueMOriginalUrl, embedUrl: entry.blueMOriginalEmbed } : entry, event, detail);
           if (event === 'playing') automaticPlayback.succeeded(entry);
           const reason = String(detail?.reason || '');
           const evidence = { event, ...detail, category: /網路|斷線/.test(reason) ? 'offline' : /緩衝|rebuild-buffer/.test(reason) ? 'buffer' : /格式|影音/.test(reason) ? 'media' : 'source' };

@@ -85,6 +85,7 @@ public class MainActivity extends Activity {
 
     private FrameLayout root;
     private WebView webView;
+    private BlueMLiveBridge blueMLiveBridge;
     private static final int SUBTITLE_REQUEST = 7301;
     private ValueCallback<Uri[]> subtitleCallback;
     private TextView statusView;
@@ -129,6 +130,13 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        blueMLiveBridge = new BlueMLiveBridge(this, (requestId, json) -> {
+            if (webView == null || !isTrustedUiPage() || (BuildConfig.REQUIRE_LICENSE && !DeviceLicenseManager.isLicensed(this))) return;
+            try {
+                JSONObject result = new JSONObject(json); result.put("requestId", requestId);
+                webView.evaluateJavascript("window.dispatchEvent(new CustomEvent('yingshi-bluem-live',{detail:" + result + "}));", null);
+            } catch (Exception ignored) { }
+        });
         diagnostics = new PlaybackDiagnostics(this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -193,6 +201,7 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        if (blueMLiveBridge != null) blueMLiveBridge.close();
         if (subtitleCallback != null) { subtitleCallback.onReceiveValue(null); subtitleCallback = null; }
         if (customView != null) {
             hideCustomView();
@@ -929,6 +938,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            if (blueMLiveBridge != null && isHomeDocument(Uri.parse(url))) blueMLiveBridge.reset();
             if (isHomeDocument(Uri.parse(url))) watchPageBoot();
             statusView.setText("影視 載入中");
             statusView.setVisibility(View.VISIBLE);
@@ -983,12 +993,16 @@ public class MainActivity extends Activity {
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+            WebResourceResponse live = blueMLiveBridge == null ? null : blueMLiveBridge.intercept(request.getUrl());
+            if (live != null) return live;
             WebResourceResponse response = compatibilityResponse(request.getUrl());
             return response != null ? response : super.shouldInterceptRequest(view, request);
         }
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+            WebResourceResponse live = blueMLiveBridge == null ? null : blueMLiveBridge.intercept(Uri.parse(url));
+            if (live != null) return live;
             WebResourceResponse response = compatibilityResponse(Uri.parse(url));
             return response != null ? response : super.shouldInterceptRequest(view, url);
         }
@@ -1123,6 +1137,19 @@ public class MainActivity extends Activity {
     }
 
     private final class PageBridge {
+        @JavascriptInterface
+        public void resolveBlueMLive(String videoId, String requestId) {
+            if (videoId == null || requestId == null || !videoId.matches("[A-Za-z0-9_-]{11}") || !requestId.matches("[A-Za-z0-9_-]{1,64}")) return;
+            mainHandler.post(() -> {
+                if (isTrustedUiPage() && (!BuildConfig.REQUIRE_LICENSE || DeviceLicenseManager.isLicensed(MainActivity.this))) blueMLiveBridge.resolve(videoId, requestId);
+            });
+        }
+
+        @JavascriptInterface
+        public void cancelBlueMLive(String requestId) {
+            if (requestId != null) mainHandler.post(() -> { if (isTrustedUiPage()) blueMLiveBridge.cancel(requestId); });
+        }
+
         @JavascriptInterface
         public String phoneticKey(String value) {
             String safe = safeVoiceValue(value, 200);

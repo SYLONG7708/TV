@@ -14,8 +14,8 @@ android {
         applicationId = "tw.com.sylong.tvcar"
         minSdk = 21
         targetSdk = 35
-        versionCode = 40
-        versionName = "1.4.30-cloud-license"
+        versionCode = 41
+        versionName = "1.4.31-blue-m-live"
         buildConfigField("String", "LICENSE_API_BASE_URL", "\"https://yingshi-license.pppp77088.workers.dev\"")
         buildConfigField("String", "LICENSE_PRODUCT_ID", "\"yingshi\"")
         buildConfigField(
@@ -31,16 +31,26 @@ android {
         create("licensed") {
             dimension = "access"
             applicationId = "tw.com.sylong.tvcar"
-            versionCode = 40
-            versionName = "1.4.30-cloud-license"
+            versionCode = 41
+            versionName = "1.4.31-blue-m-live"
             buildConfigField("boolean", "REQUIRE_LICENSE", "true")
         }
         create("direct") {
             dimension = "access"
             applicationId = "tw.com.sylong.tvcar.direct"
-            versionCode = 12
-            versionName = "1.4.9-no-license"
+            versionCode = 13
+            versionName = "1.4.10-blue-m-qa"
             buildConfigField("boolean", "REQUIRE_LICENSE", "false")
+        }
+    }
+
+    val releaseKeystore = providers.environmentVariable("YINGSHI_KEYSTORE_FILE").orNull
+    if (!releaseKeystore.isNullOrBlank()) {
+        signingConfigs.create("production") {
+            storeFile = file(releaseKeystore)
+            storePassword = providers.environmentVariable("YINGSHI_STORE_PASSWORD").get()
+            keyAlias = providers.environmentVariable("YINGSHI_KEY_ALIAS").get()
+            keyPassword = providers.environmentVariable("YINGSHI_KEY_PASSWORD").get()
         }
     }
 
@@ -49,7 +59,7 @@ android {
             isDebuggable = false
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("production")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

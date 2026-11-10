@@ -11,6 +11,7 @@
     <uses-feature android:name="android.hardware.type.television" android:required="false" />
 
     <queries>
+        <package android:name="app.morphe.android.youtube" />
         <intent>
             <action android:name="android.intent.action.OPEN_DOCUMENT" />
             <category android:name="android.intent.category.OPENABLE" />

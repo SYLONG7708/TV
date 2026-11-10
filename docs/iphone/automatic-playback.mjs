@@ -31,7 +31,7 @@ export function createAutomaticPlayback({ rank, resolve, start, exhausted, disco
   }
   async function advance(position = 0) {
     const value = session, token = generation;
-    if (!value || value.loading || value.paused) return;
+    if (!value || value.loading || value.paused || value.blocked) return;
     value.position = Math.max(0, Number(position) || 0);
     if (!online()) { schedule(value, 'offline'); return; }
     value.loading = true;
@@ -69,6 +69,7 @@ export function createAutomaticPlayback({ rank, resolve, start, exhausted, disco
     const value = session;
     if (!value || value.loading || value.paused) return;
     clearTimer(value.timer); value.timer = null; value.attemptId = '';
+    value.blocked = false;
     value.queue = [...value.candidates]; value.seen.clear(); value.discovered = false;
     value.recoveryAttempts = 0; value.startedAt = now(); value.playedAt = 0;
     return advance(position);
@@ -80,10 +81,17 @@ export function createAutomaticPlayback({ rank, resolve, start, exhausted, disco
         controller: new AbortController(), discovered: false, position: options.position || 0, round: 0 };
       return advance(options.position || 0);
     },
-    async failed(entry, position = 0) {
+    async failed(entry, position = 0, detail = {}) {
       const value = session, token = generation;
       if (value?.attemptId !== entry?.attemptId) return;
       value.attemptId = ''; value.position = position;
+      if (detail.terminal) {
+        // A private/removed/non-embeddable video needs user or source action.
+        // Keep its explanation on screen, without repeatedly requesting it.
+        value.blocked = true;
+        clearTimer(value.timer); value.timer = null;
+        return;
+      }
       if (value.hasPlayed) {
         value.startedAt = now();
         if (now() - value.playedAt >= 90000) { value.recoveryAttempts = 0; value.round = 0; }
@@ -105,11 +113,11 @@ export function createAutomaticPlayback({ rank, resolve, start, exhausted, disco
       const wasPaused = session.paused;
       session.paused = action === 'pause';
       if (session.paused) { clearTimer(session.timer); session.timer = null; }
-      else if (wasPaused && !session.attemptId) void retry(session.position);
+      else if (wasPaused && !session.attemptId && !session.blocked) void retry(session.position);
     },
     reconnect() { if (session?.timer && online()) return retry(session.position); },
     close,
     snapshot: () => session ? { attempts: session.attempts, remaining: session.queue.length,
-      loading: session.loading, waiting: Boolean(session.timer) } : null,
+      loading: session.loading, waiting: Boolean(session.timer), blocked: Boolean(session.blocked) } : null,
   };
 }
