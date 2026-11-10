@@ -1,44 +1,52 @@
-# YouTube 直播留在影視內：恢復功能測試版
+# 藍色 M 公開直播在影視內播放
 
-日期：2026-11-11（UTC+8）。使用者指定播放畫面全程留在影視內。
+日期：2026-11-11（UTC+8）。Android 9 以上的影視使用同機藍色 M 的 Morphe 核心解析 YouTube 公開直播，影音由影視自己的播放器解碼與顯示。點選頻道、換台、暫停、繼續及關閉都在影視內完成。
 
-## 這次實作
+## 實作
 
-直播仍在影視的官方 YouTube 嵌入播放器播放。參考藍色 M 的故障恢復策略，在同一播放器頁面內重建同一個影片 ID 的播放器，讓官方播放器重新連接目前串流。沒有開啟藍色 M、其他 App 或外部播放分頁。
+1. 影視從既有直播清單取得 YouTube 影片 ID，明確綁定藍色 M 的 `com.sylong.bluem.live.LiveResolveService`。
+2. 雙方驗證套件簽章。藍色 M 以 Android `Message.sendingUid` 驗證呼叫者，只接受原簽章的影視授權版；QA 建置額外接受獨立套件的影視測試版。
+3. 藍色 M 呼叫已修補的 `StreamingDataRequest.fetchRequest`，取回公開直播 AVC/AAC 影音軌。新版服務不開啟藍色 M Activity，也不傳遞帳號、Cookie 或授權標頭。
+4. 影視原生層把分離的 fragmented MP4 轉為應用程式內的 HLS 視窗。`shouldInterceptRequest` 供應當次 UUID 的播放清單、初始化資料及片段；頁面只收到應用程式內網址。
+5. 既有 Hls.js 播放器負責畫質、音量、暫停與影音解碼。換台、關閉、頁面重載及 App 銷毀會取消舊請求、解除綁定與關閉串流。
 
-- 已起播後進度停滯或持續緩衝約 6 秒，先重新載入同一個頻道一次；再失敗才交回既有同頻道備援與退避重試流程。
-- 暫時性播放器錯誤等候 2 秒再恢復；重複錯誤事件不建立多個恢復工作。
-- 實際播放累計 90 秒後可處理後續的新故障。只回報「播放中」但進度沒有前進不算成功。
-- 前置廣告／準備期間的時鐘前進不算已驗證直播，也不因啟播等待而中斷它。
-- 暫停、背景、直播結束、瀏覽器阻擋自動播放時不強制重播；返回前景重新觀察，離線交回既有連線恢復流程。
-- 網址無效、移除／私人影片、禁止嵌入及來源驗證錯誤保留明確說明，停止無效自動重試。手動重新開啟或重新連線可重試。
-- 關閉播放器與換台會取消舊工作的計時器，舊頻道回呼不能操作新頻道。
+每次最多等待 35 秒，逾時交回原有同頻道備援與退避重連。設定／簽章不相容時顯示更新提示並提供「重新連線」；不跳轉外部 App。解析期間的暫停意圖會保留，舊頻道的回呼不能重新開啟播放器。
 
-## 與完整藍色 M 核心的差別
+網頁及 iPhone 沒有 Android 服務介面，沿用原官方嵌入播放器與恢復策略。這次整合供 Android 影視使用。
 
-**這份變更沒有移植 Morphe 的原生取流、SABR、PoToken、帳號或去廣告核心；官方嵌入仍可能顯示 YouTube 廣告。不能將本測試版稱為「藍色 M 核心已內建影視」。**
+## Android 驗證
 
-藍色 M 在既有 YouTube APK 中修補其播放器與串流資料；它不是可供影視直接載入的播放器 SDK。參考程式：
+使用隱藏的 API 35 x86_64 Android 模擬器、Morphe patches 2.1.0 / YouTube 21.23.492 基底及配套 QA APK：
 
-- [藍色 M 實作與恢復策略](https://github.com/SYLONG7708/Morphe/blob/main/bluem/README.md)
-- [上游取流程式](https://github.com/MorpheApp/morphe-patches/blob/main/extensions/shared-youtube/library/src/main/java/app/morphe/extension/shared/spoof/requests/StreamingDataRequest.java)
+- 三立 iNEWS 播放達 1280×720，時間、解碼影格數與音訊解碼位元組持續增加，已持續播放數分鐘。
+- 中視新聞換台後保留正確頻道，使用相同 `blue-m` 播放後端。
+- 暫停停住進度、繼續播放恢復進度、關閉後不被舊回呼重新打開。
+- 播放時影視為前景 Activity，YouTube iframe 的 `src` 為空。
 
-本機對單一公開直播測試四種取流設定，三種要求登入驗證，iOS 設定回傳 OK 但只有分離影音與專用串流資料，沒有 HLS manifest。此結果只代表當時本機測試，不能推論所有裝置或所有頻道。完整原生核心仍需另外處理取流與媒體協定整合並在 Android 實機驗證；本次不假裝這部分已完成。
+這是 Android 模擬器的影音解碼驗證；沒有連接使用者車機，模擬器關閉聲音輸出，因此沒有宣稱完成實機喇叭聽測。支援公開直播 AVC/AAC，最高 720p；尚未驗證私人、會員、付費、地區限制或全部頻道。串流供應與裝置環境改變仍可能影響可用性。
 
-## 驗證與使用範圍
+## 建置與簽章
 
-142 項儲存庫 Node 測試通過，包括 11 項新增播放器／恢復工作測試。另建置車機版相容頁，4 項相容頁回歸及內嵌程式／CSP 雜湊驗證通過。
+正式影視為 `tw.com.sylong.tvcar`，版本 1.4.31-blue-m-live / code 41，保留授權機制。需使用影視原簽章，才能保留既有安裝與資料：
 
-隱藏 Chromium 以本機修改程式替換測試頁面，使用正式雲端頻道資料與未替換的 YouTube 影音。三立 iNEWS 實際解碼 854×480 畫面，播放時間與解碼影格數持續增加，頁面與單一分頁保持不變。檢查桌面 1365×900 與手機 390×844 畫面。這是瀏覽器與短時間啟播測試；未接 Android 裝置、未逐台測全部直播，也不能保證第三方長期可用。
+```text
+b6f8718ac28ae96e1b76bfe7a8c4687e73d2c4f2dcd187a25c6af9427993a9a0
+```
 
-本次修改共用雲端播放器，未產生或安裝新 APK。尚未合併的分支不會改變正式站。
+藍色 M 正式版須由 Morphe 儲存庫現有受保護簽章流程建置，且帶有 `com.sylong.bluem.LIVE_BRIDGE=1`、更新修訂 11。既有未提供服務的藍色 M APK 需配套更新。
+
+影視未提供原金鑰時只輸出未簽章授權版；本機 debug 簽章 QA APK 不可當成正式覆蓋更新。不要為測試而卸載使用者的既有 App 或清除資料。
 
 ```powershell
 node --test tests/*.test.mjs
 node tools/update-iphone-csp.mjs --check
+./tools/test-blue-m-media.ps1
 cd mobile/yingshi-car
 npm ci
 npm run build:compat
 npm test
 npm run verify:bundle
+./gradlew.bat :app:assembleDirectDebug :app:assembleLicensedRelease :app:lintLicensedRelease
 ```
+
+新增 Morphe 服務與反射 API 相容性檢查位於 [配套 Morphe 分支](https://github.com/SYLONG7708/Morphe/tree/feat/yingshi-embedded-live-20261111)。未合併、未簽章及未發布的程式不會自動改變使用者裝置。

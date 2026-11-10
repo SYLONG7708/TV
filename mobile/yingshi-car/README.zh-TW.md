@@ -1,6 +1,8 @@
 # 影視車機正式版
 
-`tw.com.sylong.tvcar`，1.4.30-cloud-license / versionCode 40。此專案延續原授權影視 1.4.28，與 `mobile/oktv-cloud` 為不同 Android 套件。
+`tw.com.sylong.tvcar`，1.4.31-blue-m-live / versionCode 41。此專案延續原授權影視 1.4.30，與 `mobile/oktv-cloud` 為不同 Android 套件。
+
+Android 9 以上可透過同機藍色 M 的新版直播服務取得 Morphe 公開直播串流，由影視自己的播放器播放；換台及播放期間都留在影視。需要同時更新影視與藍色 M，完整協定與測試範圍見 [直播整合說明](../../docs/iphone/YOUTUBE_IN_APP_RECOVERY.md)。
 
 正式版關閉 Android / WebView 開發偵錯。線上優先讀取受信任的 Pages 播放器；啟動、載入或渲染失敗時使用內建相容播放器。片庫、直播、節目備援與健康資料由雲端取得，不將片庫或影片打包。
 
@@ -27,7 +29,7 @@ gradlew :app:assembleLicensedRelease :app:lintLicensedRelease
 
 相容頁由儲存庫 `docs/iphone` 建立；也可透過 `TV_CLOUD_SOURCE` 指向該儲存庫。產生的相容頁、node_modules、SDK 路徑、建置輸出及簽章私鑰不提交。
 
-既有 APK 使用原設備保留的簽章；目前 Gradle 簽章名稱為 `debug`，不代表 release 的 `debuggable` 為 true。換一台電腦產生新的 debug keystore 會產生不同簽章，不能作為原位更新。發布前必須核對原簽章 SHA-256：
+release 建置由環境變數 `YINGSHI_KEYSTORE_FILE`、`YINGSHI_STORE_PASSWORD`、`YINGSHI_KEY_ALIAS`、`YINGSHI_KEY_PASSWORD` 提供原簽章。未提供時只產生 `app-licensed-release-unsigned.apk`。密碼與私鑰不提交、不寫入教學。發布前必須核對原簽章 SHA-256：
 
 ```text
 b6f8718ac28ae96e1b76bfe7a8c4687e73d2c4f2dcd187a25c6af9427993a9a0

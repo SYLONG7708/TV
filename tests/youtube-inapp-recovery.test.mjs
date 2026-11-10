@@ -3,13 +3,14 @@ import fs from 'node:fs';
 import test from 'node:test';
 import vm from 'node:vm';
 import { createAutomaticPlayback } from '../docs/iphone/automatic-playback.mjs';
+import { createBlueMLiveResolver } from '../docs/iphone/blue-m-live.mjs';
 
-const source = fs.readFileSync(new URL('../docs/iphone/player-controls.mjs', import.meta.url), 'utf8').replace(/^export /gm, '');
+const source = fs.readFileSync(new URL('../docs/iphone/player-controls.mjs', import.meta.url), 'utf8').replace(/^export /gm, '').replace(/^import .*;\n/gm, '');
 const flush = () => new Promise(resolve => setImmediate(resolve));
 
 // Run the actual controller with a clock and the documented iframe API surface.
 // No network, production channels, credentials or externally installed app is used.
-async function fixture({ startState = 1 } = {}) {
+async function fixture({ startState = 1, native = false } = {}) {
   let clock = 0, timerId = 0;
   const timers = new Map(), nodes = new Map(), players = [], failures = [], evidence = [];
   const setTimer = (callback, delay, interval = 0) => {
@@ -21,6 +22,7 @@ async function fixture({ startState = 1 } = {}) {
       this.classList = { toggle() {}, add() {}, remove() {} };
     }
     addEventListener(type, callback) { (this.listeners[type] ||= []).push(callback); }
+    removeEventListener(type, callback) { this.listeners[type] = (this.listeners[type] || []).filter(fn => fn !== callback); }
     dispatch(type, detail = {}) { for (const fn of this.listeners[type] || []) fn(detail); }
     removeAttribute(name) { delete this[name]; }
     setAttribute(name, value) { this[name] = value; }
@@ -33,7 +35,7 @@ async function fixture({ startState = 1 } = {}) {
   const video = node('player');
   Object.assign(video, { currentTime: 0, duration: Infinity, paused: true, readyState: 0, videoHeight: 0,
     textTracks: Object.assign([], { addEventListener() {} }),
-    pause() { this.paused = true; }, play() { this.paused = false; return Promise.resolve(); }, load() {} });
+    pause() { this.paused = true; }, play() { this.paused = false; return Promise.resolve(); }, load() {}, canPlayType() { return 'probably'; } });
   const document = new Node();
   Object.assign(document, { hidden: false, getElementById: node, createElement: () => new Node(), head: new Node() });
   class Player {
@@ -51,7 +53,11 @@ async function fixture({ startState = 1 } = {}) {
     destroy() { this.destroyed = true; this.frame.remove(); }
   }
   const window = new Node(); window.YT = { Player }; window.localStorage = null;
+  const nativeCalls = [], cancellations = [];
+  if (native) window.CarBridge = { resolveBlueMLive: (videoId, requestId) => nativeCalls.push({ videoId, requestId }), cancelBlueMLive: id => cancellations.push(id) };
+  const resolveNative = (data, index = nativeCalls.length - 1) => window.dispatch('yingshi-bluem-live', { detail: { requestId: nativeCalls[index].requestId, ...data } });
   const context = vm.createContext({ window, document, navigator: { onLine: true },
+    createBlueMLiveResolver: options => createBlueMLiveResolver({ ...options, setTimer: (fn, delay) => setTimer(fn, delay), clearTimer: id => timers.delete(id) }),
     location: { origin: 'https://sylong7708.github.io' }, URL, performance: { now: () => clock },
     setTimeout: (fn, delay) => setTimer(fn, delay), clearTimeout: id => timers.delete(id),
     setInterval: (fn, delay) => setTimer(fn, delay, delay), clearInterval: id => timers.delete(id) });
@@ -77,8 +83,39 @@ async function fixture({ startState = 1 } = {}) {
     }
   }
   controller.open(entry); await flush();
-  return { controller, players, failures, evidence, document, nodes, context, entry, advance };
+  return { controller, players, failures, evidence, document, nodes, context, entry, advance, video, nativeCalls, cancellations, resolveNative };
 }
+
+const nativeUrl = 'https://sylong7708.github.io/TV/__bluem_live__/0c49cd07-0607-465f-96c1-5f717bd30a6b/master.m3u8';
+test('Android live playback waits for Blue M and never creates an iframe player', async () => {
+  const f = await fixture({ native: true }); await f.advance(32);
+  assert.equal(f.players.length, 0); assert.equal(f.failures.length, 0);
+  f.resolveNative({ ok: true, backend: 'blue-m', url: nativeUrl }); await flush();
+  assert.equal(f.controller.snapshot().backend, 'blue-m'); assert.equal(f.video.src, nativeUrl);
+  assert.equal(f.video.paused, false); assert.equal(f.players.length, 0);
+  f.controller.close(); assert.equal(f.cancellations.length, 1);
+});
+test('pausing during Blue M resolution remains paused when the media arrives', async () => {
+  const f = await fixture({ native: true }); f.controller.pause();
+  f.resolveNative({ ok: true, backend: 'blue-m', url: nativeUrl }); await flush();
+  assert.equal(f.controller.snapshot().backend, 'blue-m'); assert.equal(f.video.paused, true);
+  await f.advance(45); assert.equal(f.failures.length, 0); f.controller.close();
+});
+test('a native compatibility failure is reported even if resolution was paused', async () => {
+  const f = await fixture({ native: true }); f.controller.pause();
+  f.resolveNative({ ok: false, terminal: true, message: '請更新藍色 M。' }); await flush();
+  assert.equal(f.failures.length, 1); assert.equal(f.failures[0].detail.terminal, true);
+  assert.equal(f.video.paused, true); assert.equal(f.players.length, 0); f.controller.close();
+});
+test('closing or changing channel cancels native resolution and ignores its late reply', async () => {
+  const f = await fixture({ native: true }); f.controller.close();
+  f.resolveNative({ ok: true, backend: 'blue-m', url: nativeUrl }); await flush();
+  assert.equal(f.controller.snapshot().active, false); assert.equal(f.cancellations.length, 1);
+  f.controller.open({ ...f.entry, embedUrl: 'https://www.youtube.com/embed/TCnaIE_SAtM' });
+  f.resolveNative({ ok: true, backend: 'blue-m', url: nativeUrl }, 0); await flush();
+  assert.equal(f.controller.snapshot().backend, 'direct'); assert.equal(f.video.src, undefined);
+  f.controller.close();
+});
 
 test('a stalled live player is recreated once for the same video inside the existing page', async () => {
   const f = await fixture(); await f.advance(3, true); await f.advance(7);

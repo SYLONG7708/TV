@@ -1,3 +1,4 @@
+import { createBlueMLiveResolver } from './blue-m-live.mjs';
 export const PLAYER_SETTINGS_KEY = 'oktv:player:settings:v1';
 export const PLAYER_PROGRESS_KEY = 'oktv:player:progress:v1';
 export const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || 0));
@@ -38,6 +39,8 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   let pendingSeek = 0, lastSave = 0, dragging = false, fatal = false;
   let startedAt = 0, hasStarted = false, userPaused = false, stallTimer = null, youtube = null;
   let lastMediaTime = -1, lastProgressAt = 0, stableProgress = 0, evidenceSent = false, lastGoodPosition = 0;
+  const blueM = createBlueMLiveResolver({ bridge: window.CarBridge, events: window });
+  let blueMOperation = null, blueMUrl = '';
   const retiredHlsTracks = new WeakSet();
   const store = (key, data) => { try { storage?.setItem(key, JSON.stringify(data)); } catch { /* Private browsing / full storage remain usable. */ } };
   const say = text => { status.textContent = text; };
@@ -56,8 +59,9 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     if (localUrl) URL.revokeObjectURL(localUrl);
     localUrl = '';
   }
-  function stop() {
+  function stop(preserveBlueM = false) {
     saveProgress(); generation++;
+    if (preserveBlueM !== true) { blueMOperation?.close(); blueMOperation = null; blueMUrl = ''; }
     clearTimeout(stallTimer); stallTimer = null;
     if (youtube) { try { youtube.destroy(); } catch {} youtube = null; }
     // The iframe API may replace/remove its element when destroyed.
@@ -147,7 +151,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     }
   }
   function fail(message, detail = {}) {
-    if (!entry || fatal || userPaused) return;
+    if (!entry || fatal || (userPaused && !detail.allowPaused)) return;
     fatal = true; say(message); $('playerRetry').hidden = false;
     clearTimeout(readyTimer); clearTimeout(recoveryTimer);
     clearTimeout(stallTimer);
@@ -179,7 +183,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     if (!entry) return;
     clearTimeout(readyTimer); clearTimeout(stallTimer); userPaused = false; onIntent('play');
     hasStarted = true;
-    fatal = false; $('playerRetry').hidden = true; say('播放中');
+    fatal = false; $('playerRetry').hidden = true; say(entry.backend === 'blue-m' ? '藍色 M 內播・播放中' : '播放中');
   }
   function ensureYouTube() {
     if (window.YT?.Player) return Promise.resolve(window.YT);
@@ -193,14 +197,29 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     return window.__oktvYouTubeReady;
   }
   function open(next, resumeTime = 0, autoplay = true) {
-    stop(); entry = { ...next }; const token = generation; fatal = false; recoveries = mediaRecoveries = 0;
+    const keepBlueM = Boolean(next.backend === 'blue-m' && blueMOperation && next.url === blueMUrl);
+    stop(keepBlueM); entry = { ...next }; const token = generation; fatal = false; recoveries = mediaRecoveries = 0;
     startedAt = performance.now(); hasStarted = false; userPaused = !autoplay;
     lastProgressAt = startedAt; lastMediaTime = -1; stableProgress = 0; evidenceSent = false; lastGoodPosition = resumeTime || 0;
     subtitleChoice = 'off'; pendingSeek = resumeTime || 0; dragging = false;
     document.getElementById('playerResolution').textContent = '';
     if (!pendingSeek && settings.remember && entry.key) pendingSeek = Number(readStored(storage, PLAYER_PROGRESS_KEY, {})[entry.key]?.time) || 0;
     controls.hidden = Boolean(entry.embedUrl); hint.hidden = !entry.embedUrl;
+    $('playerRetry').hidden = true;
     video.classList.toggle('hidden', Boolean(entry.embedUrl));
+    if (entry.embedUrl && blueM.supported()) {
+      hint.hidden = true;
+      frame.classList.remove('hidden');
+      say('正在由藍色 M 解析直播頻道…');
+      blueMOperation = blueM.open(entry.embedUrl);
+      blueMOperation.promise.then(result => {
+        if (!isCurrent(token)) return;
+        blueMUrl = result.url;
+        open({ ...entry, blueMOriginalUrl: entry.url, blueMOriginalEmbed: entry.embedUrl,
+          url: result.url, embedUrl: '', backend: 'blue-m' }, 0, !userPaused);
+      }).catch(error => { if (isCurrent(token)) fail(error.message, { terminal: Boolean(error.terminal), allowPaused: true }); });
+      return;
+    }
     if (entry.embedUrl) {
       frame.classList.remove('hidden');
       const embed = new URL(entry.embedUrl);
@@ -242,7 +261,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     video.preservesPitch = true;
     $('playerPip').disabled = !(document.pictureInPictureEnabled && video.requestPictureInPicture);
     $('playerFullscreen').disabled = false;
-    say('正在連線至片源…');
+    say(entry.backend === 'blue-m' ? '正在連接藍色 M 內播串流…' : '正在連線至片源…');
     const Hls = getHls();
     if (/\.m3u8(?:$|\?)/i.test(entry.url) && Hls?.isSupported?.()) {
       hls = new Hls({ lowLatencyMode: false, liveDurationInfinity: true, enableWorker: true, backBufferLength: 15, maxBufferLength: 20, maxMaxBufferLength: 40, maxBufferSize: 32 * 1024 * 1024, manifestLoadingTimeOut: 6000, manifestLoadingMaxRetry: 1, fragLoadingTimeOut: 8000, fragLoadingMaxRetry: 1, abrEwmaDefaultEstimate: 1500000, capLevelToPlayerSize: true });
@@ -402,6 +421,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   // Progress is measured independently of waiting/error events, which some WebViews omit.
   const checkProgress = () => {
     if (!entry || fatal || userPaused || document.hidden) return;
+    if (entry.embedUrl && blueMOperation) return;
     const time = youtube ? Number(youtube.getCurrentTime?.() || 0) : video.currentTime;
     const youtubeState = youtube?.getPlayerState?.();
     const now = performance.now(), delta = time - lastMediaTime;
@@ -446,7 +466,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     if (!entry) return { active: false };
     const finite = value => Number.isFinite(Number(value)) ? Number(value) : 0;
     if (youtube) return { active: true, time: finite(youtube.getCurrentTime?.()), paused: youtube.getPlayerState?.() !== 1, youtubeState: youtube.getPlayerState?.() ?? -1 };
-    return { active: true, time: finite(video.currentTime), paused: video.paused,
+    return { active: true, backend: entry.backend || 'direct', time: finite(video.currentTime), paused: video.paused,
       width: video.videoWidth, height: video.videoHeight, frames: finite(video.getVideoPlaybackQuality?.().totalVideoFrames ?? video.webkitDecodedFrameCount), ready: video.readyState, error: video.error?.code || 0 };
   }
   return { open, close: stop, retry, seek, saveProgress, play, pause, snapshot };

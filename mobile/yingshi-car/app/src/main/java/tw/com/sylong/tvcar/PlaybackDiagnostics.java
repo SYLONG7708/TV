@@ -65,7 +65,11 @@ final class PlaybackDiagnostics {
             out.put("at", System.currentTimeMillis()).put("versionCode", BuildConfig.VERSION_CODE);
             out.put("bundled", bundled).put("webViewMajor", webViewMajor);
             revision(out, input, "codeRevision"); revision(out, input, "playerRevision");
-            out.put("media", numbers(input.optJSONObject("media"), "active", "time", "paused", "width", "height", "frames", "ready", "error", "youtubeState"));
+            JSONObject inputMedia = input.optJSONObject("media");
+            JSONObject media = numbers(inputMedia, "active", "time", "paused", "width", "height", "frames", "ready", "error", "youtubeState");
+            String backend = inputMedia == null ? "" : inputMedia.optString("backend");
+            if (backend.matches("(?:blue-m|direct)")) media.put("backend", backend);
+            out.put("media", media);
             out.put("session", numbers(input.optJSONObject("session"), "attempts", "remaining", "loading", "waiting"));
             out.put("update", numbers(input.optJSONObject("update"), "lastCheckedAt", "pending", "failures"));
             latest = out;
