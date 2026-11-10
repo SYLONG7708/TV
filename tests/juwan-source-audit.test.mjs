@@ -2,7 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import {parseSourceRows,publicHttp,decodeConfig,inspectConfig,classifySite,discoverIndex} from '../tools/audit-juwan-sources.mjs';
-import {sitemapUrls,pageResources} from '../tools/crawl-juwan-site.mjs';
+import {sitemapUrls,pageResources,crawlSite} from '../tools/crawl-juwan-site.mjs';
+import fs from 'node:fs/promises';
+import os from 'node:os';
+import path from 'node:path';
 
 test('source inputs preserve names and escaped URLs without reading script content',()=>{
   const rows=parseSourceRows('<input value="https://example.com/a?x=1&amp;y=2"><a data-name="來源甲" data-status="0">複製</a><input value="https://example.com/b"><a data-name="來源乙">複製</a>','https://example.com/');
@@ -49,4 +52,11 @@ test('site scan deduplicates the sitemap and extracts API and repository referen
   assert.deepEqual(sitemapUrls('<loc>https://www.juwanhezi.com/</loc><loc>https://www.juwanhezi.com/</loc><loc>https://other.example/</loc>'),['https://www.juwanhezi.com/']);
   const result=pageResources('<title>接口 &amp; 工具</title><code>https://example.com/vod.json</code><a href="https://github.com/org/repo">repo</a><a href="/item/1">next</a>','https://www.juwanhezi.com/item/1');
   assert.equal(result.title,'接口 & 工具');assert.deepEqual(result.resourceUrls,['https://example.com/vod.json','https://github.com/org/repo']);
+});
+test('site batches retain their checkpoint and do not label partial coverage complete',async()=>{
+  const root=await fs.mkdtemp(path.join(os.tmpdir(),'juwan-site-test-'));
+  const output=path.join(root,'site.json');const urls=Array.from({length:101},(_,i)=>`https://www.juwanhezi.com/item/${i}`);
+  const mock=async url=>new Response(String(url).endsWith('sitemap.xml')?urls.map(x=>`<loc>${x}</loc>`).join(''):'<title>測試頁</title>');
+  const a=await crawlSite({output,fetchImpl:mock,delayMs:0,maxPages:3});assert.equal(a.succeeded,3);assert.equal(a.complete,false);
+  const b=await crawlSite({output,fetchImpl:mock,delayMs:0,maxPages:2});assert.equal(b.succeeded,5);assert.equal(b.complete,false);
 });
