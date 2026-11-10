@@ -3,6 +3,7 @@ import path from 'node:path';
 import { writeStableGzipJson } from './stable-gzip-json.mjs';
 import { classifyVodKind } from './vod-kind-rules.mjs';
 import { parseVodPayload } from './vod-payload-parser.mjs';
+import {sourceAllowsItem} from './juwan-approved-sources.mjs';
 
 const args = new Map();
 for (let i = 2; i < process.argv.length; i += 1) {
@@ -315,6 +316,7 @@ function normalizeVodItem(item, source, sourceSlug, page) {
   const title = normalizeText(item.vod_name ?? item.name ?? item.title);
   if (!title) return null;
   const typeName = normalizeText(item.type_name || item.list_name || '');
+  if(!sourceAllowsItem(source,item))return null;
   const playUrl = item.vod_play_url || item.vod_url || item.vod_play_url_with_player || item.play_url || item.url;
   const episodes = parseEpisodes(playUrl);
 

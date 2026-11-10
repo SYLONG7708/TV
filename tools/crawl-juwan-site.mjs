@@ -23,7 +23,7 @@ export async function crawlSite({output,delayMs=600,timeoutMs=15000,fetchImpl=fe
   const rows=new Map((previous.pages||[]).filter(x=>x.status==='ok').map(x=>[x.url,x]));
   let consecutiveNetworkFailures=0;
   const save=async()=>{const pages=[...rows.values()];const report={generatedAt:new Date().toISOString(),sitemapCount:urls.length,attempted:pages.length,succeeded:pages.filter(x=>x.status==='ok').length,failed:pages.filter(x=>x.status!=='ok').length,complete:urls.every(u=>rows.get(u)?.status==='ok'),pages};await fs.mkdir(path.dirname(output),{recursive:true});const temp=output+'.tmp';await fs.writeFile(temp,JSON.stringify(report,null,2)+'\n');await fs.rename(temp,output);return report;};
-  const remaining=urls.filter(u=>!rows.has(u));let cursor=0,lastStart=0;
+  const remaining=urls.filter(u=>rows.get(u)?.status!=='ok');let cursor=0,lastStart=0;
   // Two workers share one request clock. The origin sees at most one request
   // every delayMs, including when a previous request is slow.
   let turn=Promise.resolve();

@@ -73,7 +73,23 @@ export async function discoverIndex({fetchImpl=fetch,timeoutMs=18000}={}) {
 export function decodeConfig(text) {
   const clean=String(text).trim();
   try{return {config:parseJsonc(clean),encoding:'jsonc'};}catch(e){
-    const base64=clean.replace(/^[\w]{0,12}\*\*/,'');
+    // TVBox's public self-contained CBC envelope includes its own key and IV.
+    // This decodes configuration data only; it never loads an executable adapter.
+    const hex=clean.replace(/\s+/g,'');
+    if(/^2423[\da-f]+$/i.test(hex)&&hex.length%2===0){
+      const separator=hex.indexOf('2324');
+      if(separator<4||hex.length<separator+62)throw new Error('Malformed TVBox CBC envelope');
+      const keyText=Buffer.from(hex.slice(4,separator),'hex').toString('utf8').toLowerCase();
+      const ivText=Buffer.from(hex.slice(-26),'hex').toString('utf8').toLowerCase();
+      const key=Buffer.from(keyText.padEnd(16,'0'));
+      const iv=Buffer.from(ivText.padEnd(16,'0'));
+      if(key.length!==16||iv.length!==16)throw new Error('Invalid TVBox CBC key or IV');
+      const decipher=crypto.createDecipheriv('aes-128-cbc',key,iv);
+      const decrypted=Buffer.concat([decipher.update(Buffer.from(hex.slice(separator+4,-26),'hex')),decipher.final()]).toString('utf8');
+      return {config:parseJsonc(decrypted),encoding:'tvbox-self-contained-cbc'};
+    }
+    const marker=clean.match(/[A-Za-z\d]{8}\*\*/);
+    const base64=marker?clean.slice(marker.index+marker[0].length).trim():clean.replace(/^[\w]{0,12}\*\*/,'');
     if(base64.length>20&&/^[A-Za-z\d+/=\r\n]+$/.test(base64)){
       const decoded=Buffer.from(base64,'base64').toString('utf8');
       if(decoded.trimStart().startsWith('{'))return {config:parseJsonc(decoded),encoding:'base64-json'};
@@ -120,11 +136,13 @@ export async function crawlConfigurations(entries,{fetchImpl=fetch,timeoutMs=180
   return {configurations:configs,sites:allSites,lives,truncated:queue.length>0};
 }
 
-export async function auditJuwan({configuredSites,extraEntries=[],fetchImpl=fetch,timeoutMs=12000,skipProbes=false}={}) {
-  const index=await discoverIndex({fetchImpl,timeoutMs});
+export async function auditJuwan({configuredSites,extraEntries=[],fetchImpl=fetch,timeoutMs=12000,skipProbes=false,indexSnapshot=null}={}) {
+  const index=indexSnapshot||await discoverIndex({fetchImpl,timeoutMs});
   if(!index.complete)throw new Error(`Incomplete source list: ${index.listedCount}/${index.advertisedCount}; preserve previous report and sources`);
+  console.log(JSON.stringify({stage:'index-complete',listed:index.listedCount,unique:index.entries.length}));
   const crawled=await crawlConfigurations([...index.entries,...extraEntries],{fetchImpl,timeoutMs});
   if(!crawled.configurations.some(x=>x.status==='ok'))throw new Error('All configurations failed; preserve previous sources');
+  console.log(JSON.stringify({stage:'configs-complete',configurations:crawled.configurations.length,sites:crawled.sites.length}));
   const baseline=new Map(configuredSites.filter(x=>classifySite(x)==='cms-candidate').flatMap(x=>{try{return [[normalizeApi(x.api),x]];}catch{return [];}}));
   const logical=new Set([...baseline.keys()].map(x=>normalizeApi(x,true)));
   const cms=new Map(),counts={};
@@ -147,7 +165,8 @@ async function main(){
   const repoRoot=path.resolve(args.get('repoRoot')||path.join(import.meta.dirname,'..'));
   const configuredSites=[];for(const file of ['sources/TVBOX','sources/All on-demand sources']){const data=parseJsonc(await fs.readFile(path.join(repoRoot,file),'utf8'));configuredSites.push(...data.sites||[]);}
   const extraEntries=args.has('extraEntries')?JSON.parse(await fs.readFile(args.get('extraEntries'),'utf8')):[];
-  const report=await auditJuwan({configuredSites,extraEntries,timeoutMs:Number(args.get('timeoutMs')||12000),skipProbes:args.get('skipProbes')==='true'});
+  const indexSnapshot=args.has('indexSnapshot')?JSON.parse(await fs.readFile(args.get('indexSnapshot'),'utf8')).index:null;
+  const report=await auditJuwan({configuredSites,extraEntries,indexSnapshot,timeoutMs:Number(args.get('timeoutMs')||12000),skipProbes:args.get('skipProbes')==='true'});
   const out=path.resolve(args.get('output')||path.join(repoRoot,'reports/juwan-latest.json'));await fs.mkdir(path.dirname(out),{recursive:true});await fs.writeFile(out,JSON.stringify(report,null,2)+'\n');await fs.writeFile(out.replace(/\.json$/,'.md'),markdownReport(report));console.log(JSON.stringify({output:out,totals:report.totals,siteClassifications:report.siteClassifications}));
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(path.resolve(process.argv[1])).href)main().catch(e=>{console.error(e.stack);process.exitCode=1;});

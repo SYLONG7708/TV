@@ -1227,6 +1227,61 @@
         "韩国剧",
         "现代都市"
       ]
+    },
+    {
+      "key": "聚玩_OK資源",
+      "name": "OK資源｜追劇",
+      "type": 1,
+      "api": "https://api.okzyw.net/api.php/provide/vod",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "categories": [
+        "动作片",
+        "港台动漫",
+        "爽文短剧",
+        "大陆综艺"
+      ],
+      "generalOnly": true,
+      "excludedCategoryIds": [
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "73"
+      ],
+      "refreshCategories": [
+        "国产剧",
+        "台剧",
+        "日韩动漫",
+        "爽文短剧",
+        "大陆综艺"
+      ]
+    },
+    {
+      "key": "聚玩_淘片資源",
+      "name": "淘片資源｜備用片庫",
+      "type": 1,
+      "api": "https://taopianapi.com/cjapi/mc/vod/json.html",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "categories": [
+        "电影/动作片",
+        "动漫/日本动漫",
+        "综艺/港台综艺"
+      ],
+      "generalOnly": true,
+      "refreshCategories": [
+        "电影/动作片",
+        "电视剧/台湾剧",
+        "电视剧/国产剧",
+        "动漫/日本动漫",
+        "综艺/港台综艺"
+      ]
     }
   ],
   "parses": [],

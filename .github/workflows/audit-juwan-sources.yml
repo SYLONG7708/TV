@@ -10,14 +10,10 @@ on:
   schedule:
     # 01:17 UTC+8; the established VOD job checks its window at 02:00.
     - cron: '17 17 * * *'
-  push:
-    branches: [feat/juwan-source-integration-20261111]
-    paths:
-      - tools/audit-juwan-sources.mjs
-      - .github/workflows/audit-juwan-sources.yml
 
 permissions:
   contents: read
+  actions: read
 
 concurrency:
   group: oktv-juwan-audit
@@ -52,7 +48,7 @@ jobs:
   site:
     if: github.event_name == 'workflow_dispatch' && inputs.fullSite
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -62,12 +58,21 @@ jobs:
             tools/audit-juwan-sources.mjs
             tools/audit-upstream-sources.mjs
             tools/vod-payload-parser.mjs
+      - name: Restore the most recent site checkpoint
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          previous="$(gh api "repos/$GITHUB_REPOSITORY/actions/artifacts?per_page=100" --jq '.artifacts | map(select(.expired == false and (.name | startswith("juwan-site-")))) | .[0] | if . then [.workflow_run.id, .name] | @tsv else empty end')"
+          if [ -n "$previous" ]; then
+            read -r run artifact <<< "$previous"
+            gh run download "$run" --repo "$GITHUB_REPOSITORY" --name "$artifact" --dir reports
+          fi
       - name: Inspect all sitemap pages with request pacing
-        run: node tools/crawl-juwan-site.mjs --delayMs 500
+        run: node tools/crawl-juwan-site.mjs --delayMs 2400
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
-          name: juwan-site-${{ github.run_id }}
+          name: juwan-site-progress-${{ github.run_id }}
           path: reports/juwan-site.json
           if-no-files-found: warn
           retention-days: 90

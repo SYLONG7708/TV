@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import {loadApprovedSites,mergeApprovedSites} from './juwan-approved-sources.mjs';
 
 const args = new Map();
 for (let i = 2; i < process.argv.length; i += 1) {
@@ -210,6 +211,9 @@ function normalizeSite(site, index) {
   if (categories) normalized.categories = categories;
   if (Array.isArray(site.tvboxCategories)) normalized.refreshCategories = categories;
   if (adult) normalized.adult = true;
+  if (site.generalOnly) normalized.generalOnly = true;
+  if (Array.isArray(site.excludedCategoryIds)) normalized.excludedCategoryIds = site.excludedCategoryIds.map(String);
+  if (site.generalOnly && Array.isArray(site.refreshCategories)) normalized.refreshCategories=site.refreshCategories;
   if (site.changeable !== undefined) normalized.changeable = normalizeInt(site.changeable, site.changeable);
   if (site.playerType !== undefined) normalized.playerType = normalizeInt(site.playerType, site.playerType);
   if (site.timeout !== undefined) normalized.timeout = normalizeInt(site.timeout, site.timeout);
@@ -229,7 +233,7 @@ function normalizeList(value) {
 }
 
 const source = await readJson(input);
-const sourceSites = Array.isArray(source) ? source : normalizeList(source.sites);
+const sourceSites = mergeApprovedSites(Array.isArray(source) ? source : normalizeList(source.sites),await loadApprovedSites(repoRoot));
 const warningText =
   trimString(source.warningText).replace(/every\s+\d+\s+days/i, 'daily at 02:00') ||
   'OKTV TVBox on-demand sources. Auto refreshed daily at 02:00.';

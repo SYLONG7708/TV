@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-11-11T01:06:00+08:00",
+  "discoveryPage": "https://www.juwanhezi.com/jsonlist",
+  "updatePolicy": "Only these reviewed CMS endpoints are used by the established daily VOD refresh. Newly discovered endpoints remain in the audit report.",
+  "sites": [
+    {
+      "key": "聚玩_OK資源",
+      "name": "OK資源｜追劇",
+      "type": 1,
+      "api": "https://api.okzyw.net/api.php/provide/vod",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "generalOnly": true,
+      "excludedCategoryIds": ["55", "56", "57", "58", "59", "60", "61", "73"],
+      "categories": ["动作片", "国产剧", "港台动漫", "爽文短剧", "大陆综艺", "4K电影"],
+      "refreshCategories": ["国产剧", "台剧", "日韩动漫", "爽文短剧", "大陆综艺"],
+      "provenance": "https://www.cttv.vip/ys/json/ctys.json"
+    },
+    {
+      "key": "聚玩_淘片資源",
+      "name": "淘片資源｜備用片庫",
+      "type": 1,
+      "api": "https://taopianapi.com/cjapi/mc/vod/json.html",
+      "searchable": 1,
+      "quickSearch": 1,
+      "filterable": 1,
+      "generalOnly": true,
+      "categories": ["电影/动作片", "电视剧/台湾剧", "电视剧/国产剧", "动漫/日本动漫", "综艺/港台综艺"],
+      "refreshCategories": ["电影/动作片", "电视剧/台湾剧", "电视剧/国产剧", "动漫/日本动漫", "综艺/港台综艺"],
+      "provenance": "https://raw.githubusercontent.com/yw88075/tvbox/main/yw.json",
+      "note": "2026-11-11 sample metadata last updated 2026-09-18; usable as an older-library backup, not a current-release guarantee."
+    }
+  ]
+}

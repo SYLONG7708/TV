@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import {loadApprovedSites} from './juwan-approved-sources.mjs';
 
 const args = new Map();
 for (let i = 2; i < process.argv.length; i += 1) {
@@ -448,6 +449,9 @@ function configSiteRow(site, index, originUrl) {
     trend: '',
     origin: originUrl,
     adult: isAdultSource(site),
+    generalOnly: Boolean(site.generalOnly),
+    excludedCategoryIds: Array.isArray(site.excludedCategoryIds)?site.excludedCategoryIds.map(String):[],
+    refreshCategories: Array.isArray(site.refreshCategories)?site.refreshCategories:[],
   };
 }
 
@@ -729,6 +733,10 @@ for (const url of extraConfigUrls) {
   }
 }
 
+for (const [index,site] of (await loadApprovedSites(repoRoot)).entries()) {
+  addSourceRow(configSiteRow(site,index,'reviewed:juwan-20261111'));
+}
+
 for (const row of requiredRows) {
   addSourceRow(row, { pinned: true });
 }
@@ -760,6 +768,7 @@ const sites = dedupedRows.map((row, index) => {
     categories,
   };
   if (row.ext) site.ext = row.ext;
+  if (row.generalOnly) { site.generalOnly=true;site.excludedCategoryIds=row.excludedCategoryIds;site.refreshCategories=row.refreshCategories; }
   if (Array.isArray(row.tvboxCategories)) site.tvboxCategories = row.tvboxCategories;
   if (row.changeable !== undefined) site.changeable = row.changeable;
   if (row.filterable !== undefined) site.filterable = row.filterable;

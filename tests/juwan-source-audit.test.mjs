@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 import {parseSourceRows,publicHttp,decodeConfig,inspectConfig,classifySite,discoverIndex} from '../tools/audit-juwan-sources.mjs';
 import {sitemapUrls,pageResources} from '../tools/crawl-juwan-site.mjs';
 
@@ -17,6 +18,15 @@ test('JSONC and base64 data parse without evaluating executable input',()=>{
   assert.deepEqual(decodeConfig('token**'+Buffer.from(JSON.stringify(config)).toString('base64')).config,config);
   assert.throws(()=>decodeConfig('(()=>{throw new Error("executed")})()'));
   assert.throws(()=>decodeConfig('<html>blocked</html>'));
+});
+test('standard self-contained CBC envelope decodes as data and rejects truncated payloads',()=>{
+  const config={sites:[{name:'電影',type:1,api:'https://example.com/api'}]};
+  const key='123',iv='1234567890123';
+  const cipher=crypto.createCipheriv('aes-128-cbc',Buffer.from(key.padEnd(16,'0')),Buffer.from(iv.padEnd(16,'0')));
+  const data=Buffer.concat([cipher.update(JSON.stringify(config)),cipher.final()]);
+  const envelope=Buffer.from('$#'+key+'#$').toString('hex')+data.toString('hex')+Buffer.from(iv).toString('hex');
+  assert.deepEqual(decodeConfig(envelope).config,config);
+  assert.throws(()=>decodeConfig(envelope.slice(0,-30)));
 });
 test('nested repository addresses resolve while executable adapters stay classified',()=>{
   const data=inspectConfig({urls:[{name:'next',url:'./config.json'}],sites:[{name:'短劇',type:3,api:'csp_Drama'}],lives:[{name:'live',url:'https://example.com/live.m3u'}]},'https://example.com/path/root.json');
