@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import {loadApprovedSites,sourceAllowsItem} from './juwan-approved-sources.mjs';
 import { classifyVodKind } from './vod-kind-rules.mjs';
 import { parseVodPayload } from './vod-payload-parser.mjs';
 
@@ -494,6 +495,7 @@ function normalizeVodItem(item, source, category = null) {
   const episodes = parseEpisodes(item.vod_play_url || item.vod_play || item.vod_url || item.vod_play_url_with_player || item.play_url || item.url);
   const adult = isAdultVodItem(item, source, typeName || category?.name || '', genre, title);
   const kind = classifyVodKind({ categoryName: typeName || category?.name || '', genre, title, sourceAdult: adult, adult });
+  if(!sourceAllowsItem(source,{...item,adult,kind,categoryName:typeName}))return null;
   const id = `${source.id}::${normalizeText(item.vod_id ?? item.id ?? title)}`;
 
   return {
@@ -545,6 +547,8 @@ function sourceFromSite(site, index, origin) {
     refreshCategories: Array.isArray(site.refreshCategories)
       ? site.refreshCategories.map((category) => normalizeText(category)).filter(Boolean)
       : [],
+    generalOnly: Boolean(site.generalOnly),
+    excludedCategoryIds: Array.isArray(site.excludedCategoryIds)?site.excludedCategoryIds.map(String):[],
   };
 }
 
@@ -588,6 +592,8 @@ async function loadSources() {
     addSites(await readJson(allOnDemandSourcesPath, {}), 'legacy-all-on-demand');
     addSites(await readJson(lunaFullPath, {}), 'legacy-lunatv-full');
   }
+
+  addSites({sites:await loadApprovedSites(tvRoot)},'reviewed-juwan');
 
   return rawSources;
 }

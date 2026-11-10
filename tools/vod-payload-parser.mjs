@@ -147,5 +147,10 @@ export function parseVodPayload(text) {
       limit: Number(payload.page?.pagesize || 0), page: Number(payload.page?.pageindex || 1),
     };
   }
+  // Taopian-style CMS uses these top-level aliases for its real pagination.
+  // Keep the declared values so the indexer can advance beyond the first page.
+  if(payload&&Array.isArray(payload.list)&&('recordcount' in payload||'pageindex' in payload)) {
+    return {...payload,page:payload.page??Number(payload.pageindex||1),total:payload.total??Number(payload.recordcount||0),limit:payload.limit??Number(payload.pagesize||0)};
+  }
   return payload;
 }

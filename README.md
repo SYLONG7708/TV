@@ -28,6 +28,8 @@
 
 ## 外部來源每日比對
 
+聚玩盒子完整點播／直播接口清單每天 01:17（UTC+8）由 [Audit Juwan public sources](https://github.com/SYLONG7708/TV/actions/workflows/audit-juwan-sources.yml) 檢查。已驗證的「OK資源｜追劇」及「淘片資源｜備用片庫」接入原每日片庫更新；首批各 200 筆，後續補明細。完整範圍、播放抽樣與全站內文掃描限制見[檢查紀錄](docs/JUWAN_SOURCE_AUDIT_20261111.md)。
+
 `AA257265/265` 的一般 CMS 入口每天 03:43（UTC+8）由 [Audit 265 upstream sources](https://github.com/SYLONG7708/TV/actions/workflows/audit-upstream-sources.yml) 比對，結果在每次執行的摘要及 artifact 中保留 90 天。這項排程只更新報告；新網址不會自動變成播放來源。初次比對、樣本及限制見[查核紀錄](docs/UPSTREAM_265_AUDIT_20261109.md)。
 
 ## 目前內置來源
