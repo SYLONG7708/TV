@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-DAsVpTu4bKKSGkv+MDoWIK8n2jA4zUq+vCpCc/Fzjpw=' https://cdn.jsdelivr.net https://www.youtube.com; style-src 'self' 'sha256-espkF4pVwtnSOb5hvDumVNHfVQ/83x3JfrOf/xLJ5yY='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-CgWqsgaRu9+49AIy6hCrMeHKiLPsuG+8WSNJ0Yf115E=' https://cdn.jsdelivr.net https://www.youtube.com; style-src 'self' 'sha256-espkF4pVwtnSOb5hvDumVNHfVQ/83x3JfrOf/xLJ5yY='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1891,6 +1891,14 @@
 
       async function ensureSourceIndex(source) {
         if (!source || state.loadedSourceIds.has(source.id)) return false;
+        if (source.adapterKind && source.indexPath) {
+          const payload = await getJson(`../data/${source.indexPath}`, null);
+          const rows = Array.isArray(payload?.items) ? payload.items : [];
+          if (rows.length < Number(source.itemCount || 0)) throw new Error('adapter-source-index-incomplete');
+          registerCatalogItems(rows);
+          state.loadedSourceIds.add(source.id);
+          return rows.length > 0;
+        }
         if (hasRegisteredSourceItems(source.id)) {
           state.loadedSourceIds.add(source.id);
           return false;
@@ -4919,7 +4927,7 @@
           return;
         }
         const scopeKey = [state.tab, state.selectedSource, needle.query].join('\u001f');
-        if (state.selectedSource.startsWith(PUBLIC_SOURCE_PREFIX) && state.loadedSourceIds.has(state.selectedSource)) {
+        if ((state.selectedSource.startsWith(PUBLIC_SOURCE_PREFIX) || sourceById(state.selectedSource)?.adapterKind) && state.loadedSourceIds.has(state.selectedSource)) {
           cancelActiveSearch('cancelled');
           state.searchLoading = false;
           state.searchProgress = { query: needle.query, scopeKey, completed: 0, total: 0, failed: 0, status: 'complete' };

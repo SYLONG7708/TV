@@ -3,6 +3,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { promisify } from 'node:util';
 import { writeStableGzipJson } from './stable-gzip-json.mjs';
+import {sourceIdentityKey} from './source-identity.mjs';
 
 const gunzip = promisify(zlib.gunzip);
 
@@ -267,7 +268,7 @@ const previousPublicSourceByApi = new Map();
 for (const source of previousPublicSources) {
   const slug = detailDirFromPattern(source.detailPathPattern) || sourceSlug(source);
   if (slug && !previousPublicSourceBySlug.has(slug)) previousPublicSourceBySlug.set(slug, source);
-  const api = normalizeApi(source.api);
+  const api = sourceIdentityKey(source,normalizeApi);
   if (api && !previousPublicSourceByApi.has(api)) previousPublicSourceByApi.set(api, source);
 }
 
@@ -288,7 +289,7 @@ const sources = (fullCatalog.sources || []).map((source) => {
   const previousPublicSource =
     previousPublicSourceById.get(source.id) ||
     previousPublicSourceBySlug.get(slug) ||
-    previousPublicSourceByApi.get(normalizeApi(source.api));
+    previousPublicSourceByApi.get(sourceIdentityKey(source,normalizeApi));
   const trustPreviousPublicSource = Boolean(trustPreviousPublicSources && previousPublicSource?.indexed);
   const hasDetail = publishedDetailDirs.has(slug) || trustPreviousPublicSource;
   const indexFile = source.indexPath ? path.basename(source.indexPath) : `${slug}.json.gz`;
@@ -347,7 +348,7 @@ const sources = (fullCatalog.sources || []).map((source) => {
     for (const key of ['itemCount', 'playableCount', 'sourceTotalCount', 'detailPageCount', 'detailExpectedPages']) {
       next[key] = Math.max(Number(next[key] || 0), Number(previousPublicSource[key] || 0));
     }
-    if (previousPublicSource.complete && !next.complete) next.complete = previousPublicSource.complete;
+    if (previousPublicSource.complete && !next.complete && !next.adapterKind) next.complete = previousPublicSource.complete;
   }
   if (hasIndex) {
     next.indexMode = 'chunked-json-gzip';

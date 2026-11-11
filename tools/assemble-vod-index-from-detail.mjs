@@ -203,7 +203,7 @@ for (const source of catalog.sources || []) {
     itemCount: compact.length,
     playableCount: compact.filter((item) => item.playable).length,
     sourceTotalCount: total || compact.length,
-    complete: expectedPages > 0 && files.length >= expectedPages,
+    complete: source.adapterKind ? Boolean(source.adapterState?.backfillComplete) : expectedPages > 0 && files.length >= expectedPages,
     detailPageCount: files.length,
     detailExpectedPages: expectedPages || files.length,
     indexed: compact.length > 0,

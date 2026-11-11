@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "reviewedAt": "2026-11-11",
+  "description": "已實測分類、分頁、搜尋、詳情、選集及媒體片段的來源；轉為現有影視可讀的雲端索引。傳輸設定從上游公開配置讀取，不在目錄散佈金鑰。驗證採抽樣，非保證全站影片可播。",
+  "sites": [
+    {
+      "key": "聚玩_元咲動漫",
+      "name": "元咲動漫（適配）",
+      "type": 3,
+      "api": "csp_AppGet",
+      "adapterKind": "appget",
+      "configRef": {"url": "http://47.96.82.41:5188/svip/svip.json", "key": "元咲"},
+      "generalOnly": true
+    },
+    {
+      "key": "聚玩_番薯動漫",
+      "name": "番薯動漫（適配）",
+      "type": 3,
+      "api": "csp_AppGet",
+      "adapterKind": "appget",
+      "configRef": {"url": "http://47.96.82.41:5188/svip/svip.json", "key": "番薯"},
+      "generalOnly": true
+    },
+    {
+      "key": "聚玩_王子影視",
+      "name": "王子影視（適配）",
+      "type": 3,
+      "api": "csp_AppGet",
+      "adapterKind": "appget",
+      "configRef": {"url": "http://150.158.52.248/tgyg/bbm.json", "key": "王子"},
+      "generalOnly": true
+    },
+    {
+      "key": "聚玩_短劇五五",
+      "name": "短劇五五（適配）",
+      "type": 3,
+      "api": "csp_XYQHiker",
+      "adapterKind": "xyq",
+      "ext": "https://raw.githubusercontent.com/xyq254245/xyqonlinerule/main/XYQHiker/%E7%9F%AD%E5%89%A7%E4%BA%94%E4%BA%94.json",
+      "generalOnly": true,
+      "categoryKind": "short"
+    },
+    {
+      "key": "聚玩_八零影視",
+      "name": "八零影視（適配）",
+      "type": 3,
+      "api": "csp_XBPQ",
+      "adapterKind": "xbpq",
+      "ext": "http://47.96.82.41:5188/svip/XBPQ/80S%E7%94%B5%E5%BD%B1.json",
+      "generalOnly": true
+    },
+    {
+      "key": "聚玩_看影網",
+      "name": "看影網（適配）",
+      "type": 3,
+      "api": "csp_XYQHiker",
+      "adapterKind": "xyq",
+      "ext": "https://raw.githubusercontent.com/xyq254245/xyqonlinerule/main/XYQHiker/%E7%9C%8B%E5%BD%B1%E7%BD%91.json",
+      "generalOnly": true
+    }
+  ]
+}
