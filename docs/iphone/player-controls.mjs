@@ -139,7 +139,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     if (!isDirect()) return false;
     const target = seekTarget(time, video.seekable, video.duration);
     let applied = false;
-    if (target !== null) { try { video.currentTime = target; lastGoodPosition = target; applied = true; } catch { say('此片源暫時無法跳轉，請稍後再試。'); } }
+    if (target !== null) { try { clearTimeout(stallTimer);stallTimer=null;lastProgressAt=performance.now();video.currentTime = target; lastGoodPosition = target; applied = true; } catch { say('此片源暫時無法跳轉，請稍後再試。'); } }
     syncTransport();
     return applied;
   }
@@ -417,8 +417,9 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     if (!isDirect() || fatal || userPaused) return;
     say('緩衝中…');
     if (hasStarted && !stallTimer) {
-      const token = generation; onEvidence(entry, 'stall');
-      stallTimer = setTimeout(() => { stallTimer = null; if (isCurrent(token) && !userPaused && video.readyState < 3) stalled('片源持續緩衝，正在檢查其他訊號。'); }, 6000);
+      const token = generation;if(!video.seeking)onEvidence(entry, 'stall');
+      const wait=entry.backend==='source-media'?20000:6000;
+      stallTimer = setTimeout(() => { stallTimer = null; if (isCurrent(token) && !userPaused && video.readyState < 3) stalled('片源持續緩衝，正在檢查其他訊號。'); }, wait);
     }
   });
   video.addEventListener('ended', () => { if (isDirect()) { say(entry.index < (entry.episodes?.length || 0) - 1 ? '本集播放完畢，可點選下一集。' : '播放完畢'); saveProgress(); } });

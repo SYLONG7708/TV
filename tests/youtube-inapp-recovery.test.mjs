@@ -110,6 +110,16 @@ test('native MP4 startup allows metadata range requests before falling back and 
   await f.advance(17);assert.equal(f.failures.length,1);f.controller.close();
 });
 
+test('a user seek keeps the native stream alive while a fresh range connects',async()=>{
+  const f=await fixture({sourceNative:true,entryOverride:{url:'http://ccc.oiio.fun/episode.mp4',embedUrl:''}});
+  const local='https://sylong7708.github.io/TV/__source_media__/01234567-89ab-cdef-0123-456789abcdef/video.mp4';
+  f.resolveSource({ok:true,backend:'source-media',url:local});await flush();
+  f.video.readyState=4;f.video.videoHeight=720;f.video.duration=1400;f.video.dispatch('playing');
+  f.video.seeking=true;f.controller.seek(900);f.video.readyState=1;f.video.dispatch('waiting');await f.advance(10);
+  assert.equal(f.video.src,local);assert.equal(f.nativeCalls.length,1);assert.equal(f.cancellations.length,0);assert.equal(f.failures.length,0);assert.equal(f.evidence.filter(x=>x.event==='stall').length,0);
+  f.video.seeking=false;f.video.readyState=4;f.video.dispatch('playing');await f.advance(1);assert.equal(f.failures.length,0);f.controller.close();
+});
+
 const nativeUrl = 'https://sylong7708.github.io/TV/__bluem_live__/0c49cd07-0607-465f-96c1-5f717bd30a6b/master.m3u8';
 test('Android live playback waits for Blue M and never creates an iframe player', async () => {
   const f = await fixture({ native: true }); await f.advance(32);
