@@ -51,7 +51,7 @@ jobs:
   site:
     if: (github.event_name == 'workflow_dispatch' && inputs.fullSite) || (github.event_name == 'schedule' && github.event.schedule != '17 17 * * *')
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
@@ -72,7 +72,10 @@ jobs:
           fi
       - name: Inspect all sitemap pages with request pacing
         id: scan
-        run: node tools/crawl-juwan-site.mjs --delayMs 2400 --maxPages 24
+        run: |
+          pages=24
+          if [ '${{ github.event_name }}' = 'workflow_dispatch' ] && [ '${{ inputs.fullSite }}' = 'true' ]; then pages=0; fi
+          node tools/crawl-juwan-site.mjs --delayMs 2400 --maxPages "$pages"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always() && steps.scan.outputs.changed != 'false'
         with:

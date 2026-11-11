@@ -201,6 +201,7 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     return window.__oktvYouTubeReady;
   }
   function open(next, resumeTime = 0, autoplay = true) {
+    if(next.sourceMediaOriginalUrl&&next.url!==sourceUrl){next={...next};delete next.sourceMediaOriginalUrl;if(next.backend==='source-media')delete next.backend;}
     const keepBlueM = Boolean(next.backend === 'blue-m' && blueMOperation && next.url === blueMUrl);
     const keepSource = Boolean(next.backend==='source-media'&&sourceOperation&&next.url===sourceUrl);
     stop(keepBlueM,keepSource); entry = { ...next }; const token = generation; fatal = false; recoveries = mediaRecoveries = 0;

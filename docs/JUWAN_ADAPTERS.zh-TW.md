@@ -49,3 +49,5 @@ node tools/seed-adapter-vod.mjs --repoRoot . --refreshPages 1 --backfillPages 0
 - XYQ 支援 JSON、JSONP、DOM 與 `{SearchPg}` 搜尋頁碼。
 - AppYs 與 drpy 宣告式規則也有相容模組；這次沒有把未通過實際完整流程的來源登錄為可用。drpy 中需要執行腳本的部分會回報 `runtime-required`，不會執行下載的任意程式。
 - 上游失效、帳號驗證、地區限制、私有 JAR／Python 協定仍需個別處理。此相容層沒有宣稱整個聚玩網站的所有來源皆可使用。
+
+全站內文掃描保存成功頁的續查進度。平時每 10 分鐘的排程每輪 24 頁；手動執行 `Audit Juwan public sources` 並勾選 `fullSite` 會從進度繼續查至本輪 sitemap 結束，維持每 2.4 秒最多開始一個請求、最多兩個同時連線，最長 150 分鐘。遇到來源限流 429／503 或連續網路失敗會保存進度後停止，後續排程再續查；仍須以報告 `complete: true` 確認全站內文完成。

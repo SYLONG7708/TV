@@ -21,7 +21,7 @@ export async function crawlSite({output,delayMs=2400,timeoutMs=15000,fetchImpl=f
   const urls=sitemapUrls(text);if(urls.length<100)throw new Error('Unexpected sitemap size; preserve previous site report');
   const previous=await fs.readFile(output,'utf8').then(JSON.parse).catch(()=>({pages:[]}));
   const rows=new Map((previous.pages||[]).filter(x=>x.status==='ok').map(x=>[x.url,x]));
-  let consecutiveNetworkFailures=0,saveCounter=0,processed=0;
+  let consecutiveNetworkFailures=0,saveCounter=0,processed=0,throttled=false;
   const save=async()=>{const pages=[...rows.values()];const report={generatedAt:new Date().toISOString(),sitemapCount:urls.length,attempted:pages.length,succeeded:pages.filter(x=>x.status==='ok').length,failed:pages.filter(x=>x.status!=='ok').length,complete:urls.every(u=>rows.get(u)?.status==='ok'),pages};await fs.mkdir(path.dirname(output),{recursive:true});const temp=output+'.'+process.pid+'.'+saveCounter+++'.tmp';await fs.writeFile(temp,JSON.stringify(report,null,2)+'\n');await fs.rename(temp,output);return report;};
   const pending=urls.filter(u=>rows.get(u)?.status!=='ok');
   if(!pending.length&&previous.complete){if(process.env.GITHUB_OUTPUT)await fs.appendFile(process.env.GITHUB_OUTPUT,'changed=false\n');console.log('Site checkpoint already covers this sitemap.');return previous;}
@@ -30,9 +30,10 @@ export async function crawlSite({output,delayMs=2400,timeoutMs=15000,fetchImpl=f
   // every delayMs, including when a previous request is slow.
   let turn=Promise.resolve();
   const pace=async()=>{const previousTurn=turn;let release;turn=new Promise(r=>{release=r;});await previousTurn;await new Promise(r=>setTimeout(r,Math.max(0,lastStart+delayMs-Date.now())));lastStart=Date.now();release();};
-  await Promise.all(Array.from({length:2},async()=>{while(cursor<remaining.length&&consecutiveNetworkFailures<6){const url=remaining[cursor++];await pace();try{const {text,finalUrl}=await fetchBoundedText(url,{fetchImpl,timeoutMs,maxBytes:2500000});rows.set(url,{...pageResources(text,url),finalUrl,status:'ok'});consecutiveNetworkFailures=0;}catch(e){rows.set(url,{url,status:'failed',error:e.message});if(!/HTTP 4\d\d/.test(e.message))consecutiveNetworkFailures++;}processed++;if(processed%20===0){await save();console.log(JSON.stringify({attempted:rows.size,total:urls.length}));}}}));
+  await Promise.all(Array.from({length:2},async()=>{while(cursor<remaining.length&&consecutiveNetworkFailures<6&&!throttled){const url=remaining[cursor++];await pace();try{const {text,finalUrl}=await fetchBoundedText(url,{fetchImpl,timeoutMs,maxBytes:2500000});rows.set(url,{...pageResources(text,url),finalUrl,status:'ok'});consecutiveNetworkFailures=0;}catch(e){rows.set(url,{url,status:'failed',error:e.message});if(/HTTP (429|503)/.test(e.message))throttled=true;if(!/HTTP 4\d\d/.test(e.message))consecutiveNetworkFailures++;}processed++;if(processed%20===0){await save();console.log(JSON.stringify({attempted:rows.size,total:urls.length}));}}}));
   const report=await save();console.log(JSON.stringify({complete:report.complete,attempted:report.attempted,succeeded:report.succeeded,failed:report.failed,sitemapCount:urls.length}));
   if(process.env.GITHUB_OUTPUT)await fs.appendFile(process.env.GITHUB_OUTPUT,'changed=true\n');
+  if(throttled)throw new Error('Origin limited requests; scan checkpoint preserved for a later retry');
   if(cursor<remaining.length||consecutiveNetworkFailures>=6)throw new Error('Origin repeatedly timed out; scan checkpoint preserved for resuming');
   return report;
 }

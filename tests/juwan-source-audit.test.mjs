@@ -60,3 +60,13 @@ test('site batches retain their checkpoint and do not label partial coverage com
   const a=await crawlSite({output,fetchImpl:mock,delayMs:0,maxPages:3});assert.equal(a.succeeded,3);assert.equal(a.complete,false);
   const b=await crawlSite({output,fetchImpl:mock,delayMs:0,maxPages:2});assert.equal(b.succeeded,5);assert.equal(b.complete,false);
 });
+
+test('full site scanning stops on source throttling and preserves a resumable checkpoint',async()=>{
+  const root=await fs.mkdtemp(path.join(os.tmpdir(),'juwan-throttle-test-')),output=path.join(root,'site.json');
+  const sitemap=Array.from({length:101},(_,i)=>`<loc>https://www.juwanhezi.com/item/${i}</loc>`).join('');let pages=0;
+  try{
+    const fetchImpl=async url=>{if(String(url).endsWith('sitemap.xml'))return new Response(sitemap);pages++;return new Response('busy',{status:429});};
+    await assert.rejects(crawlSite({output,fetchImpl,delayMs:0,maxPages:0}),/limited requests/);
+    const report=JSON.parse(await fs.readFile(output,'utf8'));assert.equal(report.complete,false);assert.ok(pages<=2);assert.equal(report.failed,pages);
+  }finally{await fs.rm(root,{recursive:true,force:true});}
+});

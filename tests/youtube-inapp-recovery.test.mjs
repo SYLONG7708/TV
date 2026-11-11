@@ -11,7 +11,7 @@ const flush = () => new Promise(resolve => setImmediate(resolve));
 
 // Run the actual controller with a clock and the documented iframe API surface.
 // No network, production channels, credentials or externally installed app is used.
-async function fixture({ startState = 1, native = false } = {}) {
+async function fixture({ startState = 1, native = false, sourceNative = false, entryOverride = {} } = {}) {
   let clock = 0, timerId = 0;
   const timers = new Map(), nodes = new Map(), players = [], failures = [], evidence = [];
   const setTimer = (callback, delay, interval = 0) => {
@@ -56,7 +56,9 @@ async function fixture({ startState = 1, native = false } = {}) {
   const window = new Node(); window.YT = { Player }; window.localStorage = null;
   const nativeCalls = [], cancellations = [];
   if (native) window.CarBridge = { resolveBlueMLive: (videoId, requestId) => nativeCalls.push({ videoId, requestId }), cancelBlueMLive: id => cancellations.push(id) };
+  if (sourceNative) window.CarBridge = {resolveSourceMedia:(url,requestId)=>nativeCalls.push({url,requestId}),cancelSourceMedia:id=>cancellations.push(id)};
   const resolveNative = (data, index = nativeCalls.length - 1) => window.dispatch('yingshi-bluem-live', { detail: { requestId: nativeCalls[index].requestId, ...data } });
+  const resolveSource = (data, index = nativeCalls.length - 1) => window.dispatch('yingshi-source-media', {detail:{requestId:nativeCalls[index].requestId,...data}});
   const context = vm.createContext({ window, document, navigator: { onLine: true },
     needsSourceMedia,createSourceMediaResolver: options=>createSourceMediaResolver({...options,setTimer:(fn,delay)=>setTimer(fn,delay),clearTimer:id=>timers.delete(id)}),
     createBlueMLiveResolver: options => createBlueMLiveResolver({ ...options, setTimer: (fn, delay) => setTimer(fn, delay), clearTimer: id => timers.delete(id) }),
@@ -69,7 +71,7 @@ async function fixture({ startState = 1, native = false } = {}) {
     onFailure: (entry, detail) => failures.push({ entry, detail }),
     onEvidence: (entry, event, detail) => evidence.push({ entry, event, detail }) });
   const entry = { url: 'https://www.youtube.com/watch?v=pF507BLtbqU',
-    embedUrl: 'https://www.youtube.com/embed/pF507BLtbqU', attemptId: 'same-channel' };
+    embedUrl: 'https://www.youtube.com/embed/pF507BLtbqU', attemptId: 'same-channel', ...entryOverride };
   async function advance(seconds, progress = false) {
     for (let i = 0; i < seconds; i++) {
       if (progress) players.at(-1).time++;
@@ -85,8 +87,21 @@ async function fixture({ startState = 1, native = false } = {}) {
     }
   }
   controller.open(entry); await flush();
-  return { controller, players, failures, evidence, document, nodes, context, entry, advance, video, nativeCalls, cancellations, resolveNative };
+  return { controller, players, failures, evidence, document, nodes, context, entry, advance, video, nativeCalls, cancellations, resolveNative, resolveSource };
 }
+
+test('source playback keeps native ranges alive during retry and releases the session when switching quality',async()=>{
+  const gateway='http://ccc.oiio.fun/d/[group]episode.mp4',alternative='https://media.example/video.mp4';
+  const f=await fixture({sourceNative:true,entryOverride:{url:gateway,embedUrl:'',variants:[{url:gateway,label:'720p'},{url:alternative,label:'1080p'}]}});
+  assert.equal(f.nativeCalls[0].url,gateway);f.controller.pause();
+  const local='https://sylong7708.github.io/TV/__source_media__/01234567-89ab-cdef-0123-456789abcdef/video.mp4';
+  f.resolveSource({ok:true,backend:'source-media',url:local});await flush();
+  assert.equal(f.video.src,local);assert.equal(f.video.paused,true);assert.equal(f.cancellations.length,0);
+  f.controller.retry();assert.equal(f.video.src,local);assert.equal(f.cancellations.length,0);
+  f.nodes.get('playerQuality').dispatch('change',{target:{value:'mp4:1'}});
+  assert.equal(f.video.src,alternative);assert.equal(f.controller.snapshot().backend,'direct');assert.equal(f.cancellations.length,1);
+  f.controller.close();
+});
 
 const nativeUrl = 'https://sylong7708.github.io/TV/__bluem_live__/0c49cd07-0607-465f-96c1-5f717bd30a6b/master.m3u8';
 test('Android live playback waits for Blue M and never creates an iframe player', async () => {
