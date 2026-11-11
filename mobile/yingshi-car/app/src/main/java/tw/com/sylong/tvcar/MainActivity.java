@@ -86,6 +86,7 @@ public class MainActivity extends Activity {
     private FrameLayout root;
     private WebView webView;
     private BlueMLiveBridge blueMLiveBridge;
+    private SourceMediaBridge sourceMediaBridge;
     private static final int SUBTITLE_REQUEST = 7301;
     private ValueCallback<Uri[]> subtitleCallback;
     private TextView statusView;
@@ -130,6 +131,10 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sourceMediaBridge=new SourceMediaBridge((requestId,json)->{
+            if(webView==null||!isTrustedUiPage()||(BuildConfig.REQUIRE_LICENSE&&!DeviceLicenseManager.isLicensed(this)))return;
+            try{JSONObject result=new JSONObject(json);result.put("requestId",requestId);webView.evaluateJavascript("window.dispatchEvent(new CustomEvent('yingshi-source-media',{detail:"+result+"}));",null);}catch(Exception ignored){}
+        });
         blueMLiveBridge = new BlueMLiveBridge(this, (requestId, json) -> {
             if (webView == null || !isTrustedUiPage() || (BuildConfig.REQUIRE_LICENSE && !DeviceLicenseManager.isLicensed(this))) return;
             try {
@@ -202,6 +207,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         if (blueMLiveBridge != null) blueMLiveBridge.close();
+        if (sourceMediaBridge != null) sourceMediaBridge.close();
         if (subtitleCallback != null) { subtitleCallback.onReceiveValue(null); subtitleCallback = null; }
         if (customView != null) {
             hideCustomView();
@@ -939,6 +945,7 @@ public class MainActivity extends Activity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             if (blueMLiveBridge != null && isHomeDocument(Uri.parse(url))) blueMLiveBridge.reset();
+            if (sourceMediaBridge != null && isHomeDocument(Uri.parse(url))) sourceMediaBridge.reset();
             if (isHomeDocument(Uri.parse(url))) watchPageBoot();
             statusView.setText("影視 載入中");
             statusView.setVisibility(View.VISIBLE);
@@ -993,6 +1000,8 @@ public class MainActivity extends Activity {
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+            WebResourceResponse media=sourceMediaBridge==null?null:sourceMediaBridge.intercept(request.getUrl(),request.getRequestHeaders());
+            if(media!=null)return media;
             WebResourceResponse live = blueMLiveBridge == null ? null : blueMLiveBridge.intercept(request.getUrl());
             if (live != null) return live;
             WebResourceResponse response = compatibilityResponse(request.getUrl());
@@ -1001,6 +1010,8 @@ public class MainActivity extends Activity {
 
         @Override
         public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+            WebResourceResponse media=sourceMediaBridge==null?null:sourceMediaBridge.intercept(Uri.parse(url),null);
+            if(media!=null)return media;
             WebResourceResponse live = blueMLiveBridge == null ? null : blueMLiveBridge.intercept(Uri.parse(url));
             if (live != null) return live;
             WebResourceResponse response = compatibilityResponse(Uri.parse(url));
@@ -1137,6 +1148,11 @@ public class MainActivity extends Activity {
     }
 
     private final class PageBridge {
+        @JavascriptInterface public void resolveSourceMedia(String url,String requestId){
+            if(!SourceMediaTransport.isGateway(url)||requestId==null||!requestId.matches("[A-Za-z0-9_-]{1,64}"))return;
+            mainHandler.post(()->{if(isTrustedUiPage()&&(!BuildConfig.REQUIRE_LICENSE||DeviceLicenseManager.isLicensed(MainActivity.this)))sourceMediaBridge.resolve(url,requestId);});
+        }
+        @JavascriptInterface public void cancelSourceMedia(String requestId){if(requestId!=null)mainHandler.post(()->{if(isTrustedUiPage())sourceMediaBridge.cancel(requestId);});}
         @JavascriptInterface
         public void resolveBlueMLive(String videoId, String requestId) {
             if (videoId == null || requestId == null || !videoId.matches("[A-Za-z0-9_-]{11}") || !requestId.matches("[A-Za-z0-9_-]{1,64}")) return;

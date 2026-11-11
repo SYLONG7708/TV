@@ -14,8 +14,8 @@ android {
         applicationId = "tw.com.sylong.tvcar"
         minSdk = 21
         targetSdk = 35
-        versionCode = 41
-        versionName = "1.4.31-blue-m-live"
+        versionCode = 42
+        versionName = "1.4.32-source-adapters"
         buildConfigField("String", "LICENSE_API_BASE_URL", "\"https://yingshi-license.pppp77088.workers.dev\"")
         buildConfigField("String", "LICENSE_PRODUCT_ID", "\"yingshi\"")
         buildConfigField(
@@ -31,15 +31,15 @@ android {
         create("licensed") {
             dimension = "access"
             applicationId = "tw.com.sylong.tvcar"
-            versionCode = 41
-            versionName = "1.4.31-blue-m-live"
+            versionCode = 42
+            versionName = "1.4.32-source-adapters"
             buildConfigField("boolean", "REQUIRE_LICENSE", "true")
         }
         create("direct") {
             dimension = "access"
             applicationId = "tw.com.sylong.tvcar.direct"
-            versionCode = 13
-            versionName = "1.4.10-blue-m-qa"
+            versionCode = 14
+            versionName = "1.4.11-source-qa"
             buildConfigField("boolean", "REQUIRE_LICENSE", "false")
         }
     }

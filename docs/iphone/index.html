@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-CgWqsgaRu9+49AIy6hCrMeHKiLPsuG+8WSNJ0Yf115E=' https://cdn.jsdelivr.net https://www.youtube.com; style-src 'self' 'sha256-espkF4pVwtnSOb5hvDumVNHfVQ/83x3JfrOf/xLJ5yY='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-k6shyorZB5mcq4PtHLdC0vIhk14GWBRDGbwX+tt/Yto=' https://cdn.jsdelivr.net https://www.youtube.com; style-src 'self' 'sha256-espkF4pVwtnSOb5hvDumVNHfVQ/83x3JfrOf/xLJ5yY='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1284,7 +1284,7 @@
         onRetry: position => automaticPlayback.retry(position),
         onIntent: action => automaticPlayback.intent(action),
         onEvidence: (entry, event, detail) => {
-          signalPriority.record(entry.blueMOriginalUrl ? { ...entry, url: entry.blueMOriginalUrl, embedUrl: entry.blueMOriginalEmbed } : entry, event, detail);
+          signalPriority.record(entry.sourceMediaOriginalUrl ? {...entry,url:entry.sourceMediaOriginalUrl} : entry.blueMOriginalUrl ? { ...entry, url: entry.blueMOriginalUrl, embedUrl: entry.blueMOriginalEmbed } : entry, event, detail);
           if (event === 'playing') automaticPlayback.succeeded(entry);
           const reason = String(detail?.reason || '');
           const evidence = { event, ...detail, category: /網路|斷線/.test(reason) ? 'offline' : /緩衝|rebuild-buffer/.test(reason) ? 'buffer' : /格式|影音/.test(reason) ? 'media' : 'source' };

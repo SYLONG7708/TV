@@ -38,3 +38,11 @@ b6f8718ac28ae96e1b76bfe7a8c4687e73d2c4f2dcd187a25c6af9427993a9a0
 以相同套件及簽章執行原位更新，保留原授權／資料，不卸載、不清除資料。GitHub Release 使用獨立的 `yingshi-car-*` 標籤，不改 OKTV 2.x 的 latest。
 
 後續雲端播放器與來源修正會自動載入，不必更換 APK；Android 原生程式或權限改動仍需 APK 原位更新。本版沒有繞過 Android 安裝權限的靜默原生 APK 更新器。
+# 1.4.32：短效影片來源適配
+
+`ccc.oiio.fun` 的 MP4 會跳轉到只有約 9 分鐘效期的天翼網址。此版由 App 內部在每次影片 Range 請求重新解析，將原本的範圍標頭轉送到最終 HTTPS 儲存端，串流回傳給同一個播放器。短效簽章不存入片庫、不交給網頁，也不加入 APK。
+
+雲端介面可直接辨識這類來源；需要此功能的選集須使用具備 `resolveSourceMedia` 的 Android 版。其他一般 HTTPS 影片維持既有流程。此版保留影視授權判斷與原套件 `tw.com.sylong.tvcar`，版號 42。
+
+正式覆蓋安裝必須沿用原簽章 `b6f8718ac28ae96e1b76bfe7a8c4687e73d2c4f2dcd187a25c6af9427993a9a0`。目前本機與已查備份的金鑰均不吻合；`licensedRelease` 先提供 unsigned APK，接續既有到店簽章流程。測試用 direct APK 只供隔離模擬器驗證，不能替代正式授權版。
+

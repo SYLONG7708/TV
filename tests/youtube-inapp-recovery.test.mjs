@@ -4,6 +4,7 @@ import test from 'node:test';
 import vm from 'node:vm';
 import { createAutomaticPlayback } from '../docs/iphone/automatic-playback.mjs';
 import { createBlueMLiveResolver } from '../docs/iphone/blue-m-live.mjs';
+import { createSourceMediaResolver,needsSourceMedia } from '../docs/iphone/source-media.mjs';
 
 const source = fs.readFileSync(new URL('../docs/iphone/player-controls.mjs', import.meta.url), 'utf8').replace(/^export /gm, '').replace(/^import .*;\n/gm, '');
 const flush = () => new Promise(resolve => setImmediate(resolve));
@@ -57,6 +58,7 @@ async function fixture({ startState = 1, native = false } = {}) {
   if (native) window.CarBridge = { resolveBlueMLive: (videoId, requestId) => nativeCalls.push({ videoId, requestId }), cancelBlueMLive: id => cancellations.push(id) };
   const resolveNative = (data, index = nativeCalls.length - 1) => window.dispatch('yingshi-bluem-live', { detail: { requestId: nativeCalls[index].requestId, ...data } });
   const context = vm.createContext({ window, document, navigator: { onLine: true },
+    needsSourceMedia,createSourceMediaResolver: options=>createSourceMediaResolver({...options,setTimer:(fn,delay)=>setTimer(fn,delay),clearTimer:id=>timers.delete(id)}),
     createBlueMLiveResolver: options => createBlueMLiveResolver({ ...options, setTimer: (fn, delay) => setTimer(fn, delay), clearTimer: id => timers.delete(id) }),
     location: { origin: 'https://sylong7708.github.io' }, URL, performance: { now: () => clock },
     setTimeout: (fn, delay) => setTimer(fn, delay), clearTimeout: id => timers.delete(id),

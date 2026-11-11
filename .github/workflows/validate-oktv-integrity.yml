@@ -13,6 +13,7 @@ on:
       - "tools/*.ps1"
       - "tools/source-adapters/**"
       - "sources/juwan-adapter-sources.json"
+      - "mobile/yingshi-car/app/src/main/java/tw/com/sylong/tvcar/SourceMediaTransport.java"
   push:
     branches:
       - main
@@ -26,6 +27,7 @@ on:
       - "tools/*.ps1"
       - "tools/source-adapters/**"
       - "sources/juwan-adapter-sources.json"
+      - "mobile/yingshi-car/app/src/main/java/tw/com/sylong/tvcar/SourceMediaTransport.java"
 
 permissions:
   contents: read
@@ -53,6 +55,8 @@ jobs:
             docs/data/iphone-vod-catalog.json
             /sources/title-aliases.json
             tests/*
+            tests/fixtures/**
+            mobile/yingshi-car/app/src/main/java/tw/com/sylong/tvcar/SourceMediaTransport.java
             tools/*.mjs
             tools/*.ps1
             tools/source-adapters/**
@@ -64,6 +68,11 @@ jobs:
 
       - name: Install declarative source adapters
         run: npm ci --prefix tools/source-adapters --ignore-scripts --no-audit --no-fund
+
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3
+        with:
+          distribution: temurin
+          java-version: '21'
 
       - name: Run regression tests
         shell: bash

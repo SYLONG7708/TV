@@ -1,4 +1,5 @@
 import { createBlueMLiveResolver } from './blue-m-live.mjs';
+import { createSourceMediaResolver, needsSourceMedia } from './source-media.mjs';
 export const PLAYER_SETTINGS_KEY = 'oktv:player:settings:v1';
 export const PLAYER_PROGRESS_KEY = 'oktv:player:progress:v1';
 export const clamp = (value, min, max) => Math.min(max, Math.max(min, Number(value) || 0));
@@ -41,6 +42,8 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   let lastMediaTime = -1, lastProgressAt = 0, stableProgress = 0, evidenceSent = false, lastGoodPosition = 0;
   const blueM = createBlueMLiveResolver({ bridge: window.CarBridge, events: window });
   let blueMOperation = null, blueMUrl = '';
+  const sourceMedia = createSourceMediaResolver({bridge:window.CarBridge,events:window});
+  let sourceOperation = null,sourceUrl = '';
   const retiredHlsTracks = new WeakSet();
   const store = (key, data) => { try { storage?.setItem(key, JSON.stringify(data)); } catch { /* Private browsing / full storage remain usable. */ } };
   const say = text => { status.textContent = text; };
@@ -59,9 +62,10 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     if (localUrl) URL.revokeObjectURL(localUrl);
     localUrl = '';
   }
-  function stop(preserveBlueM = false) {
+  function stop(preserveBlueM = false,preserveSource = false) {
     saveProgress(); generation++;
     if (preserveBlueM !== true) { blueMOperation?.close(); blueMOperation = null; blueMUrl = ''; }
+    if (!preserveSource) { sourceOperation?.close();sourceOperation=null;sourceUrl=''; }
     clearTimeout(stallTimer); stallTimer = null;
     if (youtube) { try { youtube.destroy(); } catch {} youtube = null; }
     // The iframe API may replace/remove its element when destroyed.
@@ -198,7 +202,8 @@ export function createPlayerController({ video, frame, panel, controls, status, 
   }
   function open(next, resumeTime = 0, autoplay = true) {
     const keepBlueM = Boolean(next.backend === 'blue-m' && blueMOperation && next.url === blueMUrl);
-    stop(keepBlueM); entry = { ...next }; const token = generation; fatal = false; recoveries = mediaRecoveries = 0;
+    const keepSource = Boolean(next.backend==='source-media'&&sourceOperation&&next.url===sourceUrl);
+    stop(keepBlueM,keepSource); entry = { ...next }; const token = generation; fatal = false; recoveries = mediaRecoveries = 0;
     startedAt = performance.now(); hasStarted = false; userPaused = !autoplay;
     lastProgressAt = startedAt; lastMediaTime = -1; stableProgress = 0; evidenceSent = false; lastGoodPosition = resumeTime || 0;
     subtitleChoice = 'off'; pendingSeek = resumeTime || 0; dragging = false;
@@ -207,6 +212,13 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     controls.hidden = Boolean(entry.embedUrl); hint.hidden = !entry.embedUrl;
     $('playerRetry').hidden = true;
     video.classList.toggle('hidden', Boolean(entry.embedUrl));
+    if(needsSourceMedia(entry.url)) {
+      say('正在準備播放連線…');hint.hidden=true;
+      sourceOperation=sourceMedia.open(entry.url);
+      sourceOperation.promise.then(result=>{if(!isCurrent(token))return;sourceUrl=result.url;open({...entry,sourceMediaOriginalUrl:entry.url,url:result.url,backend:'source-media'},pendingSeek,!userPaused);})
+        .catch(error=>{if(isCurrent(token))fail(error.message,{allowPaused:true});});
+      return;
+    }
     if (entry.embedUrl && blueM.supported()) {
       hint.hidden = true;
       frame.classList.remove('hidden');
