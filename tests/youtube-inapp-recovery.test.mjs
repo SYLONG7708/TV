@@ -103,6 +103,13 @@ test('source playback keeps native ranges alive during retry and releases the se
   f.controller.close();
 });
 
+test('native MP4 startup allows metadata range requests before falling back and still has a hard timeout',async()=>{
+  const f=await fixture({sourceNative:true,entryOverride:{url:'http://ccc.oiio.fun/d/[group]episode.mp4',embedUrl:'',canFallback:true}});
+  f.resolveSource({ok:true,backend:'source-media',url:'https://sylong7708.github.io/TV/__source_media__/01234567-89ab-cdef-0123-456789abcdef/video.mp4'});await flush();
+  await f.advance(10);assert.equal(f.failures.length,0);assert.equal(f.cancellations.length,0);
+  await f.advance(17);assert.equal(f.failures.length,1);f.controller.close();
+});
+
 const nativeUrl = 'https://sylong7708.github.io/TV/__bluem_live__/0c49cd07-0607-465f-96c1-5f717bd30a6b/master.m3u8';
 test('Android live playback waits for Blue M and never creates an iframe player', async () => {
   const f = await fixture({ native: true }); await f.advance(32);

@@ -303,7 +303,10 @@ export function createPlayerController({ video, frame, panel, controls, status, 
     } else video.src = entry.url;
     if (!fatal && autoplay) readyTimer = setTimeout(() => {
       if (!isCurrent(token) || hasStarted || userPaused) return;
-      if (entry.canFallback) fail('片源啟播逾時，正在檢查其他訊號。');
+      if(entry.backend==='source-media'){
+        say('正在取得影片資料，請稍候…');
+        readyTimer=setTimeout(()=>{if(isCurrent(token)&&!hasStarted&&!userPaused)fail('片源啟播逾時，正在檢查其他訊號。');},17000);
+      }else if (entry.canFallback) fail('片源啟播逾時，正在檢查其他訊號。');
       else {
         // Do not abort the only viable connection just because it needs more
         // than nine seconds on a tethered network. It still has a hard limit.
