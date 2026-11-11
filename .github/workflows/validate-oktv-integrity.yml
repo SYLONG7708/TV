@@ -11,6 +11,8 @@ on:
       - "tests/**"
       - "tools/*.mjs"
       - "tools/*.ps1"
+      - "tools/source-adapters/**"
+      - "sources/juwan-adapter-sources.json"
   push:
     branches:
       - main
@@ -22,6 +24,8 @@ on:
       - "tests/**"
       - "tools/*.mjs"
       - "tools/*.ps1"
+      - "tools/source-adapters/**"
+      - "sources/juwan-adapter-sources.json"
 
 permissions:
   contents: read
@@ -51,6 +55,15 @@ jobs:
             tests/*
             tools/*.mjs
             tools/*.ps1
+            tools/source-adapters/**
+            /sources/juwan-adapter-sources.json
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+
+      - name: Install declarative source adapters
+        run: npm ci --prefix tools/source-adapters --ignore-scripts --no-audit --no-fund
 
       - name: Run regression tests
         shell: bash

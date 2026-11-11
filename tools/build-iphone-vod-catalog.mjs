@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {loadApprovedSites,sourceAllowsItem} from './juwan-approved-sources.mjs';
+import {loadAdapterSites} from './juwan-adapter-sources.mjs';
+import {sourceIdentityKey} from './source-identity.mjs';
 import { classifyVodKind } from './vod-kind-rules.mjs';
 import { parseVodPayload } from './vod-payload-parser.mjs';
 
@@ -539,7 +541,8 @@ function sourceFromSite(site, index, origin) {
     name,
     type,
     api,
-    ext: normalizeText(site.ext || ''),
+    ext: typeof site.ext==='object'?site.ext:normalizeText(site.ext || ''),
+    ...(site.adapterKind?{adapterKind:site.adapterKind,configRef:site.configRef,categoryKind:site.categoryKind}:{}),
     host: hostOf(api),
     origin,
     indexable: INDEXABLE_TYPES.has(type) && /^https?:\/\//i.test(api),
@@ -566,7 +569,7 @@ async function loadSources() {
     const sites = Array.isArray(config?.sites) ? config.sites : [];
     for (const site of sites) {
       const apiKey = normalizeApi(site.api || `${origin}:${site.key || site.name}`);
-      const dedupeKey = `${apiKey}|${site.ext || ''}`;
+      const dedupeKey = `${apiKey}|${JSON.stringify(site.ext || '')}|${JSON.stringify(site.configRef || '')}`;
       if (!apiKey || seen.has(dedupeKey)) continue;
       seen.add(dedupeKey);
       rawSources.push(sourceFromSite(site, rawSources.length, origin));
@@ -594,6 +597,7 @@ async function loadSources() {
   }
 
   addSites({sites:await loadApprovedSites(tvRoot)},'reviewed-juwan');
+  addSites({sites:await loadAdapterSites(tvRoot)},'聚玩適配來源');
 
   return rawSources;
 }
@@ -734,13 +738,13 @@ const existingCatalog = mergeExisting ? await readJson(output, null) : null;
 const existingSourceById = new Map((existingCatalog?.sources || []).map((source) => [source.id, source]));
 const existingSourceByApi = new Map();
 for (const source of existingCatalog?.sources || []) {
-  const apiKey = normalizeApi(source.api);
+  const apiKey = sourceIdentityKey(source,normalizeApi);
   if (apiKey && !existingSourceByApi.has(apiKey)) existingSourceByApi.set(apiKey, source);
 }
 
 function preserveExistingSourceIdentity(source) {
   if (!mergeExisting) return source;
-  const existingSource = existingSourceByApi.get(normalizeApi(source.api));
+  const existingSource = existingSourceById.get(source.id)||existingSourceByApi.get(sourceIdentityKey(source,normalizeApi));
   if (!existingSource || existingSource.id === source.id) return source;
   return {
     ...source,
@@ -783,6 +787,7 @@ function sourceView(source) {
   const existingSource = existingSourceById.get(source.id);
   if (mergeExisting && existingSource) {
     return {
+      ...existingSource,
       ...source,
       categories: existingSource.categories || [],
       itemCount: existingSource.itemCount || 0,

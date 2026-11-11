@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { writeStableGzipJson } from './stable-gzip-json.mjs';
+import { indexReviewedAdapter } from './source-adapters/catalog.mjs';
 
 const args = new Map();
 for (let i = 2; i < process.argv.length; i += 1) {
@@ -459,6 +460,7 @@ async function probeUnsupportedTencent(source) {
 }
 
 function adapterFor(source) {
+  if(source.adapterKind)return source=>indexReviewedAdapter(source,{detailRoot,http:undefined,refreshPages:Number(args.get('adapterRefreshPages')||2),backfillPages:Number(args.get('adapterBackfillPages')||4),detailConcurrency:Math.min(detailConcurrency,4),outputPageSize,onProgress:value=>console.log(JSON.stringify(value))});
   const haystack = [source.key, source.name, source.api, source.ext].map(normalizeText).join(' ');
   if (QIXING_API_RE.test(haystack)) return indexQixingSource;
   if (/TX|tencent/i.test(source.key || '') || TENCENT_EXT_RE.test(haystack)) return probeUnsupportedTencent;
