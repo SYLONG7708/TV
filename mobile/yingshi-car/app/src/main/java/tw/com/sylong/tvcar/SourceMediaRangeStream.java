@@ -17,7 +17,7 @@ final class SourceMediaRangeStream extends InputStream {
         long prefix=0,length=-1;
         try{
             if(status==206){
-                Matcher interval=Pattern.compile("bytes ([0-9]{1,18})-([0-9]{1,18})/(?:[0-9]{1,18}|\\*)").matcher(headers.getOrDefault("Content-Range",""));
+                Matcher interval=Pattern.compile("bytes ([0-9]{1,18})-([0-9]{1,18})/(?:[0-9]{1,18}|\\*)").matcher(headers.containsKey("Content-Range")?headers.get("Content-Range"):"");
                 if(!interval.matches())throw new IOException("Missing video byte interval");
                 long start=Long.parseLong(interval.group(1)),end=Long.parseLong(interval.group(2));
                 if(end<start)throw new IOException("Invalid video byte interval");length=end-start+1;
