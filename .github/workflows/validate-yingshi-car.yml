@@ -58,7 +58,14 @@ jobs:
           npm test
       - name: Compile Android and check release lint
         working-directory: mobile/yingshi-car
-        run: bash gradlew --no-daemon :app:assembleLicensedDebug :app:lintLicensedRelease
+        run: bash gradlew --no-daemon :app:assembleLicensedDebug :app:assembleDirectDebug :app:assembleLicensedRelease :app:lintLicensedRelease
+      - name: Preserve reviewable update packages
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: yingshi-build-${{ github.run_id }}
+          path: |
+            mobile/yingshi-car/app/build/outputs/apk/direct/debug/*.apk
+            mobile/yingshi-car/app/build/outputs/apk/licensed/release/*unsigned.apk
       - name: Preserve lint evidence
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

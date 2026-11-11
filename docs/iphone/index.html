@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-CgWqsgaRu9+49AIy6hCrMeHKiLPsuG+8WSNJ0Yf115E=' https://cdn.jsdelivr.net https://www.youtube.com; style-src 'self' 'sha256-espkF4pVwtnSOb5hvDumVNHfVQ/83x3JfrOf/xLJ5yY='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
+    <meta http-equiv="Content-Security-Policy" data-oktv-csp content="default-src 'self'; script-src 'self' 'sha256-C+TCvdbHb/D1dxwAaIYNZ3AUWN7gpjTvM7p1hLQhyVs=' https://cdn.jsdelivr.net https://www.youtube.com; style-src 'self' 'sha256-espkF4pVwtnSOb5hvDumVNHfVQ/83x3JfrOf/xLJ5yY='; img-src 'self' data: https:; media-src 'self' blob: https:; connect-src 'self' https:; frame-src https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; font-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -1132,6 +1132,7 @@
     <script type="module" data-csp-hash>
       import { cleanTitle, titleQuality, workIdentity, sameDetailIdentity } from './title-quality.mjs';
       import { createPlayerController } from './player-controls.mjs';
+      import { sourcePlaybackUrl } from './source-media.mjs';
       import { createPlayerPresentation } from './player-presentation.mjs';
       import { createSheetNavigation } from './sheet-navigation.mjs';
       import { createSafeStorage } from './safe-storage.mjs';
@@ -1284,7 +1285,7 @@
         onRetry: position => automaticPlayback.retry(position),
         onIntent: action => automaticPlayback.intent(action),
         onEvidence: (entry, event, detail) => {
-          signalPriority.record(entry.blueMOriginalUrl ? { ...entry, url: entry.blueMOriginalUrl, embedUrl: entry.blueMOriginalEmbed } : entry, event, detail);
+          signalPriority.record(entry.sourceMediaOriginalUrl ? {...entry,url:entry.sourceMediaOriginalUrl} : entry.blueMOriginalUrl ? { ...entry, url: entry.blueMOriginalUrl, embedUrl: entry.blueMOriginalEmbed } : entry, event, detail);
           if (event === 'playing') automaticPlayback.succeeded(entry);
           const reason = String(detail?.reason || '');
           const evidence = { event, ...detail, category: /網路|斷線/.test(reason) ? 'offline' : /緩衝|rebuild-buffer/.test(reason) ? 'buffer' : /格式|影音/.test(reason) ? 'media' : 'source' };
@@ -1306,7 +1307,7 @@
           const hydrated = await hydrateItemDetail(candidate.item, signal);
           if (!samePlaybackWork(hydrated, candidate.original, candidate.episode, compactSearchText, itemDuplicateKey)) return [];
           return matchingEpisodes(hydrated, candidate.episode, candidate.original, candidate.index)
-            .flatMap(episode => startupVariants(episode).map(variant => ({ ...candidate, item: null, resolved: true, url: safeHttpUrl(variant.url || episode.url),
+            .flatMap(episode => startupVariants(episode).map(variant => ({ ...candidate, item: null, resolved: true, url: sourcePlaybackUrl(variant.url || episode.url,location.href),
               sourceId: hydrated.sourceId, sourceName: hydrated.sourceName,
               variants: (episode.variants || []).filter(v => publicHttpsUrl(v.url)) })));
         },
@@ -5946,7 +5947,7 @@
 
       function openPlayer(title, meta, url, embedUrl = '', options = {}) {
         const verifiedEmbedUrl = embedUrl ? safeEmbedUrl(embedUrl) : '';
-        const verifiedMediaUrl = embedUrl ? '' : safeHttpUrl(url);
+        const verifiedMediaUrl = embedUrl ? '' : sourcePlaybackUrl(url,location.href);
         closeDetail(false);
         automaticPlayback.close();
         playback.close();
@@ -5974,8 +5975,8 @@
           // not substitute another station just because both broadcast news.
           const alternatives = channel ? state.live.filter(row => row.id !== channel.id && liveChannelIdentity(row) === liveChannelIdentity(channel)) : [];
           candidates = [channel || { url: verifiedMediaUrl, embedUrl: verifiedEmbedUrl }, ...alternatives]
-            .flatMap(row => [{ ...row, sourceName: row.sourceName || row.group || '', url: safeHttpUrl(row.url), embedUrl: row.embedUrl ? safeEmbedUrl(row.embedUrl) : '' },
-              ...(row.alternates || []).map(next => typeof next === 'string' ? { url: safeHttpUrl(next) } : { ...next, url: safeHttpUrl(next.url), embedUrl: next.embedUrl ? safeEmbedUrl(next.embedUrl) : '' })]);
+            .flatMap(row => [{ ...row, sourceName: row.sourceName || row.group || '', url: sourcePlaybackUrl(row.url,location.href), embedUrl: row.embedUrl ? safeEmbedUrl(row.embedUrl) : '' },
+              ...(row.alternates || []).map(next => typeof next === 'string' ? { url: sourcePlaybackUrl(next,location.href) } : { ...next, url: sourcePlaybackUrl(next.url,location.href), embedUrl: next.embedUrl ? safeEmbedUrl(next.embedUrl) : '' })]);
         }
         void automaticPlayback.open(candidates, { ...options, title, meta });
       }
