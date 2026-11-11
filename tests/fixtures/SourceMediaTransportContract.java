@@ -34,5 +34,6 @@ public final class SourceMediaTransportContract {
         SourceMediaTransport unsafe=new SourceMediaTransport("http://ccc.oiio.fun/file.mp4",url->new Connection(url,302,Collections.singletonMap("Location","http://127.0.0.1/private")));
         boolean rejected=false;try{unsafe.open("bytes=0-1");}catch(IOException expected){rejected=true;}check(rejected,"private redirect rejected before fetch");unsafe.close();
         System.out.println("PASS SourceMediaTransport range, renewal, URL policy and cancellation");
+        SourceMediaRangeContract.run();
     }
 }

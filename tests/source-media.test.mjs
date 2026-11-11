@@ -39,7 +39,7 @@ test('native range transport renews expiring redirects, preserves seeking and re
   const javaHome=process.env.JAVA_HOME||(process.platform==='win32'?'C:/Program Files/Eclipse Adoptium/jdk-21.0.11.10-hotspot':'');
   const tool=name=>javaHome?path.join(javaHome,'bin',name+(process.platform==='win32'?'.exe':'')):name;
   try{
-    execFileSync(tool('javac'),['-encoding','UTF-8','-d',out,path.join(root,'mobile/yingshi-car/app/src/main/java/tw/com/sylong/tvcar/SourceMediaTransport.java'),path.join(root,'tests/fixtures/SourceMediaTransportContract.java')],{timeout:20000});
-    const report=execFileSync(tool('java'),['-cp',out,'tw.com.sylong.tvcar.SourceMediaTransportContract'],{encoding:'utf8',timeout:10000});assert.match(report,/PASS SourceMediaTransport/);
+    execFileSync(tool('javac'),['-encoding','UTF-8','-d',out,...['SourceMediaTransport.java','SourceMediaRangeStream.java'].map(name=>path.join(root,'mobile/yingshi-car/app/src/main/java/tw/com/sylong/tvcar',name)),...['SourceMediaTransportContract.java','SourceMediaRangeContract.java'].map(name=>path.join(root,'tests/fixtures',name))],{timeout:20000});
+    const report=execFileSync(tool('java'),['-cp',out,'tw.com.sylong.tvcar.SourceMediaTransportContract'],{encoding:'utf8',timeout:10000});assert.match(report,/PASS SourceMediaTransport/);assert.match(report,/PASS WebView range/);
   }finally{await fs.rm(out,{recursive:true,force:true});}
 });

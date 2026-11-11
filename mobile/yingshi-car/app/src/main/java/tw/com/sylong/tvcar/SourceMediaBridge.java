@@ -29,7 +29,17 @@ final class SourceMediaBridge implements Closeable {
         SourceMediaTransport current; synchronized(this){if(!uri.getPath().equals(path)||uri.getQuery()!=null||uri.getFragment()!=null)return error(410);current=transport;}
         if(current==null)return error(410);
         String range=null;if(requestHeaders!=null)for(Map.Entry<String,String> header:requestHeaders.entrySet())if("Range".equalsIgnoreCase(header.getKey()))range=header.getValue();
-        try{SourceMediaTransport.Body body=current.open(range);return new WebResourceResponse("video/mp4",null,body.code,body.code==206?"Partial Content":"OK",body.headers,body.stream);}
+        try{
+            SourceMediaTransport.Body body=current.open(range);
+            try{
+                InputStream stream=SourceMediaRangeStream.adapt(body.code,range,body.headers,body.stream);
+                Map<String,String> headers=new HashMap<>(body.headers);
+                // WebView generates this from the adapted stream. Appending
+                // the upstream value creates duplicate Content-Length fields.
+                headers.remove("Content-Length");
+                return new WebResourceResponse("video/mp4",null,body.code,body.code==206?"Partial Content":"OK",headers,stream);
+            }catch(Exception error){body.close();throw error;}
+        }
         catch(Exception failure){return error(502);}
     }
     private WebResourceResponse error(int code){return new WebResourceResponse("text/plain","UTF-8",code,"Media unavailable",Collections.singletonMap("Cache-Control","no-store"),new ByteArrayInputStream("此影片連線已關閉或暫時無法使用。".getBytes(StandardCharsets.UTF_8)));}

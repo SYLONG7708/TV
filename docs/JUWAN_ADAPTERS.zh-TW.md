@@ -6,6 +6,8 @@
 
 後續還原檢查確認元咲有 316 個 HTTP MP4 跳轉入口，最終網址只有約 9 分鐘效期，不能存成固定 HTTPS 地址。Android 1.4.32 加入 App 內即時解析，逐次轉送 Range 並保留拖曳、續播；這 316 集需要此新版原生能力。其他 HTTPS 入口可透過原本雲端介面使用。正式更新包必須接續原簽章，沒有以不同金鑰替換現有安裝。
 
+Android WebView 會對攔截回傳的串流再次套用 Range 位移；原生回傳已是 206 片段時，會重複跳過資料。`SourceMediaRangeStream` 以可跳過但不配置資料的前綴承接 WebView 位移，讀取仍只輸出真正影片片段，並避免重複 Content-Length。依據：[Chromium InputStreamReader](https://chromium.googlesource.com/chromium/src/+/main/components/embedder_support/android/util/input_stream_reader.cc)、[上游重現與修復紀錄](https://github.com/tauri-apps/wry/issues/1864)。
+
 ## 已登錄來源
 
 | 影視來源名稱 | 適配方式 | 實測範圍 |
