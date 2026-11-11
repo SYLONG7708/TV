@@ -2,7 +2,6 @@ package tw.com.sylong.tvcar;
 
 import java.io.*;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /** Refresh the public gateway redirect for every MP4 range; signed URLs stay native. */
@@ -20,10 +19,10 @@ final class SourceMediaTransport implements Closeable {
     SourceMediaTransport(String value) throws IOException {this(value,SourceMediaTransport::publicConnection);}
     SourceMediaTransport(String value,Opener opener) throws IOException {
         if(!isGateway(value))throw new IOException("Unsupported source gateway");
-        gateway=new URL(value);this.opener=opener;
+        gateway=new URL(value.replace("[","%5B").replace("]","%5D"));this.opener=opener;
     }
     static boolean isGateway(String value){
-        try{URI u=new URI(value);return value.length()<8192&&"http".equalsIgnoreCase(u.getScheme())&&"ccc.oiio.fun".equalsIgnoreCase(u.getHost())&&(u.getPort()==-1||u.getPort()==80)&&u.getRawUserInfo()==null&&u.getRawFragment()==null;}
+        try{URL u=new URL(value);return value.length()<8192&&!value.matches("(?s).*[\\x00-\\x20\\x7f].*")&&"http".equalsIgnoreCase(u.getProtocol())&&"ccc.oiio.fun".equalsIgnoreCase(u.getHost())&&(u.getPort()==-1||u.getPort()==80)&&u.getUserInfo()==null&&u.getRef()==null;}
         catch(Exception ignored){return false;}
     }
     static boolean allowedTarget(URL url){

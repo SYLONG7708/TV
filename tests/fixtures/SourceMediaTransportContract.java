@@ -15,7 +15,8 @@ public final class SourceMediaTransportContract {
     }
     public static void main(String[] args) throws Exception {
         check(SourceMediaTransport.isGateway("http://ccc.oiio.fun/file.mp4"),"declared gateway");
-        for(String url:new String[]{"http://127.0.0.1/file.mp4","http://ccc.oiio.fun:81/file.mp4","http://u:p@ccc.oiio.fun/file.mp4"})check(!SourceMediaTransport.isGateway(url),"reject unknown gateway");
+        check(SourceMediaTransport.isGateway("http://ccc.oiio.fun/d/[%E6%AC%A1%E5%85%83%E5%92%B2]video.mp4"),"upstream bracketed filenames");
+        for(String url:new String[]{"http://127.0.0.1/file.mp4","http://ccc.oiio.fun:81/file.mp4","http://u:p@ccc.oiio.fun/file.mp4","http://ccc.oiio.fun/file.mp4\r\nX: injected"})check(!SourceMediaTransport.isGateway(url),"reject unknown gateway");
         check(!SourceMediaTransport.allowedTarget(new URL("https://ctyun.cn.evil.invalid/file.mp4")),"reject redirect host spoofing");
         for(String range:new String[]{"bytes=10-1","bytes=0-1,4-5","bytes=1-2\r\nCookie: x"})check(!SourceMediaTransport.validRange(range),"reject invalid range");
         final int[] refreshed={0};List<Connection> opened=new ArrayList<>();List<String> targets=new ArrayList<>();
