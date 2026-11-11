@@ -78,14 +78,19 @@ export async function indexReviewedAdapter(source,{
   const failures=[],freshIds=[];let updated=0;
   const pendingIds=new Set((source.adapterState?.pendingDetails||[]).map(x=>x.id));
   const queued=[...rows.values()],newRows=queued.filter(x=>!old.has(String(x.item.id))&&!pendingIds.has(x.item.id));
-  const retries=queued.filter(x=>pendingIds.has(x.item.id)).slice(0,Math.max(1,Math.floor(maxDetailsPerSource/4)));
+  const retries=queued.filter(x=>pendingIds.has(x.item.id)).slice(0,Math.max(1,Math.floor(maxDetailsPerSource/6)));
   const refresh=queued.filter(x=>old.has(String(x.item.id))&&!pendingIds.has(x.item.id));
-  const targets=[...newRows,...retries,...refresh].slice(0,maxDetailsPerSource),targetIds=new Set(targets.map(x=>x.item.id));
-  const deferred=queued.filter(x=>!targetIds.has(x.item.id)).map(x=>({id:x.item.id,title:x.item.title,poster:x.item.poster||'',category:x.category,page:x.page,code:'deferred'}));
+  const refreshOffset=refresh.length?Number(source.adapterState?.refreshOffset||0)%refresh.length:0;
+  const rotatingRefresh=[...refresh.slice(refreshOffset),...refresh.slice(0,refreshOffset)];
+  const refreshBudget=Math.max(1,Math.floor(maxDetailsPerSource/3));
+  const preferred=[...rotatingRefresh.slice(0,refreshBudget),...newRows.slice(0,Math.ceil(maxDetailsPerSource/2)),...retries,...newRows,...rotatingRefresh];
+  const uniqueTargets=new Map(preferred.map(x=>[x.item.id,x]));
+  const targets=[...uniqueTargets.values()].slice(0,maxDetailsPerSource),targetIds=new Set(targets.map(x=>x.item.id));
+  const deferred=queued.filter(x=>!targetIds.has(x.item.id)&&(!old.has(String(x.item.id))||pendingIds.has(x.item.id))).map(x=>({id:x.item.id,title:x.item.title,poster:x.item.poster||'',category:x.category,page:x.page,code:'deferred'}));
   await mapLimit(targets,detailConcurrency,async({item,category,page})=>{
     try{
       const detail=await adapter.detail(item.id);if(excludedContent.test([detail.title,detail.category,category.name].join(' ')))return;
-      detail.title=item.title||detail.title;detail.poster=detail.poster||item.poster;
+      detail.title=item.title||detail.title;detail.poster=item.poster||detail.poster;
       let line=selectDirectLine(detail.episodes);
       // Resolve the source's own public transport IDs only when no direct line
       // exists. Keep all episodes in that line together; never publish a half line.
@@ -119,5 +124,5 @@ export async function indexReviewedAdapter(source,{
     const pageItems=items.slice((page-1)*outputPageSize,page*outputPageSize).map(item=>({...item,detailPage:page,detailPath:`vod-detail/${slug}/page-${String(page).padStart(4,'0')}.json.gz`}));
     await writeStableGzipJson(path.join(sourceDir,`page-${String(page).padStart(4,'0')}.json.gz`),{generatedAt:new Date().toISOString(),sourceId:source.id,sourceName:source.name,page,pagecount:pageCount,total:items.length,complete,checks,items:pageItems});
   }
-  return {source:{...source,spiderEngine:`reviewed-${adapter.kind}-v1`,spiderIndexable:true,indexed:true,itemCount:items.length,playableCount:items.length,sourceTotalCount:items.length,detailMode:'spider-json-gzip',detailPathPattern:`vod-detail/${slug}/page-{page}.json.gz`,detailPageCount:pageCount,detailExpectedPages:pageCount,complete,adapterState:{cursors,completedCategories:[...completed],pendingDetails,lastUpdatedAt:new Date().toISOString(),backfillComplete:complete},checks,error:''},items};
+  return {source:{...source,spiderEngine:`reviewed-${adapter.kind}-v1`,spiderIndexable:true,indexed:true,itemCount:items.length,playableCount:items.length,sourceTotalCount:items.length,detailMode:'spider-json-gzip',detailPathPattern:`vod-detail/${slug}/page-{page}.json.gz`,detailPageCount:pageCount,detailExpectedPages:pageCount,complete,adapterState:{cursors,completedCategories:[...completed],pendingDetails,refreshOffset:refresh.length?(refreshOffset+Math.min(refreshBudget,refresh.length))%refresh.length:0,lastUpdatedAt:new Date().toISOString(),backfillComplete:complete},checks,error:''},items};
 }

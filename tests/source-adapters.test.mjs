@@ -11,6 +11,8 @@ import {probeMedia} from '../tools/source-adapters/media.mjs';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
+import {execFileSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 import {indexReviewedAdapter,selectDirectLine} from '../tools/source-adapters/catalog.mjs';
 import {sourceIdentityKey} from '../tools/source-identity.mjs';
 
@@ -124,4 +126,20 @@ test('AppGet opaque IDs use the source transport resolver and never become fake 
     assert.ok(url.pathname.endsWith('/vodParse'));const form=new URLSearchParams(options.body);assert.equal(form.get('parse_api'),'public-transport');assert.ok(options.headers['app-api-verify-sign']);return {data:encode({json:JSON.stringify({url:'https://cdn.example/first.m3u8'})})};
   });
   const a=await createAdapter({api:'csp_AppGet',key:'test',ext},{http});const detail=await a.detail('1');assert.equal(detail.episodes[0].rawUrl,'opaque-id');assert.equal((await a.resolve(detail.episodes[0])).url,'https://cdn.example/first.m3u8');
+});
+
+test('daily catalog rebuild preserves distinct object configurations and adapter checkpoints',async()=>{
+  const root=await fs.mkdtemp(path.join(os.tmpdir(),'yingshi-adapter-rebuild-'));
+  try{
+    await fs.mkdir(path.join(root,'sources'),{recursive:true});await fs.mkdir(path.join(root,'docs/data'),{recursive:true});
+    const sites=['a','b'].map(key=>({key,name:key,type:3,api:'csp_AppGet',adapterKind:'appget',ext:{url:`https://${key}.example`,dataKey:'fixture-key'}}));
+    await fs.writeFile(path.join(root,'sources/juwan-adapter-sources.json'),JSON.stringify({sites}));
+    await fs.writeFile(path.join(root,'sources/current.json'),JSON.stringify({sites:[]}));
+    const output=path.join(root,'docs/data/iphone-vod-catalog.json');
+    await fs.writeFile(output,JSON.stringify({sources:sites.map(x=>({...x,id:`stable-${x.key}`,indexed:true,itemCount:1,playableCount:1,adapterState:{cursors:{'1':8}},indexPath:`vod-index/${x.key}.json.gz`,detailPathPattern:`vod-detail/${x.key}/page-{page}.json.gz`})),items:[],filters:{},totals:{items:2,playableItems:2}}));
+    const script=fileURLToPath(new URL('../tools/build-iphone-vod-catalog.mjs',import.meta.url));
+    execFileSync(process.execPath,[script,'--tvRoot',root,'--output',output,'--currentVodInput',path.join(root,'sources/current.json'),'--includeLegacySources','false','--mergeExisting','true'],{encoding:'utf8',timeout:15000});
+    const result=JSON.parse(await fs.readFile(output,'utf8'));assert.equal(result.sources.length,2);
+    for(const source of result.sources){assert.equal(source.id,`stable-${source.key}`);assert.equal(source.ext.url,`https://${source.key}.example`);assert.equal(source.adapterState.cursors['1'],8);assert.equal(source.indexPath,`vod-index/${source.key}.json.gz`);}
+  }finally{await fs.rm(root,{recursive:true,force:true});}
 });
