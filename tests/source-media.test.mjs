@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {createSourceMediaResolver,needsSourceMedia} from '../docs/iphone/source-media.mjs';
+import {createSourceMediaResolver,needsSourceMedia,sourcePlaybackUrl} from '../docs/iphone/source-media.mjs';
 import fs from 'node:fs/promises';
+import fsSync from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import {execFileSync} from 'node:child_process';
@@ -11,6 +12,12 @@ function fixture(){const events=new EventTarget(),calls=[],cancelled=[];const br
 test('source media requests are limited to the declared public HTTP gateway',()=>{
   assert.equal(needsSourceMedia('http://ccc.oiio.fun/file.mp4'),true);
   for(const url of ['http://127.0.0.1/file.mp4','http://ccc.oiio.fun:8080/file.mp4','http://u:p@ccc.oiio.fun/file.mp4','https://ccc.oiio.fun/file.mp4','http://ccc.oiio.fun/file.mp4#x'])assert.equal(needsSourceMedia(url),false);
+});
+test('playback normalization preserves the native gateway instead of sending it to invalid HTTPS',()=>{
+  const value='http://ccc.oiio.fun/d/[group]%E7%AC%AC01%E9%9B%86.mp4';assert.equal(sourcePlaybackUrl(value),value);assert.equal(needsSourceMedia(sourcePlaybackUrl(value)),true);
+  assert.equal(sourcePlaybackUrl('http://media.example/video.mp4'),'https://media.example/video.mp4');assert.equal(sourcePlaybackUrl('javascript:alert(1)'),'');
+  const page=fsSync.readFileSync(new URL('../docs/iphone/index.html',import.meta.url),'utf8');
+  assert.match(page,/url: sourcePlaybackUrl\(variant\.url \|\| episode\.url,location\.href\)/);assert.match(page,/verifiedMediaUrl = embedUrl \? '' : sourcePlaybackUrl\(url,location\.href\)/);
 });
 test('source resolver accepts only the native app-local session and closes it on change',async()=>{
   const f=fixture(),operation=f.resolver.open('http://ccc.oiio.fun/file.mp4');

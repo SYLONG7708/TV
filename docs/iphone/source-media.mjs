@@ -1,6 +1,10 @@
 export function needsSourceMedia(value) {
   try { const u=new URL(value);return u.protocol==='http:'&&u.hostname==='ccc.oiio.fun'&&!u.username&&!u.password&&(!u.port||u.port==='80')&&!u.hash; } catch { return false; }
 }
+export function sourcePlaybackUrl(value,base) {
+  const raw=String(value||'').trim();if(!raw)return '';
+  try{const url=new URL(raw,base);if(needsSourceMedia(url.href))return url.href;if(url.protocol==='http:')url.protocol='https:';if(url.protocol!=='https:')return '';url.username='';url.password='';return url.href;}catch{return '';}
+}
 export function createSourceMediaResolver({bridge=globalThis.window?.CarBridge,events=globalThis.window,setTimer=setTimeout,clearTimer=clearTimeout}={}) {
   let serial=0;
   return {
