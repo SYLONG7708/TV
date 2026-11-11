@@ -6,17 +6,27 @@ import {createAdapter,createHttp,AdapterError} from './index.mjs';
 import {cleanText,directMedia,excludedContent} from './common.mjs';
 import {writeStableGzipJson} from '../stable-gzip-json.mjs';
 import {probeMedia} from './media.mjs';
+import {episodeIdentity} from '../../docs/iphone/signal-priority.mjs';
 
 export function adapterSlug(source){return `adapter-${crypto.createHash('sha256').update(source.key||source.id).digest('hex').slice(0,20)}`;}
 export async function mapLimit(items,limit,worker){const result=new Array(items.length);let next=0;await Promise.all(Array.from({length:Math.min(Math.max(1,limit),items.length)},async()=>{while(next<items.length){const i=next++;result[i]=await worker(items[i],i);}}));return result;}
 function kindOf(value){return /短剧|短劇/.test(value)?'short':/动漫|動漫|动画|動畫|番剧|番劇/.test(value)?'anime':/综艺|綜藝/.test(value)?'variety':/剧|劇|电视剧|電視劇/.test(value)?'series':'movie';}
 
-// The current player takes one episode list. Preserve every episode in the most
-// complete direct line, rather than mixing repeated episode numbers across lines.
+// The player takes one episode list plus per-episode variants. Keep episode
+// numbers stable while exposing matching alternative lines to its failover.
 export function selectDirectLine(episodes){
   const groups=new Map();
   for(const ep of episodes){if(!directMedia(ep.url)||ep.platform)continue;const key=ep.from||'direct';if(!groups.has(key))groups.set(key,[]);groups.get(key).push({name:cleanText(ep.name),url:ep.url});}
-  return [...groups.entries()].sort((a,b)=>b[1].length-a[1].length).map(([name,episodes])=>({name,episodes}))[0]||{name:'',episodes:[]};
+  const lines=[...groups.entries()].sort((a,b)=>b[1].length-a[1].length),best=lines[0];if(!best)return {name:'',episodes:[]};
+  return {name:best[0],episodes:best[1].map((ep,index)=>{
+    const variants=[{label:best[0],url:ep.url}],seen=new Set([ep.url]);
+    for(const [label,list] of lines.slice(1)){
+      if(/预告|預告|花絮|片花/.test(label)&&!/预告|預告|花絮|片花/.test(best[0]))continue;
+      const other=list.find(x=>episodeIdentity(x.name)===episodeIdentity(ep.name))||(list.length===1&&best[1].length===1?list[0]:null);
+      if(other&&!seen.has(other.url)){variants.push({label,url:other.url});seen.add(other.url);}
+    }
+    return {...ep,...(variants.length>1?{variants}:{})};
+  })};
 }
 
 export function catalogItem(source,category,detail,line){

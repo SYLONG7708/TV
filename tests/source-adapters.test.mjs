@@ -92,6 +92,11 @@ test('shared spider class names do not merge independent AppGet providers',()=>{
   assert.equal(sourceIdentityKey({type:1,api:'https://cms.example/api'}),'https://cms.example/api');
 });
 
+test('matching direct lines become failover variants without mixing episodes or trailers',()=>{
+  const result=selectDirectLine([{from:'主線',name:'第01集',url:'https://a.example/1.m3u8'},{from:'主線',name:'第02集',url:'https://a.example/2.m3u8'},{from:'備用',name:'1',url:'https://b.example/1.m3u8'},{from:'備用',name:'2',url:'https://b.example/2.m3u8'},{from:'預告',name:'第01集',url:'https://c.example/trailer.mp4'}]);
+  assert.equal(result.episodes.length,2);assert.equal(result.episodes[0].variants.length,2);assert.equal(result.episodes[1].variants[1].url,'https://b.example/2.m3u8');
+});
+
 test('adapter snapshots keep full episode lines, resume backfill, and retain details after upstream failures',async()=>{
   const root=await fs.mkdtemp(path.join(os.tmpdir(),'yingshi-adapter-'));
   try{
