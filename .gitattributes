@@ -1,0 +1,19 @@
+*.csv text eol=lf
+*.html text eol=lf
+*.js text eol=lf
+*.json text eol=lf
+*.mjs text eol=lf
+*.ps1 text eol=lf
+*.svg text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+docs/data/** text eol=lf
+docs/iphone/** text eol=lf
+sources/** text eol=lf
+tools/** text eol=lf
+
+# Compressed indexes and application artifacts must never pass through
+# end-of-line conversion. Treating gzip as text can silently corrupt data.
+*.gz binary
+*.apk binary
