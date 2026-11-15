@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-15T06:45:39.247Z",
+  "checkedAt": "2026-11-15T12:42:55.660Z",
   "inputs": {
     "catalogPath": "D:\\a\\TV\\TV\\docs\\data\\iphone-vod-catalog.json",
     "livePath": "D:\\a\\TV\\TV\\docs\\data\\live-channels.json"
@@ -7,28 +7,41 @@
   "summary": {
     "sources": {
       "total": 91,
-      "ok": 78,
-      "failed": 13
+      "ok": 77,
+      "failed": 14
     },
     "posters": {
-      "total": 11,
-      "ok": 11,
-      "titleOk": 11,
-      "posterOk": 11,
-      "playOk": 11,
-      "qualityOk": 11,
+      "total": 81,
+      "ok": 81,
+      "titleOk": 81,
+      "posterOk": 81,
+      "playOk": 81,
+      "qualityOk": 81,
       "failed": 0
     },
     "live": {
       "total": 123,
-      "ok": 119,
-      "failed": 4,
-      "qualityOk": 119,
+      "ok": 123,
+      "failed": 0,
+      "qualityOk": 123,
       "probeReliable": true,
       "ignoredFailures": 0
     }
   },
   "failed": [
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47",
+      "name": "黄色仓库｜追劇",
+      "type": 1,
+      "url": "https://hsckzy.xyz/api.php/provide/vod/",
+      "indexed": true,
+      "adult": true,
+      "ok": false,
+      "status": 523,
+      "elapsedMs": 130,
+      "error": "ac=list returned no source categories"
+    },
     {
       "kind": "source",
       "id": "juwan-adapter-43bed8818b867693f99b",
@@ -39,7 +52,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "error": "spider api=Failed to parse URL from csp_AppGet; ext=undefined"
     },
     {
@@ -52,7 +65,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 500,
+      "elapsedMs": 386,
       "error": "spider api=Failed to parse URL from csp_XBPQ; ext=206"
     },
     {
@@ -65,7 +78,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 61,
+      "elapsedMs": 76,
       "error": "spider api=Failed to parse URL from csp_XYQHiker; ext=206"
     },
     {
@@ -78,7 +91,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "error": "spider api=Failed to parse URL from csp_AppGet; ext=undefined"
     },
     {
@@ -104,7 +117,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 271,
+      "elapsedMs": 213,
       "error": "fetch failed"
     },
     {
@@ -117,7 +130,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 254,
+      "elapsedMs": 268,
       "error": "fetch failed"
     },
     {
@@ -130,7 +143,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 182,
+      "elapsedMs": 49,
       "error": "fetch failed"
     },
     {
@@ -143,7 +156,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 76,
+      "elapsedMs": 122,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -156,7 +169,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 92,
+      "elapsedMs": 46,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -169,7 +182,7 @@
       "adult": true,
       "ok": false,
       "status": 502,
-      "elapsedMs": 460,
+      "elapsedMs": 501,
       "error": "Unexpected token '<', \"<html>\r\n<h\"... is not valid JSON"
     },
     {
@@ -182,7 +195,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 2778,
+      "elapsedMs": 2807,
       "error": "fetch failed"
     },
     {
@@ -195,76 +208,8 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 74,
+      "elapsedMs": 38,
       "error": "spider api=Failed to parse URL from csp_XYQHiker; ext=206"
-    },
-    {
-      "kind": "live",
-      "id": "public-france24-ar",
-      "name": "France 24 阿拉伯語｜官方串流",
-      "type": "hls",
-      "url": "https://live.france24.com/hls/live/2037222-b/F24_AR_HI_HLS/master_5000.m3u8",
-      "group": "全球官方串流",
-      "ok": false,
-      "qualityOk": false,
-      "qualityLabel": "",
-      "maxHeight": 0,
-      "maxBandwidth": 0,
-      "variants": 0,
-      "status": 404,
-      "elapsedMs": 316,
-      "error": "manifest HTTP 404"
-    },
-    {
-      "kind": "live",
-      "id": "public-france24-en",
-      "name": "France 24 英語｜官方串流",
-      "type": "hls",
-      "url": "https://live.france24.com/hls/live/2037218-b/F24_EN_HI_HLS/master_5000.m3u8",
-      "group": "全球官方串流",
-      "ok": false,
-      "qualityOk": false,
-      "qualityLabel": "",
-      "maxHeight": 0,
-      "maxBandwidth": 0,
-      "variants": 0,
-      "status": 404,
-      "elapsedMs": 313,
-      "error": "manifest HTTP 404"
-    },
-    {
-      "kind": "live",
-      "id": "public-france24-fr",
-      "name": "France 24 法語｜官方串流",
-      "type": "hls",
-      "url": "https://live.france24.com/hls/live/2037179-b/F24_FR_HI_HLS/master_5000.m3u8",
-      "group": "全球官方串流",
-      "ok": false,
-      "qualityOk": false,
-      "qualityLabel": "",
-      "maxHeight": 0,
-      "maxBandwidth": 0,
-      "variants": 0,
-      "status": 404,
-      "elapsedMs": 305,
-      "error": "manifest HTTP 404"
-    },
-    {
-      "kind": "live",
-      "id": "public-france24-es",
-      "name": "France 24 西班牙語｜官方串流",
-      "type": "hls",
-      "url": "https://live.france24.com/hls/live/2037220-b/F24_ES_HI_HLS/master_5000.m3u8",
-      "group": "全球官方串流",
-      "ok": false,
-      "qualityOk": false,
-      "qualityLabel": "",
-      "maxHeight": 0,
-      "maxBandwidth": 0,
-      "variants": 0,
-      "status": 404,
-      "elapsedMs": 290,
-      "error": "manifest HTTP 404"
     }
   ],
   "rows": [
@@ -291,7 +236,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 258,
+      "elapsedMs": 247,
       "error": ""
     },
     {
@@ -304,7 +249,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1032,
+      "elapsedMs": 793,
       "error": ""
     },
     {
@@ -317,7 +262,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 820,
+      "elapsedMs": 786,
       "error": ""
     },
     {
@@ -330,7 +275,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 143,
+      "elapsedMs": 103,
       "error": ""
     },
     {
@@ -343,7 +288,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 802,
+      "elapsedMs": 1262,
       "error": ""
     },
     {
@@ -356,7 +301,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 347,
+      "elapsedMs": 273,
       "error": ""
     },
     {
@@ -369,7 +314,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 250,
+      "elapsedMs": 235,
       "error": ""
     },
     {
@@ -382,7 +327,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 834,
+      "elapsedMs": 1845,
       "error": ""
     },
     {
@@ -395,7 +340,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1214,
+      "elapsedMs": 1011,
       "error": ""
     },
     {
@@ -408,7 +353,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 391,
+      "elapsedMs": 496,
       "error": ""
     },
     {
@@ -421,7 +366,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 98,
+      "elapsedMs": 335,
       "error": ""
     },
     {
@@ -434,7 +379,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 576,
+      "elapsedMs": 747,
       "error": ""
     },
     {
@@ -447,7 +392,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 280,
+      "elapsedMs": 209,
       "error": ""
     },
     {
@@ -460,7 +405,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 564,
+      "elapsedMs": 914,
       "error": ""
     },
     {
@@ -473,7 +418,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 67,
+      "elapsedMs": 225,
       "error": ""
     },
     {
@@ -486,7 +431,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 116,
+      "elapsedMs": 124,
       "error": ""
     },
     {
@@ -499,7 +444,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 157,
+      "elapsedMs": 161,
       "error": ""
     },
     {
@@ -512,7 +457,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 740,
+      "elapsedMs": 495,
       "error": ""
     },
     {
@@ -525,7 +470,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 386,
+      "elapsedMs": 334,
       "error": ""
     },
     {
@@ -538,7 +483,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 140,
+      "elapsedMs": 191,
       "error": ""
     },
     {
@@ -551,7 +496,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 252,
+      "elapsedMs": 328,
       "error": ""
     },
     {
@@ -564,7 +509,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 351,
+      "elapsedMs": 589,
       "error": ""
     },
     {
@@ -577,7 +522,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1024,
+      "elapsedMs": 1595,
       "error": ""
     },
     {
@@ -590,7 +535,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 768,
+      "elapsedMs": 1882,
       "error": ""
     },
     {
@@ -603,7 +548,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 219,
+      "elapsedMs": 324,
       "error": ""
     },
     {
@@ -616,7 +561,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 282,
+      "elapsedMs": 312,
       "error": ""
     },
     {
@@ -629,7 +574,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 606,
+      "elapsedMs": 703,
       "error": ""
     },
     {
@@ -642,7 +587,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 391,
+      "elapsedMs": 145,
       "error": ""
     },
     {
@@ -668,7 +613,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 88,
+      "elapsedMs": 81,
       "error": ""
     },
     {
@@ -681,7 +626,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 342,
+      "elapsedMs": 371,
       "error": ""
     },
     {
@@ -694,7 +639,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 258,
+      "elapsedMs": 256,
       "error": ""
     },
     {
@@ -707,7 +652,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 324,
+      "elapsedMs": 332,
       "error": ""
     },
     {
@@ -720,7 +665,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 891,
+      "elapsedMs": 259,
       "error": ""
     },
     {
@@ -733,7 +678,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 173,
+      "elapsedMs": 220,
       "error": ""
     },
     {
@@ -746,7 +691,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 616,
+      "elapsedMs": 1639,
       "error": ""
     },
     {
@@ -759,7 +704,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 274,
+      "elapsedMs": 176,
       "error": ""
     },
     {
@@ -772,8 +717,21 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1423,
+      "elapsedMs": 1518,
       "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47",
+      "name": "黄色仓库｜追劇",
+      "type": 1,
+      "url": "https://hsckzy.xyz/api.php/provide/vod/",
+      "indexed": true,
+      "adult": true,
+      "ok": false,
+      "status": 523,
+      "elapsedMs": 130,
+      "error": "ac=list returned no source categories"
     },
     {
       "kind": "source",
@@ -785,7 +743,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 402,
+      "elapsedMs": 451,
       "error": ""
     },
     {
@@ -798,7 +756,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 155,
+      "elapsedMs": 260,
       "error": ""
     },
     {
@@ -811,7 +769,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 2399,
+      "elapsedMs": 407,
       "error": ""
     },
     {
@@ -824,7 +782,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 405,
+      "elapsedMs": 397,
       "error": ""
     },
     {
@@ -837,7 +795,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 397,
+      "elapsedMs": 373,
       "error": ""
     },
     {
@@ -850,7 +808,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 207,
+      "elapsedMs": 227,
       "error": ""
     },
     {
@@ -863,7 +821,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 188,
+      "elapsedMs": 186,
       "error": ""
     },
     {
@@ -876,7 +834,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 926,
+      "elapsedMs": 824,
       "error": ""
     },
     {
@@ -889,7 +847,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 243,
+      "elapsedMs": 149,
       "error": ""
     },
     {
@@ -902,7 +860,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 252,
+      "elapsedMs": 198,
       "error": ""
     },
     {
@@ -915,7 +873,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 636,
+      "elapsedMs": 463,
       "error": ""
     },
     {
@@ -928,7 +886,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 850,
+      "elapsedMs": 811,
       "error": ""
     },
     {
@@ -941,7 +899,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 130,
+      "elapsedMs": 164,
       "error": ""
     },
     {
@@ -954,7 +912,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1186,
+      "elapsedMs": 1054,
       "error": ""
     },
     {
@@ -967,7 +925,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 221,
+      "elapsedMs": 218,
       "error": ""
     },
     {
@@ -980,7 +938,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 252,
+      "elapsedMs": 194,
       "error": ""
     },
     {
@@ -993,7 +951,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 480,
+      "elapsedMs": 475,
       "error": ""
     },
     {
@@ -1006,7 +964,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 313,
+      "elapsedMs": 300,
       "error": ""
     },
     {
@@ -1019,7 +977,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1314,
+      "elapsedMs": 1315,
       "error": ""
     },
     {
@@ -1032,7 +990,7 @@
       "adult": false,
       "ok": true,
       "status": 206,
-      "elapsedMs": 167,
+      "elapsedMs": 405,
       "error": ""
     },
     {
@@ -1045,7 +1003,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1221,
+      "elapsedMs": 1414,
       "error": ""
     },
     {
@@ -1058,7 +1016,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 2101,
+      "elapsedMs": 1313,
       "error": ""
     },
     {
@@ -1071,7 +1029,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 422,
+      "elapsedMs": 384,
       "error": ""
     },
     {
@@ -1084,7 +1042,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1018,
+      "elapsedMs": 1132,
       "error": ""
     },
     {
@@ -1097,7 +1055,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 444,
+      "elapsedMs": 1684,
       "error": ""
     },
     {
@@ -1110,7 +1068,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 2276,
+      "elapsedMs": 1396,
       "error": ""
     },
     {
@@ -1123,7 +1081,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 256,
+      "elapsedMs": 347,
       "error": ""
     },
     {
@@ -1136,7 +1094,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 241,
+      "elapsedMs": 335,
       "error": ""
     },
     {
@@ -1149,7 +1107,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 612,
+      "elapsedMs": 594,
       "error": ""
     },
     {
@@ -1162,7 +1120,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 344,
+      "elapsedMs": 396,
       "error": ""
     },
     {
@@ -1175,7 +1133,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 299,
+      "elapsedMs": 676,
       "error": ""
     },
     {
@@ -1188,7 +1146,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 373,
+      "elapsedMs": 366,
       "error": ""
     },
     {
@@ -1201,7 +1159,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 318,
+      "elapsedMs": 265,
       "error": ""
     },
     {
@@ -1214,7 +1172,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 462,
+      "elapsedMs": 1816,
       "error": ""
     },
     {
@@ -1227,7 +1185,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 299,
+      "elapsedMs": 704,
       "error": ""
     },
     {
@@ -1240,20 +1198,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1508,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47",
-      "name": "黄色仓库｜追劇",
-      "type": 1,
-      "url": "https://hsckzy.xyz/api.php/provide/vod/",
-      "indexed": true,
-      "adult": true,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 142,
+      "elapsedMs": 1882,
       "error": ""
     },
     {
@@ -1266,7 +1211,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "error": "spider api=Failed to parse URL from csp_AppGet; ext=undefined"
     },
     {
@@ -1279,7 +1224,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 500,
+      "elapsedMs": 386,
       "error": "spider api=Failed to parse URL from csp_XBPQ; ext=206"
     },
     {
@@ -1292,7 +1237,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 61,
+      "elapsedMs": 76,
       "error": "spider api=Failed to parse URL from csp_XYQHiker; ext=206"
     },
     {
@@ -1305,7 +1250,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "error": "spider api=Failed to parse URL from csp_AppGet; ext=undefined"
     },
     {
@@ -1331,7 +1276,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 271,
+      "elapsedMs": 213,
       "error": "fetch failed"
     },
     {
@@ -1344,7 +1289,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1476,
+      "elapsedMs": 1059,
       "error": ""
     },
     {
@@ -1357,7 +1302,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 254,
+      "elapsedMs": 268,
       "error": "fetch failed"
     },
     {
@@ -1370,7 +1315,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 182,
+      "elapsedMs": 49,
       "error": "fetch failed"
     },
     {
@@ -1383,7 +1328,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 76,
+      "elapsedMs": 122,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -1396,7 +1341,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 92,
+      "elapsedMs": 46,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -1409,7 +1354,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 919,
+      "elapsedMs": 1032,
       "error": ""
     },
     {
@@ -1422,7 +1367,7 @@
       "adult": true,
       "ok": false,
       "status": 502,
-      "elapsedMs": 460,
+      "elapsedMs": 501,
       "error": "Unexpected token '<', \"<html>\r\n<h\"... is not valid JSON"
     },
     {
@@ -1435,7 +1380,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 2778,
+      "elapsedMs": 2807,
       "error": "fetch failed"
     },
     {
@@ -1448,7 +1393,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 74,
+      "elapsedMs": 38,
       "error": "spider api=Failed to parse URL from csp_XYQHiker; ext=206"
     },
     {
@@ -1469,7 +1414,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 200,
-      "elapsedMs": 415,
+      "elapsedMs": 448,
       "error": ""
     },
     {
@@ -1490,7 +1435,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 200,
-      "elapsedMs": 406,
+      "elapsedMs": 448,
       "error": ""
     },
     {
@@ -1511,7 +1456,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 400,
+      "elapsedMs": 424,
       "error": ""
     },
     {
@@ -1532,7 +1477,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 394,
+      "elapsedMs": 450,
       "error": ""
     },
     {
@@ -1553,7 +1498,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 417,
+      "elapsedMs": 434,
       "error": ""
     },
     {
@@ -1574,7 +1519,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 396,
+      "elapsedMs": 427,
       "error": ""
     },
     {
@@ -1595,7 +1540,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 408,
+      "elapsedMs": 425,
       "error": ""
     },
     {
@@ -1616,7 +1561,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 427,
+      "elapsedMs": 429,
       "error": ""
     },
     {
@@ -1637,7 +1582,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 422,
+      "elapsedMs": 449,
       "error": ""
     },
     {
@@ -1658,7 +1603,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 403,
+      "elapsedMs": 450,
       "error": ""
     },
     {
@@ -1679,7 +1624,1477 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 417,
+      "elapsedMs": 446,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89661-1",
+      "name": "云南网红 哈尼阿乡 婚内出轨高小姐 原配妻子多条证据实锤 聊天记录偷情视频曝光全网围观",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/edbc6191da2e7f2fe115f98f5434f622.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 233,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89660-1",
+      "name": "外网博主 子仪 性爱视频 02年骚货口足侍奉男友 后入爆操蜜穴浪叫贼骚",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/18d2a0f70c1984a272f5bc8e8c0574fb.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 237,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89674-1",
+      "name": "推特网黄 175夫妻 新作 肉丝套屌为老公足交打飞机 穿上灌精高跟 任其欣赏粘稠丝足",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/17912ae1a3f3ca798dfe0a81de122991.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 222,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89665-1",
+      "name": "台湾女神 璃奈酱 化身性感厨娘 奶油摸胸胡萝卜插穴自慰 媚叫勾人心魂",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/ed4f8b5661c11830fc0ff9a0f1448e4e.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 222,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89678-1",
+      "name": "快手网红 二嫂你的王 自慰视频 风骚高跟熟女自慰骚穴 口交淫液假屌摄人心魂",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/57d48fc0ee3182e53f1fedeee2bf016b.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 219,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89670-1",
+      "name": "河南新乡抖音网红出轨榜一大哥 前男友怒曝性爱视频 扭腰榨精像发情母狗被玩到潮红",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/4852991967e8129fb79ccd7ddcbadf12.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 223,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89663-1",
+      "name": "俄罗斯嫩妹 米莉奥 第九弹 美乳笔挺肥臀圆润 假屌插白虎穴狂叫尽显淫荡",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/e29cf624bd0034a2f8f398332127636e.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 223,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89676-1",
+      "name": "抖音网红 苳笗 定制福利 身穿女仆装三点全漏 脸穴同框 自慰骚话不断",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/443ad639581ea9c5556a796059945518.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 44,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89679-1",
+      "name": "超美肥臀尤物 Kiki小野猫 自慰直播 罕见粗大黄瓜猛插白虎穴 颤栗流浆淫尿连喷不止",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/b240ef258be2496cf89898f2ecd4702a.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 44,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89662-1",
+      "name": "白虎网黄 困困狗 性爱新作 油亮丝袜足交侍奉主人 发热膏涂穴无套狠操 越干越烫放肆淫叫",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/76a84eb36e58d3ba6ab264b392fb1a55.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 44,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89669-1",
+      "name": "摄影大神 老虎菜 劲爆福利佳作 酒店约拍巨乳网黄小尤奈 全裸自慰发骚视觉冲击爆棚",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/fde67b51f8dc7aa97a146c9ef4689eff.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 45,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89675-1",
+      "name": "极品网红 我都懒得骂你 福利合集 约炮金主狂操肥臀 道具自慰画面香艳至极",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/c5bb44f9c729c7f0ba42978a18682601.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 54,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89672-1",
+      "name": "极品TS伪娘 蛋奶酒 自慰视频 假屌塞肛刺激前列腺 边捅菊花边撸管比女人还骚",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/1122b8c12ba46cc9dddd20bd3730a758.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 44,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89673-1",
+      "name": "韩国TS网红 JessieLee 福利佳作 性感伪娘镜头前妖娆发浪 肛塞自慰爆喷精液",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/c0e96cfb62576975caf21bf0bec6ba12.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 47,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89677-1",
+      "name": "抖音网红 buzz4 缺钱下海裸聊 浴室全裸白嫩酮体诱惑 掰穴展示证明骚货本质",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/0d157bc5a977bd66d44851d71d7d39a1.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 27,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89668-1",
+      "name": "推特福利姬 是小桃呢 自慰福利 OL制服搭配紧身皮裙 假屌捅破黑丝 狂插白虎肥穴",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/7ee2d0ca2026dcb98f9b75a4b5388c05.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 23,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89667-1",
+      "name": "推特操良大神 狱哥 约啪敏感体质校花 狗链栓脖后入蜜臀 当场操喷浑身激烈痉挛",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/d0197cb11ea29a36e4d527564c01f173.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 30,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89666-1",
+      "name": "快手网红 贵州眉眉 定制福利 揉挤硕大圆乳奶水滴落 掀裙抠搅肥穴 粉肉浸满水光",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/2a7ec155b8cce6f69e007ee5ff792df7.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 17,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89671-1",
+      "name": "高颜女神 MilaAzul 浴室全裸自慰福利 花洒冲淋白虎蜜洞 手指掰逼灌满淫水",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/7bab585faa68b1f2bd2c53c0bd8e65b5.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 21,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89664-1",
+      "name": "抖音网红陪玩 小宅喵 明码标价卖逼圈钱 东东电竞刘旭东 推出嫖娼新赛道火爆出圈",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261115-1/7f03fb8aeb520899e7fc66bf7b779c1e.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 24,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89640-1",
+      "name": "短发极品少妇的放纵，听狼友指挥互动小游戏，舔弄大鸡巴，淫声荡语让大哥吃奶舔逼",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261114-1/d664b77aa4d28e0d24d4bf069ac30186.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 23,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89641-1",
+      "name": "极品嫩妹【小葡萄可爱】完美炮架，黑丝逆天大长腿，白嫩圆润大奶，粉嫩无毛嫩穴，裸舞掰逼自慰",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261114-1/8c71a0d39a5d13c3ad9157288d1fca1b.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 49,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89642-1",
+      "name": "极品姐妹花全程激情大秀，骚逼淫水泛滥，揉奶抠逼，穿上假鸡巴内裤换着姿势爆草蹂躏",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261114-1/676d30198844633e414fecd6418436a7.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 44,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89558-1",
+      "name": "顶级颜值校花巨乳嫩妹！28CM大屌模拟做爱爆插乳摇狂喷！完美丰满身材，乳摇暴插高潮狂喷！",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261113-1/21a7e8ba5986e875c4ed84d1f902f0c0.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "1706p",
+      "maxHeight": 1706,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 44,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89568-1",
+      "name": "好色小姨子肤白貌美有纹身，被大哥按着头深喉草嘴玩弄骚奶子，多体位无套爆草蹂躏",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261113-1/c6c178276b7f11ea4e3ead6b32f4be9a.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 49,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89569-1",
+      "name": "乖巧听话的小少妇深夜跟小哥激情啪啪，从床下干到床上各种爆草蹂躏，道具玩逼高潮不断",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261113-1/c638161798131ade86438d49eda815bc.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 28,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89583-1",
+      "name": "极品白嫩少妇被男主各种姿势操，软了操嘴，硬了操逼，卧槽这奶子是真的顶 (2)",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261113-1/70678705886dff0e30c5c4d34e12eaa9.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 23,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89586-1",
+      "name": "抖M美少女【超敏感少女】露脸骑乘激情啪，深喉伺候入珠屌 (3)",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261113-1/f4a4fc16589854e01df567eb37ba0655.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 25,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89534-1",
+      "name": "颜值不错的校花跟小哥哥激情啪啪，镜头前的放纵全程露脸后入抽插",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/6a4e8e02941d94c5a502e2c34c19389f.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2258p",
+      "maxHeight": 2258,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 22,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89530-1",
+      "name": "漂亮小姐姐大战头套男，骑乘上下套弄持续爆操浪叫",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/5a25d7431cdb84cfb93643dc319df5fd.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 24,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89531-1",
+      "name": "红唇漂亮小姐姐开裆黑丝多毛骚穴，换装红色连体网袜",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/8d7dbd3673668eb0ba035964c721751e.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 29,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89538-1",
+      "name": "【顶配娃娃脸】00后小孕妇产后赚奶粉钱，淫液四溢观赏价值高",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/383322dee0538e8f1eccc2e00c470381.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2258p",
+      "maxHeight": 2258,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 44,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89537-1",
+      "name": "顶级颜值甜美网红小姐姐，死库水掏出白皙美乳，难得小露下逼逼",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/512ca6487600f868ad39f42a93a8a8d9.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 44,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89539-1",
+      "name": "淫荡一线天肥逼女神蹲在圆桌上自慰",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/96999457dd2f453fcc2792f90522afd0.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 39,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89535-1",
+      "name": "骚表姐在床前给小弟弟口交，舔蛋蛋玩乳交足交好刺激",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/18abb67576bd4cad44441463dbc6956d.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 37,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89533-1",
+      "name": "短发御姐露脸性感撩人，丝袜情趣装高跟诱惑",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/1a4fbfc82300c901cedc3ce731870e13.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 36,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89536-1",
+      "name": "卡哇伊白皙皮肤蜜桃臀萌妹纸自慰诱惑",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/cd9f52eced7c849db340aac18e711589.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 29,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89532-1",
+      "name": "高颜值豪乳女友和小鲜肉啪啪大秀",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/87bb3bc8d53bb0e00db3b4f033280381.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 30,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89438-1",
+      "name": "顶级反差婊美少女！极品女大和男友的幸福生活，激情性爱招式繁多，无套啪啪啪！",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/c07d7edb7150b8ec70a6fb9a3fefb870.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 31,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89446-1",
+      "name": "顶级绝美双马尾，奶子超漂亮，长腿玉足蜜桃臀，粉嫩逼逼，怼屏水晶棒插逼自慰爆浆",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/2778275d6a5bc1f64c3b11b5bc13f906.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "2276p",
+      "maxHeight": 2276,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 23,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89445-1",
+      "name": "穿上性感的心形肉丝翘起屁股被操，征服感就能让人高潮，后入深插不停全程打桩-小虎牙",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261112-1/aeee81052dfcaa0dfc63c52d740299f8.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 38,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89427-1",
+      "name": "背德禁忌惹火亲妹的极限诱惑~最疯狂的兄妹乱伦床上沙发我都要-纱季",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261111-1/b3d0cf4d03e79b13e738269cda79e260.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 26,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89366-1",
+      "name": "【梓怡师妹】兄弟的恶陪玩女友胁迫中出，超嫩骚穴淫水直流",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261110-1/7b4c179d7f63765862d9d2da522ec767.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 25,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89273-1",
+      "name": "【潘潘Pan】丝足色诱电竞少女勾引电脑修理师",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261109-1/1f3998a593038ce74266caf17af59c4d.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 27,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89275-1",
+      "name": "【嫩小兔】时雨羽衣的淫穴奸计色诱保安大叔！口足穴侍奉中出！",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261109-1/606a507b8525181c36a2a72bc82160c5.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 26,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89114-1",
+      "name": "原神cos-仙人弟子申鹤为了帮助旅行者付出了比生命还要珍贵的肉体·桥本香菜",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261106-1/5169c2cae8c8ad1e8aa0006452170c6b.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 22,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89042-1",
+      "name": "为了孩子奉献出自己的一切的母亲，菜菜将身体献出赔罪～只有获得精液才有资格被原谅",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261105-1/00b7adf75319ccff6bfdee0cf133ac81.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 25,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-88940-1",
+      "name": "我的青梅竹马是魅魔~黑丝高跟极致引诱~无套深插不停中出灌精-西野加奈",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261104-1/7ab4bbfce185d9025dcee38e950a807a.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 31,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-88729-1",
+      "name": "私房女模~内射不满足被操到高潮狂颤，大龟头塞的小嘴都含不下，在小穴里抽插刮蹭吟声超酥",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261031-1/c025577d260f958c244ca573a9540a99.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 19,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-88484-1",
+      "name": "波点袜情趣魅惑，长腿蜜桃臀真是极品，后入简直爽爆了，榨精小蛮腰放荡叫床-小虎牙",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261028-1/1116e2941abed1d6793cbe8423e4859a.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 24,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-88154-1",
+      "name": "顶级淫欲丝袜家教女教师，反差教师太骚了！色诱大屌学生疯狂抽插骚穴",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261023-1/7aedd8b5034e79fcf3a2ec63168c566d.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 26,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-88155-1",
+      "name": "极品性感淫荡美女主播被房东爆操，黑屌怒射性感黑丝，浓滑精汁淫靡玉足",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261023-1/07e407eb9bb24e85bf2008f666f547d7.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 33,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-87342-1",
+      "name": "【丝跟嫩穴】极致魅惑！指淫插穴骚水流不停-蜡笔甜心",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261012-1/1a8bcdd2165b9eba5c564225807410cd.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 24,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-87343-1",
+      "name": "房东的骚女儿！色播被发现后主动引诱黑丝淫穴疯狂榨精中出-喵叽小糯",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261012-1/0742f67d437d70322f077f8d79bd5a0f.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 25,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-87344-1",
+      "name": "兼职家政化身女仆.遭业主强上轻调深插.太粗了小穴要被插坏.内射太深了-喵叽小糯",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261012-1/4d472ee02d4d76cc6bf1ad261b8d695a.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 18,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-87346-1",
+      "name": "幻想女仆女友，跪地舔食多体位插穴，抽插爽出好多白浆，肉棒超滑内射深处温温兔-温温兔",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261012-1/9aae45d0e80061c31cdbce57eb1773c6.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 30,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-87350-1",
+      "name": "偷喝汽水教官的肉穴惩罚，跪地深喉舔食肉棒，嫩逼被后入的好爽，白虎逼又嫩又湿内射",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261012-1/018f7655df3fd688410dead691eaf02f.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 42,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-87157-1",
+      "name": "网恋小狗等不及跟我见面，饥渴求插，深深的爆操插女上位，嫩逼被灌满了精液- DS小兮",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261009-1/048fd0cb1d1850bd191f90ca876549fc.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 24,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-87076-1",
+      "name": "《纯享性爱体验》骚嘴化身肉便器被疯狂抽插，嫩穴疯狂榨精中出-小欣奈",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261008-1/376dfb9513b750997a7b8c6860f2a185.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 22,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-87079-1",
+      "name": "傲娇少女的心事肉棒惩罚白虎穴，操爽了还自己揉大奶子，抱臀速插精液全射在嫩逼里-萌小萌",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261008-1/7239e6f7f1e3f301b4cef5bcc8cab0fa.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 25,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89425-1",
+      "name": "【7BOSS约啪】约了一个东北JK妹妹，各种姿势一顿爆操",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261111-1/c66d8cd19b10772e353c463ce1da7f94.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 38,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89429-1",
+      "name": "【7BOSS】约的妹妹吃肉棒像吃冰棒一样津津有味",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261111-1/d578fa2f2199ac71288c3b91b061abeb.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 22,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89374-1",
+      "name": "18岁极品师妹，清纯高颜值超多淫水刚开始做动作不熟练，她说一天接9单小穴都被操肿了",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261110-1/a2009b36cf0a5943da43a8538f315e57.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 15,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89375-1",
+      "name": "3000约的高中学生妹，一脸青涩奶子却很大",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261110-1/d802b27a7a7442f1ba540fee2c14cce1.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 27,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89160-1",
+      "name": "【极品探花】高颜值大长腿妹子啪啪，穿上黑丝情趣装热舞扭动",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261107-1/3a422346433a082092f8beb0b9441a62.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "726p",
+      "maxHeight": 726,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 22,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89162-1",
+      "name": "【极品探花】约花臂纹身小太妹啪啪，张开双腿摸逼口交舔屌",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261107-1/67e9bc5375b29ab1bb3d0a3da17e9f53.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "726p",
+      "maxHeight": 726,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 26,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89163-1",
+      "name": "【极品探花】约了个肉肉身材黑裙少妇啪啪，舔奶调情穿上包臀裙黑丝",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261107-1/fd4d0eb709e410cf9326c02fb6fd3f80.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "726p",
+      "maxHeight": 726,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 23,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89161-1",
+      "name": "【极品探花】风骚少妇需求就是大，干破了3个避孕套",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261107-1/fe2531e1c667f7bc6515e8ddde51d231.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "726p",
+      "maxHeight": 726,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 18,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89171-1",
+      "name": "【李公子密探】上门操极品美臀小姐姐，口活一流扛起双腿就草",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261107-1/10943367ac89ad0b86ef15c03525d7d2.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "726p",
+      "maxHeight": 726,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 32,
+      "error": ""
+    },
+    {
+      "kind": "poster",
+      "id": "all-on-demand-sources-黄色仓库-https-hsckzy-xyz-api-php-provide-vod-47-89170-1",
+      "name": "【老婆姨姐闺蜜换着探花】淫荡姐妹花激情双飞，黑丝渔网情趣装",
+      "type": "adult",
+      "url": "https://img.uyjthen.com/upload/vod/20261107-1/ea8ba305e592b734a62f94f4eb82637d.jpg",
+      "sourceName": "黄色仓库｜追劇",
+      "titleOk": true,
+      "posterOk": true,
+      "playOk": true,
+      "qualityOk": true,
+      "qualityLabel": "720p",
+      "maxHeight": 720,
+      "maxBandwidth": 2000000,
+      "variants": 1,
+      "ok": true,
+      "status": 200,
+      "playStatus": 200,
+      "elapsedMs": 24,
       "error": ""
     },
     {
@@ -1696,7 +3111,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 162,
+      "elapsedMs": 155,
       "error": ""
     },
     {
@@ -1713,7 +3128,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 163,
+      "elapsedMs": 140,
       "error": ""
     },
     {
@@ -1730,7 +3145,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 156,
+      "elapsedMs": 135,
       "error": ""
     },
     {
@@ -1747,7 +3162,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 152,
+      "elapsedMs": 163,
       "error": ""
     },
     {
@@ -1764,7 +3179,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 165,
+      "elapsedMs": 142,
       "error": ""
     },
     {
@@ -1781,7 +3196,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 155,
+      "elapsedMs": 135,
       "error": ""
     },
     {
@@ -1798,7 +3213,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 170,
+      "elapsedMs": 145,
       "error": ""
     },
     {
@@ -1815,7 +3230,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 152,
+      "elapsedMs": 156,
       "error": ""
     },
     {
@@ -1832,7 +3247,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 168,
+      "elapsedMs": 132,
       "error": ""
     },
     {
@@ -1849,7 +3264,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 161,
+      "elapsedMs": 157,
       "error": ""
     },
     {
@@ -1866,7 +3281,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 145,
+      "elapsedMs": 136,
       "error": ""
     },
     {
@@ -1883,7 +3298,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 143,
+      "elapsedMs": 141,
       "error": ""
     },
     {
@@ -1900,7 +3315,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 90,
+      "elapsedMs": 97,
       "error": ""
     },
     {
@@ -1917,7 +3332,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 83,
+      "elapsedMs": 84,
       "error": ""
     },
     {
@@ -1934,7 +3349,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 86,
+      "elapsedMs": 98,
       "error": ""
     },
     {
@@ -1951,7 +3366,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 100,
+      "elapsedMs": 82,
       "error": ""
     },
     {
@@ -1968,7 +3383,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 92,
+      "elapsedMs": 118,
       "error": ""
     },
     {
@@ -1985,7 +3400,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 106,
+      "elapsedMs": 81,
       "error": ""
     },
     {
@@ -2002,7 +3417,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 86,
+      "elapsedMs": 92,
       "error": ""
     },
     {
@@ -2019,7 +3434,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 83,
+      "elapsedMs": 86,
       "error": ""
     },
     {
@@ -2036,7 +3451,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 87,
+      "elapsedMs": 88,
       "error": ""
     },
     {
@@ -2053,7 +3468,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 84,
+      "elapsedMs": 95,
       "error": ""
     },
     {
@@ -2070,7 +3485,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 93,
+      "elapsedMs": 90,
       "error": ""
     },
     {
@@ -2087,7 +3502,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 98,
+      "elapsedMs": 82,
       "error": ""
     },
     {
@@ -2104,7 +3519,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 91,
+      "elapsedMs": 88,
       "error": ""
     },
     {
@@ -2121,7 +3536,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 89,
+      "elapsedMs": 82,
       "error": ""
     },
     {
@@ -2138,7 +3553,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 94,
+      "elapsedMs": 95,
       "error": ""
     },
     {
@@ -2155,7 +3570,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 95,
+      "elapsedMs": 93,
       "error": ""
     },
     {
@@ -2172,7 +3587,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 107,
+      "elapsedMs": 81,
       "error": ""
     },
     {
@@ -2189,7 +3604,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 84,
+      "elapsedMs": 95,
       "error": ""
     },
     {
@@ -2206,7 +3621,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 100,
+      "elapsedMs": 80,
       "error": ""
     },
     {
@@ -2223,7 +3638,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 88,
+      "elapsedMs": 83,
       "error": ""
     },
     {
@@ -2240,7 +3655,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 92,
+      "elapsedMs": 94,
       "error": ""
     },
     {
@@ -2257,7 +3672,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 86,
+      "elapsedMs": 78,
       "error": ""
     },
     {
@@ -2274,7 +3689,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 96,
+      "elapsedMs": 85,
       "error": ""
     },
     {
@@ -2291,7 +3706,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 82,
+      "elapsedMs": 91,
       "error": ""
     },
     {
@@ -2308,7 +3723,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 78,
+      "elapsedMs": 81,
       "error": ""
     },
     {
@@ -2325,7 +3740,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 86,
+      "elapsedMs": 81,
       "error": ""
     },
     {
@@ -2342,7 +3757,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 86,
+      "elapsedMs": 80,
       "error": ""
     },
     {
@@ -2393,7 +3808,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 91,
+      "elapsedMs": 94,
       "error": ""
     },
     {
@@ -2410,7 +3825,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 88,
+      "elapsedMs": 95,
       "error": ""
     },
     {
@@ -2427,7 +3842,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 85,
+      "elapsedMs": 90,
       "error": ""
     },
     {
@@ -2461,7 +3876,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 93,
+      "elapsedMs": 86,
       "error": ""
     },
     {
@@ -2478,7 +3893,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 93,
+      "elapsedMs": 99,
       "error": ""
     },
     {
@@ -2495,7 +3910,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 82,
+      "elapsedMs": 85,
       "error": ""
     },
     {
@@ -2512,7 +3927,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 78,
+      "elapsedMs": 93,
       "error": ""
     },
     {
@@ -2529,7 +3944,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 78,
+      "elapsedMs": 84,
       "error": ""
     },
     {
@@ -2546,7 +3961,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 88,
+      "elapsedMs": 83,
       "error": ""
     },
     {
@@ -2563,7 +3978,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 101,
+      "elapsedMs": 77,
       "error": ""
     },
     {
@@ -2580,7 +3995,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 96,
+      "elapsedMs": 85,
       "error": ""
     },
     {
@@ -2597,7 +4012,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 95,
+      "elapsedMs": 84,
       "error": ""
     },
     {
@@ -2614,7 +4029,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 88,
+      "elapsedMs": 77,
       "error": ""
     },
     {
@@ -2631,7 +4046,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 83,
+      "elapsedMs": 87,
       "error": ""
     },
     {
@@ -2648,7 +4063,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 104,
+      "elapsedMs": 82,
       "error": ""
     },
     {
@@ -2665,7 +4080,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 80,
+      "elapsedMs": 85,
       "error": ""
     },
     {
@@ -2682,7 +4097,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 81,
+      "elapsedMs": 83,
       "error": ""
     },
     {
@@ -2699,7 +4114,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 99,
+      "elapsedMs": 143,
       "error": ""
     },
     {
@@ -2716,7 +4131,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 95,
+      "elapsedMs": 81,
       "error": ""
     },
     {
@@ -2733,7 +4148,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 85,
+      "elapsedMs": 81,
       "error": ""
     },
     {
@@ -2750,7 +4165,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 115,
+      "elapsedMs": 86,
       "error": ""
     },
     {
@@ -2767,7 +4182,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 88,
+      "elapsedMs": 81,
       "error": ""
     },
     {
@@ -2784,7 +4199,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 102,
+      "elapsedMs": 77,
       "error": ""
     },
     {
@@ -2801,7 +4216,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 92,
+      "elapsedMs": 101,
       "error": ""
     },
     {
@@ -2818,7 +4233,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 108,
+      "elapsedMs": 77,
       "error": ""
     },
     {
@@ -2835,7 +4250,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 87,
+      "elapsedMs": 89,
       "error": ""
     },
     {
@@ -2852,7 +4267,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 95,
+      "elapsedMs": 89,
       "error": ""
     },
     {
@@ -2869,7 +4284,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 82,
+      "elapsedMs": 102,
       "error": ""
     },
     {
@@ -2886,7 +4301,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 97,
+      "elapsedMs": 78,
       "error": ""
     },
     {
@@ -2903,7 +4318,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 79,
+      "elapsedMs": 98,
       "error": ""
     },
     {
@@ -2920,7 +4335,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 81,
+      "elapsedMs": 89,
       "error": ""
     },
     {
@@ -2937,7 +4352,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 90,
+      "elapsedMs": 83,
       "error": ""
     },
     {
@@ -2954,7 +4369,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 82,
+      "elapsedMs": 85,
       "error": ""
     },
     {
@@ -2971,7 +4386,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 90,
+      "elapsedMs": 94,
       "error": ""
     },
     {
@@ -2988,7 +4403,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 86,
+      "elapsedMs": 84,
       "error": ""
     },
     {
@@ -3005,7 +4420,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 82,
+      "elapsedMs": 85,
       "error": ""
     },
     {
@@ -3022,7 +4437,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 92,
+      "elapsedMs": 94,
       "error": ""
     },
     {
@@ -3039,7 +4454,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 105,
+      "elapsedMs": 96,
       "error": ""
     },
     {
@@ -3056,7 +4471,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 81,
+      "elapsedMs": 82,
       "error": ""
     },
     {
@@ -3073,7 +4488,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 85,
+      "elapsedMs": 90,
       "error": ""
     },
     {
@@ -3090,7 +4505,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 82,
+      "elapsedMs": 84,
       "error": ""
     },
     {
@@ -3107,7 +4522,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 91,
+      "elapsedMs": 108,
       "error": ""
     },
     {
@@ -3124,7 +4539,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 81,
+      "elapsedMs": 78,
       "error": ""
     },
     {
@@ -3141,7 +4556,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 90,
+      "elapsedMs": 88,
       "error": ""
     },
     {
@@ -3158,7 +4573,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 87,
+      "elapsedMs": 99,
       "error": ""
     },
     {
@@ -3175,7 +4590,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 80,
+      "elapsedMs": 100,
       "error": ""
     },
     {
@@ -3192,7 +4607,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 91,
+      "elapsedMs": 84,
       "error": ""
     },
     {
@@ -3209,7 +4624,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 78,
+      "elapsedMs": 97,
       "error": ""
     },
     {
@@ -3226,7 +4641,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 133,
+      "elapsedMs": 81,
       "error": ""
     },
     {
@@ -3243,7 +4658,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 77,
+      "elapsedMs": 79,
       "error": ""
     },
     {
@@ -3260,7 +4675,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 89,
+      "elapsedMs": 74,
       "error": ""
     },
     {
@@ -3277,7 +4692,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 90,
+      "elapsedMs": 98,
       "error": ""
     },
     {
@@ -3294,7 +4709,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 96,
+      "elapsedMs": 92,
       "error": ""
     },
     {
@@ -3311,7 +4726,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 87,
+      "elapsedMs": 83,
       "error": ""
     },
     {
@@ -3328,7 +4743,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 96,
+      "elapsedMs": 78,
       "error": ""
     },
     {
@@ -3345,7 +4760,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 85,
+      "elapsedMs": 79,
       "error": ""
     },
     {
@@ -3362,7 +4777,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 89,
+      "elapsedMs": 95,
       "error": ""
     },
     {
@@ -3379,7 +4794,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 83,
+      "elapsedMs": 79,
       "error": ""
     },
     {
@@ -3396,7 +4811,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 109,
+      "elapsedMs": 87,
       "error": ""
     },
     {
@@ -3413,7 +4828,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 90,
+      "elapsedMs": 86,
       "error": ""
     },
     {
@@ -3430,7 +4845,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 92,
+      "elapsedMs": 97,
       "error": ""
     },
     {
@@ -3447,7 +4862,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 91,
+      "elapsedMs": 84,
       "error": ""
     },
     {
@@ -3464,7 +4879,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 93,
+      "elapsedMs": 77,
       "error": ""
     },
     {
@@ -3481,7 +4896,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 83,
+      "elapsedMs": 98,
       "error": ""
     },
     {
@@ -3498,7 +4913,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 93,
+      "elapsedMs": 87,
       "error": ""
     },
     {
@@ -3515,7 +4930,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 95,
+      "elapsedMs": 84,
       "error": ""
     },
     {
@@ -3532,7 +4947,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 113,
+      "elapsedMs": 81,
       "error": ""
     },
     {
@@ -3549,7 +4964,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 96,
+      "elapsedMs": 82,
       "error": ""
     },
     {
@@ -3566,7 +4981,7 @@
       "maxBandwidth": 6221313,
       "variants": 10,
       "status": 200,
-      "elapsedMs": 65,
+      "elapsedMs": 162,
       "error": ""
     },
     {
@@ -3583,7 +4998,7 @@
       "maxBandwidth": 6221313,
       "variants": 10,
       "status": 200,
-      "elapsedMs": 195,
+      "elapsedMs": 255,
       "error": ""
     },
     {
@@ -3600,7 +5015,7 @@
       "maxBandwidth": 6221313,
       "variants": 10,
       "status": 200,
-      "elapsedMs": 171,
+      "elapsedMs": 495,
       "error": ""
     },
     {
@@ -3617,7 +5032,7 @@
       "maxBandwidth": 6221313,
       "variants": 10,
       "status": 200,
-      "elapsedMs": 704,
+      "elapsedMs": 906,
       "error": ""
     },
     {
@@ -3634,7 +5049,7 @@
       "maxBandwidth": 4540800,
       "variants": 4,
       "status": 200,
-      "elapsedMs": 663,
+      "elapsedMs": 1143,
       "error": ""
     },
     {
@@ -3651,7 +5066,7 @@
       "maxBandwidth": 7003216,
       "variants": 3,
       "status": 200,
-      "elapsedMs": 866,
+      "elapsedMs": 772,
       "error": ""
     },
     {
@@ -3668,7 +5083,7 @@
       "maxBandwidth": 3256000,
       "variants": 4,
       "status": 200,
-      "elapsedMs": 1440,
+      "elapsedMs": 1535,
       "error": ""
     },
     {
@@ -3685,7 +5100,7 @@
       "maxBandwidth": 3256000,
       "variants": 4,
       "status": 200,
-      "elapsedMs": 584,
+      "elapsedMs": 1108,
       "error": ""
     },
     {
@@ -3702,7 +5117,7 @@
       "maxBandwidth": 6969600,
       "variants": 5,
       "status": 200,
-      "elapsedMs": 413,
+      "elapsedMs": 1107,
       "error": ""
     },
     {
@@ -3712,15 +5127,15 @@
       "type": "hls",
       "url": "https://live.france24.com/hls/live/2037222-b/F24_AR_HI_HLS/master_5000.m3u8",
       "group": "全球官方串流",
-      "ok": false,
-      "qualityOk": false,
-      "qualityLabel": "",
+      "ok": true,
+      "qualityOk": true,
+      "qualityLabel": "single",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 404,
-      "elapsedMs": 316,
-      "error": "manifest HTTP 404"
+      "status": 200,
+      "elapsedMs": 452,
+      "error": ""
     },
     {
       "kind": "live",
@@ -3729,15 +5144,15 @@
       "type": "hls",
       "url": "https://live.france24.com/hls/live/2037218-b/F24_EN_HI_HLS/master_5000.m3u8",
       "group": "全球官方串流",
-      "ok": false,
-      "qualityOk": false,
-      "qualityLabel": "",
+      "ok": true,
+      "qualityOk": true,
+      "qualityLabel": "single",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 404,
-      "elapsedMs": 313,
-      "error": "manifest HTTP 404"
+      "status": 200,
+      "elapsedMs": 650,
+      "error": ""
     },
     {
       "kind": "live",
@@ -3746,15 +5161,15 @@
       "type": "hls",
       "url": "https://live.france24.com/hls/live/2037179-b/F24_FR_HI_HLS/master_5000.m3u8",
       "group": "全球官方串流",
-      "ok": false,
-      "qualityOk": false,
-      "qualityLabel": "",
+      "ok": true,
+      "qualityOk": true,
+      "qualityLabel": "single",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 404,
-      "elapsedMs": 305,
-      "error": "manifest HTTP 404"
+      "status": 200,
+      "elapsedMs": 492,
+      "error": ""
     },
     {
       "kind": "live",
@@ -3763,15 +5178,15 @@
       "type": "hls",
       "url": "https://live.france24.com/hls/live/2037220-b/F24_ES_HI_HLS/master_5000.m3u8",
       "group": "全球官方串流",
-      "ok": false,
-      "qualityOk": false,
-      "qualityLabel": "",
+      "ok": true,
+      "qualityOk": true,
+      "qualityLabel": "single",
       "maxHeight": 0,
       "maxBandwidth": 0,
       "variants": 0,
-      "status": 404,
-      "elapsedMs": 290,
-      "error": "manifest HTTP 404"
+      "status": 200,
+      "elapsedMs": 430,
+      "error": ""
     }
   ]
 }
