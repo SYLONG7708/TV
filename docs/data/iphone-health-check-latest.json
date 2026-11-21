@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-11-21T12:47:18.674Z",
+  "checkedAt": "2026-11-21T18:44:25.942Z",
   "inputs": {
     "catalogPath": "D:\\a\\TV\\TV\\docs\\data\\iphone-vod-catalog.json",
     "livePath": "D:\\a\\TV\\TV\\docs\\data\\live-channels.json"
@@ -7,8 +7,8 @@
   "summary": {
     "sources": {
       "total": 91,
-      "ok": 77,
-      "failed": 14
+      "ok": 76,
+      "failed": 15
     },
     "posters": {
       "total": 11,
@@ -31,16 +31,16 @@
   "failed": [
     {
       "kind": "source",
-      "id": "all-on-demand-sources-滴滴资源-https-api-ddapi-cc-api-php-provide-vod-56",
-      "name": "滴滴资源｜追劇",
+      "id": "all-on-demand-sources-光速资源-https-api-guangsuapi-com-api-php-provide-vod-22",
+      "name": "光速资源｜追劇",
       "type": 1,
-      "url": "https://api.ddapi.cc/api.php/provide/vod/",
+      "url": "https://api.guangsuapi.com/api.php/provide/vod/",
       "indexed": true,
-      "adult": true,
+      "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 162,
-      "error": "fetch failed"
+      "elapsedMs": 8013,
+      "error": "The operation was aborted due to timeout"
     },
     {
       "kind": "source",
@@ -52,8 +52,21 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 0,
+      "elapsedMs": 1,
       "error": "spider api=Failed to parse URL from csp_AppGet; ext=undefined"
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-金鹰点播-https-jinyingzy-com-api-php-provide-vod-19",
+      "name": "金鹰点播｜追劇",
+      "type": 1,
+      "url": "https://jinyingzy.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": false,
+      "ok": false,
+      "status": 0,
+      "elapsedMs": 8002,
+      "error": "The operation was aborted due to timeout"
     },
     {
       "kind": "source",
@@ -65,7 +78,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 442,
+      "elapsedMs": 401,
       "error": "spider api=Failed to parse URL from csp_XBPQ; ext=206"
     },
     {
@@ -78,7 +91,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 345,
+      "elapsedMs": 123,
       "error": "spider api=Failed to parse URL from csp_XYQHiker; ext=206"
     },
     {
@@ -117,7 +130,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 471,
+      "elapsedMs": 164,
       "error": "fetch failed"
     },
     {
@@ -130,7 +143,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 362,
+      "elapsedMs": 61,
       "error": "fetch failed"
     },
     {
@@ -143,7 +156,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 153,
+      "elapsedMs": 66,
       "error": "fetch failed"
     },
     {
@@ -156,7 +169,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 164,
+      "elapsedMs": 68,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -169,7 +182,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 110,
+      "elapsedMs": 60,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -182,7 +195,7 @@
       "adult": true,
       "ok": false,
       "status": 502,
-      "elapsedMs": 447,
+      "elapsedMs": 360,
       "error": "Unexpected token '<', \"<html>\r\n<h\"... is not valid JSON"
     },
     {
@@ -195,7 +208,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 2755,
+      "elapsedMs": 2545,
       "error": "fetch failed"
     },
     {
@@ -208,7 +221,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 116,
+      "elapsedMs": 104,
       "error": "spider api=Failed to parse URL from csp_XYQHiker; ext=206"
     }
   ],
@@ -236,7 +249,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 260,
+      "elapsedMs": 269,
       "error": ""
     },
     {
@@ -249,7 +262,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 4856,
+      "elapsedMs": 914,
       "error": ""
     },
     {
@@ -262,7 +275,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 952,
+      "elapsedMs": 1110,
       "error": ""
     },
     {
@@ -275,7 +288,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 190,
+      "elapsedMs": 163,
       "error": ""
     },
     {
@@ -288,7 +301,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1039,
+      "elapsedMs": 1029,
       "error": ""
     },
     {
@@ -301,7 +314,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 304,
+      "elapsedMs": 246,
       "error": ""
     },
     {
@@ -314,7 +327,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 258,
+      "elapsedMs": 193,
       "error": ""
     },
     {
@@ -327,7 +340,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 929,
+      "elapsedMs": 669,
       "error": ""
     },
     {
@@ -340,7 +353,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 932,
+      "elapsedMs": 750,
       "error": ""
     },
     {
@@ -353,7 +366,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 403,
+      "elapsedMs": 271,
       "error": ""
     },
     {
@@ -366,7 +379,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 268,
+      "elapsedMs": 263,
       "error": ""
     },
     {
@@ -379,7 +392,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 406,
+      "elapsedMs": 664,
       "error": ""
     },
     {
@@ -392,7 +405,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 184,
+      "elapsedMs": 77,
       "error": ""
     },
     {
@@ -405,7 +418,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 574,
+      "elapsedMs": 385,
       "error": ""
     },
     {
@@ -418,7 +431,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 70,
+      "elapsedMs": 44,
       "error": ""
     },
     {
@@ -431,7 +444,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 196,
+      "elapsedMs": 58,
       "error": ""
     },
     {
@@ -444,7 +457,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 171,
+      "elapsedMs": 223,
       "error": ""
     },
     {
@@ -457,7 +470,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 697,
+      "elapsedMs": 399,
       "error": ""
     },
     {
@@ -470,7 +483,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 469,
+      "elapsedMs": 77,
       "error": ""
     },
     {
@@ -481,10 +494,10 @@
       "url": "https://api.guangsuapi.com/api.php/provide/vod/",
       "indexed": true,
       "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 148,
-      "error": ""
+      "ok": false,
+      "status": 0,
+      "elapsedMs": 8013,
+      "error": "The operation was aborted due to timeout"
     },
     {
       "kind": "source",
@@ -496,7 +509,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 236,
+      "elapsedMs": 161,
       "error": ""
     },
     {
@@ -509,7 +522,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 478,
+      "elapsedMs": 767,
       "error": ""
     },
     {
@@ -522,7 +535,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1391,
+      "elapsedMs": 1179,
       "error": ""
     },
     {
@@ -535,7 +548,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 795,
+      "elapsedMs": 659,
       "error": ""
     },
     {
@@ -548,7 +561,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 308,
+      "elapsedMs": 170,
       "error": ""
     },
     {
@@ -561,7 +574,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 343,
+      "elapsedMs": 170,
       "error": ""
     },
     {
@@ -574,7 +587,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 389,
+      "elapsedMs": 440,
       "error": ""
     },
     {
@@ -587,7 +600,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 192,
+      "elapsedMs": 87,
       "error": ""
     },
     {
@@ -600,7 +613,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 342,
+      "elapsedMs": 171,
       "error": ""
     },
     {
@@ -613,7 +626,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 109,
+      "elapsedMs": 96,
       "error": ""
     },
     {
@@ -626,7 +639,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 303,
+      "elapsedMs": 122,
       "error": ""
     },
     {
@@ -639,7 +652,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 350,
+      "elapsedMs": 167,
       "error": ""
     },
     {
@@ -652,7 +665,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 387,
+      "elapsedMs": 333,
       "error": ""
     },
     {
@@ -665,7 +678,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 534,
+      "elapsedMs": 581,
       "error": ""
     },
     {
@@ -678,7 +691,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 182,
+      "elapsedMs": 92,
       "error": ""
     },
     {
@@ -691,7 +704,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 553,
+      "elapsedMs": 467,
       "error": ""
     },
     {
@@ -704,7 +717,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 202,
+      "elapsedMs": 138,
       "error": ""
     },
     {
@@ -717,7 +730,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 452,
+      "elapsedMs": 139,
       "error": ""
     },
     {
@@ -730,7 +743,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 153,
+      "elapsedMs": 898,
       "error": ""
     },
     {
@@ -743,7 +756,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 413,
+      "elapsedMs": 351,
       "error": ""
     },
     {
@@ -756,7 +769,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 153,
+      "elapsedMs": 144,
       "error": ""
     },
     {
@@ -769,7 +782,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1012,
+      "elapsedMs": 290,
       "error": ""
     },
     {
@@ -782,7 +795,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1033,
+      "elapsedMs": 1009,
       "error": ""
     },
     {
@@ -795,7 +808,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 376,
+      "elapsedMs": 281,
       "error": ""
     },
     {
@@ -808,7 +821,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 227,
+      "elapsedMs": 291,
       "error": ""
     },
     {
@@ -819,10 +832,10 @@
       "url": "https://api.ddapi.cc/api.php/provide/vod/",
       "indexed": true,
       "adult": true,
-      "ok": false,
-      "status": 0,
-      "elapsedMs": 162,
-      "error": "fetch failed"
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 252,
+      "error": ""
     },
     {
       "kind": "source",
@@ -834,7 +847,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 987,
+      "elapsedMs": 1072,
       "error": ""
     },
     {
@@ -847,7 +860,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 351,
+      "elapsedMs": 89,
       "error": ""
     },
     {
@@ -860,7 +873,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 251,
+      "elapsedMs": 185,
       "error": ""
     },
     {
@@ -873,332 +886,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 601,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "current-vod-url-金鹰点播-https-jyzyapi-com-provide-vod-60",
-      "name": "金鹰点播｜追劇",
-      "type": 1,
-      "url": "https://jyzyapi.com/provide/vod/",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 153,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-鲨鱼资源-https-shayuapi-com-api-php-provide-vod-54",
-      "name": "鲨鱼资源｜追劇",
-      "type": 1,
-      "url": "https://shayuapi.com/api.php/provide/vod/",
-      "indexed": true,
-      "adult": true,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 991,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-闪电影视-http-sdzyapi-com-api-php-provide-vod-77",
-      "name": "闪电影视｜追剧",
-      "type": 1,
-      "url": "http://sdzyapi.com/api.php/provide/vod/",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 235,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-牛牛影视-https-api-niuniuzy-me-api-php-provide-vod-at-xml-78",
-      "name": "牛牛影视｜追剧",
-      "type": 0,
-      "url": "https://api.niuniuzy.me/api.php/provide/vod/at/xml",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 283,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-雲飛影视-http-cj-lziapi-com-api-php-provide-vod-79",
-      "name": "雲飛影视｜追劇",
-      "type": 1,
-      "url": "http://cj.lziapi.com/api.php/provide/vod/",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 468,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-火狐-https-hhzyapi-com-api-php-provide-vod-81",
-      "name": "火狐影视｜追剧",
-      "type": 1,
-      "url": "https://hhzyapi.com/api.php/provide/vod/",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 326,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-api-如意-https-cj-rycjapi-com-api-php-provide-vod-82",
-      "name": "如意影视｜追剧",
-      "type": 1,
-      "url": "https://cj.rycjapi.com/api.php/provide/vod/",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 1241,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "current-vod-url-七星短剧-https-mpimg-cn-down-php-48e9d346cdf6da376c53136693bec95a-py-71",
-      "name": "七星丨短剧｜追劇",
-      "type": 3,
-      "url": "https://mpimg.cn/down.php/48e9d346cdf6da376c53136693bec95a.py",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 206,
-      "elapsedMs": 352,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-cj-360资源-https-360zy-com-api-php-provide-vod-84",
-      "name": "360丨短剧｜追劇",
-      "type": 1,
-      "url": "https://360zy.com/api.php/provide/vod/",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 1344,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-大地采集-https-dadiapi-com-apple-m3u8-php-88",
-      "name": "大地av｜18+",
-      "type": 0,
-      "url": "https://dadiapi.com/apple_m3u8.php",
-      "indexed": true,
-      "adult": true,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 1186,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-黄色仓库-av-https-hsckzy-vip-api-php-provide-vod-89",
-      "name": "黄色仓库(旧)｜18+",
-      "type": 1,
-      "url": "https://hsckzy.vip/api.php/provide/vod/",
-      "indexed": true,
-      "adult": true,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 367,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-fqzy资源-https-fqzy-me-api-php-provide-vod-ac-list-90",
-      "name": "国产资源｜18+",
-      "type": 1,
-      "url": "https://fqzy.me//api.php/provide/vod/?ac=list",
-      "indexed": true,
-      "adult": true,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 1118,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "current-vod-url-无水印资源-https-api-wsyzy-net-api-php-provide-vod-78",
-      "name": "无水印资源｜追劇",
-      "type": 1,
-      "url": "https://api.wsyzy.net/api.php/provide/vod/",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 1522,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "current-vod-url-吉吉资源-https-caiji-jjzyapi-com-api-php-provide-vod-79",
-      "name": "吉吉资源｜追劇",
-      "type": 1,
-      "url": "https://caiji.jjzyapi.com/api.php/provide/vod/",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 1180,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "current-vod-url-第一资源-https-caiji-diyizy-net-api-php-provide-vod-80",
-      "name": "第一资源｜追劇",
-      "type": 1,
-      "url": "https://caiji.diyizy.net/api.php/provide/vod/",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 284,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "current-vod-local-聚玩-ok資源-https-api-okzyw-net-api-php-provide-vod-81",
-      "name": "OK資源｜追劇",
-      "type": 1,
-      "url": "https://api.okzyw.net/api.php/provide/vod",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 251,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "current-vod-local-聚玩-淘片資源-https-taopianapi-com-cjapi-mc-vod-json-html-82",
-      "name": "淘片資源｜備用片庫",
-      "type": 1,
-      "url": "https://taopianapi.com/cjapi/mc/vod/json.html",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 640,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "juwan-adapter-43bed8818b867693f99b",
-      "name": "王子影視（適配）",
-      "type": 3,
-      "url": "csp_AppGet",
-      "indexed": true,
-      "adult": false,
-      "ok": false,
-      "status": 0,
-      "elapsedMs": 0,
-      "error": "spider api=Failed to parse URL from csp_AppGet; ext=undefined"
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-美少女-https-www-msnii-com-api-json-php-64",
-      "name": "美少女｜追劇",
-      "type": 1,
-      "url": "https://www.msnii.com/api/json.php",
-      "indexed": true,
-      "adult": true,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 440,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-黄avzy-https-www-pgxdy-com-api-json-php-65",
-      "name": "黄AVZY｜追劇",
-      "type": 1,
-      "url": "https://www.pgxdy.com/api/json.php",
-      "indexed": true,
-      "adult": true,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 312,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-白嫖资源-https-www-kxgav-com-api-json-php-66",
-      "name": "白嫖资源｜追劇",
-      "type": 1,
-      "url": "https://www.kxgav.com/api/json.php",
-      "indexed": true,
-      "adult": true,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 358,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-豪华资源-https-pz-v88-qzz-io-url-https-hhzyapi-com-api-php-provide-vod-26",
-      "name": "豪华资源｜追劇",
-      "type": 1,
-      "url": "https://pz.v88.qzz.io/?url=https://hhzyapi.com/api.php/provide/vod",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 298,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-如意资源-https-pz-v88-qzz-io-url-https-cj-rycjapi-com-api-php-provide-vod-25",
-      "name": "如意资源｜追劇",
-      "type": 1,
-      "url": "https://pz.v88.qzz.io/?url=https://cj.rycjapi.com/api.php/provide/vod",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 622,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-金鹰点播-https-jinyingzy-com-api-php-provide-vod-19",
-      "name": "金鹰点播｜追劇",
-      "type": 1,
-      "url": "https://jinyingzy.com/api.php/provide/vod/",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 296,
-      "error": ""
-    },
-    {
-      "kind": "source",
-      "id": "all-on-demand-sources-爱奇艺-https-iqiyizyapi-com-api-php-provide-vod-1",
-      "name": "爱奇艺｜追劇",
-      "type": 1,
-      "url": "https://iqiyizyapi.com/api.php/provide/vod/",
-      "indexed": true,
-      "adult": false,
-      "ok": true,
-      "status": 200,
-      "elapsedMs": 1740,
+      "elapsedMs": 553,
       "error": ""
     },
     {
@@ -1211,7 +899,332 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 2749,
+      "elapsedMs": 247,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "current-vod-url-金鹰点播-https-jyzyapi-com-provide-vod-60",
+      "name": "金鹰点播｜追劇",
+      "type": 1,
+      "url": "https://jyzyapi.com/provide/vod/",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 109,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-鲨鱼资源-https-shayuapi-com-api-php-provide-vod-54",
+      "name": "鲨鱼资源｜追劇",
+      "type": 1,
+      "url": "https://shayuapi.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": true,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 829,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-闪电影视-http-sdzyapi-com-api-php-provide-vod-77",
+      "name": "闪电影视｜追剧",
+      "type": 1,
+      "url": "http://sdzyapi.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 141,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-牛牛影视-https-api-niuniuzy-me-api-php-provide-vod-at-xml-78",
+      "name": "牛牛影视｜追剧",
+      "type": 0,
+      "url": "https://api.niuniuzy.me/api.php/provide/vod/at/xml",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 162,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-雲飛影视-http-cj-lziapi-com-api-php-provide-vod-79",
+      "name": "雲飛影视｜追劇",
+      "type": 1,
+      "url": "http://cj.lziapi.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 364,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-火狐-https-hhzyapi-com-api-php-provide-vod-81",
+      "name": "火狐影视｜追剧",
+      "type": 1,
+      "url": "https://hhzyapi.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 236,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-api-如意-https-cj-rycjapi-com-api-php-provide-vod-82",
+      "name": "如意影视｜追剧",
+      "type": 1,
+      "url": "https://cj.rycjapi.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 1048,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "current-vod-url-七星短剧-https-mpimg-cn-down-php-48e9d346cdf6da376c53136693bec95a-py-71",
+      "name": "七星丨短剧｜追劇",
+      "type": 3,
+      "url": "https://mpimg.cn/down.php/48e9d346cdf6da376c53136693bec95a.py",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 206,
+      "elapsedMs": 378,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-cj-360资源-https-360zy-com-api-php-provide-vod-84",
+      "name": "360丨短剧｜追劇",
+      "type": 1,
+      "url": "https://360zy.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 1013,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-大地采集-https-dadiapi-com-apple-m3u8-php-88",
+      "name": "大地av｜18+",
+      "type": 0,
+      "url": "https://dadiapi.com/apple_m3u8.php",
+      "indexed": true,
+      "adult": true,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 1078,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-黄色仓库-av-https-hsckzy-vip-api-php-provide-vod-89",
+      "name": "黄色仓库(旧)｜18+",
+      "type": 1,
+      "url": "https://hsckzy.vip/api.php/provide/vod/",
+      "indexed": true,
+      "adult": true,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 393,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-fqzy资源-https-fqzy-me-api-php-provide-vod-ac-list-90",
+      "name": "国产资源｜18+",
+      "type": 1,
+      "url": "https://fqzy.me//api.php/provide/vod/?ac=list",
+      "indexed": true,
+      "adult": true,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 1050,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "current-vod-url-无水印资源-https-api-wsyzy-net-api-php-provide-vod-78",
+      "name": "无水印资源｜追劇",
+      "type": 1,
+      "url": "https://api.wsyzy.net/api.php/provide/vod/",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 220,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "current-vod-url-吉吉资源-https-caiji-jjzyapi-com-api-php-provide-vod-79",
+      "name": "吉吉资源｜追劇",
+      "type": 1,
+      "url": "https://caiji.jjzyapi.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 1103,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "current-vod-url-第一资源-https-caiji-diyizy-net-api-php-provide-vod-80",
+      "name": "第一资源｜追劇",
+      "type": 1,
+      "url": "https://caiji.diyizy.net/api.php/provide/vod/",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 190,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "current-vod-local-聚玩-ok資源-https-api-okzyw-net-api-php-provide-vod-81",
+      "name": "OK資源｜追劇",
+      "type": 1,
+      "url": "https://api.okzyw.net/api.php/provide/vod",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 164,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "current-vod-local-聚玩-淘片資源-https-taopianapi-com-cjapi-mc-vod-json-html-82",
+      "name": "淘片資源｜備用片庫",
+      "type": 1,
+      "url": "https://taopianapi.com/cjapi/mc/vod/json.html",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 163,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "juwan-adapter-43bed8818b867693f99b",
+      "name": "王子影視（適配）",
+      "type": 3,
+      "url": "csp_AppGet",
+      "indexed": true,
+      "adult": false,
+      "ok": false,
+      "status": 0,
+      "elapsedMs": 1,
+      "error": "spider api=Failed to parse URL from csp_AppGet; ext=undefined"
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-美少女-https-www-msnii-com-api-json-php-64",
+      "name": "美少女｜追劇",
+      "type": 1,
+      "url": "https://www.msnii.com/api/json.php",
+      "indexed": true,
+      "adult": true,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 173,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-黄avzy-https-www-pgxdy-com-api-json-php-65",
+      "name": "黄AVZY｜追劇",
+      "type": 1,
+      "url": "https://www.pgxdy.com/api/json.php",
+      "indexed": true,
+      "adult": true,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 173,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-白嫖资源-https-www-kxgav-com-api-json-php-66",
+      "name": "白嫖资源｜追劇",
+      "type": 1,
+      "url": "https://www.kxgav.com/api/json.php",
+      "indexed": true,
+      "adult": true,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 232,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-豪华资源-https-pz-v88-qzz-io-url-https-hhzyapi-com-api-php-provide-vod-26",
+      "name": "豪华资源｜追劇",
+      "type": 1,
+      "url": "https://pz.v88.qzz.io/?url=https://hhzyapi.com/api.php/provide/vod",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 291,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-如意资源-https-pz-v88-qzz-io-url-https-cj-rycjapi-com-api-php-provide-vod-25",
+      "name": "如意资源｜追劇",
+      "type": 1,
+      "url": "https://pz.v88.qzz.io/?url=https://cj.rycjapi.com/api.php/provide/vod",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 704,
+      "error": ""
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-金鹰点播-https-jinyingzy-com-api-php-provide-vod-19",
+      "name": "金鹰点播｜追劇",
+      "type": 1,
+      "url": "https://jinyingzy.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": false,
+      "ok": false,
+      "status": 0,
+      "elapsedMs": 8002,
+      "error": "The operation was aborted due to timeout"
+    },
+    {
+      "kind": "source",
+      "id": "all-on-demand-sources-爱奇艺-https-iqiyizyapi-com-api-php-provide-vod-1",
+      "name": "爱奇艺｜追劇",
+      "type": 1,
+      "url": "https://iqiyizyapi.com/api.php/provide/vod/",
+      "indexed": true,
+      "adult": false,
+      "ok": true,
+      "status": 200,
+      "elapsedMs": 1069,
       "error": ""
     },
     {
@@ -1224,7 +1237,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 442,
+      "elapsedMs": 401,
       "error": "spider api=Failed to parse URL from csp_XBPQ; ext=206"
     },
     {
@@ -1237,7 +1250,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 345,
+      "elapsedMs": 123,
       "error": "spider api=Failed to parse URL from csp_XYQHiker; ext=206"
     },
     {
@@ -1276,7 +1289,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 471,
+      "elapsedMs": 164,
       "error": "fetch failed"
     },
     {
@@ -1289,7 +1302,7 @@
       "adult": true,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1070,
+      "elapsedMs": 800,
       "error": ""
     },
     {
@@ -1302,7 +1315,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 362,
+      "elapsedMs": 61,
       "error": "fetch failed"
     },
     {
@@ -1315,7 +1328,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 153,
+      "elapsedMs": 66,
       "error": "fetch failed"
     },
     {
@@ -1328,7 +1341,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 164,
+      "elapsedMs": 68,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -1341,7 +1354,7 @@
       "adult": false,
       "ok": false,
       "status": 403,
-      "elapsedMs": 110,
+      "elapsedMs": 60,
       "error": "Unexpected token '<', \"<!DOCTYPE \"... is not valid JSON"
     },
     {
@@ -1354,7 +1367,7 @@
       "adult": false,
       "ok": true,
       "status": 200,
-      "elapsedMs": 1715,
+      "elapsedMs": 407,
       "error": ""
     },
     {
@@ -1367,7 +1380,7 @@
       "adult": true,
       "ok": false,
       "status": 502,
-      "elapsedMs": 447,
+      "elapsedMs": 360,
       "error": "Unexpected token '<', \"<html>\r\n<h\"... is not valid JSON"
     },
     {
@@ -1380,7 +1393,7 @@
       "adult": true,
       "ok": false,
       "status": 0,
-      "elapsedMs": 2755,
+      "elapsedMs": 2545,
       "error": "fetch failed"
     },
     {
@@ -1393,7 +1406,7 @@
       "adult": false,
       "ok": false,
       "status": 0,
-      "elapsedMs": 116,
+      "elapsedMs": 104,
       "error": "spider api=Failed to parse URL from csp_XYQHiker; ext=206"
     },
     {
@@ -1414,7 +1427,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 200,
-      "elapsedMs": 503,
+      "elapsedMs": 517,
       "error": ""
     },
     {
@@ -1435,7 +1448,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 200,
-      "elapsedMs": 506,
+      "elapsedMs": 480,
       "error": ""
     },
     {
@@ -1456,7 +1469,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 504,
+      "elapsedMs": 490,
       "error": ""
     },
     {
@@ -1477,7 +1490,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 502,
+      "elapsedMs": 486,
       "error": ""
     },
     {
@@ -1498,7 +1511,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 505,
+      "elapsedMs": 520,
       "error": ""
     },
     {
@@ -1519,7 +1532,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 524,
+      "elapsedMs": 497,
       "error": ""
     },
     {
@@ -1540,7 +1553,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 517,
+      "elapsedMs": 526,
       "error": ""
     },
     {
@@ -1561,7 +1574,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 532,
+      "elapsedMs": 480,
       "error": ""
     },
     {
@@ -1582,7 +1595,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 507,
+      "elapsedMs": 521,
       "error": ""
     },
     {
@@ -1603,7 +1616,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 499,
+      "elapsedMs": 490,
       "error": ""
     },
     {
@@ -1624,7 +1637,7 @@
       "ok": true,
       "status": 206,
       "playStatus": 206,
-      "elapsedMs": 508,
+      "elapsedMs": 500,
       "error": ""
     },
     {
@@ -1641,7 +1654,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 270,
+      "elapsedMs": 179,
       "error": ""
     },
     {
@@ -1658,7 +1671,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 229,
+      "elapsedMs": 184,
       "error": ""
     },
     {
@@ -1675,7 +1688,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 229,
+      "elapsedMs": 219,
       "error": ""
     },
     {
@@ -1692,7 +1705,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 242,
+      "elapsedMs": 188,
       "error": ""
     },
     {
@@ -1709,7 +1722,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 254,
+      "elapsedMs": 186,
       "error": ""
     },
     {
@@ -1726,7 +1739,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 232,
+      "elapsedMs": 169,
       "error": ""
     },
     {
@@ -1743,7 +1756,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 239,
+      "elapsedMs": 192,
       "error": ""
     },
     {
@@ -1760,7 +1773,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 262,
+      "elapsedMs": 196,
       "error": ""
     },
     {
@@ -1777,7 +1790,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 248,
+      "elapsedMs": 188,
       "error": ""
     },
     {
@@ -1794,7 +1807,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 229,
+      "elapsedMs": 198,
       "error": ""
     },
     {
@@ -1811,7 +1824,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 237,
+      "elapsedMs": 189,
       "error": ""
     },
     {
@@ -1828,7 +1841,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 245,
+      "elapsedMs": 191,
       "error": ""
     },
     {
@@ -1845,7 +1858,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 131,
+      "elapsedMs": 113,
       "error": ""
     },
     {
@@ -1862,7 +1875,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 159,
+      "elapsedMs": 120,
       "error": ""
     },
     {
@@ -1879,7 +1892,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 118,
+      "elapsedMs": 131,
       "error": ""
     },
     {
@@ -1896,7 +1909,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 134,
+      "elapsedMs": 109,
       "error": ""
     },
     {
@@ -1913,7 +1926,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 182,
+      "elapsedMs": 115,
       "error": ""
     },
     {
@@ -1930,7 +1943,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 107,
+      "elapsedMs": 193,
       "error": ""
     },
     {
@@ -1947,7 +1960,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 129,
+      "elapsedMs": 123,
       "error": ""
     },
     {
@@ -1964,7 +1977,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 127,
+      "elapsedMs": 99,
       "error": ""
     },
     {
@@ -1981,7 +1994,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 126,
+      "elapsedMs": 111,
       "error": ""
     },
     {
@@ -1998,7 +2011,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 140,
+      "elapsedMs": 124,
       "error": ""
     },
     {
@@ -2015,7 +2028,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 121,
+      "elapsedMs": 123,
       "error": ""
     },
     {
@@ -2032,7 +2045,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 127,
+      "elapsedMs": 109,
       "error": ""
     },
     {
@@ -2049,7 +2062,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 145,
+      "elapsedMs": 117,
       "error": ""
     },
     {
@@ -2066,7 +2079,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 115,
+      "elapsedMs": 106,
       "error": ""
     },
     {
@@ -2083,7 +2096,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 124,
+      "elapsedMs": 100,
       "error": ""
     },
     {
@@ -2100,7 +2113,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 136,
+      "elapsedMs": 127,
       "error": ""
     },
     {
@@ -2117,7 +2130,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 166,
+      "elapsedMs": 111,
       "error": ""
     },
     {
@@ -2134,7 +2147,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 111,
+      "elapsedMs": 101,
       "error": ""
     },
     {
@@ -2151,7 +2164,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 108,
+      "elapsedMs": 126,
       "error": ""
     },
     {
@@ -2168,7 +2181,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 126,
+      "elapsedMs": 157,
       "error": ""
     },
     {
@@ -2185,7 +2198,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 117,
+      "elapsedMs": 111,
       "error": ""
     },
     {
@@ -2202,7 +2215,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 119,
+      "elapsedMs": 125,
       "error": ""
     },
     {
@@ -2219,7 +2232,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 108,
+      "elapsedMs": 128,
       "error": ""
     },
     {
@@ -2236,7 +2249,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 136,
+      "elapsedMs": 109,
       "error": ""
     },
     {
@@ -2253,7 +2266,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 105,
+      "elapsedMs": 113,
       "error": ""
     },
     {
@@ -2270,7 +2283,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 136,
+      "elapsedMs": 108,
       "error": ""
     },
     {
@@ -2287,7 +2300,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 126,
+      "elapsedMs": 110,
       "error": ""
     },
     {
@@ -2304,7 +2317,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 141,
+      "elapsedMs": 128,
       "error": ""
     },
     {
@@ -2321,7 +2334,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 158,
+      "elapsedMs": 119,
       "error": ""
     },
     {
@@ -2355,7 +2368,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 113,
+      "elapsedMs": 97,
       "error": ""
     },
     {
@@ -2372,7 +2385,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 116,
+      "elapsedMs": 128,
       "error": ""
     },
     {
@@ -2389,7 +2402,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 106,
+      "elapsedMs": 99,
       "error": ""
     },
     {
@@ -2406,7 +2419,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 106,
+      "elapsedMs": 118,
       "error": ""
     },
     {
@@ -2423,7 +2436,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 109,
+      "elapsedMs": 100,
       "error": ""
     },
     {
@@ -2440,7 +2453,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 135,
+      "elapsedMs": 108,
       "error": ""
     },
     {
@@ -2457,7 +2470,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 110,
+      "elapsedMs": 111,
       "error": ""
     },
     {
@@ -2474,7 +2487,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 113,
+      "elapsedMs": 110,
       "error": ""
     },
     {
@@ -2491,7 +2504,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 124,
+      "elapsedMs": 105,
       "error": ""
     },
     {
@@ -2508,7 +2521,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 126,
+      "elapsedMs": 111,
       "error": ""
     },
     {
@@ -2525,7 +2538,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 126,
+      "elapsedMs": 111,
       "error": ""
     },
     {
@@ -2542,7 +2555,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 111,
+      "elapsedMs": 114,
       "error": ""
     },
     {
@@ -2559,7 +2572,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 107,
+      "elapsedMs": 109,
       "error": ""
     },
     {
@@ -2576,7 +2589,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 117,
+      "elapsedMs": 129,
       "error": ""
     },
     {
@@ -2593,7 +2606,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 125,
+      "elapsedMs": 117,
       "error": ""
     },
     {
@@ -2610,7 +2623,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 118,
+      "elapsedMs": 113,
       "error": ""
     },
     {
@@ -2627,7 +2640,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 130,
+      "elapsedMs": 100,
       "error": ""
     },
     {
@@ -2644,7 +2657,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 128,
+      "elapsedMs": 111,
       "error": ""
     },
     {
@@ -2678,7 +2691,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 112,
+      "elapsedMs": 122,
       "error": ""
     },
     {
@@ -2695,7 +2708,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 123,
+      "elapsedMs": 106,
       "error": ""
     },
     {
@@ -2712,7 +2725,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 142,
+      "elapsedMs": 116,
       "error": ""
     },
     {
@@ -2729,7 +2742,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 124,
+      "elapsedMs": 113,
       "error": ""
     },
     {
@@ -2746,7 +2759,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 125,
+      "elapsedMs": 93,
       "error": ""
     },
     {
@@ -2763,7 +2776,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 109,
+      "elapsedMs": 107,
       "error": ""
     },
     {
@@ -2780,7 +2793,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 106,
+      "elapsedMs": 129,
       "error": ""
     },
     {
@@ -2797,7 +2810,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 126,
+      "elapsedMs": 122,
       "error": ""
     },
     {
@@ -2814,7 +2827,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 115,
+      "elapsedMs": 117,
       "error": ""
     },
     {
@@ -2831,7 +2844,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 112,
+      "elapsedMs": 105,
       "error": ""
     },
     {
@@ -2848,7 +2861,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 136,
+      "elapsedMs": 106,
       "error": ""
     },
     {
@@ -2865,7 +2878,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 121,
+      "elapsedMs": 108,
       "error": ""
     },
     {
@@ -2882,7 +2895,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 111,
+      "elapsedMs": 103,
       "error": ""
     },
     {
@@ -2899,7 +2912,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 117,
+      "elapsedMs": 109,
       "error": ""
     },
     {
@@ -2916,7 +2929,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 126,
+      "elapsedMs": 112,
       "error": ""
     },
     {
@@ -2933,7 +2946,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 120,
+      "elapsedMs": 105,
       "error": ""
     },
     {
@@ -2950,7 +2963,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 136,
+      "elapsedMs": 126,
       "error": ""
     },
     {
@@ -2967,7 +2980,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 123,
+      "elapsedMs": 108,
       "error": ""
     },
     {
@@ -2984,7 +2997,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 104,
+      "elapsedMs": 111,
       "error": ""
     },
     {
@@ -3001,7 +3014,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 115,
+      "elapsedMs": 108,
       "error": ""
     },
     {
@@ -3018,7 +3031,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 125,
+      "elapsedMs": 110,
       "error": ""
     },
     {
@@ -3035,7 +3048,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 133,
+      "elapsedMs": 101,
       "error": ""
     },
     {
@@ -3052,7 +3065,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 124,
+      "elapsedMs": 111,
       "error": ""
     },
     {
@@ -3069,7 +3082,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 114,
+      "elapsedMs": 125,
       "error": ""
     },
     {
@@ -3086,7 +3099,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 117,
+      "elapsedMs": 120,
       "error": ""
     },
     {
@@ -3103,7 +3116,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 124,
+      "elapsedMs": 108,
       "error": ""
     },
     {
@@ -3120,7 +3133,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 121,
+      "elapsedMs": 106,
       "error": ""
     },
     {
@@ -3137,7 +3150,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 126,
+      "elapsedMs": 109,
       "error": ""
     },
     {
@@ -3154,7 +3167,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 113,
+      "elapsedMs": 108,
       "error": ""
     },
     {
@@ -3171,7 +3184,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 133,
+      "elapsedMs": 108,
       "error": ""
     },
     {
@@ -3188,7 +3201,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 120,
+      "elapsedMs": 112,
       "error": ""
     },
     {
@@ -3205,7 +3218,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 116,
+      "elapsedMs": 112,
       "error": ""
     },
     {
@@ -3222,7 +3235,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 131,
+      "elapsedMs": 100,
       "error": ""
     },
     {
@@ -3239,7 +3252,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 152,
+      "elapsedMs": 112,
       "error": ""
     },
     {
@@ -3256,7 +3269,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 123,
+      "elapsedMs": 110,
       "error": ""
     },
     {
@@ -3273,7 +3286,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 114,
+      "elapsedMs": 117,
       "error": ""
     },
     {
@@ -3290,7 +3303,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 161,
+      "elapsedMs": 122,
       "error": ""
     },
     {
@@ -3307,7 +3320,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 144,
+      "elapsedMs": 111,
       "error": ""
     },
     {
@@ -3324,7 +3337,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 122,
+      "elapsedMs": 120,
       "error": ""
     },
     {
@@ -3341,7 +3354,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 116,
+      "elapsedMs": 115,
       "error": ""
     },
     {
@@ -3358,7 +3371,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 119,
+      "elapsedMs": 108,
       "error": ""
     },
     {
@@ -3375,7 +3388,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 125,
+      "elapsedMs": 114,
       "error": ""
     },
     {
@@ -3392,7 +3405,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 109,
+      "elapsedMs": 113,
       "error": ""
     },
     {
@@ -3409,7 +3422,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 125,
+      "elapsedMs": 110,
       "error": ""
     },
     {
@@ -3426,7 +3439,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 117,
+      "elapsedMs": 106,
       "error": ""
     },
     {
@@ -3443,7 +3456,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 115,
+      "elapsedMs": 114,
       "error": ""
     },
     {
@@ -3460,7 +3473,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 126,
+      "elapsedMs": 102,
       "error": ""
     },
     {
@@ -3477,7 +3490,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 127,
+      "elapsedMs": 110,
       "error": ""
     },
     {
@@ -3494,7 +3507,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 114,
+      "elapsedMs": 122,
       "error": ""
     },
     {
@@ -3511,7 +3524,7 @@
       "maxBandwidth": 6221313,
       "variants": 10,
       "status": 200,
-      "elapsedMs": 107,
+      "elapsedMs": 379,
       "error": ""
     },
     {
@@ -3528,7 +3541,7 @@
       "maxBandwidth": 6221313,
       "variants": 10,
       "status": 200,
-      "elapsedMs": 300,
+      "elapsedMs": 341,
       "error": ""
     },
     {
@@ -3545,7 +3558,7 @@
       "maxBandwidth": 6221313,
       "variants": 10,
       "status": 200,
-      "elapsedMs": 490,
+      "elapsedMs": 237,
       "error": ""
     },
     {
@@ -3562,7 +3575,7 @@
       "maxBandwidth": 6221313,
       "variants": 10,
       "status": 200,
-      "elapsedMs": 929,
+      "elapsedMs": 769,
       "error": ""
     },
     {
@@ -3579,7 +3592,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 314,
+      "elapsedMs": 1117,
       "error": ""
     },
     {
@@ -3596,7 +3609,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 374,
+      "elapsedMs": 785,
       "error": ""
     },
     {
@@ -3613,7 +3626,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 772,
+      "elapsedMs": 307,
       "error": ""
     },
     {
@@ -3630,7 +3643,7 @@
       "maxBandwidth": 0,
       "variants": 0,
       "status": 200,
-      "elapsedMs": 419,
+      "elapsedMs": 117,
       "error": ""
     },
     {
@@ -3647,7 +3660,7 @@
       "maxBandwidth": 4540800,
       "variants": 4,
       "status": 200,
-      "elapsedMs": 890,
+      "elapsedMs": 1220,
       "error": ""
     },
     {
@@ -3664,7 +3677,7 @@
       "maxBandwidth": 7003216,
       "variants": 3,
       "status": 200,
-      "elapsedMs": 603,
+      "elapsedMs": 385,
       "error": ""
     },
     {
@@ -3681,7 +3694,7 @@
       "maxBandwidth": 3256000,
       "variants": 4,
       "status": 200,
-      "elapsedMs": 3583,
+      "elapsedMs": 896,
       "error": ""
     },
     {
@@ -3698,7 +3711,7 @@
       "maxBandwidth": 3256000,
       "variants": 4,
       "status": 200,
-      "elapsedMs": 862,
+      "elapsedMs": 635,
       "error": ""
     },
     {
@@ -3715,7 +3728,7 @@
       "maxBandwidth": 11545600,
       "variants": 5,
       "status": 200,
-      "elapsedMs": 888,
+      "elapsedMs": 2483,
       "error": ""
     }
   ]
