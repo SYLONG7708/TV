@@ -1,0 +1,874 @@
+{
+    "generatedAt":  "2026-09-04T12:54:07.9480151+08:00",
+    "channelCsv":  "sources/youtube-live-channels.csv",
+    "baseLive":  "sources/live-verified-only.txt",
+    "youtubeOutput":  "sources/live-youtube-stable.txt",
+    "mergedOutput":  "sources/live-stable.txt",
+    "total":  112,
+    "resolved":  112,
+    "playable":  0,
+    "fallback":  112,
+    "failed":  112,
+    "workflowSuccessRate":  100,
+    "hlsSuccessRate":  0,
+    "candidatePlaylistEntries":  112,
+    "playlistEntries":  112,
+    "removedFromPlaylist":  0,
+    "playlistPolicy":  "include-fallback",
+    "minPlaylistEntries":  10,
+    "outputsPreserved":  false,
+    "mode":  "no-cookies-fallback",
+    "note":  "GitHub runner has no YouTube cookies, so unresolved YouTube watch URLs are removed from the playable playlist. Add YOUTUBE_COOKIES_B64 to resolve HLS URLs.",
+    "skipResolve":  true,
+    "includeOriginalOnFailure":  true,
+    "maxHeight":  1080,
+    "processTimeoutSec":  45,
+    "streamValidationTimeoutSec":  8,
+    "segmentProbeBytes":  262144,
+    "minSegmentBytes":  65536,
+    "minSegmentKbps":  600,
+    "retryCount":  2,
+    "ytDlp":  "",
+    "cookiesEnabled":  false,
+    "cookiesFromBrowser":  "",
+    "groups":  [
+                   {
+                       "name":  "YouTube互動娛樂",
+                       "count":  1
+                   },
+                   {
+                       "name":  "YouTube文化紀實",
+                       "count":  7
+                   },
+                   {
+                       "name":  "YouTube台灣節目",
+                       "count":  1
+                   },
+                   {
+                       "name":  "YouTube亞洲新聞",
+                       "count":  15
+                   },
+                   {
+                       "name":  "YouTube兒童動畫",
+                       "count":  9
+                   },
+                   {
+                       "name":  "YouTube音樂體育風景",
+                       "count":  4
+                   },
+                   {
+                       "name":  "YouTube動漫台",
+                       "count":  8
+                   },
+                   {
+                       "name":  "YouTube國際新聞",
+                       "count":  15
+                   },
+                   {
+                       "name":  "YouTube新聞台",
+                       "count":  25
+                   },
+                   {
+                       "name":  "YouTube電影劇集",
+                       "count":  6
+                   },
+                   {
+                       "name":  "YouTube綜合娛樂",
+                       "count":  12
+                   },
+                   {
+                       "name":  "YouTube購物台",
+                       "count":  8
+                   },
+                   {
+                       "name":  "YouTube韓綜娛樂",
+                       "count":  1
+                   }
+               ],
+    "failures":  [
+                     {
+                         "Order":  1,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "三立iNEWS",
+                         "PageUrl":  "https://www.youtube.com/watch?v=pF507BLtbqU",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  2,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "寰宇新聞台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=Ej3LQM_lTEw",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  3,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "東森財經新聞",
+                         "PageUrl":  "https://www.youtube.com/watch?v=1I2iq41Akmo",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  4,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "運通財經台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=dlTbFSt2spc",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  5,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "中視新聞",
+                         "PageUrl":  "https://www.youtube.com/watch?v=TCnaIE_SAtM",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  6,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "民視新聞",
+                         "PageUrl":  "https://www.youtube.com/watch?v=ylYJSBUgaMA",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  7,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "台視新聞台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=sNtCBxP-8LY",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  8,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "三立新聞台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=QsGswQvRmtU",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  9,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "TVBS NEWS 24小時直播",
+                         "PageUrl":  "https://www.youtube.com/watch?v=m_dhMSvUCIc",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  10,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "中天電視",
+                         "PageUrl":  "https://www.youtube.com/watch?v=vr3XyVCR4T0",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  11,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "鳳凰衛視資訊台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=fN9uYWCjQaw",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  12,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "新唐人LIVE",
+                         "PageUrl":  "https://www.youtube.com/watch?v=Bhp_V7H5QoY",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  13,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "鏡新聞",
+                         "PageUrl":  "https://www.youtube.com/watch?v=5n0y6b0Q25o",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  14,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "TVBS NEWS",
+                         "PageUrl":  "https://www.youtube.com/watch?v=jMGAopbbmEE",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  15,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "TVBS選新聞",
+                         "PageUrl":  "https://www.youtube.com/watch?v=72d-gkakiek",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  16,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "寰宇新聞財經台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=yAUQQ0DhPxI",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  17,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "倪珍24小時播新聞",
+                         "PageUrl":  "https://www.youtube.com/watch?v=RRybv1kEnCU",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  18,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "公視新聞網",
+                         "PageUrl":  "https://www.youtube.com/watch?v=quwqlazU-c8",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  19,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "華視新聞",
+                         "PageUrl":  "https://www.youtube.com/watch?v=wM0g8EoUZ_E",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  20,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "華視公眾安全資訊觀測站",
+                         "PageUrl":  "https://www.youtube.com/watch?v=meHTKm4XBS8",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  21,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "東森新聞 51 頻道 24 小時直播",
+                         "PageUrl":  "https://www.youtube.com/watch?v=V1p33hqPrUk",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  22,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "寰宇新聞台灣台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=Ej3LQM_lTEw",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  23,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "公視 網路直播頻道",
+                         "PageUrl":  "https://www.youtube.com/watch?v=C6gYqSHLRw4",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  24,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "CNA LIVE",
+                         "PageUrl":  "https://www.youtube.com/watch?v=XWq5kBlakcQ",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  25,
+                         "Group":  "YouTube新聞台",
+                         "Name":  "華視戲劇頻道",
+                         "PageUrl":  "https://www.youtube.com/watch?v=6ZowCmLBcMY",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  26,
+                         "Group":  "YouTube購物台",
+                         "Name":  "momo購物一台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=_pZQ1Lk0xMA",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  27,
+                         "Group":  "YouTube購物台",
+                         "Name":  "momo購物二台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=xbNWkUyxQGM",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  28,
+                         "Group":  "YouTube購物台",
+                         "Name":  "東森購物台CH60",
+                         "PageUrl":  "https://www.youtube.com/watch?v=2IGZjBPTPT8",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  29,
+                         "Group":  "YouTube購物台",
+                         "Name":  "東森購物台CH46",
+                         "PageUrl":  "https://www.youtube.com/watch?v=tUvQg2HgIbs",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  30,
+                         "Group":  "YouTube購物台",
+                         "Name":  "東森購物台CH47",
+                         "PageUrl":  "https://www.youtube.com/watch?v=vZHktiRowRg",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  31,
+                         "Group":  "YouTube購物台",
+                         "Name":  "東森購物台CH34",
+                         "PageUrl":  "https://www.youtube.com/watch?v=J3t9N0vciPI",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  32,
+                         "Group":  "YouTube購物台",
+                         "Name":  "美好購物1台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=8TBJDKRcg6c",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  33,
+                         "Group":  "YouTube購物台",
+                         "Name":  "美好購物2台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=MHoyggBaFW4",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  34,
+                         "Group":  "YouTube綜合娛樂",
+                         "Name":  "信大電視台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=3MakY86sYn8",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  35,
+                         "Group":  "YouTube綜合娛樂",
+                         "Name":  "中天亞洲台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=fdHutVy5SUM",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  36,
+                         "Group":  "YouTube綜合娛樂",
+                         "Name":  "華視綜藝頻道",
+                         "PageUrl":  "https://www.youtube.com/watch?v=0ePhPlTJbGo",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  37,
+                         "Group":  "YouTube綜合娛樂",
+                         "Name":  "中視經典綜藝",
+                         "PageUrl":  "https://www.youtube.com/watch?v=ADDSmXoPDY8",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  38,
+                         "Group":  "YouTube綜合娛樂",
+                         "Name":  "中天2台",
+                         "PageUrl":  "https://www.youtube.com/watch?v=6LNCDdQpv-w",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  39,
+                         "Group":  "YouTube綜合娛樂",
+                         "Name":  "大陸尋奇",
+                         "PageUrl":  "https://www.youtube.com/watch?v=Kc5OXLZ9NEw",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  40,
+                         "Group":  "YouTube綜合娛樂",
+                         "Name":  "豬哥會社",
+                         "PageUrl":  "https://www.youtube.com/watch?v=v8MUGB4vst8",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  41,
+                         "Group":  "YouTube綜合娛樂",
+                         "Name":  "GTV DRAMA 八大劇樂部",
+                         "PageUrl":  "https://www.youtube.com/watch?v=6UQA6Qp0Bks",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  42,
+                         "Group":  "YouTube綜合娛樂",
+                         "Name":  "民視戲劇館",
+                         "PageUrl":  "https://www.youtube.com/watch?v=NyrdWXddfR4",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  43,
+                         "Group":  "YouTube綜合娛樂",
+                         "Name":  "Entertainment - Mediacorp",
+                         "PageUrl":  "https://www.youtube.com/watch?v=ipqTkEH3mhE",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  44,
+                         "Group":  "YouTube綜合娛樂",
+                         "Name":  "東森綜合2台頻道 24 小時直播",
+                         "PageUrl":  "https://www.youtube.com/watch?v=cimbpAZUjzw",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  45,
+                         "Group":  "YouTube綜合娛樂",
+                         "Name":  "8world",
+                         "PageUrl":  "https://www.youtube.com/watch?v=RvSOIM620bA",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  46,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "DW News",
+                         "PageUrl":  "https://www.youtube.com/watch?v=LuKwFajn37U",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  47,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "Al Jazeera Arabic",
+                         "PageUrl":  "https://www.youtube.com/watch?v=N8xxOD0nT1Y",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  48,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "ABC News",
+                         "PageUrl":  "https://www.youtube.com/watch?v=IkKbZ_TC9Tc",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  49,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "LIVE NOW",
+                         "PageUrl":  "https://www.youtube.com/watch?v=vNVp6bxkL1c",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  50,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "Haberturk TV",
+                         "PageUrl":  "https://www.youtube.com/watch?v=s4KIyYkwiM0",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  51,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "GB News",
+                         "PageUrl":  "https://www.youtube.com/watch?v=grQjlyyQsn4",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  52,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "Sky News",
+                         "PageUrl":  "https://www.youtube.com/watch?v=paEJskVBz_M",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  53,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "Euronews English",
+                         "PageUrl":  "https://www.youtube.com/watch?v=pykpO5kQJ98",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  54,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "FRANCE 24 English",
+                         "PageUrl":  "https://www.youtube.com/watch?v=HvZt-nh9sGg",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  55,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "NBC News",
+                         "PageUrl":  "https://www.youtube.com/watch?v=fDYFTkFJtdM",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  56,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "Al Jazeera English",
+                         "PageUrl":  "https://www.youtube.com/watch?v=gCNeDWCI0vo",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  57,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "CRUX",
+                         "PageUrl":  "https://www.youtube.com/watch?v=LLWrwAKROfY",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  58,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "LiveNOW from FOX",
+                         "PageUrl":  "https://www.youtube.com/watch?v=9fTzGUvzjQw",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  59,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "TV5 News",
+                         "PageUrl":  "https://www.youtube.com/watch?v=EMNH8Gg8BzM",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  60,
+                         "Group":  "YouTube國際新聞",
+                         "Name":  "TaiwanPlus",
+                         "PageUrl":  "https://www.youtube.com/watch?v=Vrs-AeKZIEg",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  61,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "Malaimurasu Tv 24X7",
+                         "PageUrl":  "https://www.youtube.com/watch?v=vpZ5af6irzA",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  62,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "Asianet News",
+                         "PageUrl":  "https://www.youtube.com/watch?v=s0LLVQeMmtU",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  63,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "JapaNews24",
+                         "PageUrl":  "https://www.youtube.com/watch?v=D1uFPfCvtRI",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  64,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "Astro AWANI",
+                         "PageUrl":  "https://www.youtube.com/watch?v=mkVyNaGee8A",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  65,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "India Today",
+                         "PageUrl":  "https://www.youtube.com/watch?v=Y9lhb97xlhY",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  66,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "News18 India",
+                         "PageUrl":  "https://www.youtube.com/watch?v=o6OP0iB5zvE",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  67,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "MediaoneTV Live",
+                         "PageUrl":  "https://www.youtube.com/watch?v=-8d8-c0yvyU",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  68,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "TBS NEWS",
+                         "PageUrl":  "https://www.youtube.com/watch?v=d8Rm7OKE9mA",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  69,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "NewsTamil24x7",
+                         "PageUrl":  "https://www.youtube.com/watch?v=hGs-nKaNc88",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  70,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "Malayalam News",
+                         "PageUrl":  "https://www.youtube.com/watch?v=1wECsnGZcfc",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  71,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "Arirang TV",
+                         "PageUrl":  "https://www.youtube.com/watch?v=CJVBX7KI5nU",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  72,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "HTB北海道ニュース",
+                         "PageUrl":  "https://www.youtube.com/watch?v=tvgbZZYS4Nk",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  73,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "KBS News",
+                         "PageUrl":  "https://www.youtube.com/watch?v=p5W8X3vziJ8",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  74,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "ABCテレビニュース",
+                         "PageUrl":  "https://www.youtube.com/watch?v=XGSEjlkjK8o",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  75,
+                         "Group":  "YouTube亞洲新聞",
+                         "Name":  "TIMES NOW",
+                         "PageUrl":  "https://www.youtube.com/watch?v=6lrvdOedqgk",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  76,
+                         "Group":  "YouTube兒童動畫",
+                         "Name":  "123 GO! Live",
+                         "PageUrl":  "https://www.youtube.com/watch?v=8FHerid3vag",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  77,
+                         "Group":  "YouTube兒童動畫",
+                         "Name":  "Muse木棉花-闔家歡",
+                         "PageUrl":  "https://www.youtube.com/watch?v=Lh6xiMlkRrg",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  78,
+                         "Group":  "YouTube兒童動畫",
+                         "Name":  "YOYO TV",
+                         "PageUrl":  "https://www.youtube.com/watch?v=KbG88GiZmBI",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  79,
+                         "Group":  "YouTube兒童動畫",
+                         "Name":  "小猪佩奇",
+                         "PageUrl":  "https://www.youtube.com/watch?v=MxK0SaEVQFs",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  80,
+                         "Group":  "YouTube兒童動畫",
+                         "Name":  "Talking Tom",
+                         "PageUrl":  "https://www.youtube.com/watch?v=2wqCOO4gAUs",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  81,
+                         "Group":  "YouTube兒童動畫",
+                         "Name":  "TalkingFriendsTVMini",
+                         "PageUrl":  "https://www.youtube.com/watch?v=FxmuSm_wgng",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  82,
+                         "Group":  "YouTube兒童動畫",
+                         "Name":  "Dave and Ava",
+                         "PageUrl":  "https://www.youtube.com/watch?v=NU-7Xmj514E",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  83,
+                         "Group":  "YouTube兒童動畫",
+                         "Name":  "Tayo the Little Bus",
+                         "PageUrl":  "https://www.youtube.com/watch?v=wgFPP9dRO-w",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  84,
+                         "Group":  "YouTube兒童動畫",
+                         "Name":  "Disney Junio",
+                         "PageUrl":  "https://www.youtube.com/watch?v=k7iNXiw1zL4",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  85,
+                         "Group":  "YouTube文化紀實",
+                         "Name":  "Tokyo Walk",
+                         "PageUrl":  "https://www.youtube.com/watch?v=pcPhqxOUv8A",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  86,
+                         "Group":  "YouTube文化紀實",
+                         "Name":  "大愛一臺HD",
+                         "PageUrl":  "https://www.youtube.com/watch?v=pM-1ytfQhos",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  87,
+                         "Group":  "YouTube文化紀實",
+                         "Name":  "MIT台灣誌",
+                         "PageUrl":  "https://www.youtube.com/watch?v=DxvKbRgUXc8",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  88,
+                         "Group":  "YouTube文化紀實",
+                         "Name":  "大愛二臺HD",
+                         "PageUrl":  "https://www.youtube.com/watch?v=QDxRJP-wfeI",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  89,
+                         "Group":  "YouTube文化紀實",
+                         "Name":  "國會頻道１",
+                         "PageUrl":  "https://www.youtube.com/watch?v=UQnVkK1kcDI",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  90,
+                         "Group":  "YouTube文化紀實",
+                         "Name":  "立法院會議",
+                         "PageUrl":  "https://www.youtube.com/watch?v=UQnVkK1kcDI",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  91,
+                         "Group":  "YouTube文化紀實",
+                         "Name":  "佛光山人間衛視",
+                         "PageUrl":  "https://www.youtube.com/watch?v=kyjN8rvSnio",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  92,
+                         "Group":  "YouTube音樂體育風景",
+                         "Name":  "THE K-POP",
+                         "PageUrl":  "https://www.youtube.com/watch?v=JVocS7Yftw8",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  93,
+                         "Group":  "YouTube音樂體育風景",
+                         "Name":  "Lofi Girl",
+                         "PageUrl":  "https://www.youtube.com/watch?v=qGohtGC5Rtk",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  94,
+                         "Group":  "YouTube音樂體育風景",
+                         "Name":  "earthTV",
+                         "PageUrl":  "https://www.youtube.com/watch?v=r1K7DyQn3jg",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  95,
+                         "Group":  "YouTube音樂體育風景",
+                         "Name":  "Best of MLB",
+                         "PageUrl":  "https://www.youtube.com/watch?v=wKiClrFLjZs",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  96,
+                         "Group":  "YouTube韓綜娛樂",
+                         "Name":  "SBS Running Man",
+                         "PageUrl":  "https://www.youtube.com/watch?v=lDcWeklf6DI",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  97,
+                         "Group":  "YouTube台灣節目",
+                         "Name":  "飢餓遊戲",
+                         "PageUrl":  "https://www.youtube.com/watch?v=6TsaEYaKueE",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  98,
+                         "Group":  "YouTube互動娛樂",
+                         "Name":  "InquizeX",
+                         "PageUrl":  "https://www.youtube.com/watch?v=Sa0UpjTdJT4",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  99,
+                         "Group":  "YouTube動漫台",
+                         "Name":  "Anileap 動漫歌曲24小時",
+                         "PageUrl":  "https://www.youtube.com/watch?v=4FBW3mkdKOs",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  101,
+                         "Group":  "YouTube動漫台",
+                         "Name":  "Muse 葬送的芙莉蓮馬拉松",
+                         "PageUrl":  "https://www.youtube.com/watch?v=PxAQgmdBgug",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  102,
+                         "Group":  "YouTube動漫台",
+                         "Name":  "Muse 異世界流浪美食家馬拉松",
+                         "PageUrl":  "https://www.youtube.com/watch?v=fK1M3oM7ZPQ",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  103,
+                         "Group":  "YouTube動漫台",
+                         "Name":  "Muse 獵人馬拉松",
+                         "PageUrl":  "https://www.youtube.com/watch?v=YrUJXdCamNs",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  105,
+                         "Group":  "YouTube動漫台",
+                         "Name":  "Muse 中華一番馬拉松",
+                         "PageUrl":  "https://www.youtube.com/watch?v=mRCXonM5ru8",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  106,
+                         "Group":  "YouTube動漫台",
+                         "Name":  "Muse 我們這一家馬拉松",
+                         "PageUrl":  "https://www.youtube.com/watch?v=e1gbvCkwxFE",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  107,
+                         "Group":  "YouTube動漫台",
+                         "Name":  "Muse 新哆啦A夢馬拉松",
+                         "PageUrl":  "https://www.youtube.com/watch?v=gnDok9gtopw",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  108,
+                         "Group":  "YouTube動漫台",
+                         "Name":  "Muse 蠟筆小新馬拉松",
+                         "PageUrl":  "https://www.youtube.com/watch?v=ENnjj7jQ23g",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  120,
+                         "Group":  "YouTube電影劇集",
+                         "Name":  "FilmRise Cheaters 劇集直播",
+                         "PageUrl":  "https://www.youtube.com/watch?v=1z_V6alJa2U",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  121,
+                         "Group":  "YouTube電影劇集",
+                         "Name":  "FilmRise Dick Van Dyke劇集直播",
+                         "PageUrl":  "https://www.youtube.com/watch?v=Y0vqwbt0A0w",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  122,
+                         "Group":  "YouTube電影劇集",
+                         "Name":  "FilmRise Unsolved Mysteries直播",
+                         "PageUrl":  "https://www.youtube.com/watch?v=quxkJY6GYvY",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  123,
+                         "Group":  "YouTube電影劇集",
+                         "Name":  "FilmRise Unsolved Mysteries全集",
+                         "PageUrl":  "https://www.youtube.com/watch?v=5CDcgYH0Ot0",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  124,
+                         "Group":  "YouTube電影劇集",
+                         "Name":  "FilmRise Cheaters全集",
+                         "PageUrl":  "https://www.youtube.com/watch?v=4oqyCiX-93Q",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     },
+                     {
+                         "Order":  125,
+                         "Group":  "YouTube電影劇集",
+                         "Name":  "Shout MST3K 電影劇場",
+                         "PageUrl":  "https://www.youtube.com/watch?v=DcXiauXqrPM",
+                         "Error":  "Resolved stream failed HLS validation: Skipped resolution."
+                     }
+                 ]
+}
