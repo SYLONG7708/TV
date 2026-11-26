@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-11-26T00:17:20.384Z",
+  "generatedAt": "2026-11-26T06:17:09.218Z",
   "sourceName": "full",
   "adultStartIndex": 40,
   "totalAdultSources": 30,
-  "usableAdultSources": 0,
+  "usableAdultSources": 3,
   "duplicateAdultSources": 27,
-  "failedAdultSources": 3,
-  "searchOkSources": 21,
-  "searchPlayableSources": 21,
+  "failedAdultSources": 0,
+  "searchOkSources": 24,
+  "searchPlayableSources": 24,
   "candidateOutput": "sources/vod-lunatv-adult18-sorted-oktv.json",
   "analysisOutput": "sources/vod-lunatv-adult18-sorted-analysis.csv",
   "categoryCounts": {
@@ -19,21 +19,21 @@
     },
     "02 國產/短片": {
       "total": 9,
-      "usable": 0,
+      "usable": 1,
       "duplicate": 8,
-      "failed": 1
+      "failed": 0
     },
     "03 番號/日本": {
       "total": 6,
-      "usable": 0,
+      "usable": 1,
       "duplicate": 5,
-      "failed": 1
+      "failed": 0
     },
     "04 動漫/美少女": {
       "total": 1,
-      "usable": 0,
+      "usable": 1,
       "duplicate": 0,
-      "failed": 1
+      "failed": 0
     },
     "05 精品/大站": {
       "total": 10,
@@ -201,17 +201,25 @@
       "order": 65,
       "name": "Luna 65 白嫖资源",
       "api": "https://www.kxgav.com/api/json.php",
-      "included": false,
+      "included": true,
       "duplicate": false,
       "duplicateReason": "",
-      "listOk": false,
-      "detailOk": false,
-      "searchOk": false,
-      "searchHasPlayUrl": false,
-      "hasPlayUrl": false,
-      "status": "failed_removed",
-      "error": "Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (404) Not Found.\"",
-      "record": null
+      "listOk": true,
+      "detailOk": true,
+      "searchOk": true,
+      "searchHasPlayUrl": true,
+      "hasPlayUrl": true,
+      "status": "usable_review_required",
+      "error": "",
+      "record": {
+        "key": "白嫖资源|AV",
+        "name": "白嫖资源｜",
+        "type": 1,
+        "api": "https://www.kxgav.com/api/json.php",
+        "quickSearch": 1,
+        "searchable": 1,
+        "filterable": 0
+      }
     },
     {
       "category": "02 國產/短片",
@@ -337,17 +345,25 @@
       "order": 64,
       "name": "Luna 64 黄AVZY",
       "api": "https://www.pgxdy.com/api/json.php",
-      "included": false,
+      "included": true,
       "duplicate": false,
       "duplicateReason": "",
-      "listOk": false,
-      "detailOk": false,
-      "searchOk": false,
-      "searchHasPlayUrl": false,
-      "hasPlayUrl": false,
-      "status": "failed_removed",
-      "error": "Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (404) Not Found.\"",
-      "record": null
+      "listOk": true,
+      "detailOk": true,
+      "searchOk": true,
+      "searchHasPlayUrl": true,
+      "hasPlayUrl": true,
+      "status": "usable_review_required",
+      "error": "",
+      "record": {
+        "key": "黄AVZY|AV",
+        "name": "黄AVZY｜",
+        "type": 1,
+        "api": "https://www.pgxdy.com/api/json.php",
+        "quickSearch": 1,
+        "searchable": 1,
+        "filterable": 0
+      }
     },
     {
       "category": "03 番號/日本",
@@ -371,17 +387,25 @@
       "order": 63,
       "name": "Luna 63 美少女-",
       "api": "https://www.msnii.com/api/json.php",
-      "included": false,
+      "included": true,
       "duplicate": false,
       "duplicateReason": "",
-      "listOk": false,
-      "detailOk": false,
-      "searchOk": false,
-      "searchHasPlayUrl": false,
-      "hasPlayUrl": false,
-      "status": "failed_removed",
-      "error": "Exception calling \"GetResponse\" with \"0\" argument(s): \"The remote server returned an error: (404) Not Found.\"",
-      "record": null
+      "listOk": true,
+      "detailOk": true,
+      "searchOk": true,
+      "searchHasPlayUrl": true,
+      "hasPlayUrl": true,
+      "status": "usable_review_required",
+      "error": "",
+      "record": {
+        "key": "美少女|AV",
+        "name": "美少女｜",
+        "type": 1,
+        "api": "https://www.msnii.com/api/json.php",
+        "quickSearch": 1,
+        "searchable": 1,
+        "filterable": 0
+      }
     },
     {
       "category": "05 精品/大站",
